@@ -86,7 +86,7 @@ export default function MoodMapPage() {
           Get useful tips on how to survive, sex and intimacy advice, and day-to-day updates—delivered with honesty and humor. Sign up below to get notified!
         </p>
         {submitted ? (
-          <p className="mt-6 text-green-400 font-semibold">Thanks! You'll be notified when we launch 🚀</p>
+          <p className="mt-6 text-green-400 font-semibold">Thanks! You&rsquo;ll be notified when we launch 🚀</p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 flex justify-center flex-wrap gap-2">
             <input
