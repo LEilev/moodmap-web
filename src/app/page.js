@@ -57,7 +57,7 @@ export default function MoodMapPage() {
       <section id="about" className="py-16 px-4 max-w-4xl mx-auto">
         <h3 className="text-2xl font-semibold mb-4">About MoodMap</h3>
         <p className="text-white text-lg">
-          MoodMap is built for men who want to survive—and even thrive—while navigating their partner’s hormonal cycle. With a simple interface and brutally honest reminders, it’s your ultimate toolkit for better intimacy, timing, and day-to-day peacekeeping. It features an interactive color code that helps you know when it's best (or worst) to be intimate.
+          MoodMap is built for men who want to survive—and even thrive—while navigating their partner&rsquo;s hormonal cycle. With a simple interface and brutally honest reminders, it’s your ultimate toolkit for better intimacy, timing, and day-to-day peacekeeping. It features an interactive color code that helps you know when it&rsquo;s best (or worst) to be intimate.
         </p>
       </section>
 
