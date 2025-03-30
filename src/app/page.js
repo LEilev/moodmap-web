@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FaHeartbeat, FaBomb, FaLaughSquint, FaFireAlt } from "react-icons/fa";
+import { FaHeartbeat, FaBomb, FaLaughSquint } from "react-icons/fa";
 
 export default function MoodMapPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -9,21 +9,18 @@ export default function MoodMapPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
-    // In a real app, you'd send this to a backend or Mailchimp
   };
 
   return (
     <div className="min-h-screen bg-[#1E3A8A] text-white font-sans">
       {/* Header */}
       <header className="p-4 flex justify-between items-center border-b border-blue-900">
-        <h1 className="text-4xl font-extrabold flex items-center gap-2">
-  MoodMap
-  <img src="/icon.png" alt="MoodMap logo" className="w-12 h-12 -ml-3 -mb-2 rotate-[15deg]" />
-</h1>
+        <h1 className="text-4xl font-extrabold">MoodMap™</h1>
         <nav className="space-x-4">
           <a href="#about" className="hover:underline">About</a>
           <a href="#download" className="hover:underline">Download</a>
           <a href="#contact" className="hover:underline">Contact</a>
+          <a href="/privacy-policy.html" target="_blank" className="hover:underline">Privacy</a>
         </nav>
       </header>
 
@@ -31,7 +28,7 @@ export default function MoodMapPage() {
       <section className="text-center py-20 px-4">
         <h2 className="text-4xl font-bold mb-4">Understand the cycle. Survive the chaos.</h2>
         <p className="text-lg mb-6 max-w-xl mx-auto">
-          MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane.
+          MoodMap™ helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane.
         </p>
         <div id="download" className="space-x-4">
           <a
@@ -55,9 +52,9 @@ export default function MoodMapPage() {
 
       {/* About Section */}
       <section id="about" className="py-16 px-4 max-w-4xl mx-auto">
-        <h3 className="text-2xl font-semibold mb-4">About MoodMap</h3>
+        <h3 className="text-2xl font-semibold mb-4">About MoodMap™</h3>
         <p className="text-white text-lg">
-          MoodMap is built for men who want to survive—and even thrive—while navigating their partner&rsquo;s hormonal cycle. With a simple interface and brutally honest reminders, it’s your ultimate toolkit for better intimacy, timing, and day-to-day peacekeeping. It features an interactive color code that helps you know when it&rsquo;s best (or worst) to be intimate.
+          MoodMap™ is built for men who want to survive—and even thrive—while navigating their partner&rsquo;s hormonal cycle. With a simple interface and brutally honest reminders, it’s your ultimate toolkit for better intimacy, timing, and day-to-day peacekeeping. It features an interactive color code that helps you know when it&rsquo;s best (or worst) to be intimate.
         </p>
       </section>
 
@@ -105,7 +102,16 @@ export default function MoodMapPage() {
       {/* Contact Section */}
       <footer id="contact" className="py-10 text-center text-sm text-gray-300">
         <p>Contact us: <a href="mailto:Moodmap.tech@gmail.com" className="underline">Moodmap.tech@gmail.com</a></p>
-        <p className="mt-2">&copy; {new Date().getFullYear()} MoodMap. All rights reserved.</p>
+        <p className="mt-2">&copy; {new Date().getFullYear()} MoodMap™. All rights reserved.</p>
+        <div className="mt-4">
+          <a
+            href="/privacy-policy.html"
+            className="text-blue-400 underline hover:text-blue-300"
+            target="_blank"
+          >
+            View our Privacy Policy
+          </a>
+        </div>
       </footer>
     </div>
   );
