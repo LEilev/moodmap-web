@@ -2,9 +2,11 @@
 
 import React, { useState } from "react";
 import { FaHeartbeat, FaBomb, FaLaughSquint } from "react-icons/fa";
+import { Menu, X } from "lucide-react";
 
 export default function MoodMapPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,11 +18,16 @@ export default function MoodMapPage() {
       {/* Header */}
       <header className="p-4 flex justify-between items-center border-b border-blue-900">
         <h1 className="text-4xl font-extrabold">MoodMap™</h1>
-        <nav className="space-x-4">
-          <a href="#about" className="hover:underline">About</a>
-          <a href="#download" className="hover:underline">Download</a>
-          <a href="#contact" className="hover:underline">Contact</a>
-          <a href="/privacy-policy.html" target="_blank" className="hover:underline">Privacy</a>
+        <div className="md:hidden">
+          <button onClick={() => setMenuOpen(!menuOpen)}>
+            {menuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
+        <nav className={`space-y-2 absolute top-16 right-4 bg-[#1E3A8A] p-4 rounded-lg shadow-lg md:static md:flex md:space-x-4 md:space-y-0 md:p-0 md:shadow-none ${menuOpen ? 'block' : 'hidden'} md:block`}>
+          <a href="#about" className="block hover:underline">About</a>
+          <a href="#download" className="block hover:underline">Download</a>
+          <a href="#contact" className="block hover:underline">Contact</a>
+          <a href="/privacy-policy.html" target="_blank" className="block hover:underline">Privacy</a>
         </nav>
       </header>
 
