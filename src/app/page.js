@@ -5,7 +5,6 @@ import { FaHeartbeat, FaBomb, FaLaughSquint } from "react-icons/fa";
 
 export default function MoodMapPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,27 +15,12 @@ export default function MoodMapPage() {
   return (
     <div className="min-h-screen bg-[#1E3A8A] text-white font-sans tracking-normal leading-relaxed">
       {/* Header */}
-      <header className="p-4 flex justify-between items-center border-b border-blue-900 relative z-50">
-        <h1 className="text-5xl font-extrabold text-white drop-shadow-lg">
-          MoodMap
-        </h1>
-        <button
-          className="md:hidden focus:outline-none"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle menu"
-        >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-        <nav
-          className={`fixed inset-x-0 top-16 p-6 z-40 transform transition-transform duration-300 ease-in-out bg-[#1E3A8A] shadow-lg rounded-b-xl md:static md:bg-transparent md:shadow-none md:rounded-none md:flex md:space-x-4 md:p-0 md:transform-none md:transition-none ${
-            menuOpen ? "translate-y-0" : "-translate-y-full"
-          } md:translate-y-0`}
-        >
-          <a href="#about" className="block py-2 md:inline-block hover:underline" onClick={() => setMenuOpen(false)}>About</a>
-          <a href="#download" className="block py-2 md:inline-block hover:underline" onClick={() => setMenuOpen(false)}>Download</a>
-          <a href="#contact" className="block py-2 md:inline-block hover:underline" onClick={() => setMenuOpen(false)}>Contact</a>
+      <header className="p-4 flex justify-between items-center border-b border-blue-900">
+        <h1 className="text-4xl font-extrabold">MoodMap</h1>
+        <nav className="space-x-4">
+          <a href="#about" className="hover:underline">About</a>
+          <a href="#download" className="hover:underline">Download</a>
+          <a href="#contact" className="hover:underline">Contact</a>
         </nav>
       </header>
 
