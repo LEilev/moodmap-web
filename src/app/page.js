@@ -17,9 +17,8 @@ export default function MoodMapPage() {
     <div className="min-h-screen bg-[#1E3A8A] text-white font-sans tracking-normal leading-relaxed">
       {/* Header */}
       <header className="p-4 flex justify-between items-center border-b border-blue-900 relative z-50">
-        <h1 className="text-5xl font-extrabold text-white drop-shadow-lg flex items-center gap-2">
+        <h1 className="text-5xl font-extrabold text-white drop-shadow-lg">
           MoodMap
-          <img src="/icon.png" alt="MoodMap logo" className="w-14 h-14 -ml-4 -mb-3 rotate-[15deg]" />
         </h1>
         <button
           className="md:hidden focus:outline-none"
