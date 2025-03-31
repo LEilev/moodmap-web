@@ -1,9 +1,8 @@
-/* Fjern disse importene - Next.js håndterer Tailwind via PostCSS */
-/* @import "tailwindcss/base"; */
-/* @import "tailwindcss/components"; */
-/* @import "tailwindcss/utilities"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Definer globale variabler */
+/* Resten av din eksisterende kode */
 :root {
   --background: #1E3A8A;
   --foreground: #ffffff;
