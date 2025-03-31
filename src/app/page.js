@@ -14,12 +14,12 @@ export default function MoodMapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1E3A8A] text-white font-sans">
+    <div className="min-h-screen bg-[#1E3A8A] text-white font-sans tracking-normal leading-relaxed">
       {/* Header */}
       <header className="p-4 flex justify-between items-center border-b border-blue-900 relative z-50">
-        <h1 className="text-4xl font-extrabold flex items-center gap-2">
+        <h1 className="text-5xl font-extrabold text-white drop-shadow-lg flex items-center gap-2">
           MoodMap
-          <img src="/icon.png" alt="MoodMap logo" className="w-12 h-12 -ml-3 -mb-2 rotate-[15deg]" />
+          <img src="/icon.png" alt="MoodMap logo" className="w-14 h-14 -ml-4 -mb-3 rotate-[15deg]" />
         </h1>
         <button
           className="md:hidden focus:outline-none"
@@ -42,7 +42,7 @@ export default function MoodMapPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-20 px-4">
+      <section className="text-center py-20 px-4 shadow-lg bg-gradient-to-b from-[#1E3A8A] to-[#0F172A]">
         <h2 className="text-4xl font-bold mb-4">Understand the cycle. Survive the chaos.</h2>
         <p className="text-lg mb-6 max-w-xl mx-auto">
           MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane.
@@ -52,7 +52,7 @@ export default function MoodMapPage() {
             href="https://apps.apple.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-black text-white px-5 py-3 rounded-lg text-sm"
+            className="inline-block bg-black hover:scale-105 transition text-white px-5 py-3 rounded-lg text-sm shadow-lg"
           >
             Download on the App Store
           </a>
@@ -60,7 +60,7 @@ export default function MoodMapPage() {
             href="https://play.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-green-600 text-white px-5 py-3 rounded-lg text-sm"
+            className="inline-block bg-green-600 hover:bg-green-700 hover:scale-105 transition text-white px-5 py-3 rounded-lg text-sm shadow-lg"
           >
             Download on Google Play
           </a>
@@ -75,20 +75,23 @@ export default function MoodMapPage() {
         </p>
       </section>
 
-      {/* Features Section */}
-      <section className="py-16 px-4">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-6 bg-white text-black rounded-xl shadow-sm">
-            <h4 className="text-xl font-bold mb-2 flex items-center gap-2"><FaHeartbeat /> Cycle Overview</h4>
-            <p>Quick-glance insight into what day it is—and what mood to expect.</p>
+      {/* Feature Columns */}
+      <section className="py-16 px-4 bg-[#0F172A]">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Left box */}
+          <div className="bg-white text-black p-6 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition duration-200 ease-in-out">
+            <h4 className="text-xl font-bold mb-2">Tips</h4>
+            <p>Short, tactical survival advice for different phases of the cycle. Delivered with a wink.</p>
           </div>
-          <div className="p-6 bg-white text-black rounded-xl shadow-sm">
-            <h4 className="text-xl font-bold mb-2 flex items-center gap-2"><FaBomb /> Survival Alerts</h4>
-            <p>Timely notifications for when to lean in, back off, or just bring snacks.</p>
+          {/* Middle box */}
+          <div className="bg-white text-black p-6 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition duration-200 ease-in-out">
+            <h4 className="text-xl font-bold mb-2">How to Survive</h4>
+            <p>Real-world strategies, humor, and signals for when to go all in—or get out of the way.</p>
           </div>
-          <div className="p-6 bg-white text-black rounded-xl shadow-sm">
-            <h4 className="text-xl font-bold mb-2 flex items-center gap-2"><FaLaughSquint /> Tips & Intimacy</h4>
-            <p>Useful (and sometimes hilarious) tips to keep connection and sex alive through all phases.</p>
+          {/* Right box */}
+          <div className="bg-white text-black p-6 rounded-xl shadow-md hover:shadow-xl hover:scale-[1.02] transition duration-200 ease-in-out">
+            <h4 className="text-xl font-bold mb-2">Sex & Intimacy</h4>
+            <p>Know when she’s open to intimacy, when to be extra gentle, and when to stock chocolate instead.</p>
           </div>
         </div>
       </section>
@@ -109,7 +112,7 @@ export default function MoodMapPage() {
               required
               className="px-4 py-2 rounded-md text-black focus:outline-none min-w-[240px]"
             />
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md">
+            <button type="submit" className="bg-green-600 hover:bg-green-700 hover:scale-105 transition text-white px-6 py-2 rounded-md shadow-md font-semibold">
               Notify Me
             </button>
           </form>
