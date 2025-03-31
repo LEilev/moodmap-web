@@ -9,7 +9,7 @@ export default function MoodMapPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.location.href = "mailto:Moodmap.tech@gmail.com?subject=Notify%20Me&body=Hi!%20I'd%20like%20to%20get%20updates%20about%20MoodMap.";
+    window.location.href = "mailto:Moodmap.tech@gmail.com?subject=Notify%20Me&body=Hi!%20I&#39;d%20like%20to%20get%20updates%20about%20MoodMap.";
     setSubmitted(true);
   };
 
@@ -57,7 +57,7 @@ export default function MoodMapPage() {
       <section id="about" className="py-16 px-6 max-w-4xl mx-auto">
         <h3 className="text-2xl font-bold mb-4">What is MoodMap?</h3>
         <p className="text-lg">
-          MoodMap gives you cycle-based insights to help you build a better connection. Whether it's time to cuddle or take a walk—MoodMap lets you know.
+          MoodMap gives you cycle-based insights to help you build a better connection. Whether it&#39;s time to cuddle or take a walk—MoodMap lets you know.
         </p>
       </section>
 
@@ -83,10 +83,10 @@ export default function MoodMapPage() {
       <section className="py-20 px-6 text-center bg-[#121212] text-white">
         <h3 className="text-3xl font-bold mb-4">Coming Soon</h3>
         <p className="text-lg max-w-2xl mx-auto">
-          Sign up to be notified when MoodMap is ready. We'll send launch updates, new features, and early access info.
+          Sign up to be notified when MoodMap is ready. We&#39;ll send launch updates, new features, and early access info.
         </p>
         {submitted ? (
-          <p className="mt-6 text-green-400 font-semibold">Thanks! You'll be notified when we launch.</p>
+          <p className="mt-6 text-green-400 font-semibold">Thanks! You&#39;ll be notified when we launch.</p>
         ) : (
           <form onSubmit={handleSubmit} className="mt-6 flex justify-center flex-wrap gap-2">
             <input
