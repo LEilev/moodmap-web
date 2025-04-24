@@ -42,6 +42,11 @@ export default function RootLayout({ children }) {
         <footer className="bg-[#121212] py-6 text-center text-sm text-gray-300 mt-10">
           <p>Contact us: Moodmap.tech@gmail.com</p>
           <p className="mt-1">
+            <a href="/privacy-policy.html" className="underline hover:text-gray-100">
+              Privacy Policy
+            </a>
+          </p>
+          <p className="mt-1">
             © {new Date().getFullYear()} MoodMap. All rights reserved.
           </p>
         </footer>
