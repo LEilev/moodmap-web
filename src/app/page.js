@@ -5,11 +5,9 @@ import { FaHeartbeat, FaBomb, FaLaughSquint } from "react-icons/fa";
 
 export default function MoodMapPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [showCookies, setShowCookies] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Åpner e-postklient for "Notify me"-knapp
     window.location.href =
       "mailto:Moodmap.tech@gmail.com?subject=Notify%20Me&body=Hi!%20I’d%20like%20to%20get%20updates%20about%20MoodMap.";
     setSubmitted(true);
@@ -24,121 +22,63 @@ export default function MoodMapPage() {
           Survive the chaos.
         </h2>
         <p className="text-lg max-w-xl mx-auto mb-8">
-          MoodMap helps you decode mood swings and better understand how to approach
-          intimacy and connection—day by day.
+          MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane.
         </p>
         <div id="download" className="space-x-4">
           <a
             href="https://apps.apple.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-black text-white px-6 py-3 rounded-lg text-sm font-semibold shadow"
+            className="inline-block bg-gradient-to-r from-[#228BE6] to-[#1A73C7] text-white px-6 py-3 rounded-lg text-sm font-semibold shadow hover:from-[#4DABF7] hover:to-[#339AF0] transition-all"
           >
-            App Store
+            Download on the App Store
           </a>
           <a
-            href="https://play.google.com"
+            href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg text-sm font-semibold shadow"
+            className="inline-block bg-gradient-to-r from-[#4CAF50] to-[#388E3C] text-white px-6 py-3 rounded-lg text-sm font-semibold shadow hover:from-[#66BB66] hover:to-[#388E3C] transition-all"
           >
-            Google Play
+            Download on Google Play
           </a>
         </div>
       </section>
 
-      {/* Tre-kolonners layout */}
-      <main className="max-w-6xl mx-auto py-10 px-4 md:px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* Leftboks */}
-        <aside className="bg-white text-black rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <FaHeartbeat /> Leftboks
-          </h3>
-          <p className="text-sm mb-4 leading-relaxed">
-            Her kan du legge status, menyer eller informasjon som ligner appens “venstreboks”.
-          </p>
-          <div className="p-4 border border-gray-300 rounded">
-            <h4 className="font-semibold mb-1">Dagens Status</h4>
-            <p className="text-gray-700 text-sm">
-              Day 12 &middot; Follicular Phase
-            </p>
-          </div>
-        </aside>
+      {/* About MoodMap Section */}
+      <section id="about" className="max-w-4xl mx-auto py-10 px-6">
+        <h3 className="text-2xl font-bold mb-4 text-white">About MoodMap</h3>
+        <p className="text-sm leading-relaxed mb-8 text-gray-300">
+          MoodMap is built for men who want to survive—and even thrive—while navigating their partner’s hormonal cycle. With a simple interface and brutally honest reminders, it’s your ultimate toolkit for better intimacy, timing, and day-to-day peacekeeping. It features an interactive color code that helps you know when it’s best (or worst) to be intimate.
+        </p>
 
-        {/* Midboks */}
-        <section id="about" className="bg-white text-black rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <FaLaughSquint /> About MoodMap
-          </h3>
-          <p className="text-sm leading-relaxed mb-4">
-            MoodMap gives you cycle-based insights to help you build a better connection.
-            Whether it’s time to cuddle or take a walk—MoodMap lets you know.
-          </p>
-          {/* Notify form */}
-          <form onSubmit={handleSubmit} className="mb-4">
-            <button
-              type="submit"
-              className="bg-blue-700 hover:bg-blue-600 text-white px-4 py-2 rounded shadow text-sm font-semibold"
-            >
-              Notify Me
-            </button>
-            {submitted && (
-              <p className="text-green-600 mt-2 text-sm">
-                Taking you to your email client...
-              </p>
-            )}
-          </form>
-
-          {/* Eksempel-liste over funksjoner */}
-          <div className="border-t pt-4 mt-4">
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white text-black rounded-lg shadow p-6">
             <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
-              <FaBomb /> Key Features
+              <FaHeartbeat /> Cycle Overview
             </h4>
-            <ul className="list-disc list-inside text-sm text-gray-700">
-              <li>Cycle Radar – see the daily phase & adapt your energy</li>
-              <li>Alerts – know when tension is rising</li>
-              <li>Simple, friendly interface with cycle-based tips</li>
-            </ul>
-          </div>
-        </section>
-
-        {/* Rightboks */}
-        <aside id="contact" className="bg-white text-black rounded-lg shadow p-6">
-          <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-            <FaBomb /> Rightboks
-          </h3>
-          <p className="text-sm leading-relaxed mb-4">
-            Bruk denne kolonnen til et kontaktskjema, CTA-knapper,
-            eller nye funksjoner som matcher appens “høyresider”.
-          </p>
-          <div className="space-y-2">
-            <a
-              href="mailto:Moodmap.tech@gmail.com"
-              className="inline-block bg-blue-600 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-blue-500"
-            >
-              Contact Us
-            </a>
-            <p className="text-gray-700 text-xs">
-              Have questions? Send us a message.
+            <p className="text-sm text-gray-700">
+              🔴 Quick-glance insight into what day it is—and what mood to expect.
             </p>
           </div>
-        </aside>
-      </main>
-
-      {/* Cookie-lignende boks (valgfritt) */}
-      {showCookies && (
-        <div className="bg-black text-white text-sm p-4 flex items-center justify-between">
-          <span>
-            We use cookies to ensure the best experience on our website.
-          </span>
-          <button
-            className="bg-blue-600 px-3 py-1 rounded ml-4"
-            onClick={() => setShowCookies(false)}
-          >
-            OK
-          </button>
+          <div className="bg-white text-black rounded-lg shadow p-6">
+            <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
+              <FaBomb /> Survival Alerts
+            </h4>
+            <p className="text-sm text-gray-700">
+              💣 Timely notifications for when to lean in, back off, or just bring snacks.
+            </p>
+          </div>
+          <div className="bg-white text-black rounded-lg shadow p-6">
+            <h4 className="text-lg font-semibold mb-2 flex items-center gap-2">
+              <FaLaughSquint /> Tips & Intimacy
+            </h4>
+            <p className="text-sm text-gray-700">
+              💑 Useful (and sometimes hilarious) tips to keep connection and sex alive through all phases.
+            </p>
+          </div>
         </div>
-      )}
+      </section>
     </div>
   );
 }

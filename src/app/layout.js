@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#1E3A8A] text-white`}
       >
         {/* Global Header */}
-        <header className="p-6 flex justify-between items-center border-b border-blue-900">
+        <header className="p-6 flex justify-between items-center">
           <h1 className="text-4xl font-extrabold text-white">MoodMap</h1>
           <nav className="space-x-6 text-sm font-medium">
             <a href="#about" className="hover:underline">About</a>
@@ -35,16 +35,14 @@ export default function RootLayout({ children }) {
           </nav>
         </header>
 
-        {/* Sideinnhold */}
+        {/* Main Content */}
         {children}
 
         {/* Global Footer */}
         <footer className="bg-[#121212] py-6 text-center text-sm text-gray-300 mt-10">
-          <p>&copy; {new Date().getFullYear()} MoodMap. All rights reserved.</p>
+          <p>Contact us: Moodmap.tech@gmail.com</p>
           <p className="mt-1">
-            <a href="/privacy-policy.html" className="underline hover:text-gray-100">
-              Privacy Policy
-            </a>
+            © {new Date().getFullYear()} MoodMap. All rights reserved.
           </p>
         </footer>
       </body>
