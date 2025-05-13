@@ -37,12 +37,13 @@ code, pre {
 /* Forbedre hamburger-menyens utseende på mobil */
 @media (max-width: 768px) {
   nav {
-    background: var(--background);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    border-radius: 0 0 8px 8px;
+    background: transparent; /* Fjern bakgrunnsboksen */
+    box-shadow: none; /* Fjern skygge */
+    border-radius: 0;
   }
   nav a {
     padding: 0.75rem 0;
     font-size: 1.1rem;
+    color: #ffffff; /* Sørg for at lenkene forblir hvite */
   }
 }

@@ -1,55 +1,37 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// src/app/layout.js
+import './globals.css';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export const metadata = {
-  title: "MoodMap",
-  description: "Understand the cycle. Survive the chaos.",
-  icons: {
-    icon: "/icon.png",
-  },
+  title: 'MoodMap',
+  description: 'Understand the cycle. Survive the chaos.',
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-[#1E3A8A] text-white`}
-      >
-        {/* Global Header */}
-        <header className="p-6 flex justify-between items-center">
-          <h1 className="text-4xl font-extrabold text-white">MoodMap</h1>
-          <nav className="space-x-6 text-sm font-medium">
-            <a href="#about" className="hover:underline">About</a>
-            <a href="#download" className="hover:underline">Download</a>
-            <a href="#contact" className="hover:underline">Contact</a>
-          </nav>
+    <html lang="en" className="h-full">
+      <body className="flex flex-col min-h-full bg-primary-blue text-white">
+        <header className="bg-primary-blue">
+          <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
+            <Link href="/" className="flex items-center text-2xl font-bold text-white">
+              MoodMap
+              <Image
+                src="/icon.png"
+                alt="MoodMap logo"
+                width={28}
+                height={28}
+                className="ml-2"
+              />
+            </Link>
+            <nav className="flex gap-6">
+              <Link href="#about" className="text-white hover:underline">About</Link>
+              <Link href="#download" className="text-white hover:underline">Download</Link>
+              <Link href="#contact" className="text-white hover:underline">Contact</Link>
+            </nav>
+          </div>
         </header>
-
-        {/* Main Content */}
-        {children}
-
-        {/* Global Footer */}
-        <footer className="bg-[#121212] py-6 text-center text-sm text-gray-300 mt-10">
-          <p>Contact us: Moodmap.tech@gmail.com</p>
-          <p className="mt-1">
-            <a href="/privacy-policy.html" className="underline hover:text-gray-100">
-              Privacy Policy
-            </a>
-          </p>
-          <p className="mt-1">
-            © {new Date().getFullYear()} MoodMap. All rights reserved.
-          </p>
-        </footer>
+        <main className="flex-grow">{children}</main>
       </body>
     </html>
   );
