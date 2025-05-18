@@ -1,49 +1,73 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ---------------------------------------------------------------------
+   1. Hent Tailwind (v4 bruker @import i stedet for @tailwind-direktivene)
+------------------------------------------------------------------------ */
+@import "tailwindcss";
 
-/* Resten av din eksisterende kode */
-:root {
-  --background: #1E3A8A;
-  --foreground: #ffffff;
-  --font-geist-sans: "Geist", sans-serif;
-  --font-geist-mono: "Geist Mono", monospace;
-}
-
-/* Støtte for mørk modus */
-@media (prefers-color-scheme: dark) {
+/* ---------------------------------------------------------------------
+   2. Base-laget – egne CSS-variabler + grunnstil
+------------------------------------------------------------------------ */
+@layer base {
   :root {
-    --background: #121212;
-    --foreground: #ededed;
+    --background: #1E3A8A;
+    --foreground: #ffffff;
+    --font-geist-sans: "Geist", sans-serif;
+    --font-geist-mono: "Geist Mono", monospace;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans);
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code,
+  pre {
+    font-family: var(--font-geist-mono);
   }
 }
 
-/* Grunnleggende styling for body */
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans);
-  margin: 0;
-  padding: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ---------------------------------------------------------------------
+   3. Custom utilities – MÅ ligge i @layer utilities for at @apply skal virke i v4
+------------------------------------------------------------------------ */
+@layer utilities {
+  .store-btn {
+    @apply relative inline-flex items-center justify-center px-6 py-3 rounded font-medium transition-colors;
+  }
+
+  .store-btn--apple.disabled {
+    @apply bg-black text-white opacity-50 cursor-not-allowed;
+  }
+  .store-btn--apple.disabled::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2px;
+    background: #ef4444;    /* rød strek */
+    transform: rotate(-8deg) translateY(-50%);
+  }
+
+  .store-btn--google {
+    @apply bg-green-500 text-white hover:bg-green-600;
+  }
+
+  /* Mobil-meny – egen util for ren @apply  */
+  .nav-link-mobile {
+    @apply block py-3 text-lg text-white;
+  }
 }
 
-/* Ekstra tilpasning for monospace-tekst om nødvendig */
-code, pre {
-  font-family: var(--font-geist-mono);
-}
-
-/* Forbedre hamburger-menyens utseende på mobil */
+/* ---------------------------------------------------------------------
+   4. Plain CSS fallback (ingen @apply her, så vi slipper feil)
+------------------------------------------------------------------------ */
 @media (max-width: 768px) {
-  nav {
-    background: transparent; /* Fjern bakgrunnsboksen */
-    box-shadow: none; /* Fjern skygge */
-    border-radius: 0;
-  }
   nav a {
+    display: block;
     padding: 0.75rem 0;
     font-size: 1.1rem;
-    color: #ffffff; /* Sørg for at lenkene forblir hvite */
+    color: #ffffff;
   }
 }
