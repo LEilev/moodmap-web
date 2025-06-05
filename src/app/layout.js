@@ -22,14 +22,16 @@ export default function RootLayout({ children }) {
             <nav className="hidden sm:flex gap-6">
               <Link href="#about"     className="hover:underline">About</Link>
               <Link href="#download"  className="hover:underline">Download</Link>
-              <Link href="#contact"   className="hover:underline">Contact</Link>
+              {/* Updated: Contact → Support */}
+              <Link href="/support"    className="hover:underline">Support</Link>
             </nav>
           </div>
-          {/* Mobil nav – reuse utility-klassen */}
+          {/* Mobile nav – reuse utility class */}
           <nav className="sm:hidden px-6">
             <Link href="#about"     className="nav-link-mobile">About</Link>
             <Link href="#download"  className="nav-link-mobile">Download</Link>
-            <Link href="#contact"   className="nav-link-mobile">Contact</Link>
+            {/* Updated: Contact → Support */}
+            <Link href="/support"   className="nav-link-mobile">Support</Link>
           </nav>
         </header>
 
