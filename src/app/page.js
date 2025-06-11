@@ -1,6 +1,10 @@
 // src/app/page.js
 import Link from 'next/link';
 
+/**
+ * Home page for MoodMap marketing site.
+ * TailwindCSS only – both store buttons are now styled buttons (no badge images).
+ */
 export default function HomePage() {
   return (
     <>
@@ -14,29 +18,30 @@ export default function HomePage() {
           and daily guidance for staying connected—and sane.
         </p>
 
-        {/* Store buttons */}
-        <div id="download" className="flex flex-col sm:flex-row justify-center gap-4 mb-4">
+        {/* Store buttons – both styled buttons now */}
+        <div
+          id="download"
+          className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4"
+        >
+          {/* App Store button */}
           <a
-            href="#"
-            className="store-btn store-btn--apple disabled"
-            aria-disabled="true"
-            title="Coming soon on the App Store"
+            href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
+            className="inline-flex items-center justify-center bg-black text-white rounded-lg px-6 py-3 text-sm font-semibold transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           >
-            Download on the App Store
+            Download on the App Store
           </a>
 
+          {/* Google Play button */}
           <a
             href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
-            className="store-btn store-btn--google"
+            className="inline-flex items-center justify-center bg-[#34A853] text-white rounded-lg px-6 py-3 text-sm font-semibold transition hover:bg-[#2f9a49] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#34A853]"
           >
-            Get it on Google Play
+            Get it on Google Play
           </a>
         </div>
 
-        {/* English notice under the buttons */}
-        <p className="text-sm opacity-70 italic">
-          Coming soon on iOS
-        </p>
+        {/* Notice under the buttons */}
+        <p className="text-sm opacity-70 italic">Available on iOS and Android</p>
       </section>
 
       {/* ─────────────────── About ─────────────────── */}
@@ -58,7 +63,7 @@ export default function HomePage() {
             <h3 className="flex items-center text-xl font-semibold mb-2">
               <span className="mr-2">❤️‍🩹</span> Cycle Overview
             </h3>
-            <p>Quick-glance insight into what day it is—and what mood to expect.</p>
+            <p>Quick‑glance insight into what day it is—and what mood to expect.</p>
           </div>
 
           {/* Card 2 */}
@@ -72,7 +77,7 @@ export default function HomePage() {
           {/* Card 3 */}
           <div className="bg-white text-black rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition">
             <h3 className="flex items-center text-xl font-semibold mb-2">
-              <span className="mr-2">🍑</span> Tips & Intimacy
+              <span className="mr-2">🍑</span> Tips & Intimacy
             </h3>
             <p>Useful (and sometimes hilarious) tips to keep connection and sex alive through all phases.</p>
           </div>
@@ -92,7 +97,7 @@ export default function HomePage() {
             Privacy Policy
           </Link>
         </p>
-        <p className="mt-2">© 2025 MoodMap. All rights reserved.</p>
+        <p className="mt-2">© {new Date().getFullYear()} MoodMap. All rights reserved.</p>
       </footer>
     </>
   );
