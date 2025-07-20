@@ -42,16 +42,23 @@ export default async function handler(req, res) {
   const rawBody = await readRawBody(req)
   const signature = req.headers['stripe-signature']
 
-  let event
-  try {
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    )
-  } catch (err) {
-    console.error('[stripe‑webhook] ❌  Bad sig', err.message)
-    return res.status(400).send(`Webhook Error: ${err.message}`)
+  // ① allow a second secret for the CLI relay
+  const endpointSecrets = [
+    process.env.STRIPE_WEBHOOK_SECRET,      // real one (prod & test dashboards)
+    process.env.STRIPE_CLI_WEBHOOK_SECRET,  // set only when you run `stripe listen`
+  ].filter(Boolean)
+
+  let event, verified = false
+  for (const secret of endpointSecrets) {
+    try {
+      event = stripe.webhooks.constructEvent(rawBody, signature, secret)
+      verified = true
+      break
+    } catch (_) {}   // try next secret
+  }
+  if (!verified) {
+    console.error('[stripe‑webhook] ❌  Bad sig – none of the secrets matched')
+    return res.status(400).send('Webhook signature verification failed.')
   }
 
   if (!EVENTS.has(event.type)) return res.status(200).end()
