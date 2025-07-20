@@ -14,8 +14,7 @@ import Stripe from 'stripe'
 import axios from 'axios'
 import { createClient } from 'redis'
 
-// ---------- 1. Init ---------- //
-export const config = { api: { bodyParser: false } }      // keep raw body
+export const config = { api: { bodyParser: false } } // keep raw body
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
@@ -29,19 +28,17 @@ const EVENTS = new Set([
   'customer.subscription.created',
   'customer.subscription.deleted',
   'invoice.paid',
-  'invoice.payment_succeeded',       // future‑proof
+  'invoice.payment_succeeded',
   'invoice.updated',
   'invoice.payment_failed',
   'charge.refunded',
 ])
 
-// ---------- 2. Handler ---------- //
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed')
   }
 
-  /** @type {Buffer} */
   const rawBody = await readRawBody(req)
   const signature = req.headers['stripe-signature']
 
@@ -60,17 +57,13 @@ export default async function handler(req, res) {
   if (!EVENTS.has(event.type)) return res.status(200).end()
 
   try {
-    // ----- 2a. Idempotency guard -----
     if (await alreadyProcessed(event.id)) return res.status(200).end()
 
-    // ----- 2b. Extract keys RevenueCat needs -----
     const { appUserId, fetchToken } = await extractRcKeys(event)
-
     if (!appUserId || !fetchToken) {
       throw new Error('appUserId / fetchToken mangler – sjekk metadata‐oppsett')
     }
 
-    // ----- 2c. Push to RC -----
     await axios.post(
       'https://api.revenuecat.com/v1/receipts',
       { app_user_id: appUserId, fetch_token: fetchToken },
@@ -83,16 +76,25 @@ export default async function handler(req, res) {
       }
     )
 
+    // ✅ Success log --------------------------------------------------------
+    console.log('[stripe-webhook] ✅ Success:', {
+      type: event.type,
+      user: appUserId,
+      token: fetchToken,
+    })
+    // ----------------------------------------------------------------------
+
     await markProcessed(event.id)
     return res.status(200).json({ ok: true })
   } catch (err) {
-    // Stripe retryer kicker inn hvis vi ikke svarer 2xx
     console.error('[stripe‑webhook] ❌  Sync error', err)
     return res.status(500).end()
   }
 }
 
-// ---------- 3. Helpers ---------- //
+/* -------------------------------------------------------------------------- */
+/* Helper functions                                                           */
+/* -------------------------------------------------------------------------- */
 
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -104,7 +106,6 @@ function readRawBody(req) {
   })
 }
 
-// Redis SETNX, TTL 24 h
 async function alreadyProcessed(id) {
   if (!redis) return false
   await redis.connect()
@@ -112,6 +113,7 @@ async function alreadyProcessed(id) {
   await redis.disconnect()
   return dup
 }
+
 async function markProcessed(id) {
   if (!redis) return
   await redis.connect()
@@ -119,56 +121,42 @@ async function markProcessed(id) {
   await redis.disconnect()
 }
 
-/**
- * @param {Stripe.Event} event
- * @returns {Promise<{appUserId?:string, fetchToken?:string}>}
- */
 async function extractRcKeys(event) {
   switch (event.type) {
     case 'checkout.session.completed': {
-      /** @type {Stripe.Checkout.Session} */
       const cs = event.data.object
       return {
         appUserId: cs.client_reference_id || cs.metadata?.app_user_id,
         fetchToken: cs.id,
       }
     }
-
     case 'customer.subscription.created':
     case 'customer.subscription.deleted': {
-      /** @type {Stripe.Subscription} */
       const sub = event.data.object
       return {
         appUserId: sub.metadata?.app_user_id || sub.metadata?.client_reference_id,
         fetchToken: sub.id,
       }
     }
-
     case 'invoice.paid':
     case 'invoice.payment_succeeded':
     case 'invoice.updated':
     case 'invoice.payment_failed': {
-      /** @type {Stripe.Invoice} */
       const inv = event.data.object
-      const subId = inv.subscription                           // may be null for one‑off
+      const subId = inv.subscription
       const metaId =
         inv.metadata?.app_user_id || inv.metadata?.client_reference_id
 
-      // ‑‑ Fallback: fetch subscription to grab metadata if invoice lacks it
       const appUserId =
         metaId ||
         (subId
-          ? (await stripe.subscriptions.retrieve(subId)).metadata
-              ?.app_user_id
+          ? (await stripe.subscriptions.retrieve(subId)).metadata?.app_user_id
           : undefined)
 
       return { appUserId, fetchToken: subId || inv.id }
     }
-
     case 'charge.refunded': {
-      /** @type {Stripe.Charge} */
       const ch = event.data.object
-      // charge may not carry app_user_id: fall back to customer metadata
       let appUserId = ch.metadata?.app_user_id
       if (!appUserId && ch.customer) {
         const cust = await stripe.customers.retrieve(ch.customer)
@@ -176,7 +164,6 @@ async function extractRcKeys(event) {
       }
       return { appUserId, fetchToken: ch.invoice || ch.id }
     }
-
     default:
       return {}
   }
