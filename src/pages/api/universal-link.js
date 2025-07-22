@@ -9,7 +9,7 @@
 //   }
 //
 // ➜ {
-//      "url": "https://moodmap.app/activate?u=user_abc123&s=sess_xyz987&exp=1721500082&sig=…"
+//      "url": "https://moodmap-app/activate?u=user_abc123&s=sess_xyz987&exp=1721500082&sig=…"
 //    }
 //
 // ENV (Vercel):
@@ -46,9 +46,8 @@ export default function handler(req, res) {
   const sig = crypto.createHmac('sha256', secret).update(payload).digest('hex')
 
   // 5. Assemble URL
-  const url = `https://moodmap.app/activate?u=${encodeURIComponent(
-    userId
-  )}&s=${encodeURIComponent(sessionId)}&exp=${exp}&sig=${sig}`
+ const url = `https://moodmap-app.com/activate?u=${encodeURIComponent(userId)}&s=${encodeURIComponent(sessionId)}&exp=${exp}&sig=${sig}`
+
 
   return res.status(200).json({ url })
 }
