@@ -1,13 +1,15 @@
 {
-  "headers": [
-    {
-      "source": "/.well-known/apple-app-site-association",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
-      ]
-    }
-  ]
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "R9GD3N8S9Y.com.eilev.moodmapnextgen",
+        "paths": [
+          "/activate",
+          "/activate*",
+          "/activate/*"
+        ]
+      }
+    ]
+  }
 }
