@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.eilev.moodmapnextgen",
+      "sha256_cert_fingerprints": [
+        "38:C7:2C:61:01:B0:A7:8B:3C:B5:2C:F0:8F:FD:F4:90:F0:3D:63:DB:64:C5:D0:E8:9D:0F:33:14:1F:01:F9:F4"
+      ]
+    }
+  }
+]
