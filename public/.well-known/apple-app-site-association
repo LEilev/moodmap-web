@@ -4,11 +4,7 @@
     "details": [
       {
         "appID": "R9GD3N8S9Y.com.eilev.moodmapnextgen",
-        "paths": [
-          "/activate",
-          "/activate*",
-          "/activate/*"
-        ]
+        "paths": ["*"]
       }
     ]
   }
