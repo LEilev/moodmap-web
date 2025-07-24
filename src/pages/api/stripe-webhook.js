@@ -3,10 +3,10 @@
 // Production‑ready Stripe → RevenueCat bridge for Vercel / Next.js
 //
 // ENV (Vercel):
-//   STRIPE_SECRET_KEY            sk_live_...
-//   STRIPE_WEBHOOK_SECRET        whsec_...
-//   RC_STRIPE_PUBLIC_API_KEY     pub_stripe_...
-//   REDIS_URL                    (optional) redis://:pwd@host:port
+//   STRIPE_SECRET_KEY
+//   STRIPE_WEBHOOK_SECRET
+//   RC_STRIPE_PUBLIC_API_KEY
+//   REDIS_URL (optional)
 //
 // © 2025 MoodMap. MIT.
 
@@ -14,7 +14,7 @@ import Stripe from 'stripe'
 import { createClient } from 'redis'
 import { rcSync } from '../../lib/rcSync'
 
-export const config = { api: { bodyParser: false } } // keep raw body
+export const config = { api: { bodyParser: false } }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
@@ -36,16 +36,16 @@ const EVENTS = new Set([
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed')
+    res.setHeader('Allow', 'POST')
+    return res.status(405).end('Method Not Allowed')
   }
 
   const rawBody = await readRawBody(req)
   const signature = req.headers['stripe-signature']
 
-  // ① allow a second secret for the CLI relay
   const endpointSecrets = [
-    process.env.STRIPE_WEBHOOK_SECRET,      // real one (prod & test dashboards)
-    process.env.STRIPE_CLI_WEBHOOK_SECRET,  // set only when you run `stripe listen`
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_CLI_WEBHOOK_SECRET,
   ].filter(Boolean)
 
   let event, verified = false
@@ -54,17 +54,20 @@ export default async function handler(req, res) {
       event = stripe.webhooks.constructEvent(rawBody, signature, secret)
       verified = true
       break
-    } catch (_) {}   // try next secret
+    } catch (_) {}
   }
+
   if (!verified) {
-    console.error('[stripe‑webhook] ❌  Bad sig – none of the secrets matched')
-    return res.status(400).send('Webhook signature verification failed.')
+    console.error('[stripe‑webhook] ❌ Bad sig – none of the secrets matched')
+    return res.status(400).end('Webhook signature verification failed.')
   }
 
   if (!EVENTS.has(event.type)) return res.status(200).end()
 
   try {
-    if (await alreadyProcessed(event.id)) return res.status(200).end()
+    if (await alreadyProcessed(event.id)) {
+      return res.status(200).json({ skipped: true, reason: 'duplicate' })
+    }
 
     const { appUserId, fetchToken } = await extractRcKeys(event)
     if (!appUserId || !fetchToken) {
@@ -74,19 +77,17 @@ export default async function handler(req, res) {
     const ok = await rcSync(event)
     if (!ok) throw new Error('rcSync failed')
 
-    // ✅ Success log --------------------------------------------------------
     console.log('[stripe-webhook] ✅ Success:', {
       type: event.type,
       user: appUserId,
       token: fetchToken,
     })
-    // ----------------------------------------------------------------------
 
     await markProcessed(event.id)
     return res.status(200).json({ ok: true })
   } catch (err) {
-    console.error('[stripe‑webhook] ❌  Sync error', err)
-    return res.status(500).end()
+    console.error('[stripe‑webhook] ❌ Sync error', err)
+    return res.status(500).json({ error: 'Internal server error' })
   }
 }
 
@@ -106,17 +107,12 @@ function readRawBody(req) {
 
 async function alreadyProcessed(id) {
   if (!redis) return false
-  await redis.connect()
-  const dup = !(await redis.set(id, 1, { NX: true, EX: 86_400 }))
-  await redis.disconnect()
-  return dup
+  return !(await redis.set(id, 1, { NX: true, EX: 86_400 }))
 }
 
 async function markProcessed(id) {
   if (!redis) return
-  await redis.connect()
   await redis.set(id, 1, { NX: true, EX: 86_400 })
-  await redis.disconnect()
 }
 
 async function extractRcKeys(event) {
@@ -132,7 +128,8 @@ async function extractRcKeys(event) {
     case 'customer.subscription.deleted': {
       const sub = event.data.object
       return {
-        appUserId: sub.metadata?.app_user_id || sub.metadata?.client_reference_id,
+        appUserId:
+          sub.metadata?.app_user_id || sub.metadata?.client_reference_id,
         fetchToken: sub.id,
       }
     }
