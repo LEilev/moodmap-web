@@ -9,7 +9,7 @@ import Stripe from 'stripe';
 import { rcSync } from '../../lib/rcSync';      // section B
 import { createClient } from 'redis';
 
-export const config = { runtime: 'nodejs18.x', maxDuration: 300 };
+export const config = { maxDuration: 300 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
