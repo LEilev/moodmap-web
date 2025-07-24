@@ -11,8 +11,8 @@
 // © 2025 MoodMap. MIT.
 
 import Stripe from 'stripe'
-import axios from 'axios'
 import { createClient } from 'redis'
+import { rcSync } from '../../lib/rcSync'
 
 export const config = { api: { bodyParser: false } } // keep raw body
 
@@ -71,17 +71,8 @@ export default async function handler(req, res) {
       throw new Error('appUserId / fetchToken mangler – sjekk metadata‐oppsett')
     }
 
-    await axios.post(
-      'https://api.revenuecat.com/v1/receipts',
-      { app_user_id: appUserId, fetch_token: fetchToken },
-      {
-        headers: {
-          'X-Platform': 'stripe',
-          Authorization: `Bearer ${process.env.RC_STRIPE_PUBLIC_API_KEY}`,
-        },
-        timeout: 8_000,
-      }
-    )
+    const ok = await rcSync(event)
+    if (!ok) throw new Error('rcSync failed')
 
     // ✅ Success log --------------------------------------------------------
     console.log('[stripe-webhook] ✅ Success:', {
