@@ -1,41 +1,26 @@
-// src/pages/api/stripe-catchup.js
-// -------------------------------------------------------------
-// Daily cron‑job: re‑sender Stripe‑events de siste 72 timene
-// som ikke allerede er prosessert av webhooken.
-//
-//   Vercel Cron:  0 5 * * *   /api/stripe-catchup
-//
-// ENV:
-//   STRIPE_SECRET_KEY
-//   RC_STRIPE_PUBLIC_API_KEY
-//   REDIS_URL   rediss://default:<token>@happy-toad-46828.upstash.io:6379
-// -------------------------------------------------------------
+// pages/api/stripe-catchup.js
 import Stripe from 'stripe';
-import { rcSync } from '../../lib/rcSync';          // gjenbruk helper
+import { rcSync } from '../../lib/rcSync';
 import { createClient } from 'redis';
 
-export const config = { maxDuration: 300 };         // 5 min på Vercel
+export const config = { maxDuration: 300 };            // 5 min
 
-// ---------- Redis -----------------------------------------------------------
+/* ---------- Redis (TLS) ---------- */
 function makeRedis(url) {
   if (!url) return null;
-
-  // Upstash krever TLS – sørg for rediss:// eller sett socket.tls = true
   const opts = url.startsWith('rediss://')
     ? { url }
     : { url: url.replace('redis://', 'rediss://'), socket: { tls: true } };
-
   return createClient(opts);
 }
-
 const redis = makeRedis(process.env.REDIS_URL);
 
-// ---------- Stripe ----------------------------------------------------------
+/* ---------- Stripe ---------- */
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
 
-// ---------- Handler ---------------------------------------------------------
+/* ---------- Handler ---------- */
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.setHeader('Allow', 'GET').status(405).end('Method Not Allowed');
@@ -51,34 +36,36 @@ export default async function handler(req, res) {
 
   try {
     while (hasMore) {
-      const page = await stripe.events.list({
+      /* ⬇️  bygg param‑objekt uten tom streng ----------------------- */
+      const params = {
         created: { gte: since },
         type: 'invoice.paid',
         limit: 100,
-        starting_after: startingAfter,
-      });
+        ...(startingAfter ? { starting_after: startingAfter } : {}),
+      };
+      const page = await stripe.events.list(params);
+      /* ------------------------------------------------------------- */
 
       for (const evt of page.data) {
         processed++;
-
-        // idempotency via Redis
-        const dupe =
-          redis && !(await redis.set(evt.id, 1, { NX: true, EX: 86_400 }));
-        if (dupe) continue;
+        const skip =
+          redis &&
+          !(await redis.set(evt.id, 1, { NX: true, EX: 86_400 })); // ett døgn
+        if (skip) continue;
 
         if (await rcSync(evt)) resent++;
       }
 
       hasMore = page.has_more;
-      startingAfter = page.data.at(-1)?.id;
+      startingAfter = page.data.at(-1)?.id || null; // kan være undefined
     }
 
-    console.log('[stripe‑catchup] ✅ done', { processed, resent });
+    console.log('[stripe‑catchup] done', { processed, resent });
     return res.status(200).json({ processed, resent });
   } catch (err) {
-    console.error('[stripe‑catchup] ❌ error', err);
+    console.error('[stripe‑catchup] error', err);
     return res.status(500).json({ error: err.message });
   } finally {
-    if (redis && redis.isOpen) await redis.disconnect();
+    if (redis?.isOpen) await redis.disconnect();
   }
 }
