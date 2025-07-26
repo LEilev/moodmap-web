@@ -1,13 +1,21 @@
 // pages/api/stripe-webhook.js
+// -------------------------------------------------------------
+// Stripe  ➜  RevenueCat  ➜  Resend‑mail (universal‑link)
+// -------------------------------------------------------------
 import Stripe from 'stripe';
 import axios from 'axios';
-import { isDuplicate, markProcessed } from '../../lib/dedupe';
+import { createClient } from 'redis';
+import { generateHmacSignature } from '../../lib/universal-link';      // eksisterer fra før
+// Node 18 har global fetch ▶ ingen ekstra import
 
 export const config = { api: { bodyParser: false } };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
+
+const redis =
+  process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
 
 const EVENTS = new Set([
   'checkout.session.completed',
@@ -25,29 +33,30 @@ export default async function handler(req, res) {
     return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed');
   }
 
-  const raw = await readRaw(req);
-  const sig = req.headers['stripe-signature'];
+  const rawBody = await readRawBody(req);
+  const signature = req.headers['stripe-signature'];
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
-      raw,
-      sig,
+      rawBody,
+      signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
-  } catch (e) {
-    console.error('[stripe‑webhook] bad sig', e.message);
+  } catch (err) {
+    console.error('[stripe‑webhook] ❌ Bad sig', err.message);
     return res.status(400).end();
   }
 
   if (!EVENTS.has(event.type)) return res.status(200).end();
 
   try {
-    if (await isDuplicate(event.id)) return res.status(200).end();
+    if (await alreadyProcessed(event.id)) return res.status(200).end();
 
-    const { appUserId, fetchToken } = await rcKeys(event);
+    /* ---------- 1. send to RevenueCat ---------- */
+    const { appUserId, fetchToken } = await extractRcKeys(event);
     if (!appUserId || !fetchToken) {
-      throw new Error('appUserId / fetchToken mangler – sjekk metadata');
+      throw new Error('appUserId / fetchToken missing – check metadata.');
     }
 
     await axios.post(
@@ -62,7 +71,33 @@ export default async function handler(req, res) {
       },
     );
 
-    console.log('[stripe‑webhook] ✅', {
+    /* ---------- 2. send universal‑link e‑mail (only for checkout.session.completed) ---------- */
+    if (event.type === 'checkout.session.completed') {
+      const cs = event.data.object;
+      const email = cs.customer_details?.email;
+      if (email) {
+        const exp = Math.floor(Date.now() / 1000) + 600; // 10 min TTL
+        const sig = generateHmacSignature(appUserId, cs.id, exp);
+        const thanksUrl = `https://moodmap-app.com/thanks?u=${encodeURIComponent(
+          appUserId,
+        )}&s=${cs.id}&exp=${exp}&sig=${sig}`;
+
+        try {
+          await fetch('https://moodmap-app.com/api/send-receipt', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, link: thanksUrl }),
+          });
+          console.log('[stripe‑webhook] ✉️  Receipt mail queued');
+        } catch (mailErr) {
+          // Ikke blocker webhook – bare logg
+          console.error('[stripe‑webhook] ✉️  Mail error', mailErr.message);
+        }
+      }
+    }
+
+    /* ---------- 3. log & dedup mark ---------- */
+    console.log('[stripe-webhook] ✅ Success', {
       type: event.type,
       user: appUserId,
       token: fetchToken,
@@ -71,33 +106,52 @@ export default async function handler(req, res) {
     await markProcessed(event.id);
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('[stripe‑webhook] ❌', err);
+    console.error('[stripe‑webhook] ❌ Sync error', err);
     return res.status(500).end();
   }
 }
 
-function readRaw(req) {
-  return new Promise((res, rej) => {
+/* -------------------------------------------------------------------------- */
+/* Helper functions                                                           */
+/* -------------------------------------------------------------------------- */
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
     const chunks = [];
     req
       .on('data', (c) => chunks.push(c))
-      .on('end', () => res(Buffer.concat(chunks)))
-      .on('error', rej);
+      .on('end', () => resolve(Buffer.concat(chunks)))
+      .on('error', reject);
   });
 }
 
-async function rcKeys(evt) {
-  switch (evt.type) {
+async function alreadyProcessed(id) {
+  if (!redis) return false;
+  await redis.connect();
+  const dup = !(await redis.set(id, 1, { NX: true, EX: 86_400 }));
+  await redis.disconnect();
+  return dup;
+}
+
+async function markProcessed(id) {
+  if (!redis) return;
+  await redis.connect();
+  await redis.set(id, 1, { NX: true, EX: 86_400 });
+  await redis.disconnect();
+}
+
+async function extractRcKeys(event) {
+  switch (event.type) {
     case 'checkout.session.completed': {
-      const s = evt.data.object;
+      const cs = event.data.object;
       return {
-        appUserId: s.client_reference_id || s.metadata?.app_user_id,
-        fetchToken: s.id,
+        appUserId: cs.client_reference_id || cs.metadata?.app_user_id,
+        fetchToken: cs.id,
       };
     }
     case 'customer.subscription.created':
     case 'customer.subscription.deleted': {
-      const sub = evt.data.object;
+      const sub = event.data.object;
       return {
         appUserId:
           sub.metadata?.app_user_id || sub.metadata?.client_reference_id,
@@ -108,19 +162,19 @@ async function rcKeys(evt) {
     case 'invoice.payment_succeeded':
     case 'invoice.updated':
     case 'invoice.payment_failed': {
-      const inv = evt.data.object;
+      const inv = event.data.object;
       const subId = inv.subscription;
-      const meta =
+      const metaId =
         inv.metadata?.app_user_id || inv.metadata?.client_reference_id;
       const appUserId =
-        meta ||
+        metaId ||
         (subId
           ? (await stripe.subscriptions.retrieve(subId)).metadata?.app_user_id
           : undefined);
       return { appUserId, fetchToken: subId || inv.id };
     }
     case 'charge.refunded': {
-      const ch = evt.data.object;
+      const ch = event.data.object;
       let appUserId = ch.metadata?.app_user_id;
       if (!appUserId && ch.customer) {
         const cust = await stripe.customers.retrieve(ch.customer);
