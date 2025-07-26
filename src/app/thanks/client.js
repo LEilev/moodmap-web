@@ -1,4 +1,4 @@
-// src/app/thanks/client.js
+// src/app/thanks/client.js  ← **CLIENT COMPONENT** (interactive)
 
 "use client";
 
@@ -9,7 +9,6 @@ import Image from "next/image";
 export default function ThanksClient({ deepLink: serverLink = "" }) {
   const params = useSearchParams();
 
-  // Compute on client only if server didn’t already send a link
   const deepLink = useMemo(() => {
     if (serverLink) return serverLink;
     if (!params) return "";
@@ -44,10 +43,10 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
         throw new Error(error);
       }
 
-      console.info("receipt_send_success", email);
       setStatus("sent");
+      console.info("receipt_send_success", { email });
     } catch (err) {
-      console.error("send‑receipt failed", err);
+      console.error("receipt_send_failed", err);
       setErrMsg(err.message);
       setStatus("error");
     }
@@ -80,13 +79,15 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
               Your Pro access is active. Tap below to open the app and finish setup.
             </p>
 
+            {/* Deep‑link CTA */}
             <a
               href={deepLink}
-              className="inline-block bg-white text-primary-blue font-semibold text-lg rounded-full px-6 py-3 transition hover:bg-white/90 mb-10"
+              className="inline-block bg-white text-primary-blue font-bold tracking-wide text-lg rounded-full px-6 py-3 shadow-sm transition hover:bg-white/90 hover:shadow-md hover:brightness-105 mb-10"
             >
               🚀 Open MoodMap &amp; Activate Pro
             </a>
 
+            {/* E‑mail input */}
             <form
               onSubmit={handleSend}
               className="flex flex-col sm:flex-row items-center gap-4"
@@ -96,20 +97,21 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your e‑mail address"
-                className="flex-grow rounded-full bg-white/20 placeholder-white/70 px-5 py-3 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-60"
+                className="flex-grow rounded-full bg-white/20 placeholder-white px-5 py-3 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-60"
                 required
                 disabled={inputDisabled}
               />
 
               <button
                 type="submit"
-                className="bg-white text-primary-blue font-semibold rounded-full px-6 py-3 transition hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="bg-white text-primary-blue font-bold tracking-wide rounded-full px-6 py-3 shadow-sm transition hover:bg-white/90 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
                 disabled={inputDisabled}
               >
                 {btnLabel}
               </button>
             </form>
 
+            {/* Feedback messages */}
             {status === "error" && (
               <p className="mt-3 text-red-300 text-sm">❌ {errMsg}</p>
             )}

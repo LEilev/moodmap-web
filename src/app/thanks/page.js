@@ -1,6 +1,5 @@
 // src/app/thanks/page.js  ← **SERVER COMPONENT**
 
-// Always run server‑side; query params must be evaluated per request
 export const dynamic = "force-dynamic";
 
 export const metadata = {
@@ -8,9 +7,6 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-// Directly import the client component; Next.js will lazy‑hydrate it and show
-// `loading.js` automatically. No `next/dynamic` needed (and `ssr:false` was the
-// source of the build error).
 import ThanksClient from "./client";
 
 export default function ThanksPage({ searchParams = {} }) {
@@ -29,4 +25,4 @@ export default function ThanksPage({ searchParams = {} }) {
   return <ThanksClient deepLink={deepLink} />;
 }
 
-// `loading.js` continues to provide the skeleton while the client bundle downloads.
+// `loading.js` provides the skeleton while the client bundle loads.
