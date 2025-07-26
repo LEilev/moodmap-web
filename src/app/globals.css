@@ -1,11 +1,5 @@
-/* ---------------------------------------------------------------------
-   1. Hent Tailwind (v4 bruker @import i stedet for @tailwind-direktivene)
------------------------------------------------------------------------- */
 @import "tailwindcss";
 
-/* ---------------------------------------------------------------------
-   2. Base-laget – egne CSS-variabler + grunnstil
------------------------------------------------------------------------- */
 @layer base {
   :root {
     --background: #1E3A8A;
@@ -30,9 +24,6 @@
   }
 }
 
-/* ---------------------------------------------------------------------
-   3. Custom utilities – MÅ ligge i @layer utilities for at @apply skal virke i v4
------------------------------------------------------------------------- */
 @layer utilities {
   .store-btn {
     @apply relative inline-flex items-center justify-center px-6 py-3 rounded font-medium transition-colors;
@@ -41,12 +32,13 @@
   .store-btn--apple.disabled {
     @apply bg-black text-white opacity-50 cursor-not-allowed;
   }
+
   .store-btn--apple.disabled::after {
     content: "";
     position: absolute;
     inset: 50% 0 auto;
     height: 2px;
-    background: #ef4444;    /* rød strek */
+    background: #ef4444;
     transform: rotate(-8deg) translateY(-50%);
   }
 
@@ -54,15 +46,11 @@
     @apply bg-green-500 text-white hover:bg-green-600;
   }
 
-  /* Mobil-meny – egen util for ren @apply  */
   .nav-link-mobile {
     @apply block py-3 text-lg text-white;
   }
 }
 
-/* ---------------------------------------------------------------------
-   4. Plain CSS fallback (ingen @apply her, så vi slipper feil)
------------------------------------------------------------------------- */
 @media (max-width: 768px) {
   nav a {
     display: block;
