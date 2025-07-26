@@ -8,11 +8,6 @@ import { useMemo, useState } from "react";
 // Disable static optimization – we rely on query params
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "MoodMap • Payment successful",
-  robots: { index: false, follow: false },
-};
-
 export default function ThanksPage() {
   const params = useSearchParams();
 
@@ -132,9 +127,9 @@ export default function ThanksPage() {
           <>
             <h1 className="text-4xl font-bold mb-4">⚠️ Invalid Link</h1>
             <p className="text-lg text-white/80">
-              Something’s missing. Contact{' '}
+              Something’s missing. Contact{" "}
               <a
-                href="mailto:moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline hover:text-white"
               >
                 support@moodmap-app.com
