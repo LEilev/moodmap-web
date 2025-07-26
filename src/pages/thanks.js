@@ -21,42 +21,43 @@ export default function Thanks() {
     <>
       <Head>
         <title>MoodMap • Payment Successful</title>
+        <meta name="robots" content="noindex" />
       </Head>
 
-      <main className="min-h-screen flex items-center justify-center bg-primary-blue text-white font-geist-sans px-6">
-        <div className="w-full max-w-md bg-white/10 rounded-2xl shadow-xl py-14 px-6 text-center">
+      <main className="min-h-screen bg-primary-blue text-white font-geist-sans px-6 py-16 flex items-center justify-center">
+        <div className="w-full max-w-xl bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-10 text-center border border-white/20">
           <Image
             src="/icon.png"
             alt="MoodMap logo"
-            width={48}
-            height={48}
+            width={60}
+            height={60}
             className="mx-auto mb-6"
             priority
           />
           {valid ? (
             <>
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                🎉 Payment successful!
+              <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+                🎉 Payment successful
               </h1>
-              <p className="text-base md:text-lg mb-10">
-                Your Pro access is now active. Tap below to open the app and complete the sync.
+              <p className="text-base sm:text-lg mb-10 text-white/90">
+                Your Pro access is active. Tap below to open the app and finish setup.
               </p>
               <a
                 href={deepLink}
-                className="inline-block bg-white text-primary-blue font-semibold text-lg rounded-xl px-6 py-3 transition-colors hover:bg-white/90"
+                className="inline-block bg-white text-primary-blue font-semibold text-base sm:text-lg rounded-full px-6 py-3 transition hover:bg-white/90"
               >
-                🚀 Open MoodMap & activate Pro
+                🚀 Open MoodMap & Activate Pro
               </a>
             </>
           ) : (
             <>
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                ⚠️ Invalid link
+              <h1 className="text-3xl sm:text-4xl font-bold mb-4">
+                ⚠️ Invalid Link
               </h1>
-              <p className="text-base md:text-lg opacity-80">
-                Something’s missing in the link. Please contact&nbsp;
+              <p className="text-base sm:text-lg text-white/80">
+                Something’s missing. Contact&nbsp;
                 <a
-                  href="mailto:moodmap.tech@gmail.com"
+                  href="mailto:support@moodmap-app.com"
                   className="underline hover:text-white"
                 >
                   support@moodmap-app.com
