@@ -74,7 +74,7 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
 
         {deepLink ? (
           <>
-            <h1 className="text-4xl font-bold mb-4">🎉 Payment successful</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4">🎉 Payment successful</h1>
             <p className="text-lg mb-10 text-white/90">
               Your Pro access is active. Tap below to open the app and finish setup.
             </p>
@@ -82,7 +82,7 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
             {/* Deep‑link CTA */}
             <a
               href={deepLink}
-              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-3 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-10"
+              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-10"
             >
               🚀 Open MoodMap &amp; Activate Pro
             </a>
@@ -97,14 +97,14 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your e‑mail address"
-                className="flex-grow rounded-full bg-white/20 text-white placeholder-white px-5 py-3 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-70"
+                className="flex-grow rounded-full bg-white/20 text-white placeholder-white px-5 py-3 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-70"
                 required
                 disabled={inputDisabled}
               />
 
               <button
                 type="submit"
-                className="bg-white text-black font-bold tracking-wide rounded-full px-6 py-3 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
+                className="bg-white text-black font-bold tracking-wide rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
                 disabled={inputDisabled}
               >
                 {btnLabel}
@@ -123,14 +123,14 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
           </>
         ) : (
           <>
-            <h1 className="text-4xl font-bold mb-4">⚠️ Invalid Link</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4">⚠️ Invalid Link</h1>
             <p className="text-lg text-white/80">
               Something’s missing. Contact{" "}
               <a
                 href="mailto:moodmap.tech@gmail.com"
                 className="underline hover:text-white"
               >
-                support@moodmap-app.com
+                moodmap.tech@gmail.com
               </a>
               .
             </p>
