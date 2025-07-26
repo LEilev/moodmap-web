@@ -1,22 +1,17 @@
-// src/app/thanks/page.js
-
-import dynamic from "next/dynamic";
-import Fallback from "./loading";
+// src/app/thanks/page.js  ← **SERVER COMPONENT**
 
 // Always run server‑side; query params must be evaluated per request
 export const dynamic = "force-dynamic";
 
-// Meta tags live happily on the server again ✅
 export const metadata = {
   title: "MoodMap • Payment successful",
   robots: { index: false, follow: false },
 };
 
-// Client bundle – deferred, CSR‑only.
-const ThanksClient = dynamic(() => import("./client"), {
-  ssr: false,
-  loading: () => <Fallback />, // Leverages the same skeleton as loading.js
-});
+// Directly import the client component; Next.js will lazy‑hydrate it and show
+// `loading.js` automatically. No `next/dynamic` needed (and `ssr:false` was the
+// source of the build error).
+import ThanksClient from "./client";
 
 export default function ThanksPage({ searchParams = {} }) {
   const u = searchParams.u ?? "";
@@ -24,7 +19,6 @@ export default function ThanksPage({ searchParams = {} }) {
   const exp = searchParams.exp ?? "";
   const sig = searchParams.sig ?? "";
 
-  // Build once on the server – removes duplication inside the client.
   const deepLink =
     u && s && exp && sig
       ? `moodmap-app://activate?u=${encodeURIComponent(u)}&s=${encodeURIComponent(
@@ -34,3 +28,5 @@ export default function ThanksPage({ searchParams = {} }) {
 
   return <ThanksClient deepLink={deepLink} />;
 }
+
+// `loading.js` continues to provide the skeleton while the client bundle downloads.
