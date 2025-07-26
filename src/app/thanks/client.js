@@ -23,7 +23,7 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
   }, [serverLink, params]);
 
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [status, setStatus] = useState("idle");
   const [errMsg, setErrMsg] = useState("");
 
   async function handleSend(e) {
@@ -82,7 +82,7 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
             {/* Deep‑link CTA */}
             <a
               href={deepLink}
-              className="inline-block bg-white text-primary-blue font-bold tracking-wide text-lg rounded-full px-6 py-3 shadow-sm transition hover:bg-white/90 hover:shadow-md hover:brightness-105 mb-10"
+              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-3 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-10"
             >
               🚀 Open MoodMap &amp; Activate Pro
             </a>
@@ -97,14 +97,14 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Your e‑mail address"
-                className="flex-grow rounded-full bg-white/20 placeholder-white px-5 py-3 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-60"
+                className="flex-grow rounded-full bg-white/20 text-white placeholder-white px-5 py-3 focus:outline-none focus:ring-2 focus:ring-white disabled:opacity-70"
                 required
                 disabled={inputDisabled}
               />
 
               <button
                 type="submit"
-                className="bg-white text-primary-blue font-bold tracking-wide rounded-full px-6 py-3 shadow-sm transition hover:bg-white/90 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
+                className="bg-white text-black font-bold tracking-wide rounded-full px-6 py-3 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
                 disabled={inputDisabled}
               >
                 {btnLabel}
