@@ -17,7 +17,7 @@ export default function ThanksPage({ searchParams = {} }) {
 
   const deepLink =
     u && s && exp && sig
-      ? `moodmap-app://activate?u=${encodeURIComponent(u)}&s=${encodeURIComponent(
+      ? `https://moodmap-app.com/activate?u=${encodeURIComponent(u)}&s=${encodeURIComponent(
           s,
         )}&exp=${exp}&sig=${sig}`
       : "";
