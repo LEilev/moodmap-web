@@ -11,7 +11,7 @@
 
 export async function getServerSideProps({ query, res }) {
   // ------------------ 1. Parse & validate ------------------
-  const rawRef  = query.ref  ?? 'default';
+  const rawRef  = query.ref ?? query.via ?? 'default';
   const rawType = query.type ?? 'monthly';
 
   // allow a‑z, 0‑9, dash/underscore, 1‑32 chars
