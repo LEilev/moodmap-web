@@ -27,7 +27,7 @@ export async function getServerSideProps({ query, res }) {
   /* 2. Choose Payment Link                                             */
   /* ------------------------------------------------------------------ */
   const PLAN_LINKS = {
-    monthly: 'https://buy.stripe.com/4gwbLq3dO3YJ3jka00',
+    monthly: 'https://buy.stripe.com/14A4gAaMb3roc3Y73j3ks00',
     yearly:  'https://buy.stripe.com/7sI02ZfFecfCYJ73kk',
   };
   const url = new URL(PLAN_LINKS[type]);
