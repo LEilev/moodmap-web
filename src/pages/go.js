@@ -10,7 +10,7 @@ import Head from 'next/head';
  * • Sender brukeren videre til /buy … med ALLE relevante query‑params intakt.
  * • Viser “Redirecting …” + manuell lenke dersom JS er blokkert / noe går galt.
  */
-export default function TrackingTest() {
+export default function GoRedirect() {
   const router = useRouter();
 
   /* -------------------------------------------------------------------- */
@@ -62,7 +62,7 @@ export default function TrackingTest() {
   return (
     <>
       <Head>
-        <title>Redirecting… | MoodMap</title>
+        <title>Just a sec… | MoodMap Pro</title>
         <script
           async
           src="https://cdn.promotekit.com/promotekit.js"
@@ -73,8 +73,8 @@ export default function TrackingTest() {
       <main className="min-h-screen flex flex-col items-center justify-center bg-white text-black p-8">
         <h1 className="text-2xl font-bold mb-4">Redirecting…</h1>
         <p className="text-lg text-center max-w-md mb-8">
-          We’re sending you to checkout.<br />
-          This usually takes just a second or two.
+           We’re getting your offer ready.<br />
+          You’ll be at checkout in just a second.
         </p>
 
         {/* Synlig fallback – fungerer uten JavaScript */}
