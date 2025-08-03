@@ -41,7 +41,7 @@ export default async function handler(req, res) {
     event = stripe.webhooks.constructEvent(
       rawBody,
       signature,
-      process.env.STRIPE_WEBHOOK_SECRET,
+      process.env.STRIPE_WEBHOOK_SECRET_PROD,
     );
   } catch (err) {
     console.error('[stripe‑webhook] ❌ Bad sig', err.message);
