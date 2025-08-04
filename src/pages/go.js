@@ -1,68 +1,90 @@
-// pages/tracking-test.js
+// -------------------------------------------------------------
+// MoodMap  – /go      (affiliate landing page)
+// -------------------------------------------------------------
+// • Laster PromoteKit‑scriptet ASAP (async, non‑blocking).
+// • Skriver partner‑cookie → venter 1–1,5 s → redirect til /buy
+//   med ?via, ?type og ALLE pk_* query‑parametre intakt.
+// • Logger strukturert info til console (og PostHog hvis den er
+//   initialisert globalt).
+// • Preconnect'er til buy.stripe.com for raskere checkout‑TTFB.
+// • Gir tydelig «Click here if nothing happens»‑fallback + noscript.
+// -------------------------------------------------------------
+
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 
-/**
- * • Laster PromoteKit‑scriptet ASAP (async).
- * • Leser ?via | ?ref  (+ ?type & evt. pk_*) fra URL‑en.
- * • Venter 1.0 – 1.5 s slik at PromoteKit rekker å plante cookies.
- * • Sender brukeren videre til /buy … med ALLE relevante query‑params intakt.
- * • Viser “Redirecting …” + manuell lenke dersom JS er blokkert / noe går galt.
- */
 export default function GoRedirect() {
   const router = useRouter();
 
-  /* -------------------------------------------------------------------- */
-  /* 1. Bygg redirect‑URL (memoiseres så den bare lages én gang)          */
-  /* -------------------------------------------------------------------- */
-  const redirectUrl = useMemo(() => {
-    if (!router.isReady) return null;
+  /* ------------------------------------------------------------------ */
+  /* 1 · Bygg redirect‑URL (memoiseres)                                 */
+  /* ------------------------------------------------------------------ */
+  const { redirectUrl, via, type } = useMemo(() => {
+    if (!router.isReady) return { redirectUrl: null, via: '', type: '' };
 
     const { query } = router;
-    /** via = partner‑kode.  Faller tilbake til ref eller 'default'.   */
+
+    /* Partner‑kode (≤32 tegn, a‑zA‑Z0‑9_-)  */
     const rawVia = query.via || query.ref || 'default';
-    /** PromoKit anbefaler ≤32 tegn, [a‑zA‑Z0‑9_-]  – samme regex som buy.js */
     const via = /^[\w-]{1,32}$/.test(rawVia) ? rawVia : 'default';
 
+    /* Plan‑type  */
     const type = query.type === 'yearly' ? 'yearly' : 'monthly';
 
     const url = new URL('/buy', window.location.origin);
-    url.searchParams.set('via', via);    // bevar 'via' – buy.js håndterer både via & ref
+    url.searchParams.set('via', via);
     url.searchParams.set('type', type);
 
-    /* Bevar alle pk_*‑parametre for PromoteKit sin egen click‑tracking  */
+    /* Bevar alle pk_*‑parametre  */
     Object.entries(query).forEach(([k, v]) => {
       if (k.startsWith('pk_')) url.searchParams.set(k, v);
     });
 
-    return url.pathname + url.search;
+    return { redirectUrl: url.pathname + url.search, via, type };
   }, [router]);
 
-  /* -------------------------------------------------------------------- */
-  /* 2. Klient‑side redirect etter 1‑1.5 s                               */
-  /* -------------------------------------------------------------------- */
+  /* ------------------------------------------------------------------ */
+  /* 2 · Klient‑side redirect med logg + guard‑timeout                  */
+  /* ------------------------------------------------------------------ */
   useEffect(() => {
     if (!redirectUrl) return;
 
-    const delay = 1_000 + Math.floor(Math.random() * 500); // 1 000–1 500 ms
+    console.info('[go] redirect‑init', { via, type });
+    window?.posthog?.capture?.('go_redirect_init', { via, type });
+
+    /* 1 000–1 500 ms → gir PromoteKit tid til å plante cookie */
+    const delay = 1_000 + Math.floor(Math.random() * 500);
     const id = setTimeout(() => {
-      /* Bruk replace() slik at /tracking-test ikke havner i historikken */
       window.location.replace(redirectUrl);
     }, delay);
 
-    return () => clearTimeout(id);
-  }, [redirectUrl]);
+    /* Safety‑net: hvis vi fortsatt er her etter 5 s → logg advarsel */
+    const guard = setTimeout(() => {
+      console.warn('[go] redirect_timeout', { via, type });
+      window?.posthog?.capture?.('go_redirect_timeout', { via, type });
+    }, 5_000);
 
-  /* -------------------------------------------------------------------- */
-  /* 3. UI – fallback hvis JS feiler                                     */
-  /* -------------------------------------------------------------------- */
+    return () => {
+      clearTimeout(id);
+      clearTimeout(guard);
+    };
+  }, [redirectUrl, via, type]);
+
+  /* ------------------------------------------------------------------ */
+  /* 3 · Render fallback / no‑JS variant                                */
+  /* ------------------------------------------------------------------ */
   const manualHref = redirectUrl || '/buy';
 
   return (
     <>
       <Head>
-        <title>Just a sec… | MoodMap Pro</title>
+        <title>Just a sec… | MoodMap Pro</title>
+        <meta name="robots" content="noindex" />
+        {/* Forhåndskoble til Stripe for raskere TLS / DNS‑oppslag */}
+        <link rel="preconnect" href="https://buy.stripe.com" />
+        <link rel="dns-prefetch" href="https://buy.stripe.com" />
+        {/* PromoteKit – async så den aldri blokkerer */}
         <script
           async
           src="https://cdn.promotekit.com/promotekit.js"
@@ -73,14 +95,15 @@ export default function GoRedirect() {
       <main className="min-h-screen flex flex-col items-center justify-center bg-white text-black p-8">
         <h1 className="text-2xl font-bold mb-4">Redirecting…</h1>
         <p className="text-lg text-center max-w-md mb-8">
-           We’re getting your offer ready.<br />
+          We’re getting your offer ready.
+          <br />
           You’ll be at checkout in just a second.
         </p>
 
-        {/* Synlig fallback – fungerer uten JavaScript */}
+        {/* Fallback – fungerer uten JavaScript */}
         <noscript>
           <p className="mb-4">
-            JavaScript is disabled. Please&nbsp;
+            JavaScript is disabled.&nbsp;Please{' '}
             <a href={manualHref} className="underline text-blue-600">
               click here to continue
             </a>

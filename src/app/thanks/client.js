@@ -5,6 +5,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { Copy } from "lucide-react";
 
 export default function ThanksClient({ deepLink: serverLink = "" }) {
   const params = useSearchParams();
@@ -22,8 +23,16 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
     )}&exp=${exp}&sig=${sig}`;
   }, [serverLink, params]);
 
+  /* ---------- analytics for missing params ---------- */
+  if (!deepLink && typeof window !== "undefined") {
+    console.warn("invalid_link_access");
+    // if PostHog/GA is injected elsewhere we can capture here:
+    window?.posthog?.capture?.("invalid_link_access");
+  }
+
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
+  const [copied, setCopied] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
   async function handleSend(e) {
@@ -82,10 +91,27 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
             {/* Deep‑link CTA */}
             <a
               href={deepLink}
-              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-10"
+              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-6"
             >
               🚀 Open MoodMap &amp; Activate Pro
             </a>
+
+            {/* Copy‑link helper */}
+            <button
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(deepLink);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                } catch {
+                  console.warn("clipboard_copy_failed");
+                }
+              }}
+              className="flex items-center gap-2 text-sm text-white/90 hover:text-white mb-10"
+            >
+              <Copy size={16} />
+              {copied ? "Copied!" : "Copy unlock link"}
+            </button>
 
             {/* E‑mail input */}
             <form

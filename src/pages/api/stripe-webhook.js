@@ -4,6 +4,7 @@
 // -------------------------------------------------------------
 import Stripe from 'stripe';
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
 import { createClient } from 'redis';
 import { generateHmacSignature } from '../../lib/universal-link';      // eksisterer fra før
 // Node 18 har global fetch ▶ ingen ekstra import
@@ -16,6 +17,18 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 
 const redis =
   process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
+
+/* ------------------------------------------------------------------ */
+/* Axios global retry – 3 forsøk på 0.5 s, 1 s og 1.5 s */
+/* ------------------------------------------------------------------ */
+axiosRetry(axios, {
+ retries: 3,
+ retryDelay: (retryCount) => retryCount * 500,
+ retryCondition: (err) =>
+ err.code === 'ECONNABORTED' ||
+ err.response?.status >= 500 ||
+ err.response?.status === 429,
+});
 
 const EVENTS = new Set([
   'checkout.session.completed',
@@ -108,6 +121,9 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('[stripe‑webhook] ❌ Sync error', err);
     return res.status(500).end();
+  } finally {
+    /* ensure clean redis handles for lambda‑reuse */
+    if (redis?.isOpen) await redis.disconnect();
   }
 }
 

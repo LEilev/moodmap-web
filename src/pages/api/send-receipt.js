@@ -15,6 +15,8 @@ const RESEND_API = 'https://api.resend.com';
 const PROD_FROM  = 'MoodMap <noreply@moodmap-app.com>';
 const SANDBOX_FROM = 'MoodMap <onboarding@resend.dev>';
 
+import validator from 'validator';
+
 let fromAddress = null;              // resolved once per Lambda instance
 
 export default async function handler(req, res) {
@@ -22,7 +24,13 @@ export default async function handler(req, res) {
     return res.setHeader('Allow', 'POST').status(405).end();
 
   const { email, link } = req.body || {};
-  if (!email || !link) return res.status(400).json({ error: 'Missing email or link' });
+  if (!email || !link) {
+    return res.status(400).json({ error: 'Missing email or link' });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.status(400).json({ error: 'Invalid e‑mail address' });
+  }
 
   try {
     /* ------------------------------------------------------------ */
@@ -134,3 +142,10 @@ async function fetchRetry(url, init, retries = 3) {
   }
   throw lastErr;
 }
+
+/* ---------------- helpers ---------------- */
+/* TODO: For >100 req/min vurder å legge e‑postene
+ * i en SQS / Upstash Q og la en background
+ * worker dra dem, slik at en Resend‑glitch
+ * aldri blocker checkout‑webhooken.
+ */
