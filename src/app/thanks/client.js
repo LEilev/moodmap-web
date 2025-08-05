@@ -1,15 +1,17 @@
-// src/app/thanks/client.js  ← **CLIENT COMPONENT** (interactive)
-
+// src/app/thanks/client.js
+// -------------------------------------------------------------
+// v2.3.0  –  debounce send‑knapp + QR‑kode fallback
+// -------------------------------------------------------------
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Copy } from "lucide-react";
 
 export default function ThanksClient({ deepLink: serverLink = "" }) {
+  /* ---------- build deep‑link ---------- */
   const params = useSearchParams();
-
   const deepLink = useMemo(() => {
     if (serverLink) return serverLink;
     if (!params) return "";
@@ -18,149 +20,132 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
     const exp = params.get("exp") || "";
     const sig = params.get("sig") || "";
     if (!u || !s || !exp || !sig) return "";
-    return `moodmap-app://activate?u=${encodeURIComponent(u)}&s=${encodeURIComponent(
-      s,
-    )}&exp=${exp}&sig=${sig}`;
+    return `moodmap-app://activate?u=${encodeURIComponent(
+      u,
+    )}&s=${encodeURIComponent(s)}&exp=${exp}&sig=${sig}`;
   }, [serverLink, params]);
 
-  /* ---------- analytics for missing params ---------- */
   if (!deepLink && typeof window !== "undefined") {
     console.warn("invalid_link_access");
-    // if PostHog/GA is injected elsewhere we can capture here:
     window?.posthog?.capture?.("invalid_link_access");
   }
 
+  /* ---------- e‑mail send state ---------- */
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("idle");
   const [copied, setCopied] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
+  const lastClick = useRef(0);
 
   async function handleSend(e) {
     e.preventDefault();
-    if (!email || status === "sending") return;
+    const now = Date.now();
+    if (now - lastClick.current < 5000) return; // debounce 5 s
+    lastClick.current = now;
+
+    if (!email || status === "sending" || status === "sent") return;
 
     setStatus("sending");
     try {
-      const res = await fetch("/api/send-receipt", {
+      const r = await fetch("/api/send-receipt", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, link: deepLink }),
       });
-
-      if (!res.ok) {
-        const { error = "Unknown error" } = await res.json();
+      if (!r.ok) {
+        const { error = "Unknown error" } = await r.json();
         throw new Error(error);
       }
-
       setStatus("sent");
-      console.info("receipt_send_success", { email });
     } catch (err) {
-      console.error("receipt_send_failed", err);
-      setErrMsg(err.message);
       setStatus("error");
+      console.error("receipt_send_failed", err);
     }
   }
 
-  const inputDisabled = status === "sending" || status === "sent";
-  const btnLabel =
-    status === "sending"
-      ? "Sending…"
-      : status === "sent"
-        ? "Link sent! ✅"
-        : "Email me this link";
+  /* ---------- simple QR img (remote service) ---------- */
+  const qrSrc = deepLink
+    ? `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
+        deepLink,
+      )}`
+    : "";
 
+  /* ---------- UI ---------- */
+  const disabled = status === "sending" || status === "sent";
   return (
-    <main className="min-h-screen bg-primary-blue text-white font-geist-sans px-6 py-16 flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white/10 backdrop-blur-md rounded-3xl shadow-2xl p-10 text-center border border-white/20">
-        <Image
-          src="/icon.png"
-          alt="MoodMap logo"
-          width={60}
-          height={60}
-          className="mx-auto mb-6"
-          priority
-        />
+    <main className="min-h-screen flex items-center justify-center bg-primary-blue text-white p-8">
+      <div className="w-full max-w-xl bg-white/5 backdrop-blur-lg p-8 rounded-3xl">
+        <Image src="/icon.png" alt="MoodMap" width={60} height={60} className="mx-auto mb-5" />
 
         {deepLink ? (
           <>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4">🎉 Payment successful</h1>
-            <p className="text-lg mb-10 text-white/90">
-              Your Pro access is active. Tap below to open the app and finish setup.
+            <h1 className="text-3xl font-bold text-center mb-3">🎉 Payment successful</h1>
+            <p className="text-center mb-6">
+              Tap below to open the app and finish setup.
             </p>
 
-            {/* Deep‑link CTA */}
             <a
               href={deepLink}
-              className="inline-block bg-white text-black font-bold tracking-wide text-lg rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 mb-6"
+              className="block bg-white text-black text-center font-semibold py-3 rounded-full mb-4 hover:brightness-105"
             >
-              🚀 Open MoodMap &amp; Activate Pro
+              🚀 Open MoodMap
             </a>
 
-            {/* Copy‑link helper */}
+            <div className="flex justify-center mb-6">
+              {qrSrc && (
+                <img
+                  src={qrSrc}
+                  alt="QR code"
+                  width={160}
+                  height={160}
+                  className="rounded-lg border border-white/20"
+                />
+              )}
+            </div>
+
             <button
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(deepLink);
                   setCopied(true);
                   setTimeout(() => setCopied(false), 2000);
-                } catch {
-                  console.warn("clipboard_copy_failed");
-                }
+                } catch {}
               }}
-              className="flex items-center gap-2 text-sm text-white/90 hover:text-white mb-10"
+              className="flex items-center gap-2 mx-auto text-sm mb-6 hover:underline"
             >
               <Copy size={16} />
               {copied ? "Copied!" : "Copy unlock link"}
             </button>
 
-            {/* E‑mail input */}
-            <form
-              onSubmit={handleSend}
-              className="flex flex-col sm:flex-row items-center gap-4"
-            >
+            {/* e‑mail fallback */}
+            <form onSubmit={handleSend} className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Your e‑mail address"
-                className="flex-grow rounded-full bg-white/20 text-white placeholder-white px-5 py-3 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:opacity-70"
+                className="flex-grow rounded-full bg-white/20 px-4 py-3 placeholder-white focus:outline-none disabled:opacity-60"
+                placeholder="Your e‑mail"
                 required
-                disabled={inputDisabled}
+                disabled={disabled}
               />
-
               <button
                 type="submit"
-                className="bg-white text-black font-bold tracking-wide rounded-full px-6 py-4 shadow-sm transition hover:bg-neutral-100 hover:shadow-md hover:brightness-105 disabled:opacity-80 disabled:ring-1 disabled:ring-white/20 disabled:cursor-not-allowed"
-                disabled={inputDisabled}
+                disabled={disabled}
+                className="rounded-full bg-white text-black px-5 py-3 font-semibold disabled:opacity-60"
               >
-                {btnLabel}
+                {status === "sending"
+                  ? "Sending…"
+                  : status === "sent"
+                  ? "Sent ✅"
+                  : "Email me this link"}
               </button>
             </form>
 
-            {/* Feedback messages */}
             {status === "error" && (
-              <p className="mt-3 text-red-300 text-sm">❌ {errMsg}</p>
-            )}
-            {status === "sent" && (
-              <p className="mt-3 text-green-300 text-sm">
-                We'll see you in the app! 📥
-              </p>
+              <p className="text-red-300 text-sm mt-2">Failed – try again later.</p>
             )}
           </>
         ) : (
-          <>
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4">⚠️ Invalid Link</h1>
-            <p className="text-lg text-white/80">
-              Something’s missing. Contact{" "}
-              <a
-                href="mailto:moodmap.tech@gmail.com"
-                className="underline hover:text-white"
-              >
-                moodmap.tech@gmail.com
-              </a>
-              .
-            </p>
-          </>
+          <p className="text-center text-lg">⚠️ Link invalid – contact support.</p>
         )}
       </div>
     </main>
