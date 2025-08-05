@@ -29,9 +29,23 @@ export default async function ThanksPage({ searchParams = {} }) {
   /* ‑‑‑‑‑ 1 · If only a CheckoutSession ID is present, resolve & sign ‑‑‑‑‑ */
   if (cs && !(u && s && exp && sig)) {
     try {
-      const session = await stripe.checkout.sessions.retrieve(cs, {
-        expand: ["customer_details"],
-      });
+      let session;
+      try {
+        session = await stripe.checkout.sessions.retrieve(cs, {
+          expand: ["customer_details"],
+        });
+      } catch (err) {
+        console.warn("[thanks] Stripe lookup failed", {
+          cs,
+          code: err?.code,
+          httpStatus: err?.statusCode,
+        });
+        if (err?.statusCode === 404) {
+          /* likely mode‑mismatch – show graceful fallback */
+          return <ThanksClient deepLink="" />;
+        }
+        throw err;
+      }
       u   = session.client_reference_id || session.metadata?.app_user_id || "";
       s   = cs;
       exp = Math.floor(Date.now() / 1000) + 600;

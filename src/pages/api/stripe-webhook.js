@@ -9,21 +9,20 @@ import { createClient } from 'redis';
 import { generateHmacSignature } from '../../lib/universal-link';      // eksisterer fra før
 // Node 18 har global fetch ▶ ingen ekstra import
 
-export const config = { api: { bodyParser: false } };
+export const config = { api: { bodyParser: false }, maxDuration: 30 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
 
+/* ---------- Redis – keep a single connection per instance ---------- */
 const redis =
-  process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
-
-/* ------------------------------------------------------------------ */
-/* Axios global retry – 3 forsøk på 0.5 s, 1 s og 1.5 s */
-/* ------------------------------------------------------------------ */
+ process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
+if (redis) redis.connect().catch(() => console.warn('[redis] connect fail'));
+/* ---------- Axios global retry (3x, 0.3 → 0.9 s) ------------------- */
 axiosRetry(axios, {
  retries: 3,
- retryDelay: (retryCount) => retryCount * 500,
+ retryDelay: (n) => n * 300,
  retryCondition: (err) =>
  err.code === 'ECONNABORTED' ||
  err.response?.status >= 500 ||
@@ -48,6 +47,10 @@ export default async function handler(req, res) {
 
   const rawBody = await readRawBody(req);
   const signature = req.headers['stripe-signature'];
+ console.info('[stripe‑webhook] ⏬ payload', {
+ len: rawBody.length,
+ sig: signature?.slice(0, 16),
+ });
 
   let event;
   try {
@@ -60,6 +63,7 @@ export default async function handler(req, res) {
     console.error('[stripe‑webhook] ❌ Bad sig', err.message);
     return res.status(400).end();
   }
+ console.info('[stripe‑webhook] ▶', { id: event.id, type: event.type });
 
   if (!EVENTS.has(event.type)) return res.status(200).end();
 
@@ -121,9 +125,6 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('[stripe‑webhook] ❌ Sync error', err);
     return res.status(500).end();
-  } finally {
-    /* ensure clean redis handles for lambda‑reuse */
-    if (redis?.isOpen) await redis.disconnect();
   }
 }
 
@@ -143,17 +144,12 @@ function readRawBody(req) {
 
 async function alreadyProcessed(id) {
   if (!redis) return false;
-  await redis.connect();
-  const dup = !(await redis.set(id, 1, { NX: true, EX: 86_400 }));
-  await redis.disconnect();
-  return dup;
+  return !(await redis.set(id, 1, { NX: true, EX: 86_400 }));
 }
 
 async function markProcessed(id) {
   if (!redis) return;
-  await redis.connect();
   await redis.set(id, 1, { NX: true, EX: 86_400 });
-  await redis.disconnect();
 }
 
 async function extractRcKeys(event) {
