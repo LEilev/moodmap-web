@@ -6,8 +6,6 @@
         "paths": [
           "/activate",
           "/activate/*",
-          "/thanks",
-          "/thanks/*",
           "/support",
           "/support/*",
           "NOT /go/*",
