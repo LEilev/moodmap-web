@@ -1,5 +1,20 @@
-// Centralises the call to RevenueCat so webhook & cron share code
+// rcSync.js
+// -------------------------------------------------------------
+// v1.0.2  ·  Shares axios‑instance w/ retry + jitter
+// -------------------------------------------------------------
 import axios from 'axios';
+import axiosRetry from 'axios-retry';
+
+/* one axios instance w/ global retry */
+const http = axios.create({ timeout: 8_000 });
+axiosRetry(http, {
+  retries: 3,
+  retryDelay: (n) => Math.pow(n, 2) * 200, // 0.2 s, 0.8 s, 1.8 s
+  retryCondition: (err) =>
+    err.code === 'ECONNABORTED' ||
+    err.response?.status >= 500 ||
+    err.response?.status === 429,
+});
 
 export async function rcSync(stripeEvent) {
   const inv = stripeEvent.data.object;
@@ -10,7 +25,7 @@ export async function rcSync(stripeEvent) {
   if (!appUserId || !fetchToken) return false;
 
   try {
-    await axios.post(
+    await http.post(
       'https://api.revenuecat.com/v1/receipts',
       { app_user_id: appUserId, fetch_token: fetchToken },
       {
@@ -18,12 +33,11 @@ export async function rcSync(stripeEvent) {
           'X-Platform': 'stripe',
           Authorization: `Bearer ${process.env.RC_STRIPE_PUBLIC_API_KEY}`,
         },
-        timeout: 8000,
       },
     );
     return true;
   } catch (e) {
-    console.error('[rcSync] failed', e.message);
+    console.error('[rcSync] fail', e.message);
     return false;
   }
 }

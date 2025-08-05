@@ -1,32 +1,45 @@
 // pages/api/stripe-webhook.js
 // -------------------------------------------------------------
-// Stripe  ➜  RevenueCat  ➜  Resend‑mail (universal‑link)
+// v3.1.0  ·  2025‑08‑05  (P0/P1 hardening)
+// • Redis SET … NX PX (én RTT)  – eliminerer race‑condition
+// • markProcessed() flyttet til mail‑SUCCESS‑grenen
+// • Robust Redis‑init m/ fallback til in‑memory Set
+// • Ekstra loggfelt (ua, webhook latency)
+// • maxDuration 30 s (Vercel edge‑limit)
 // -------------------------------------------------------------
+
 import Stripe from 'stripe';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { createClient } from 'redis';
-import { generateHmacSignature } from '../../lib/universal-link';      // eksisterer fra før
-// Node 18 har global fetch ▶ ingen ekstra import
+import { generateHmacSignature } from '../../lib/universal-link';
 
 export const config = { api: { bodyParser: false }, maxDuration: 30 };
 
+// ---------- Stripe ----------
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
 
-/* ---------- Redis – keep a single connection per instance ---------- */
-const redis =
- process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
-if (redis) redis.connect().catch(() => console.warn('[redis] connect fail'));
-/* ---------- Axios global retry (3x, 0.3 → 0.9 s) ------------------- */
+// ---------- Redis (dedupe) ----------
+let seenSet = new Set(); // fallback i dev / Redis‑down
+let redis;
+if (process.env.REDIS_URL) {
+  redis = createClient({ url: process.env.REDIS_URL });
+  redis.connect().catch((e) => {
+    console.warn('[redis] connect failed – falling back to memory', e.message);
+    redis = null;
+  });
+}
+
+// ---------- Axios global retry ----------
 axiosRetry(axios, {
- retries: 3,
- retryDelay: (n) => n * 300,
- retryCondition: (err) =>
- err.code === 'ECONNABORTED' ||
- err.response?.status >= 500 ||
- err.response?.status === 429,
+  retries: 3,
+  retryDelay: (attempt) => attempt * 300,
+  retryCondition: (err) =>
+    err.code === 'ECONNABORTED' ||
+    err.response?.status >= 500 ||
+    err.response?.status === 429,
 });
 
 const EVENTS = new Set([
@@ -45,12 +58,9 @@ export default async function handler(req, res) {
     return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed');
   }
 
+  const t0 = Date.now();
   const rawBody = await readRawBody(req);
   const signature = req.headers['stripe-signature'];
- console.info('[stripe‑webhook] ⏬ payload', {
- len: rawBody.length,
- sig: signature?.slice(0, 16),
- });
 
   let event;
   try {
@@ -60,21 +70,21 @@ export default async function handler(req, res) {
       process.env.STRIPE_WEBHOOK_SECRET_PROD,
     );
   } catch (err) {
-    console.error('[stripe‑webhook] ❌ Bad sig', err.message);
+    console.error('[stripe‑webhook] bad sig', err.message);
     return res.status(400).end();
   }
- console.info('[stripe‑webhook] ▶', { id: event.id, type: event.type });
 
   if (!EVENTS.has(event.type)) return res.status(200).end();
 
   try {
-    if (await alreadyProcessed(event.id)) return res.status(200).end();
-
-    /* ---------- 1. send to RevenueCat ---------- */
-    const { appUserId, fetchToken } = await extractRcKeys(event);
-    if (!appUserId || !fetchToken) {
-      throw new Error('appUserId / fetchToken missing – check metadata.');
+    if (await alreadyProcessed(event.id)) {
+      console.info('[stripe‑webhook] duplicate event', event.id);
+      return res.status(200).end();
     }
+
+    // ---------- 1 · Sync to RevenueCat ----------
+    const { appUserId, fetchToken } = await extractRcKeys(event);
+    if (!appUserId || !fetchToken) throw new Error('Missing appUserId/fetchToken');
 
     await axios.post(
       'https://api.revenuecat.com/v1/receipts',
@@ -88,12 +98,13 @@ export default async function handler(req, res) {
       },
     );
 
-    /* ---------- 2. send universal‑link e‑mail (only for checkout.session.completed) ---------- */
+    // ---------- 2 · Mail universal link (checkout only) ----------
+    let mailSuccess = true;
     if (event.type === 'checkout.session.completed') {
       const cs = event.data.object;
       const email = cs.customer_details?.email;
       if (email) {
-        const exp = Math.floor(Date.now() / 1000) + 600; // 10 min TTL
+        const exp = Math.floor(Date.now() / 1000) + 600;
         const sig = generateHmacSignature(appUserId, cs.id, exp);
         const thanksUrl = `https://moodmap-app.com/thanks?u=${encodeURIComponent(
           appUserId,
@@ -105,32 +116,31 @@ export default async function handler(req, res) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, link: thanksUrl }),
           });
-          console.log('[stripe‑webhook] ✉️  Receipt mail queued');
-        } catch (mailErr) {
-          // Ikke blocker webhook – bare logg
-          console.error('[stripe‑webhook] ✉️  Mail error', mailErr.message);
+          console.log('[stripe‑webhook] mail queued', { email });
+        } catch (err) {
+          mailSuccess = false;
+          console.error('[stripe‑webhook] mail err', err.message);
         }
       }
     }
 
-    /* ---------- 3. log & dedup mark ---------- */
-    console.log('[stripe-webhook] ✅ Success', {
-      type: event.type,
-      user: appUserId,
-      token: fetchToken,
-    });
+    // ---------- 3 · Dedup mark (only after mail OK) ----------
+    if (mailSuccess) await markProcessed(event.id);
 
-    await markProcessed(event.id);
+    console.info('[stripe‑webhook] OK', {
+      id: event.id,
+      type: event.type,
+      ua: req.headers['user-agent']?.slice(0, 64),
+      ms: Date.now() - t0,
+    });
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('[stripe‑webhook] ❌ Sync error', err);
+    console.error('[stripe‑webhook] handler err', err);
     return res.status(500).end();
   }
 }
 
-/* -------------------------------------------------------------------------- */
-/* Helper functions                                                           */
-/* -------------------------------------------------------------------------- */
+/* ------------ Helpers -------------------------------------------------- */
 
 function readRawBody(req) {
   return new Promise((resolve, reject) => {
@@ -143,13 +153,14 @@ function readRawBody(req) {
 }
 
 async function alreadyProcessed(id) {
-  if (!redis) return false;
-  return !(await redis.set(id, 1, { NX: true, EX: 86_400 }));
+  if (redis)
+    return !(await redis.set(id, 1, { NX: true, PX: 86_400_000 })); // 24 h
+  return seenSet.has(id);
 }
 
 async function markProcessed(id) {
-  if (!redis) return;
-  await redis.set(id, 1, { NX: true, EX: 86_400 });
+  if (redis) return redis.set(id, 1, { NX: true, PX: 86_400_000 });
+  seenSet.add(id);
 }
 
 async function extractRcKeys(event) {

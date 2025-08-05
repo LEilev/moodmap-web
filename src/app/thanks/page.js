@@ -1,84 +1,52 @@
+// src/app/thanks/page.js
 // -------------------------------------------------------------
-// MoodMap – /thanks          (server component)
+// v2.2.0  ·  Adds full verifyHmacSignature() check (P0)
 // -------------------------------------------------------------
-// Handles two entry modes:
-//   ① direct HMAC params (link in e‑mail)
-//   ② ?cs={CHECKOUT_SESSION_ID}   (Stripe success redirect)
-// Adds signature‑length & expiry validation and clearer
-// error logging differentiated by Stripe error types.
-// -------------------------------------------------------------
-
-export const dynamic = "force-dynamic";
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
-  title: "MoodMap • Payment successful",
+  title: 'MoodMap • Payment successful',
   robots: { index: false, follow: false },
 };
 
-import Stripe from "stripe";
-import { generateHmacSignature } from "@/lib/universal-link";
-import ThanksClient from "./client";
+import Stripe from 'stripe';
+import {
+  generateHmacSignature,
+  verifyHmacSignature,
+} from '@/lib/universal-link';
+import ThanksClient from './client';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-04-10",
+  apiVersion: '2024-04-10',
 });
 
 export default async function ThanksPage({ searchParams = {} }) {
-  let { u = "", s = "", exp = "", sig = "", cs = "" } = searchParams;
+  let { u = '', s = '', exp = '', sig = '', cs = '' } = searchParams;
 
-  /* ‑‑‑‑‑ 1 · If only a CheckoutSession ID is present, resolve & sign ‑‑‑‑‑ */
+  /* ① Resolve from Checkout‑Session ID if needed */
   if (cs && !(u && s && exp && sig)) {
     try {
-      let session;
-      try {
-        session = await stripe.checkout.sessions.retrieve(cs, {
-          expand: ["customer_details"],
-        });
-      } catch (err) {
-        console.warn("[thanks] Stripe lookup failed", {
-          cs,
-          code: err?.code,
-          httpStatus: err?.statusCode,
-        });
-        if (err?.statusCode === 404) {
-          /* likely mode‑mismatch – show graceful fallback */
-          return <ThanksClient deepLink="" />;
-        }
-        throw err;
-      }
-      u   = session.client_reference_id || session.metadata?.app_user_id || "";
-      s   = cs;
+      const session = await stripe.checkout.sessions.retrieve(cs, {
+        expand: ['customer_details'],
+      });
+      u = session.client_reference_id || session.metadata?.app_user_id || '';
+      s = cs;
       exp = Math.floor(Date.now() / 1000) + 600;
       sig = generateHmacSignature(u, s, exp);
     } catch (err) {
-      const code = err?.type === "StripeRateLimitError" ? "RateLimit"
-                 : err?.statusCode === 404                    ? "NotFound"
-                 : "StripeErr";
-      console.error(`[thanks] ${code}:`, err.message);
-      /* graceful fall‑through to “invalid link” UI */
+      console.warn('[thanks] Stripe lookup failed', err.message);
+      return <ThanksClient deepLink="" />;
     }
   }
 
-  /* ‑‑‑‑‑ 2 · Lightweight server‑side validation of incoming params ‑‑‑‑‑ */
-  const now = Math.floor(Date.now() / 1000);
-  const looksValid =
-    u && s &&
-    sig && sig.length === 64 && /^[a-f0-9]{64}$/i.test(sig) &&
-    Number(exp) > now;
+  /* ② Verify HMAC (new) */
+  const isValid = verifyHmacSignature(u, s, exp, sig);
 
-  /* Extra guard: don’t trust client‑side for expiry check */
-  const deepLink = looksValid
+  const deepLink = isValid
     ? `https://moodmap-app.com/activate?u=${encodeURIComponent(
         u,
       )}&s=${encodeURIComponent(s)}&exp=${exp}&sig=${sig}`
-    : "";
+    : '';
 
   return <ThanksClient deepLink={deepLink} />;
 }
-
-/*
- * TODO (perf): consider `export const revalidate = 30`
- * once we put Next .js on the Edge runtime to cache
- * session‑lookups for 30 s.  Skipped for now because
- * checkout → redirect happens only once per user.
- */
