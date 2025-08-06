@@ -1,6 +1,7 @@
 // src/app/thanks/page.js
 // -------------------------------------------------------------
-// v2.2.0  ·  Adds full verifyHmacSignature() check (P0)
+// v2.3.0  ·  Adds session_id/sid alias support to cs param
+//         ·  Full verifyHmacSignature() check (P0)
 // -------------------------------------------------------------
 export const dynamic = 'force-dynamic';
 
@@ -21,7 +22,18 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 });
 
 export default async function ThanksPage({ searchParams = {} }) {
-  let { u = '', s = '', exp = '', sig = '', cs = '' } = searchParams;
+  let {
+    u = '',
+    s = '',
+    exp = '',
+    sig = '',
+    cs = '',
+    session_id = '',
+    sid = '',
+  } = searchParams;
+
+  // ✅ Add alias fallback for session_id and sid → cs
+  if (!cs) cs = session_id || sid;
 
   /* ① Resolve from Checkout‑Session ID if needed */
   if (cs && !(u && s && exp && sig)) {

@@ -1,6 +1,6 @@
 // src/app/thanks/client.js
 // -------------------------------------------------------------
-// v2.3.0  –  debounce send‑knapp + QR‑kode fallback
+// v2.4.0  –  fallback uses https-link, not moodmap-app://
 // -------------------------------------------------------------
 "use client";
 
@@ -20,7 +20,8 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
     const exp = params.get("exp") || "";
     const sig = params.get("sig") || "";
     if (!u || !s || !exp || !sig) return "";
-    return `moodmap-app://activate?u=${encodeURIComponent(
+    // ✅ Fallback to HTTPS deep-link
+    return `https://moodmap-app.com/activate?u=${encodeURIComponent(
       u,
     )}&s=${encodeURIComponent(s)}&exp=${exp}&sig=${sig}`;
   }, [serverLink, params]);
