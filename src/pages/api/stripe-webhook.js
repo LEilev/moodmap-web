@@ -183,7 +183,7 @@ async function extractRcKeys(event) {                               // same logi
       const cs = event.data.object;
       return {
         appUserId: cs.client_reference_id || cs.metadata?.app_user_id,
-        fetchToken: cs.id,
+        fetchToken: cs.subscription,
         subId: cs.subscription || undefined,
         customerId: cs.customer || undefined,
       };
