@@ -1,14 +1,25 @@
-// pages/api/stripe-webhook.js              v4.0.2   • 2025‑08‑06
+// pages/api/stripe-webhook.js
 // -----------------------------------------------------------------------------
-//  +  Copies app_user_id  ➜  subscription.metadata & customer.metadata
-//  +  Beholder fail‑soft logikk  (skipper events uten userId / RC‑feil = 200)
-//  +  Parallel RC‑sync  +  mail  +  metadataPromise via Promise.allSettled()
+// MoodMap  •  Stripe  ➜  RevenueCat   (v4.0.3  – mail flyttet til klienten)
 // -----------------------------------------------------------------------------
+//
+//   ✔  fail‑soft: mangler userId/fetchToken ⇒ 200, Stripe retry stopper
+//   ✔  RC‑sync  (8 s timeout, 3× retry via axiosRetry)
+//   ✔  Kopierer app_user_id → subscription.metadata / customer.metadata
+//   ✔  Redis‑basert dedupe 24 h  (NX+EX)
+//   ✖  Ingen e‑post‑utsending her – sendes fra /thanks/client.js når bruker klikker
+//
+//   ENV (prod):
+//     STRIPE_SECRET_KEY              sk_live_…
+//     STRIPE_WEBHOOK_SECRET_PROD     whsec_…
+//     RC_STRIPE_PUBLIC_API_KEY       pub_…
+//     REDIS_URL                      rediss://…
+// -----------------------------------------------------------------------------
+
 import Stripe from 'stripe';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 import { createClient } from 'redis';
-import { generateHmacSignature } from '../../lib/universal-link';      // :contentReference[oaicite:3]{index=3}
 
 export const config = { api: { bodyParser: false }, maxDuration: 30 };
 
@@ -17,12 +28,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
 
-/* ---------- Redis ---------- */
+/* ---------- Redis – single persistent conn ---------- */
 const redis =
   process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
 if (redis) redis.connect().catch(() => console.warn('[redis] connect fail'));
 
-/* ---------- Axios retry ---------- */
+/* ---------- Axios global retry ---------- */
 axiosRetry(axios, {
   retries: 3,
   retryDelay: (n) => n * 300,
@@ -32,7 +43,7 @@ axiosRetry(axios, {
     e.response?.status === 429,
 });
 
-/* ---------- Event allow‑list ---------- */
+/* ---------- Interested event types ---------- */
 const EVENTS = new Set([
   'checkout.session.completed',
   'customer.subscription.created',
@@ -48,14 +59,14 @@ export default async function handler(req, res) {
   if (req.method !== 'POST')
     return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed');
 
-  const raw  = await readRawBody(req);
-  const sigH = req.headers['stripe-signature'];
+  const raw = await getRaw(req);
+  const sig = req.headers['stripe-signature'];
 
   let event;
   try {
     event = stripe.webhooks.constructEvent(
       raw,
-      sigH,
+      sig,
       process.env.STRIPE_WEBHOOK_SECRET_PROD,
     );
   } catch (err) {
@@ -66,46 +77,52 @@ export default async function handler(req, res) {
   if (!EVENTS.has(event.type)) return res.status(200).end();
   if (await alreadyProcessed(event.id)) return res.status(200).end();
 
-  /* ---------- 1 · Extract keys ---------- */
-  const { appUserId, fetchToken, subId, customerId } = await extractRcKeys(event);
-  if (!appUserId || !fetchToken) {
-    console.warn('[wh] skip – missing userId/token', { id: event.id, type: event.type });
+  try {
+    /* ---------- 1 · Extract keys ---------- */
+    const { appUserId, fetchToken, subId, customerId } =
+      await extractRcKeys(event);
+
+    if (!appUserId || !fetchToken) {
+      console.warn('[wh] skip – missing userId/token', {
+        id: event.id,
+        type: event.type,
+      });
+      await markProcessed(event.id);
+      return res.status(200).json({ skipped: true });
+    }
+
+    /* ---------- 2 · Parallel tasks ---------- */
+    const rcPromise = syncRevenueCat(appUserId, fetchToken);
+    const metaPromise = maybeCopyMetadata(event.type, appUserId, subId, customerId);
+
+    const [rcRes, metaRes] = await Promise.allSettled([
+      rcPromise,
+      metaPromise,
+    ]);
+
+    const rcOk = rcRes.status === 'fulfilled';
+    const metaOk = metaRes.status === 'fulfilled';
+
     await markProcessed(event.id);
-    return res.status(200).json({ skipped: true });
+    res.status(rcOk ? 202 : 200).json({ ok: rcOk, metaOk });
+
+    console.info('[wh] ✅', {
+      id: event.id,
+      type: event.type,
+      rcOk,
+      metaOk,
+    });
+  } catch (err) {
+    console.error('[wh] ❌ unhandled', err);
+    return res.status(500).end();
   }
-
-  /* ---------- 2 · Promises in parallel ---------- */
-  const rcPromise = syncRevenueCat(appUserId, fetchToken);
-  const mailPromise = maybeSendMail(event, appUserId);
-  const metaPromise = maybeCopyMetadata(event.type, appUserId, subId, customerId);
-
-  /* Wait on all three but fail‑soft */
-  const settled = await Promise.allSettled([rcPromise, mailPromise, metaPromise]);
-  const rcOk       = settled[0].status === 'fulfilled';
-  const mailStatus = settled[1].status === 'fulfilled'
-    ? 'success'
-    : settled[1].reason?.name === 'AbortError'
-    ? 'timeout'
-    : 'fail';
-  const metaOk     = settled[2].status === 'fulfilled';
-
-  await markProcessed(event.id);
-  res.status(rcOk ? 202 : 200).json({ ok: rcOk, mailStatus, metaOk });
-
-  console.info('[wh] ✅', {
-    id: event.id,
-    type: event.type,
-    rcOk,
-    mailStatus,
-    metaOk,
-  });
 }
 
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
-/* -------------------------------------------------------------------------- */
+/* ------------------------------------------------------------------ */
+/* Helpers                                                            */
+/* ------------------------------------------------------------------ */
 
-function readRawBody(req) {
+function getRaw(req) {
   return new Promise((r, j) => {
     const b = [];
     req
@@ -123,8 +140,8 @@ async function markProcessed(id) {
   if (redis) await redis.set(id, 1, { NX: true, EX: 86_400 });
 }
 
-/* ---------- RevenueCat sync ---------- */
-async function syncRevenueCat(appUserId, fetchToken) {
+/* ---------- RevenueCat ---------- */
+function syncRevenueCat(appUserId, fetchToken) {
   return axios.post(
     'https://api.revenuecat.com/v1/receipts',
     { app_user_id: appUserId, fetch_token: fetchToken },
@@ -138,35 +155,9 @@ async function syncRevenueCat(appUserId, fetchToken) {
   );
 }
 
-/* ---------- Mail (checkout events only) ---------- */
-async function maybeSendMail(event, userId) {
-  if (event.type !== 'checkout.session.completed') return Promise.resolve();
-
-  const cs    = event.data.object;
-  const email = cs.customer_details?.email;
-  if (!email) return Promise.resolve('no‑email');
-
-  const exp = Math.floor(Date.now() / 1000) + 600;
-  const sig = generateHmacSignature(userId, cs.id, exp);
-  const link = `https://moodmap-app.com/thanks?u=${encodeURIComponent(
-    userId,
-  )}&s=${cs.id}&exp=${exp}&sig=${sig}`;
-
-  const ctrl = new AbortController();
-  setTimeout(() => ctrl.abort(), 6_000);
-
-  return fetch('https://moodmap-app.com/api/send-receipt', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, link }),
-    signal: ctrl.signal,
-  });
-}
-
-/* ---------- Copy metadata to Subscription & Customer ---------- */
-async function maybeCopyMetadata(type, userId, subId, customerId) {
+/* ---------- Copy metadata ---------- */
+function maybeCopyMetadata(type, userId, subId, customerId) {
   if (type !== 'checkout.session.completed') return Promise.resolve();
-
   const tasks = [];
   if (subId) {
     tasks.push(
@@ -182,11 +173,11 @@ async function maybeCopyMetadata(type, userId, subId, customerId) {
       }),
     );
   }
-  return Promise.all(tasks); // resolves even if array is empty
+  return Promise.all(tasks);
 }
 
-/* ---------- Extract keys (extended) ---------- */
-async function extractRcKeys(event) {                              // :contentReference[oaicite:4]{index=4}
+/* ---------- Extract keys (incl. sub‑ & customerId) ---------- */
+async function extractRcKeys(event) {                               // same logic as previous
   switch (event.type) {
     case 'checkout.session.completed': {
       const cs = event.data.object;
@@ -208,7 +199,6 @@ async function extractRcKeys(event) {                              // :contentRe
         customerId: sub.customer,
       };
     }
-    /* invoice.* events (renewals) */
     case 'invoice.paid':
     case 'invoice.payment_succeeded':
     case 'invoice.updated':
@@ -220,7 +210,9 @@ async function extractRcKeys(event) {                              // :contentRe
       const appUserId =
         metaId ||
         (subId
-          ? (await stripe.subscriptions.retrieve(subId)).metadata?.app_user_id
+          ? (
+              await stripe.subscriptions.retrieve(subId)
+            ).metadata?.app_user_id
           : undefined);
       return {
         appUserId,
