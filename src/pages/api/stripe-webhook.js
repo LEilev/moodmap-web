@@ -1,19 +1,6 @@
-// pages/api/stripe-webhook.js
+// pages/api/stripe-webhook.js                        v4.0.5   • 2025‑08‑07
 // -----------------------------------------------------------------------------
-// MoodMap  •  Stripe  ➜  RevenueCat   (v4.0.3  – mail flyttet til klienten)
-// -----------------------------------------------------------------------------
-//
-//   ✔  fail‑soft: mangler userId/fetchToken ⇒ 200, Stripe retry stopper
-//   ✔  RC‑sync  (8 s timeout, 3× retry via axiosRetry)
-//   ✔  Kopierer app_user_id → subscription.metadata / customer.metadata
-//   ✔  Redis‑basert dedupe 24 h  (NX+EX)
-//   ✖  Ingen e‑post‑utsending her – sendes fra /thanks/client.js når bruker klikker
-//
-//   ENV (prod):
-//     STRIPE_SECRET_KEY              sk_live_…
-//     STRIPE_WEBHOOK_SECRET_PROD     whsec_…
-//     RC_STRIPE_PUBLIC_API_KEY       pub_…
-//     REDIS_URL                      rediss://…
+// Stripe  ➜  RevenueCat  (no mail)   · fail‑soft   · Redis‑dedupe 24 h
 // -----------------------------------------------------------------------------
 
 import Stripe from 'stripe';
@@ -28,12 +15,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-04-10',
 });
 
-/* ---------- Redis – single persistent conn ---------- */
+/* ---------- Redis ---------- */
 const redis =
   process.env.REDIS_URL ? createClient({ url: process.env.REDIS_URL }) : null;
 if (redis) redis.connect().catch(() => console.warn('[redis] connect fail'));
 
-/* ---------- Axios global retry ---------- */
+/* ---------- Axios retry ---------- */
 axiosRetry(axios, {
   retries: 3,
   retryDelay: (n) => n * 300,
@@ -43,7 +30,7 @@ axiosRetry(axios, {
     e.response?.status === 429,
 });
 
-/* ---------- Interested event types ---------- */
+/* ---------- Event allow‑list ---------- */
 const EVENTS = new Set([
   'checkout.session.completed',
   'customer.subscription.created',
@@ -59,14 +46,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST')
     return res.setHeader('Allow', 'POST').status(405).end('Method Not Allowed');
 
-  const raw = await getRaw(req);
-  const sig = req.headers['stripe-signature'];
-
+  const raw = await readRaw(req);
   let event;
   try {
     event = stripe.webhooks.constructEvent(
       raw,
-      sig,
+      req.headers['stripe-signature'],
       process.env.STRIPE_WEBHOOK_SECRET_PROD,
     );
   } catch (err) {
@@ -78,7 +63,7 @@ export default async function handler(req, res) {
   if (await alreadyProcessed(event.id)) return res.status(200).end();
 
   try {
-    /* ---------- 1 · Extract keys ---------- */
+    /* ---------- extract keys ---------- */
     const { appUserId, fetchToken, subId, customerId } =
       await extractRcKeys(event);
 
@@ -91,7 +76,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ skipped: true });
     }
 
-    /* ---------- 2 · Parallel tasks ---------- */
+    /* ---------- parallel tasks ---------- */
     const rcPromise = syncRevenueCat(appUserId, fetchToken);
     const metaPromise = maybeCopyMetadata(event.type, appUserId, subId, customerId);
 
@@ -102,6 +87,13 @@ export default async function handler(req, res) {
 
     const rcOk = rcRes.status === 'fulfilled';
     const metaOk = metaRes.status === 'fulfilled';
+    const rcError =
+      rcRes.status === 'rejected'
+        ? {
+            status: rcRes.reason?.response?.status,
+            data: rcRes.reason?.response?.data,
+          }
+        : undefined;
 
     await markProcessed(event.id);
     res.status(rcOk ? 202 : 200).json({ ok: rcOk, metaOk });
@@ -111,6 +103,7 @@ export default async function handler(req, res) {
       type: event.type,
       rcOk,
       metaOk,
+      rcError,
     });
   } catch (err) {
     console.error('[wh] ❌ unhandled', err);
@@ -118,17 +111,16 @@ export default async function handler(req, res) {
   }
 }
 
-/* ------------------------------------------------------------------ */
-/* Helpers                                                            */
-/* ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
+/* Helpers                                                                    */
+/* -------------------------------------------------------------------------- */
 
-function getRaw(req) {
+function readRaw(req) {
   return new Promise((r, j) => {
     const b = [];
-    req
-      .on('data', (c) => b.push(c))
-      .on('end', () => r(Buffer.concat(b)))
-      .on('error', j);
+    req.on('data', (c) => b.push(c))
+       .on('end', () => r(Buffer.concat(b)))
+       .on('error', j);
   });
 }
 
@@ -155,39 +147,37 @@ function syncRevenueCat(appUserId, fetchToken) {
   );
 }
 
-/* ---------- Copy metadata ---------- */
+/* ---------- copy metadata ---------- */
 function maybeCopyMetadata(type, userId, subId, customerId) {
   if (type !== 'checkout.session.completed') return Promise.resolve();
   const tasks = [];
   if (subId) {
     tasks.push(
-      stripe.subscriptions.update(subId, {
-        metadata: { app_user_id: userId },
-      }),
+      stripe.subscriptions.update(subId, { metadata: { app_user_id: userId } }),
     );
   }
   if (customerId) {
     tasks.push(
-      stripe.customers.update(customerId, {
-        metadata: { app_user_id: userId },
-      }),
+      stripe.customers.update(customerId, { metadata: { app_user_id: userId } }),
     );
   }
   return Promise.all(tasks);
 }
 
-/* ---------- Extract keys (incl. sub‑ & customerId) ---------- */
-async function extractRcKeys(event) {                               // same logic as previous
+/* ---------- extract keys (correct fetchToken rules) ---------- */
+async function extractRcKeys(event) {
   switch (event.type) {
+    /* ---- first purchase ---- */
     case 'checkout.session.completed': {
       const cs = event.data.object;
       return {
         appUserId: cs.client_reference_id || cs.metadata?.app_user_id,
-        fetchToken: cs.subscription,
-        subId: cs.subscription || undefined,
-        customerId: cs.customer || undefined,
+        fetchToken: cs.subscription,           // ✅ sub_… token accepted by RC
+        subId: cs.subscription,
+        customerId: cs.customer,
       };
     }
+    /* ---- sub create/delete ---- */
     case 'customer.subscription.created':
     case 'customer.subscription.deleted': {
       const sub = event.data.object;
@@ -199,6 +189,7 @@ async function extractRcKeys(event) {                               // same logi
         customerId: sub.customer,
       };
     }
+    /* ---- renewals / invoices ---- */
     case 'invoice.paid':
     case 'invoice.payment_succeeded':
     case 'invoice.updated':
@@ -210,17 +201,16 @@ async function extractRcKeys(event) {                               // same logi
       const appUserId =
         metaId ||
         (subId
-          ? (
-              await stripe.subscriptions.retrieve(subId)
-            ).metadata?.app_user_id
+          ? (await stripe.subscriptions.retrieve(subId)).metadata?.app_user_id
           : undefined);
       return {
         appUserId,
-        fetchToken: subId || inv.id,
+        fetchToken: inv.id,                    // ✅ invoice id
         subId,
         customerId: inv.customer,
       };
     }
+    /* ---- refunds ---- */
     case 'charge.refunded': {
       const ch = event.data.object;
       let appUserId =
