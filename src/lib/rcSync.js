@@ -1,52 +1,28 @@
-// rcSync.js
-// -------------------------------------------------------------
-// v1.1.0  ·  Strict app_user_id from metadata only
-//           One axios instance w/ retry + jitter
-// -------------------------------------------------------------
+// src/lib/rcSync.js
 import axios from "axios";
-import axiosRetry from "axios-retry";
 
-/** Single axios client w/ retry */
-const http = axios.create({ timeout: 8_000 });
-axiosRetry(http, {
-  retries: 3,
-  retryDelay: (n) => Math.pow(n, 2) * 200, // 0.2s, 0.8s, 1.8s
-  retryCondition: (err) =>
-    err.code === "ECONNABORTED" ||
-    err.response?.status >= 500 ||
-    err.response?.status === 429,
-});
+const RC_URL = "https://api.revenuecat.com/v1/incoming-webhooks/stripe/app2r0feC8610"; // behold din endepunkt-URL
+const KEY    = process.env.RC_STRIPE_PUBLIC_API_KEY;
 
-/**
- * Syncs a Stripe invoice/subscription event to RevenueCat.
- * Expects event.data.object to carry metadata.app_user_id (string),
- * and either .subscription (for sessions) or .id (for invoice).
- *
- * @param {object} stripeEvent  – Stripe event (or a shape-alike)
- * @returns {Promise<boolean>}  – true on 2xx, false on error
- */
-export async function rcSync(stripeEvent) {
+export async function rcSync(evt) {
   try {
-    const obj = stripeEvent?.data?.object || {};
-    const appUserId = obj?.metadata?.app_user_id || null; // ← strict; no client_reference_id fallback
-    const fetchToken = obj.subscription || obj.id;
+    const res = await axios.post(RC_URL, evt, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${KEY}`,
+      },
+      timeout: 15000,
+      validateStatus: () => true,
+    });
 
-    if (!appUserId || !fetchToken) return false;
+    if (res.status >= 200 && res.status < 300) return true;
 
-    await http.post(
-      "https://api.revenuecat.com/v1/receipts",
-      { app_user_id: appUserId, fetch_token: fetchToken },
-      {
-        headers: {
-          "X-Platform": "stripe",
-          Authorization: `Bearer ${process.env.RC_STRIPE_PUBLIC_API_KEY}`,
-        },
-      }
-    );
-
-    return true;
+    console.error("[rcSync] non-2xx", { status: res.status, data: res.data });
+    return false;
   } catch (e) {
-    console.error("[rcSync] fail", e?.message || e);
+    const status = e?.response?.status;
+    const data   = e?.response?.data;
+    console.error("[rcSync] fail", { status, data, message: e?.message });
     return false;
   }
 }
