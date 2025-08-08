@@ -1,44 +1,59 @@
 // src/lib/rcSync.js
 import axios from "axios";
 
-const RC_URL = "https://api.revenuecat.com/v1/receipts"; // official endpoint
-const KEY = process.env.RC_STRIPE_PUBLIC_API_KEY;
+/**
+ * RevenueCat sync for Stripe abonnementer.
+ * Viktig: fetch_token MÅ være Stripe subscription.id (sub_...),
+ * ikke invoice.id – ellers får man 400 / code 7403 ("The receipt is not valid").
+ *
+ * @param {{ appUserId: string, fetchToken: string }} params
+ * @returns {Promise<boolean>}
+ */
+export async function rcSync({ appUserId, fetchToken }) {
+  if (!appUserId || !fetchToken) {
+    console.warn("[rcSync] missing params", { appUserId: !!appUserId, fetchToken: !!fetchToken });
+    return false;
+  }
 
-// evt = minimal Stripe-like wrapper we pass from webhook
-export async function rcSync(evt) {
+  const RC_KEY = process.env.RC_STRIPE_PUBLIC_API_KEY;
+  if (!RC_KEY) {
+    console.error("[rcSync] missing RC_STRIPE_PUBLIC_API_KEY");
+    return false;
+  }
+
+  const data = {
+    app_user_id: appUserId,
+    fetch_token: fetchToken, // MUST be subscription.id for Stripe subs
+  };
+
   try {
-    const obj = evt?.data?.object || {};
-    const appUserId = obj?.metadata?.app_user_id || null;
-    // fetch_token is subscription id during cs.completed, invoice id for invoice.*
-    const fetchToken = obj.subscription || obj.id;
-
-    if (!appUserId || !fetchToken) {
-      console.warn("[rcSync] skip (missing app_user_id or fetch_token)", { appUserId: !!appUserId, fetchToken: !!fetchToken });
-      return false;
-    }
-
     const res = await axios.post(
-      RC_URL,
-      { app_user_id: appUserId, fetch_token: fetchToken },
+      "https://api.revenuecat.com/v1/receipts",
+      data,
       {
         headers: {
+          Authorization: `Bearer ${RC_KEY}`,
           "Content-Type": "application/json",
           "X-Platform": "stripe",
-          Authorization: `Bearer ${KEY}`,
         },
-        timeout: 15000,
+        // Stramme timeouts er bra i serverless
+        timeout: 8000,
         validateStatus: () => true,
       }
     );
 
-    if (res.status >= 200 && res.status < 300) return true;
+    if (res.status >= 200 && res.status < 300) {
+      // Optional: logg lavt – dette kan være spammy i prod
+      // console.info("[rcSync] ok", { status: res.status });
+      return true;
+    }
 
     console.error("[rcSync] non-2xx", { status: res.status, data: res.data });
     return false;
   } catch (e) {
     const status = e?.response?.status;
-    const data = e?.response?.data;
-    console.error("[rcSync] fail", { status, data, message: e?.message });
+    const dataResp = e?.response?.data;
+    console.error("[rcSync] fail", { status, data: dataResp, message: e?.message });
     return false;
   }
 }
