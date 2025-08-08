@@ -44,17 +44,25 @@ export default function HomePage() {
 
         {/* Stripe Payment Links – PromoteKit tracking */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+          {/* Monthly */}
           <a
             href="https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03"
-            className="inline-flex items-center justify-center bg-yellow-500 text-black rounded-lg px-6 py-3 text-sm font-semibold transition hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
+            className="inline-flex items-center justify-center bg-yellow-400 text-black rounded-xl px-6 py-3 text-sm font-semibold shadow hover:shadow-md hover:-translate-y-[1px] transition
+                       focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
           >
             Go Pro Monthly – $3.99
           </a>
+
+          {/* Yearly (highlight) */}
           <a
-            href="https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04"
-            className="inline-flex items-center justify-center bg-yellow-500 text-black rounded-lg px-6 py-3 text-sm font-semibold transition hover:bg-yellow-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-500"
+            href="https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04"  // ← bytt til ny Payment Link hvis $29.99 har egen URL
+            className="relative inline-flex items-center justify-center bg-gradient-to-r from-emerald-400 to-emerald-500 text-black rounded-xl px-6 py-3 text-sm font-semibold shadow
+                       hover:shadow-md hover:-translate-y-[1px] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-400"
           >
-            Go Pro Yearly – $33.99
+            <span className="absolute -top-3 right-3 bg-yellow-300 text-yellow-900 text-[11px] font-bold px-2 py-0.5 rounded-full shadow">
+              Best value
+            </span>
+            Go Pro Yearly – $29.99 · Save 37%
           </a>
         </div>
       </section>
