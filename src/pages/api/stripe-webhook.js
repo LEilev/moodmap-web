@@ -1,7 +1,10 @@
-// pages/api/stripe-webhook.js                       v4.0.6
+// pages/api/stripe-webhook.js                       v4.0.7
 // -----------------------------------------------------------------------------
-//  Δ  copyMetadata() legger nå også  metadata[ref_code]  på:
+//  Δ  checkout.session.completed: fallback henter ref_code fra Subscription
+//     hvis cs.metadata.ref_code mangler. copyMetadata() oppdaterer fortsatt:
 //     • subscription   • customer   • første invoice
+// -----------------------------------------------------------------------------
+//  Øvrig funksjonalitet beholdt: Redis-dedupe, RC-sync, logging/timeout.
 // -----------------------------------------------------------------------------
 import Stripe from 'stripe';
 import axios from 'axios';
@@ -41,12 +44,12 @@ export default async function handler(req, res) {
       await markProcessed(event.id); return res.status(200).end();
     }
 
-    /* 1 · RevenueCat */
+    /* 1 · RevenueCat */
     const rcPromise = axios.post('https://api.revenuecat.com/v1/receipts',
       { app_user_id: appUserId, fetch_token: fetchToken },
       { headers:{'X-Platform':'stripe',Authorization:`Bearer ${process.env.RC_STRIPE_PUBLIC_API_KEY}`}, timeout:8_000 });
 
-    /* 2 · Metadata → sub / customer / first invoice */
+    /* 2 · Metadata → sub / customer / first invoice */
     const metaPromise = copyMetadata({ subId, customerId, latestInvoice, appUserId, refCode });
 
     const [rcRes] = await Promise.allSettled([rcPromise, metaPromise]);
@@ -69,29 +72,41 @@ async function markProcessed(id){ if(redis) await redis.set(id,1,{NX:true,EX:86_
 
 /* copy both app_user_id & ref_code */
 async function copyMetadata({ subId, customerId, latestInvoice, appUserId, refCode }) {
-  if (!subId && !customerId) return;
+  if (!subId && !customerId && !latestInvoice) return;
   const meta = { app_user_id: appUserId };
   if (refCode) meta.ref_code = refCode;
 
   const tasks = [];
-  if (subId)      tasks.push(stripe.subscriptions.update(subId, { metadata: meta }));
-  if (customerId) tasks.push(stripe.customers.update(customerId,  { metadata: meta }));
+  if (subId)         tasks.push(stripe.subscriptions.update(subId, { metadata: meta }));
+  if (customerId)    tasks.push(stripe.customers.update(customerId,  { metadata: meta }));
   if (latestInvoice) tasks.push(stripe.invoices.update(latestInvoice, { metadata: meta }));
   return Promise.all(tasks);
 }
 
-/* extract keys incl. refCode & latestInvoice */
+/* extract keys incl. refCode & latestInvoice (patched for CS fallback) */
 async function extractKeys(event){
   switch(event.type){
     case 'checkout.session.completed': {
       const cs = event.data.object;
+      let refCode = cs.metadata?.ref_code || null;
+
+      // PATCH: fallback til subscription.metadata.ref_code dersom CS mangler det
+      if (!refCode && cs.subscription) {
+        try {
+          const sub = await stripe.subscriptions.retrieve(cs.subscription);
+          refCode = sub.metadata?.ref_code || null;
+        } catch (e) {
+          console.warn('[wh] ref_code fallback failed', e.message);
+        }
+      }
+
       return {
         appUserId : cs.client_reference_id || cs.metadata?.app_user_id,
         fetchToken: cs.subscription,                      // sub_…
         subId     : cs.subscription,
         customerId: cs.customer,
-        refCode   : cs.metadata?.ref_code,
-        latestInvoice: cs.invoice,
+        refCode,
+        latestInvoice: cs.invoice,                        // første invoice
       };
     }
     case 'customer.subscription.created':
