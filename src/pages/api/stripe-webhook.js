@@ -42,7 +42,10 @@ async function readRawBody(req) {
 async function upstashGet(key) {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) return null; // fallback til prosessminne i redis-dedupe-modulen
   const url = `${UPSTASH_URL}/get/${encodeURIComponent(key)}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }, cache: "no-store" });
+  const res = await fetch(url, {
+    headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
+    cache: "no-store",
+  });
   if (!res.ok) return null;
   const json = await res.json().catch(() => null);
   const val = json?.result;
@@ -55,10 +58,17 @@ async function upstashGet(key) {
 
 async function upstashSetEx(key, seconds, value) {
   if (!UPSTASH_URL || !UPSTASH_TOKEN) return false;
-  const body = JSON.stringify([key, typeof value === "string" ? value : JSON.stringify(value), seconds]);
+  const body = JSON.stringify([
+    key,
+    typeof value === "string" ? value : JSON.stringify(value),
+    seconds,
+  ]);
   const res = await fetch(`${UPSTASH_URL}/setex`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${UPSTASH_TOKEN}`, "content-type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${UPSTASH_TOKEN}`,
+      "content-type": "application/json",
+    },
     body,
   });
   return res.ok;
@@ -111,9 +121,7 @@ async function resolveRefCode({ session, invoice, subscriptionId, redisKey }) {
 
   // 2) Fra session (metadata eller client_reference_id)
   const sesRef =
-    session?.metadata?.ref_code ||
-    session?.client_reference_id ||
-    null;
+    session?.metadata?.ref_code || session?.client_reference_id || null;
   if (sesRef) return sesRef;
 
   // 3) Fra invoice.metadata
@@ -136,7 +144,13 @@ async function resolveRefCode({ session, invoice, subscriptionId, redisKey }) {
 /**
  * Skriv metadata på Subscription / Customer / Invoice
  */
-async function writeStripeMetadata({ subscriptionId, customerId, invoiceId, refCode, appUserId }) {
+async function writeStripeMetadata({
+  subscriptionId,
+  customerId,
+  invoiceId,
+  refCode,
+  appUserId,
+}) {
   const meta = {};
   if (refCode) meta.ref_code = ensureString(refCode);
   if (appUserId) meta.app_user_id = ensureString(appUserId);
@@ -165,7 +179,10 @@ async function writeStripeMetadata({ subscriptionId, customerId, invoiceId, refC
   if (invoiceId && Object.keys(meta).length) {
     try {
       const inv = await stripe.invoices.update(invoiceId, { metadata: meta });
-      console.info("[wh] wrote invoice.metadata", { invoiceId, metadata: inv?.metadata });
+      console.info("[wh] wrote invoice.metadata", {
+        invoiceId,
+        metadata: inv?.metadata,
+      });
     } catch (e) {
       console.warn("[wh] write invoice.metadata failed", e?.message);
     }
@@ -185,7 +202,10 @@ async function primeInvoiceMetadata(inv) {
       const sub = await stripe.subscriptions.retrieve(subId);
       ensuredRef = sub?.metadata?.ref_code || null;
     } catch (e) {
-      console.warn("[wh] ref_code fallback (invoice.created/finalized) failed", e?.message);
+      console.warn(
+        "[wh] ref_code fallback (invoice.created/finalized) failed",
+        e?.message
+      );
     }
   }
 
@@ -207,9 +227,13 @@ async function primeInvoiceMetadata(inv) {
     if (appUserId) meta.app_user_id = appUserId;
 
     if (Object.keys(meta).length > 0) {
-      await stripe.invoices.update(inv.id, { metadata: { ...(inv.metadata || {}), ...meta } });
+      await stripe.invoices.update(inv.id, {
+        metadata: { ...(inv.metadata || {}), ...meta },
+      });
       console.info("[wh] primed invoice.metadata (created/finalized)", {
-        id: inv.id, ref_code: ensuredRef || null, app_user_id: appUserId || null,
+        id: inv.id,
+        ref_code: ensuredRef || null,
+        app_user_id: appUserId || null,
       });
     } else {
       console.info("[wh] nothing to prime (created/finalized)", { id: inv.id });
@@ -234,7 +258,11 @@ export default async function handler(req, res) {
   try {
     const rawBody = await readRawBody(req);
     const sig = req.headers["stripe-signature"];
-    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe.webhooks.constructEvent(
+      rawBody,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
   } catch (e) {
     console.error("[wh] signature verification failed", e?.message);
     return res.status(400).send("Invalid signature");
@@ -269,20 +297,25 @@ export default async function handler(req, res) {
         const customerId = cs?.customer || null;
 
         // E-post → app_user_id
-        const email = await extractEmailFromStripe({ session: cs, invoice: null });
+        const email = await extractEmailFromStripe({
+          session: cs,
+          invoice: null,
+        });
         const appUserId = email ? hashEmail(email) : null;
 
         // ref_code: metadata.ref_code > client_reference_id
         const refCode =
-          cs?.metadata?.ref_code ||
-          cs?.client_reference_id ||
-          null;
+          cs?.metadata?.ref_code || cs?.client_reference_id || null;
 
         // Redis-hint for invoice
         if (invoiceId) {
           const key = `inv:${invoiceId}`;
           await upstashSetEx(key, 900, { ref_code: refCode, app_user_id: appUserId });
-          console.info("[wh] set hint", { key, ref_code: refCode, app_user_id: appUserId });
+          console.info("[wh] set hint", {
+            key,
+            ref_code: refCode,
+            app_user_id: appUserId,
+          });
         }
 
         // Backfill metadata på Stripe-objekter (sub / customer / invoice)
@@ -298,7 +331,11 @@ export default async function handler(req, res) {
         const fetchToken = stripeFetchToken({ subscription: subscriptionId });
         if (fetchToken && appUserId) {
           const ok = await rcSync({ appUserId, fetchToken });
-          console.info("[wh] rcSync (cs.completed)", { ok, fetchToken, appUserId });
+          console.info("[wh] rcSync (cs.completed)", {
+            ok,
+            fetchToken,
+            appUserId,
+          });
         }
 
         // Logg etter oppdatering (nyttig ved feilsøking)
@@ -330,7 +367,7 @@ export default async function handler(req, res) {
         // Redis-hint
         const key = invoiceId ? `inv:${invoiceId}` : null;
 
-        // ref_code: hint > invoice.metadata > subscription.metadata > session (ikke tilgjengelig her)
+        // ref_code: hint > invoice.metadata > subscription.metadata
         const refCode = await resolveRefCode({
           session: null,
           invoice: inv,
@@ -339,7 +376,10 @@ export default async function handler(req, res) {
         });
 
         // app_user_id fra email
-        const email = await extractEmailFromStripe({ invoice: inv, session: null });
+        const email = await extractEmailFromStripe({
+          invoice: inv,
+          session: null,
+        });
         const appUserId = email ? hashEmail(email) : null;
 
         // ensure metadata på invoice/sub/customer
@@ -355,5 +395,35 @@ export default async function handler(req, res) {
         const fetchToken = stripeFetchToken(inv); // -> subscription.id
         if (fetchToken && appUserId) {
           const ok = await rcSync({ appUserId, fetchToken });
-          console.info("[wh] rcSync (invoice.*)", { ok, fetchToken, appUserId, ev: event.type });
+          console.info("[wh] rcSync (invoice.*)", {
+            ok,
+            fetchToken,
+            appUserId,
+            ev: event.type,
+          });
         } else {
+          console.info("[wh] skip rcSync (missing appUserId or fetchToken)", {
+            fetchToken,
+            appUserId,
+            ev: event.type,
+          });
+        }
+
+        break;
+      }
+
+      default: {
+        // andre events ignoreres
+        break;
+      }
+    }
+
+    await markProcessed(id);
+    return res.status(200).json({ ok: true });
+  } catch (err) {
+    console.error("[wh] handler error", err);
+    return res
+      .status(500)
+      .json({ ok: false, error: String(err?.message || err) });
+  }
+}
