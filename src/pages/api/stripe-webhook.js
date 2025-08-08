@@ -1,13 +1,12 @@
 // pages/api/stripe-webhook.js
 // -----------------------------------------------------------------------------
-// v4.0.9 – metadata-guard: backfill invoice.metadata { ref_code, app_user_id }
-//           + e-posthash som app_user_id  ·  uendret ref_code-flyt
+// v4.0.10 – no 'micro' dep (raw body helper) + correct rcSync import path
+//           includes v4.0.9 metadata-guard + email-hash app_user_id
 // -----------------------------------------------------------------------------
 
 import Stripe from "stripe";
-import { buffer } from "micro";
 import { alreadyProcessed, markProcessed } from "@/lib/redis-dedupe";
-import { rcSync } from "@/rcSync";
+import { rcSync } from "@/lib/rcSync"; // ← fixed path
 import crypto from "crypto";
 
 export const config = { api: { bodyParser: false } };
@@ -19,7 +18,21 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const hashEmail = (e) =>
   e ? crypto.createHash("sha256").update(e.trim().toLowerCase()).digest("hex") : null;
 
-// Kopierer metadata til subscription/customer/invoice
+// Minimal raw body helper (avoids 'micro' dependency)
+async function getRawBody(req) {
+  return await new Promise((resolve, reject) => {
+    try {
+      const chunks = [];
+      req.on("data", (c) => chunks.push(c));
+      req.on("end", () => resolve(Buffer.concat(chunks)));
+      req.on("error", reject);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+// Copy metadata to subscription/customer/invoice
 async function copyMetadata(stripeObj, { app_user_id, ref_code }) {
   const meta = {};
   if (app_user_id) meta.app_user_id = app_user_id;
@@ -32,7 +45,6 @@ async function copyMetadata(stripeObj, { app_user_id, ref_code }) {
     if (stripeObj.customer) {
       await stripe.customers.update(stripeObj.customer, { metadata: meta });
     }
-    // Oppdater invoice hvis det faktisk er en invoice (object-id starter på "in_")
     if (stripeObj.id && (stripeObj.object === "invoice" || String(stripeObj.id).startsWith("in_"))) {
       await stripe.invoices.update(stripeObj.id, { metadata: meta });
     }
@@ -41,14 +53,13 @@ async function copyMetadata(stripeObj, { app_user_id, ref_code }) {
   }
 }
 
-// Ekstraherer nøkler for ulike event-typer
+// Extract keys per event
 async function extractKeys(event) {
   switch (event.type) {
     case "checkout.session.completed": {
       const cs = event.data.object;
       let refCode = cs.metadata?.ref_code || null;
 
-      // Fallback: hent fra subscription.metadata
       if (!refCode && cs.subscription) {
         try {
           const sub = await stripe.subscriptions.retrieve(cs.subscription);
@@ -58,7 +69,6 @@ async function extractKeys(event) {
         }
       }
 
-      // app_user_id fra e-post
       let email = cs.customer_details?.email || null;
       if (!email && cs.customer) {
         const cust = await stripe.customers.retrieve(cs.customer);
@@ -83,7 +93,7 @@ async function extractKeys(event) {
       const inv = event.data.object;
       const subId = inv.subscription;
 
-      // ---- ensure we have ref_code (prefer invoice, fallback to subscription) ----
+      // Ensure ref_code (prefer invoice, fallback subscription)
       let ensuredRef = inv.metadata?.ref_code || null;
       if (!ensuredRef && subId) {
         try {
@@ -94,7 +104,7 @@ async function extractKeys(event) {
         }
       }
 
-      // ---- app_user_id fra e-post (prefer invoice.customer_email, fallback via customer/sub) ----
+      // Email → app_user_id
       let email = inv.customer_email || null;
       if (!email && inv.customer) {
         try {
@@ -114,7 +124,7 @@ async function extractKeys(event) {
         }
       }
 
-      // ---- GUARD: backfill invoice.metadata if missing ----
+      // Backfill invoice.metadata if missing
       const needsRef = !inv.metadata?.ref_code && ensuredRef;
       const needsUser = !inv.metadata?.app_user_id && appUserId;
       if (needsRef || needsUser) {
@@ -151,7 +161,7 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    const buf = await buffer(req);
+    const buf = await getRawBody(req); // ← no 'micro'
     event = stripe.webhooks.constructEvent(
       buf,
       sig,
@@ -162,7 +172,6 @@ export default async function handler(req, res) {
     return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  // Deduplication
   const eventId = event.id;
   if (await alreadyProcessed(eventId)) {
     return res.status(200).send("[wh] duplicate event skipped");
@@ -175,13 +184,11 @@ export default async function handler(req, res) {
       return res.status(200).send("[wh] unhandled event type");
     }
 
-    // Oppdater metadata på Stripe-objekter (sub/customer/invoice)
     await copyMetadata(event.data.object, {
       app_user_id: keys.appUserId,
       ref_code: keys.refCode,
     });
 
-    // Spesialtilfelle: oppdater også invoice.metadata ved cs.completed (før 1. invoice.paid)
     if (event.type === "checkout.session.completed" && keys.latestInvoice) {
       try {
         await stripe.invoices.update(keys.latestInvoice, {
@@ -195,7 +202,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // RevenueCat sync – krever at metadata.app_user_id er på fetchToken-objektet
     const rcOk = await rcSync({
       data: { object: { id: keys.fetchToken, metadata: { app_user_id: keys.appUserId } } },
     });
