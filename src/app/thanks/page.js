@@ -1,78 +1,97 @@
 // src/app/thanks/page.js
 // -----------------------------------------------------------------------------
-// v2.6.0  · adds ?ce=email param via server‑side redirect (once)
-//         · keeps alias support (session_id/sid) and HMAC verification
+// Thanks (server) – bygger ferdig deep link til /activate og sørger for at
+//   1) u = sha256(lowercase(email))     ← unik, stabil app_user_id
+//   2) HMAC-signert UL (u, s, exp, sig)
+//   3) ?ce=email appendes én gang via redirect, slik at klienten kan sende mail
 // -----------------------------------------------------------------------------
-export const dynamic = 'force-dynamic';
+// Avh.: STRIPE_SECRET_KEY, UNIVERSAL_LINK_SECRET
+// -----------------------------------------------------------------------------
 
-export const metadata = {
-  title: 'MoodMap • Payment successful',
-  robots: { index: false, follow: false },
-};
-
-import Stripe from 'stripe';
-import {
-  generateHmacSignature,
-  verifyHmacSignature,
-} from '@/lib/universal-link';
-import ThanksClient from './client';
-import { redirect } from 'next/navigation';
+import Stripe from "stripe";
+import crypto from "crypto";
+import { redirect } from "next/navigation";
+import ThanksClient from "./client";
+import { generateHmacSignature } from "@/lib/universal-link";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2024-04-10',
+  apiVersion: "2024-06-20",
 });
 
-export default async function ThanksPage({ searchParams = {} }) {
-  /* ---------- 0 · Query params & alias ---------- */
-  let {
-    u = '',
-    s = '',
-    exp = '',
-    sig = '',
-    cs = '',
-    session_id = '',
-    sid = '',
-    ce = '', // customer e‑mail (may be missing on first load)
-  } = searchParams;
+// Helper: sha256(email)
+function hashEmail(e) {
+  return crypto.createHash("sha256").update(e.trim().toLowerCase()).digest("hex");
+}
 
-  if (!cs) cs = session_id || sid;
+// Helper: bygg full UL til /activate
+function buildDeepLink(u, s, exp, sig) {
+  const base = "https://moodmap-app.com/activate";
+  const q = new URLSearchParams({ u, s, exp: String(exp), sig });
+  return `${base}?${q.toString()}`;
+}
 
-  /* ---------- 1 · Resolve from Checkout‑Session if needed ---------- */
-  let email = ce;
-  if (cs && !(u && s && exp && sig)) {
+// Server component
+export default async function ThanksPage({ searchParams }) {
+  // Klient kan allerede ha komplette parametere (f.eks. fra e-postlenke)
+  let u = searchParams?.u || "";
+  let s = searchParams?.s || searchParams?.cs || ""; // støtter ?cs= også
+  let exp = searchParams?.exp || "";
+  let sig = searchParams?.sig || "";
+  let ce = searchParams?.ce || ""; // e-post, om allerede injectet
+  let deepLink = "";
+  let email = "";
+
+  // Hvis vi ikke har komplett UL-sett, men har en Checkout Session-id (s/cs),
+  // henter vi session for å bygge u/s/exp/sig + ce.
+  const missingUL = !(u && s && exp && sig);
+  if (missingUL && s) {
     try {
-      const session = await stripe.checkout.sessions.retrieve(cs, {
-        expand: ['customer_details'],
+      const session = await stripe.checkout.sessions.retrieve(s, {
+        expand: ["customer_details"],
       });
-      u     = session.client_reference_id || session.metadata?.app_user_id || '';
-      s     = cs;
-      exp   = Math.floor(Date.now() / 1000) + 600; // 10 min
-      sig   = generateHmacSignature(u, s, exp);
-      email = session.customer_details?.email || '';
+
+      // e-post er obligatorisk i Payment Link-oppsettet ditt; fallback er likevel med
+      const email0 = session.customer_details?.email || "";
+      const uHash = email0 ? hashEmail(email0) : (session.metadata?.app_user_id || "");
+
+      // Sett nøkler
+      u = uHash || "";
+      exp = Math.floor(Date.now() / 1000) + 600; // 10 minutter gyldighet
+      sig = generateHmacSignature(u, s, exp);
+      email = email0;
+
+      // Første gang: legg på ?ce=<email> slik at klienten kan sende mail ved klikk
+      if (email && !searchParams?.ce) {
+        const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://moodmap-app.com"}/thanks`);
+        url.searchParams.set("u", u);
+        url.searchParams.set("s", s);
+        url.searchParams.set("exp", String(exp));
+        url.searchParams.set("sig", sig);
+        url.searchParams.set("ce", email);
+        // Bevar ev. opprinnelig ?cs= for historikk/lenker (valgfritt)
+        if (searchParams?.cs) url.searchParams.set("cs", searchParams.cs);
+
+        redirect(url.toString());
+      }
     } catch (err) {
-      console.warn('[thanks] Stripe lookup failed', err.message);
-      return <ThanksClient deepLink="" />;
+      console.error("[thanks] Failed to retrieve Checkout Session", err?.message || err);
+      // Fortsetter til render av feilmelding under hvis vi ikke kan bygge link
     }
+  } else if (!missingUL) {
+    // Parametre er allerede komplette – hvis ce ikke finnes men email ligger i URL,
+    // lar vi klienten håndtere fallback-form (manuelt input).
+    email = ce || "";
   }
 
-  /* ---------- 2 · First‑time redirect to add ce=email ---------- */
-  if (email && !ce) {
-    const url = new URL('/thanks', process.env.NEXT_PUBLIC_BASE_URL || 'https://moodmap-app.com');
-    url.searchParams.set('u', u);
-    url.searchParams.set('s', s);
-    url.searchParams.set('exp', exp);
-    url.searchParams.set('sig', sig);
-    url.searchParams.set('ce', email);          // new param
-    redirect(url.toString());                   // one‑time 307
+  // Bygg deepLink hvis vi har alt
+  if (u && s && exp && sig) {
+    deepLink = buildDeepLink(u, s, exp, sig);
   }
 
-  /* ---------- 3 · Verify HMAC ---------- */
-  const isValid = verifyHmacSignature(u, s, exp, sig);
-  const deepLink = isValid
-    ? `https://moodmap-app.com/activate?u=${encodeURIComponent(
-        u,
-      )}&s=${encodeURIComponent(s)}&exp=${exp}&sig=${sig}`
-    : '';
-
+  // Server-render: send ferdig deepLink som prop.
+  // Klienten vil:
+  //  - vise "Open MoodMap"-knapp
+  //  - QR + copy
+  //  - sende e-post ved klikk hvis ?ce= er i URL (dedupe pr sessionId) – se client.js
   return <ThanksClient deepLink={deepLink} />;
 }
