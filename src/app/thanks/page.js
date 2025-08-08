@@ -34,14 +34,23 @@ function buildDeepLink(u, s, exp, sig) {
 export default async function ThanksPage({ searchParams }) {
   // Klient kan allerede ha komplette parametere (f.eks. fra e-postlenke)
   let u = searchParams?.u || "";
-  let s = searchParams?.s || searchParams?.cs || ""; // støtter ?cs= også
+  // Nå støtter vi s, cs og session_id
+  let s =
+    searchParams?.s ||
+    searchParams?.cs ||
+    searchParams?.session_id ||
+    "";
   let exp = searchParams?.exp || "";
   let sig = searchParams?.sig || "";
   let ce = searchParams?.ce || ""; // e-post, om allerede injectet
   let deepLink = "";
   let email = "";
 
-  // Hvis vi ikke har komplett UL-sett, men har en Checkout Session-id (s/cs),
+  if (!s) {
+    console.warn("[thanks] missing session id (s/cs/session_id). Cannot build deep link.");
+  }
+
+  // Hvis vi ikke har komplett UL-sett, men har en Checkout Session-id (s/cs/session_id),
   // henter vi session for å bygge u/s/exp/sig + ce.
   const missingUL = !(u && s && exp && sig);
   if (missingUL && s) {
@@ -62,14 +71,17 @@ export default async function ThanksPage({ searchParams }) {
 
       // Første gang: legg på ?ce=<email> slik at klienten kan sende mail ved klikk
       if (email && !searchParams?.ce) {
-        const url = new URL(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://moodmap-app.com"}/thanks`);
+        const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://moodmap-app.com";
+        const url = new URL(`${base}/thanks`);
         url.searchParams.set("u", u);
         url.searchParams.set("s", s);
         url.searchParams.set("exp", String(exp));
         url.searchParams.set("sig", sig);
         url.searchParams.set("ce", email);
-        // Bevar ev. opprinnelig ?cs= for historikk/lenker (valgfritt)
+
+        // Bevar ev. opprinnelig alias-param
         if (searchParams?.cs) url.searchParams.set("cs", searchParams.cs);
+        if (searchParams?.session_id) url.searchParams.set("session_id", searchParams.session_id);
 
         redirect(url.toString());
       }

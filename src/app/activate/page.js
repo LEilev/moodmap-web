@@ -1,12 +1,3 @@
-// src/app/activate/page.js
-// -----------------------------------------------------------------------------
-// Universal Link landing – safe, user-first fallback
-//  - Never auto-open store immediately
-//  - Delay fallback 10s, cancel on app open / user interaction
-//  - Platform-aware store links (iOS vs Android)
-//  - Optional suppression: "Don't send me to the store" (60m)
-// -----------------------------------------------------------------------------
-
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -18,21 +9,19 @@ const APPSTORE_LINK =
 
 function isAndroid() {
   if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || "";
-  return /Android/i.test(ua);
+  return /Android/i.test(navigator.userAgent || "");
 }
 
 function isIOS() {
   if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || "";
-  return /iPhone|iPad|iPod/i.test(ua);
+  return /iPhone|iPad|iPod/i.test(navigator.userAgent || "");
 }
 
 function isInAppBrowser() {
   if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || "";
-  // Rough heuristics for IG/FB/TikTok/Twitter in-app browsers
-  return /FBAN|FBAV|Instagram|Line|WeChat|MicroMessenger|TikTok|Twitter/i.test(ua);
+  return /FBAN|FBAV|Instagram|Line|WeChat|MicroMessenger|TikTok|Twitter/i.test(
+    navigator.userAgent || ""
+  );
 }
 
 function getStoreLink() {
@@ -47,20 +36,17 @@ export default function ActivatePage({ searchParams }) {
   const [suppressed, setSuppressed] = useState(false);
   const [inApp, setInApp] = useState(false);
 
-  // Read signed UL params
   const u = searchParams?.u || "";
   const s = searchParams?.s || "";
   const exp = searchParams?.exp || "";
   const sig = searchParams?.sig || "";
 
-  // Build the deep link back into app
   const deepLink = useMemo(() => {
     if (!u || !s || !exp || !sig) return "";
     const q = new URLSearchParams({ u, s, exp, sig });
     return `https://moodmap-app.com/activate?${q.toString()}`;
   }, [u, s, exp, sig]);
 
-  // Track a single fallback timer
   const timerRef = useRef(null);
   const cancelFallback = () => {
     if (timerRef.current) {
@@ -69,7 +55,6 @@ export default function ActivatePage({ searchParams }) {
     }
   };
 
-  // Respect "do not redirect" suppression (60 min)
   useEffect(() => {
     try {
       const until = localStorage.getItem("mm_store_suppress_until");
@@ -78,46 +63,41 @@ export default function ActivatePage({ searchParams }) {
     setInApp(isInAppBrowser());
   }, []);
 
-  // Set up safe fallback: wait 10s, cancel on open/blur/visibilitychange/pagehide
   useEffect(() => {
     if (!deepLink) return;
 
-    // Open app immediately on load (user can also press the button)
-    // We rely on the OS to handle the universal link → app.
     const openApp = () => {
       try {
         window.location.assign(deepLink);
       } catch {}
     };
-
     openApp();
 
-    // Schedule fallback only if not suppressed
+    const delayMs = inApp ? 10_000 : 3_000;
+
     if (!suppressed) {
       timerRef.current = setTimeout(() => {
-        // still visible and user hasn't interacted → send to the correct store
         try {
           window.location.assign(getStoreLink());
         } catch {}
-      }, 10_000); // 10s
+      }, delayMs);
     }
 
-    // Cancel on signals that likely mean the app opened or user acted
     const cancelers = [
       ["visibilitychange", () => document.hidden && cancelFallback()],
       ["pagehide", cancelFallback],
       ["blur", cancelFallback],
-      ["focus", () => {}], // no-op; reserving if needed later
     ];
-    cancelers.forEach(([ev, fn]) => window.addEventListener(ev, fn, { passive: true }));
+    cancelers.forEach(([ev, fn]) =>
+      window.addEventListener(ev, fn, { passive: true })
+    );
 
     return () => {
       cancelFallback();
       cancelers.forEach(([ev, fn]) => window.removeEventListener(ev, fn));
     };
-  }, [deepLink, suppressed]);
+  }, [deepLink, suppressed, inApp]);
 
-  // User-initiated open = always cancel fallback
   const handleOpenClick = () => {
     cancelFallback();
     try {
@@ -128,7 +108,7 @@ export default function ActivatePage({ searchParams }) {
   const handleSuppress = () => {
     cancelFallback();
     try {
-      const until = nowSec() + 60 * 60; // 60 min
+      const until = nowSec() + 60 * 60;
       localStorage.setItem("mm_store_suppress_until", String(until));
       setSuppressed(true);
     } catch {}
@@ -139,7 +119,8 @@ export default function ActivatePage({ searchParams }) {
       <div className="w-full max-w-xl bg-white/5 backdrop-blur-lg p-8 rounded-3xl">
         <h1 className="text-3xl font-bold text-center mb-3">Open MoodMap</h1>
         <p className="text-center opacity-90 mb-6">
-          Tap the button to open the app. If it’s not installed, we’ll offer the store shortly.
+          Tap the button to open the app. If it’s not installed, we’ll offer the
+          store shortly.
         </p>
 
         <a
@@ -152,7 +133,8 @@ export default function ActivatePage({ searchParams }) {
 
         {inApp && (
           <p className="text-sm text-center mb-4 opacity-90">
-            If this doesn’t open the app, tap the ••• menu and choose “Open in Safari/Chrome”, then try again.
+            If this doesn’t open the app, tap the ••• menu and choose “Open in
+            Safari/Chrome”, then try again.
           </p>
         )}
 
@@ -160,7 +142,9 @@ export default function ActivatePage({ searchParams }) {
           <button
             onClick={() => {
               cancelFallback();
-              try { window.location.assign(getStoreLink()); } catch {}
+              try {
+                window.location.assign(getStoreLink());
+              } catch {}
             }}
             className="underline"
           >
@@ -173,7 +157,8 @@ export default function ActivatePage({ searchParams }) {
         </div>
 
         <p className="text-center text-xs opacity-70 mt-6">
-          We’ll only suggest the store after ~10s if the app didn’t open.
+          We’ll only suggest the store after a short delay if the app didn’t
+          open.
         </p>
       </div>
     </main>

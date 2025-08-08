@@ -1,15 +1,15 @@
-// pages/api/stripe-webhook.js
+// src/pages/api/stripe-webhook.js
 // -----------------------------------------------------------------------------
-// v4.0.10 – no 'micro' dep (raw body helper) + correct rcSync import path
-//           includes v4.0.9 metadata-guard + email-hash app_user_id
+// v4.0.11 – metadata-guard + e-posthash app_user_id
+//           maxDuration: 30 for robusthet
 // -----------------------------------------------------------------------------
 
 import Stripe from "stripe";
 import { alreadyProcessed, markProcessed } from "@/lib/redis-dedupe";
-import { rcSync } from "@/lib/rcSync"; // ← fixed path
+import { rcSync } from "@/lib/rcSync";
 import crypto from "crypto";
 
-export const config = { api: { bodyParser: false } };
+export const config = { api: { bodyParser: false }, maxDuration: 30 };
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
@@ -18,7 +18,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
 const hashEmail = (e) =>
   e ? crypto.createHash("sha256").update(e.trim().toLowerCase()).digest("hex") : null;
 
-// Minimal raw body helper (avoids 'micro' dependency)
+// Minimal raw body helper (unngår 'micro')
 async function getRawBody(req) {
   return await new Promise((resolve, reject) => {
     try {
@@ -32,7 +32,7 @@ async function getRawBody(req) {
   });
 }
 
-// Copy metadata to subscription/customer/invoice
+// Kopierer metadata til subscription/customer/invoice
 async function copyMetadata(stripeObj, { app_user_id, ref_code }) {
   const meta = {};
   if (app_user_id) meta.app_user_id = app_user_id;
@@ -53,7 +53,7 @@ async function copyMetadata(stripeObj, { app_user_id, ref_code }) {
   }
 }
 
-// Extract keys per event
+// Ekstraherer nøkler for ulike event-typer
 async function extractKeys(event) {
   switch (event.type) {
     case "checkout.session.completed": {
@@ -93,7 +93,6 @@ async function extractKeys(event) {
       const inv = event.data.object;
       const subId = inv.subscription;
 
-      // Ensure ref_code (prefer invoice, fallback subscription)
       let ensuredRef = inv.metadata?.ref_code || null;
       if (!ensuredRef && subId) {
         try {
@@ -104,7 +103,6 @@ async function extractKeys(event) {
         }
       }
 
-      // Email → app_user_id
       let email = inv.customer_email || null;
       if (!email && inv.customer) {
         try {
@@ -124,7 +122,6 @@ async function extractKeys(event) {
         }
       }
 
-      // Backfill invoice.metadata if missing
       const needsRef = !inv.metadata?.ref_code && ensuredRef;
       const needsUser = !inv.metadata?.app_user_id && appUserId;
       if (needsRef || needsUser) {
@@ -161,7 +158,7 @@ export default async function handler(req, res) {
   let event;
 
   try {
-    const buf = await getRawBody(req); // ← no 'micro'
+    const buf = await getRawBody(req);
     event = stripe.webhooks.constructEvent(
       buf,
       sig,
