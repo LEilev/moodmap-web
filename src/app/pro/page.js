@@ -8,16 +8,17 @@ export const metadata = {
 };
 
 function buildPlanHref(type, searchParams) {
-  const ref =
-    searchParams?.ref ||
-    searchParams?.via ||
-    searchParams?.pk_ref ||
-    searchParams?.creator ||
-    searchParams?.utm_campaign ||
-    "";
-
   const qs = new URLSearchParams({ type: type === "yearly" ? "yearly" : "monthly" });
-  if (ref) qs.set("ref", String(ref));
+
+  // Forward any of these keys if present (analytics + robust ref handling)
+  const forwardKeys = ["ref", "via", "pk_ref", "creator", "utm_campaign"];
+  for (const k of forwardKeys) {
+    const v = searchParams?.[k];
+    if (!v) continue;
+    const val = Array.isArray(v) ? v[0] : v;
+    if (val) qs.set(k, String(val));
+  }
+
   return `/buy?${qs.toString()}`;
 }
 
@@ -36,6 +37,7 @@ export default function ProPage({ searchParams }) {
 
         <div className="mt-10 mx-auto max-w-xl rounded-2xl bg-white/5 backdrop-blur-sm p-3 ring-1 ring-white/10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Monthly via /buy */}
             <Link
               href={buildPlanHref("monthly", searchParams)}
               prefetch={false}
@@ -47,6 +49,7 @@ export default function ProPage({ searchParams }) {
               <span className="text-sm text-slate-700">$3.99 / month</span>
             </Link>
 
+            {/* Yearly via /buy */}
             <Link
               href={buildPlanHref("yearly", searchParams)}
               prefetch={false}

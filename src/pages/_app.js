@@ -2,11 +2,11 @@
 import Script from "next/script";
 
 export default function MyApp({ Component, pageProps }) {
-  const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // samme som i app/layout.js
+  const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // same as in app/layout.js (LIVE)
 
   return (
     <>
-      {/* PromoteKit – må lastes i Pages-routeren også (/go, /buy) */}
+      {/* PromoteKit (Option 2: Stripe Payment Links) */}
       <Script
         id="promotekit-loader"
         src="https://cdn.promotekit.com/promotekit.js"
@@ -14,10 +14,13 @@ export default function MyApp({ Component, pageProps }) {
         data-promotekit={PK_SITE_ID}
       />
 
-      {/* Liten helper: sørg for client_reference_id på Stripe-lenker/embeds */}
+      {/* Helper: ensure client_reference_id is added to Stripe links/embeds */}
       <Script id="promotekit-helper" strategy="afterInteractive">
         {`
 (function () {
+  if (window.__promotekitHelperInstalled) return;
+  window.__promotekitHelperInstalled = true;
+
   function findReferral() {
     try {
       if (window.promotekit_referral) return String(window.promotekit_referral);
