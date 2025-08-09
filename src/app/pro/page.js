@@ -1,16 +1,27 @@
 // src/app/pro/page.js
+import Link from "next/link";
+
 export const metadata = {
   title: "MoodMap Pro",
   description:
     "Unlock MoodMap Pro for extra features and guidance. Monthly or yearly.",
 };
 
-const LINKS = {
-  monthly: "https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03",
-  yearly:  "https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04", // <-- bytt hvis $29.99 har ny link
-};
+function buildPlanHref(type, searchParams) {
+  const ref =
+    searchParams?.ref ||
+    searchParams?.via ||
+    searchParams?.pk_ref ||
+    searchParams?.creator ||
+    searchParams?.utm_campaign ||
+    "";
 
-export default function ProPage() {
+  const qs = new URLSearchParams({ type: type === "yearly" ? "yearly" : "monthly" });
+  if (ref) qs.set("ref", String(ref));
+  return `/buy?${qs.toString()}`;
+}
+
+export default function ProPage({ searchParams }) {
   return (
     <main className="min-h-[70vh] bg-primary-blue text-white">
       <section className="max-w-3xl mx-auto px-6 py-16 text-center">
@@ -23,29 +34,32 @@ export default function ProPage() {
           stay connected—without losing your mind.
         </p>
 
-        {/* Button group wrapper */}
         <div className="mt-10 mx-auto max-w-xl rounded-2xl bg-white/5 backdrop-blur-sm p-3 ring-1 ring-white/10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Monthly */}
-            <a
-              href={LINKS.monthly}
+            <Link
+              href={buildPlanHref("monthly", searchParams)}
+              prefetch={false}
               className="inline-flex flex-col items-center justify-center rounded-xl bg-white text-slate-900 font-semibold py-4 px-6 shadow-md hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              aria-label="Get Pro – Monthly"
+              data-plan="monthly"
             >
               <span className="text-base">Get Pro – Monthly</span>
               <span className="text-sm text-slate-700">$3.99 / month</span>
-            </a>
+            </Link>
 
-            {/* Yearly (highlight) */}
-            <a
-              href={LINKS.yearly}
+            <Link
+              href={buildPlanHref("yearly", searchParams)}
+              prefetch={false}
               className="relative inline-flex flex-col items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-500 text-slate-900 font-semibold py-5 px-6 shadow-md hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
+              aria-label="Get Pro – Yearly"
+              data-plan="yearly"
             >
               <span className="absolute -top-3 right-3 bg-yellow-300 text-yellow-900 text-[11px] font-bold px-2 py-0.5 rounded-full shadow">
                 Best value
               </span>
               <span className="text-base">Get Pro – Yearly</span>
               <span className="text-sm text-slate-800">$29.99 / year · Save 37%</span>
-            </a>
+            </Link>
           </div>
         </div>
 

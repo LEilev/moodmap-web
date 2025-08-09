@@ -1,60 +1,84 @@
 // pages/buy.js
-// ------------------------------------------------------------------
-// v2.3.0 • Stripe Payment Links m/ client_reference_id + pk_* videreføring
-// - Leser via/ref fra query og setter client_reference_id
-// - Bevarer alle pk_*-parametre (pk_click_id m.m.)
-// - 302-redirect til riktig Payment Link (monthly/yearly)
-// ------------------------------------------------------------------
+// -------------------------------------------------------------
+// v3.0.0 • Client-side redirect til Stripe
+// - Gir PromoteKit tid til å registrere klikk (~1.2s)
+// - Setter client_reference_id = ref/via/PromoteKit-ref
+// - Bevarer pk_* parametere (pk_click_id m.m.)
+// -------------------------------------------------------------
+import { useEffect, useMemo } from "react";
+import Head from "next/head";
+import { useRouter } from "next/router";
 
-export async function getServerSideProps({ query, req, res }) {
-  // via/ref (affiliate/referrer)
-  const rawVia = query.via ?? query.ref ?? 'default';
-  const via = /^[\w-]{1,32}$/.test(String(rawVia)) ? String(rawVia) : 'default';
+const PLAN_LINKS = {
+  monthly: "https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03",
+  yearly:  "https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04",
+};
 
-  // type = monthly | yearly (default monthly)
-  const type = query.type === 'yearly' ? 'yearly' : 'monthly';
+export default function BuyClient() {
+  const router = useRouter();
 
-  // DINE LIVE PAYMENT LINKS (de to øverste/nyeste)
-  const PLAN_LINKS = {
-    monthly: 'https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03',
-    yearly:  'https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04',
-  };
+  const href = useMemo(() => {
+    if (!router.isReady) return "";
+    const q = router.query || {};
 
-  const base = PLAN_LINKS[type];
-  if (!base) {
-    res.statusCode = 400;
-    res.end('Unknown plan type');
-    return { props: {} };
-  }
+    const type = q.type === "yearly" ? "yearly" : "monthly";
+    const base = PLAN_LINKS[type];
+    if (!base) return "";
 
-  const url = new URL(base);
+    const url = new URL(base);
 
-  // Stripe-whitelistede params
-  url.searchParams.set('client_reference_id', via); // viktig for PromoteKit
-  url.searchParams.set('type', type);
+    // ref/via → client_reference_id (fallback: PromoteKit, deretter 'default')
+    const rawVia = (q.ref || q.via || "").toString();
+    const pkRef =
+      typeof window !== "undefined" && window.promotekit_referral
+        ? String(window.promotekit_referral)
+        : "";
+    const via =
+      /^[\\w-]{1,32}$/.test(rawVia) ? rawVia : pkRef || "default";
 
-  // Bevar PromoteKit-relaterte params (pk_*)
-  for (const [k, v] of Object.entries(query)) {
-    if (k.startsWith('pk_')) url.searchParams.set(k, String(v));
-  }
+    url.searchParams.set("client_reference_id", via);
+    url.searchParams.set("type", type); // ikke nødvendig for Stripe, fint for deg i logs
 
-  // Lett serverlogg for feilsøking
-  try {
-    console.info('[buy] →', {
-      ip: req.headers['x-forwarded-for'] ?? req.socket?.remoteAddress,
-      ua: (req.headers['user-agent'] || '').slice(0, 120),
-      via,
-      type,
-      pk_params: Object.keys(query).filter((k) => k.startsWith('pk_')),
+    // Bevar alle pk_* fra URL (PromoteKit kan legge disse inn)
+    Object.entries(q).forEach(([k, v]) => {
+      if (k.startsWith("pk_")) url.searchParams.set(k, String(v));
     });
-  } catch {}
 
-  // 302 redirect til Stripe
-  res.writeHead(302, { Location: url.toString() });
-  res.end();
-  return { props: {} };
-}
+    return url.toString();
+  }, [router.isReady, router.query]);
 
-export default function BuyRedirect() {
-  return null;
+  useEffect(() => {
+    if (!href) return;
+    const a = document.getElementById("stripeLink");
+    const t = setTimeout(() => a?.click(), 1200); // pustepause så PromoteKit rekker tracking
+    return () => clearTimeout(t);
+  }, [href]);
+
+  return (
+    <>
+      <Head>
+        <title>Buy Pro · MoodMap</title>
+        <meta name="robots" content="noindex" />
+        <link rel="preconnect" href="https://buy.stripe.com" />
+      </Head>
+
+      <main className="min-h-screen flex flex-col items-center justify-center">
+        <p>Recording your click… redirecting to Stripe</p>
+        {href ? (
+          <>
+            <a id="stripeLink" href={href} style={{ display: "none" }}>
+              Continue
+            </a>
+            <a className="underline mt-4" href={href}>
+              Click here if nothing happens.
+            </a>
+          </>
+        ) : (
+          <a className="underline mt-4" href="https://moodmap-app.com/pro">
+            Go back
+          </a>
+        )}
+      </main>
+    </>
+  );
 }
