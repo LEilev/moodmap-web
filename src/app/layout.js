@@ -150,4 +150,16 @@ export default function RootLayout({ children }) {
           </div>
 
           {/* Mobile nav */}
-          <nav className="sm:hidden px-6
+          <nav className="sm:hidden px-6 pb-3 flex flex-col gap-2">
+            <Link href="#about" className="hover:underline">About</Link>
+            <Link href="#download" className="hover:underline">Download</Link>
+            <Link href="/support" className="hover:underline">Support</Link>
+            <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
+          </nav>
+        </header>
+
+        <main className="flex-grow">{children}</main>
+      </body>
+    </html>
+  );
+}
