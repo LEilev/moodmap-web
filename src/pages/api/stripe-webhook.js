@@ -1,4 +1,8 @@
-// src/pages/api/stripe-webhook.js
+// FILE: src/pages/api/stripe-webhook.js
+// Webhook handler — preserves RC unlock; writes ref_code + (optional) ref_slug
+// - Uses Upstash hinting for invoice + optional {uniqueId -> slug} stash
+// - Posts subscription.id as fetch_token to RevenueCat (unchanged)
+
 import Stripe from "stripe";
 import crypto from "crypto";
 import { alreadyProcessed, markProcessed } from "@/lib/redis-dedupe";
@@ -13,7 +17,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
 });
 
-// --- Upstash REST (hint-cache for invoice) ---
+// --- Upstash REST (hint-cache for invoice + optional ref_slug) ---
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
@@ -40,7 +44,7 @@ async function readRawBody(req) {
 }
 
 async function upstashGet(key) {
-  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null; // fallback til prosessminne i redis-dedupe-modulen
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null;
   const url = `${UPSTASH_URL}/get/${encodeURIComponent(key)}`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
@@ -53,6 +57,33 @@ async function upstashGet(key) {
     return val ? JSON.parse(val) : null;
   } catch {
     return val || null;
+  }
+}
+
+// Tight-timeout getter (avoid slowing down webhook)
+async function upstashGetTimeout(key, ms = 450) {
+  if (!UPSTASH_URL || !UPSTASH_TOKEN) return null;
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    const url = `${UPSTASH_URL}/get/${encodeURIComponent(key)}`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!res.ok) return null;
+    const json = await res.json().catch(() => null);
+    const val = json?.result;
+    try {
+      return val ? JSON.parse(val) : null;
+    } catch {
+      return val || null;
+    }
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(id);
   }
 }
 
@@ -149,10 +180,12 @@ async function writeStripeMetadata({
   customerId,
   invoiceId,
   refCode,
+  refSlug, // optional
   appUserId,
 }) {
   const meta = {};
   if (refCode) meta.ref_code = ensureString(refCode);
+  if (refSlug) meta.ref_slug = ensureString(refSlug);
   if (appUserId) meta.app_user_id = ensureString(appUserId);
 
   // subscription
@@ -307,13 +340,31 @@ export default async function handler(req, res) {
         const refCode =
           cs?.metadata?.ref_code || cs?.client_reference_id || null;
 
+        // Optionally resolve ref_slug via short-lived Upstash stash
+        let refSlug = cs?.metadata?.ref_slug || null;
+        if (refCode && !refSlug) {
+          const hit = await upstashGetTimeout(`ref:${refCode}`, 450);
+          refSlug = hit?.slug || null;
+          if (refSlug) {
+            console.info("[wh] got ref_slug from stash (cs.completed)", {
+              refCode,
+              refSlug,
+            });
+          }
+        }
+
         // Redis-hint for invoice
         if (invoiceId) {
           const key = `inv:${invoiceId}`;
-          await upstashSetEx(key, 900, { ref_code: refCode, app_user_id: appUserId });
+          await upstashSetEx(key, 900, {
+            ref_code: refCode,
+            ref_slug: refSlug || undefined,
+            app_user_id: appUserId,
+          });
           console.info("[wh] set hint", {
             key,
             ref_code: refCode,
+            ref_slug: refSlug || null,
             app_user_id: appUserId,
           });
         }
@@ -324,6 +375,7 @@ export default async function handler(req, res) {
           customerId,
           invoiceId,
           refCode,
+          refSlug,
           appUserId,
         });
 
@@ -375,6 +427,20 @@ export default async function handler(req, res) {
           redisKey: key,
         });
 
+        // Resolve optional ref_slug
+        let refSlug = inv?.metadata?.ref_slug || null;
+        if (refCode && !refSlug) {
+          const hit = await upstashGetTimeout(`ref:${refCode}`, 300);
+          refSlug = hit?.slug || null;
+          if (refSlug) {
+            console.info("[wh] got ref_slug from stash (invoice.*)", {
+              refCode,
+              refSlug,
+              ev: event.type,
+            });
+          }
+        }
+
         // app_user_id fra email
         const email = await extractEmailFromStripe({
           invoice: inv,
@@ -388,6 +454,7 @@ export default async function handler(req, res) {
           customerId,
           invoiceId,
           refCode,
+          refSlug,
           appUserId,
         });
 
