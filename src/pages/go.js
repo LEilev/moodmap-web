@@ -18,8 +18,24 @@ function validSlug(s) {
 }
 function hrefParam(name) {
   if (typeof window === 'undefined') return '';
-  const m = window.location.href.match(new RegExp(`[?&]${name}=([A-Za-z0-9_-]+)`, 'i'));
-  return m ? m[1] : '';
+  try {
+    const m = window.location.href.match(new RegExp(`[?&]${name}=([^&#]+)`, 'i'));
+    return m ? decodeURIComponent(m[1]) : '';
+  } catch {
+    return '';
+  }
+}
+function pkParamsFromHref() {
+  if (typeof window === 'undefined') return {};
+  const out = {};
+  try {
+    const rx = /[?&](pk_[A-Za-z0-9_]+)=([^&#]+)/g;
+    let m;
+    while ((m = rx.exec(window.location.href))) {
+      if (!out[m[1]]) out[m[1]] = decodeURIComponent(m[2]);
+    }
+  } catch {}
+  return out;
 }
 
 export default function GoRedirect() {
@@ -30,18 +46,18 @@ export default function GoRedirect() {
     if (!router.isReady) return { redirectUrl: null, via: '', type: '' };
     const { query } = router;
 
-    // Prefer router.query, but fall back to full href regex to handle malformed links like ?type=yearly?via=Eilev
+    // Prefer Next/router, but fall back to full href to handle malformed links like ?type=yearly?via=Eilev
     const viaFromQuery = first(query.via) || first(query.ref) || '';
     const viaFromHref = hrefParam('via') || hrefParam('ref');
     const rawVia = viaFromQuery || viaFromHref || 'default';
     const via = validSlug(rawVia) ? rawVia : 'default';
 
-    const typeFromQuery = first(query.type) || '';
-    const typeFromHref = hrefParam('type');
-    const t = (typeFromQuery || typeFromHref || '').toLowerCase();
+    const typeFromQuery = (first(query.type) || '').toLowerCase();
+    const typeFromHref = (hrefParam('type') || '').toLowerCase();
+    const t = typeFromQuery || typeFromHref;
     const type = t === 'yearly' ? 'yearly' : 'monthly';
 
-    /* prod-origin guard */
+    // prod-origin guard
     let origin = 'https://moodmap-app.com';
     if (typeof window !== 'undefined') {
       origin = window.location.origin.startsWith('http://localhost')
@@ -56,8 +72,14 @@ export default function GoRedirect() {
     const url = new URL(pathname, origin);
     url.searchParams.set('via', via);
     url.searchParams.set('type', type);
+
+    // Preserve pk_* params from router and href (href wins if not present)
     Object.entries(query).forEach(([k, v]) => {
       if (k.startsWith('pk_')) url.searchParams.set(k, String(first(v)));
+    });
+    const pkHref = pkParamsFromHref();
+    Object.entries(pkHref).forEach(([k, v]) => {
+      if (!url.searchParams.has(k)) url.searchParams.set(k, v);
     });
 
     return { redirectUrl: url.pathname + url.search, via, type };

@@ -1,8 +1,9 @@
 // FILE: src/app/layout.js
 /*
-PromoteKit helper (Option 2) with guard + priority rules.
+PromoteKit helper (Option 2) with guard + priority + regex fallback.
 - Prioritizes window.promotekit_referral (unique ID)
 - Falls back to human slug from ?via/ref (ignores "default")
+- Also parses via/ref from full href (handles bad '?type=...?...via=...' links)
 - Never overwrites an existing client_reference_id
 - Applies after a short delay with a few retries
 */
@@ -43,16 +44,30 @@ export default function RootLayout({ children }) {
     try { return new URL(window.location.href).searchParams; } catch (_) { return null; }
   }
 
-  // Prefer PromoteKit's unique ID; fallback to human slug (?via/ref) but ignore "default"
+  function hrefParam(name) {
+    try {
+      var m = window.location.href.match(new RegExp('[?&]'+name+'=([^&#]+)','i'));
+      return m ? decodeURIComponent(m[1]) : '';
+    } catch (_) { return ''; }
+  }
+
+  function isValidSlug(s) {
+    return /^[A-Za-z0-9_-]{1,32}$/.test(s || '');
+  }
+
+  // Prefer PromoteKit's unique ID; fallback to human slug (?via/ref), then from full href; ignore "default"
   function pickReferral() {
     try {
       if (window.promotekit_referral) return String(window.promotekit_referral);
+
+      var via = '';
       var sp = safeSearchParams();
-      if (!sp) return "";
-      var via = sp.get("via") || sp.get("ref") || "";
-      if (!via || via === "default") return "";
+      if (sp) via = sp.get('via') || sp.get('ref') || '';
+      if (!via) via = hrefParam('via') || hrefParam('ref');
+
+      if (!via || via === 'default' || !isValidSlug(via)) return '';
       return via;
-    } catch (_) { return ""; }
+    } catch (_) { return ''; }
   }
 
   function addClientRefToBuyLinks(ref) {
@@ -127,40 +142,12 @@ export default function RootLayout({ children }) {
 
             {/* Desktop nav */}
             <nav className="hidden sm:flex gap-6">
-              <Link href="#about" className="hover:underline">
-                About
-              </Link>
-              <Link href="#download" className="hover:underline">
-                Download
-              </Link>
-              <Link href="/support" className="hover:underline">
-                Support
-              </Link>
-              <Link href="/pro" className="hover:underline font-semibold">
-                Pro
-              </Link>
+              <Link href="#about" className="hover:underline">About</Link>
+              <Link href="#download" className="hover:underline">Download</Link>
+              <Link href="/support" className="hover:underline">Support</Link>
+              <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
             </nav>
           </div>
 
           {/* Mobile nav */}
-          <nav className="sm:hidden px-6 pb-3 flex flex-col gap-2">
-            <Link href="#about" className="hover:underline">
-              About
-            </Link>
-            <Link href="#download" className="hover:underline">
-              Download
-            </Link>
-            <Link href="/support" className="hover:underline">
-              Support
-            </Link>
-            <Link href="/pro" className="hover:underline font-semibold">
-              Pro
-            </Link>
-          </nav>
-        </header>
-
-        <main className="flex-grow">{children}</main>
-      </body>
-    </html>
-  );
-}
+          <nav className="sm:hidden px-6
