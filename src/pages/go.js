@@ -1,6 +1,7 @@
 // FILE: pages/go.js
 // -------------------------------------------------------------
-// v1.3.0 • default → /pro (boost Clicks) • 1.0–1.5 s delay • origin guard
+// v1.4.0 • robust parsing (handles bad '?type=...?...via=...' links)
+// - Default → /pro (boost Clicks) • 1.0–1.5 s delay • origin guard
 // - Preserves via/type + pk_*
 // - Fallback: support direct /buy hops via ?to=buy or ?direct=1
 // -------------------------------------------------------------
@@ -15,6 +16,11 @@ function first(val) {
 function validSlug(s) {
   return typeof s === 'string' && /^[\w-]{1,32}$/.test(s);
 }
+function hrefParam(name) {
+  if (typeof window === 'undefined') return '';
+  const m = window.location.href.match(new RegExp(`[?&]${name}=([A-Za-z0-9_-]+)`, 'i'));
+  return m ? m[1] : '';
+}
 
 export default function GoRedirect() {
   const router = useRouter();
@@ -24,9 +30,16 @@ export default function GoRedirect() {
     if (!router.isReady) return { redirectUrl: null, via: '', type: '' };
     const { query } = router;
 
-    const rawVia = first(query.via) || first(query.ref) || 'default';
+    // Prefer router.query, but fall back to full href regex to handle malformed links like ?type=yearly?via=Eilev
+    const viaFromQuery = first(query.via) || first(query.ref) || '';
+    const viaFromHref = hrefParam('via') || hrefParam('ref');
+    const rawVia = viaFromQuery || viaFromHref || 'default';
     const via = validSlug(rawVia) ? rawVia : 'default';
-    const type = first(query.type) === 'yearly' ? 'yearly' : 'monthly';
+
+    const typeFromQuery = first(query.type) || '';
+    const typeFromHref = hrefParam('type');
+    const t = (typeFromQuery || typeFromHref || '').toLowerCase();
+    const type = t === 'yearly' ? 'yearly' : 'monthly';
 
     /* prod-origin guard */
     let origin = 'https://moodmap-app.com';
