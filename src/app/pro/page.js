@@ -7,17 +7,47 @@ export const metadata = {
     "Unlock MoodMap Pro for extra features and guidance. Monthly or yearly.",
 };
 
-function buildPlanHref(type, searchParams) {
-  const qs = new URLSearchParams({ type: type === "yearly" ? "yearly" : "monthly" });
+// Safely get the first value for a param that may be string | string[] | undefined
+function first(v) {
+  return Array.isArray(v) ? v[0] : v ?? "";
+}
 
-  // Forward any of these keys if present (analytics + robust ref handling)
-  const forwardKeys = ["ref", "via", "pk_ref", "creator", "utm_campaign"];
-  for (const k of forwardKeys) {
-    const v = searchParams?.[k];
-    if (!v) continue;
-    const val = Array.isArray(v) ? v[0] : v;
-    if (val) qs.set(k, String(val));
+// Build a /buy href for a given plan type while forwarding useful params
+function buildPlanHref(planType, searchParams) {
+  // Always set the plan type explicitly
+  const qs = new URLSearchParams({
+    type: planType === "yearly" ? "yearly" : "monthly",
+  });
+
+  // Forward common referral / analytics / coupon params if present
+  const forwardKeys = [
+    "via",
+    "ref",
+    "ref_code",
+    "refcode",
+    "creator",
+    "pk_ref",
+    "promotekit_referral",
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "coupon",
+    "promo",
+    "promocode",
+    "discount",
+    "code",
+  ];
+
+  for (const key of forwardKeys) {
+    const val = first(searchParams?.[key]);
+    if (!val) continue;
+    qs.set(key, String(val));
   }
+
+  // NOTE: We intentionally do NOT forward client_reference_id here;
+  // /buy will derive it JIT from PromoteKit (or fall back to slug), which is safer.
 
   return `/buy?${qs.toString()}`;
 }
