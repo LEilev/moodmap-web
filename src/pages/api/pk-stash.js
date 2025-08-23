@@ -1,7 +1,6 @@
 // FILE: pages/api/pk-stash.js
-// Optional helper: short-lived stash { uniqueId -> slug } for 10–15 minutes
-// - Non-blocking; used by /buy.js just before redirect
-// - Webhook can read it via key "ref:<uniqueId>" to write invoice/sub metadata
+// Soft mode: prøver å stash’e {uid->slug}, men returnerer 204 ved alle Upstash-feil.
+// Tracking fungerer uansett (stash er kun for valgfri ref_slug).
 
 export const config = { maxDuration: 5 };
 
@@ -12,14 +11,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const proto = (req.headers["x-forwarded-proto"] || "https");
+    const proto = req.headers["x-forwarded-proto"] || "https";
     const host = req.headers.host || "moodmap-app.com";
     const url = new URL(req.url, `${proto}://${host}`);
 
     const uid = (url.searchParams.get("uid") || "").trim();
     const slug = (url.searchParams.get("slug") || "").trim();
     const ttlParam = Number(url.searchParams.get("ttl") || 900);
-    const ttl = Math.max(600, Math.min(900, isFinite(ttlParam) ? ttlParam : 900)); // 10–15 min
+    const ttl = Math.max(600, Math.min(900, Number.isFinite(ttlParam) ? ttlParam : 900));
 
     if (!uid || !/^[A-Za-z0-9_-]{6,128}$/.test(uid)) {
       return res.status(400).json({ ok: false, error: "invalid uid" });
@@ -28,33 +27,37 @@ export default async function handler(req, res) {
       return res.status(400).json({ ok: false, error: "invalid slug" });
     }
 
-    const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-    const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+    const UURL = (process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, "");
+    const UTOK = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-    if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      // No cache available — acknowledge without storing (non-blocking semantics)
-      return res.status(204).end();
-    }
+    // Ingen Upstash config? Ikke blokker.
+    if (!UURL || !UTOK) return res.status(204).end();
 
     const key = `ref:${uid}`;
     const value = JSON.stringify({ slug, ts: Date.now() });
 
-    const ok = await fetch(`${UPSTASH_URL}/setex`, {
+    // Prøv JSON body mode
+    let r = await fetch(`${UURL}/setex`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${UPSTASH_TOKEN}`,
-        "content-type": "application/json",
-      },
+      headers: { Authorization: `Bearer ${UTOK}`, "content-type": "application/json" },
       body: JSON.stringify([key, value, ttl]),
       cache: "no-store",
-    })
-      .then((r) => r.ok)
-      .catch(() => false);
+    });
 
-    if (!ok) return res.status(500).json({ ok: false, error: "stash failed" });
+    // Fallback: path params mode
+    if (!r.ok) {
+      r = await fetch(
+        `${UURL}/setex/${encodeURIComponent(key)}/${ttl}/${encodeURIComponent(value)}`,
+        { method: "POST", headers: { Authorization: `Bearer ${UTOK}` }, cache: "no-store" }
+      );
+    }
+
+    // Soft-fail: ikke blokker selv om Upstash sier nei (read-only / feil URL / osv.)
+    if (!r.ok) return res.status(204).end();
 
     return res.status(200).json({ ok: true, key, slug, ttl });
-  } catch (e) {
-    return res.status(500).json({ ok: false, error: String(e?.message || e) });
+  } catch {
+    // Soft-fail på uventet feil
+    return res.status(204).end();
   }
 }
