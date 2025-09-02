@@ -36,33 +36,7 @@ export default function HomePage() {
         </div>
         <p className="text-sm text-blue-200 mt-3">Available on iOS and Android</p>
 
-        {/* Pricing CTA – tighter, more premium */}
-        <div className="mt-8 mx-auto max-w-xl rounded-2xl bg-white/5 p-3 ring-1 ring-white/10 backdrop-blur-sm">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Monthly (outline style for secondary weight) */}
-            <a
-              href={LINKS.monthly}
-              className="inline-flex h-12 flex-col justify-center rounded-xl border border-yellow-300/70 bg-yellow-50 text-yellow-900 font-semibold px-6 shadow-sm hover:shadow-md hover:-translate-y-[1px] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-yellow-400"
-            >
-              <span className="leading-none">Go Pro Monthly</span>
-              <span className="text-xs font-normal opacity-90 mt-0.5">$3.99 / month</span>
-            </a>
-
-            {/* Yearly (primary) */}
-            <a
-              href={LINKS.yearly}
-              className="relative inline-flex h-12 flex-col justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-500 text-slate-900 font-semibold px-6 shadow-sm hover:shadow-md hover:-translate-y-[1px] transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
-            >
-              <span className="absolute -top-3 right-3 rounded-full bg-yellow-300 px-2 py-0.5 text-[11px] font-bold text-yellow-900 shadow">
-                Best value
-              </span>
-              <span className="leading-none">Go Pro Yearly</span>
-              <span className="text-xs font-normal text-slate-800 mt-0.5">$29.99 / year · Save 37%</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
+   
       {/* ───────── About ───────── */}
       <section id="about" className="max-w-3xl mx-auto text-center my-20 px-6">
         <h2 className="text-2xl font-semibold mb-3">About MoodMap</h2>

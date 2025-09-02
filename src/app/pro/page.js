@@ -71,12 +71,12 @@ export default function ProPage({ searchParams }) {
             <Link
               href={buildPlanHref("monthly", searchParams)}
               prefetch={false}
-              className="inline-flex flex-col items-center justify-center rounded-xl bg-white text-slate-900 font-semibold py-4 px-6 shadow-md hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex flex-col items-center justify-center rounded-xl bg-blue-500 text-white font-semibold py-4 px-6 shadow-md hover:bg-blue-600 hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
               aria-label="Get Pro – Monthly"
               data-plan="monthly"
             >
               <span className="text-base">Get Pro – Monthly</span>
-              <span className="text-sm text-slate-700">$3.99 / month</span>
+              <span className="text-sm text-blue-100">$3.99 / month</span>
             </Link>
 
             {/* Yearly via /buy */}
