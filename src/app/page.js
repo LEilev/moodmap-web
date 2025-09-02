@@ -35,6 +35,7 @@ export default function HomePage() {
           </a>
         </div>
         <p className="text-sm text-blue-200 mt-3">Available on iOS and Android</p>
+		</section>
 
    
       {/* ───────── About ───────── */}
