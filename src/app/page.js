@@ -1,13 +1,12 @@
-// FILE: src/app/page.js
+// src/app/page.js
 import Link from "next/link";
 import {
-  Lock,
-  Clock,
-  Smartphone,
-  Radar,
+  Map,
   BellRing,
-  Flame,
   Sparkles,
+  Shield,
+  Smartphone,
+  RefreshCcw,
 } from "lucide-react";
 
 export default function HomePage() {
@@ -16,63 +15,73 @@ export default function HomePage() {
       {/* ───────── Hero ───────── */}
       <section
         id="hero"
-        className="relative isolate bg-primary-blue text-center px-6 pt-20 pb-14 overflow-hidden"
+        className="relative isolate bg-primary-blue text-center px-6 pt-20 pb-14 sm:pt-24 sm:pb-16"
       >
-        {/* Subtile premium glows */}
-        <div className="pointer-events-none absolute -left-40 top-16 h-[34rem] w-[34rem] blur-3xl opacity-25 md:opacity-30"
-             style={{ backgroundImage: "radial-gradient(ellipse at center, rgba(16,185,129,.35), transparent 60%)" }} />
-        <div className="pointer-events-none absolute -right-40 -bottom-10 h-[36rem] w-[36rem] blur-3xl opacity-25 md:opacity-30"
-             style={{ backgroundImage: "radial-gradient(ellipse at center, rgba(59,130,246,.35), transparent 60%)" }} />
+        {/* Subtile premium glows (emerald→blue) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
+        />
 
-        {/* Heading with subtle gradient */}
-        <h1 className="text-balance mx-auto max-w-4xl text-4xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-300 via-emerald-200 to-blue-200 bg-clip-text text-transparent drop-shadow-[0_1px_0_rgba(0,0,0,0.35)]">
-          Understand the cycle.
-          <span className="block">Survive the chaos.</span>
+        {/* Headline */}
+        <h1 className="mx-auto max-w-4xl text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight">
+          <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
+            Understand the cycle.
+          </span>{" "}
+          <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
+            Survive the chaos.
+          </span>
         </h1>
 
-        <p className="mt-5 mx-auto max-w-2xl text-base sm:text-lg text-blue-100">
+        <p className="mt-4 max-w-2xl mx-auto text-base sm:text-lg text-blue-100">
           MoodMap helps you track and survive the hormonal cycle with clarity,
           humor, and daily guidance for staying connected—and sane.
         </p>
 
-        {/* Store buttons */}
-        <div id="download" className="mt-9 flex flex-col sm:flex-row justify-center items-center gap-4">
-          {/* App Store – premium gradient frame + solid core */}
+        {/* Store CTA buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
           <a
             href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
-            className="group inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-emerald-400 to-blue-500 p-[2px] transition-transform hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+            className="inline-flex h-11 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
           >
-            <span className="flex h-full w-full items-center justify-center rounded-[10px] bg-neutral-900/95 px-5 text-sm font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] group-hover:bg-neutral-900/90">
-              Download on the App Store
-            </span>
+            Download on the App Store
           </a>
-
-          {/* Google Play – premium solid */}
           <a
             href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
-            className="inline-flex h-12 items-center justify-center rounded-xl bg-blue-500 px-5 text-sm font-semibold text-white shadow-lg shadow-blue-900/30 transition hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+            className="inline-flex h-11 items-center justify-center rounded-full bg-blue-600 px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(37,99,235,0.35)] ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-[0_16px_36px_rgba(37,99,235,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-400"
           >
             Get it on Google Play
           </a>
         </div>
 
-        {/* Trust strip – mer luft over, tydelig kontrast */}
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 ring-1 ring-white/10 text-blue-100">
-            <Lock className="size-4" /> Private by design
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 ring-1 ring-white/10 text-blue-100">
-            <Clock className="size-4" /> Cancel anytime
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 ring-1 ring-white/10 text-blue-100">
-            <Smartphone className="size-4" /> Works on iOS &amp; Android
-          </span>
+        {/* Trust strip */}
+        <div className="mt-9 flex justify-center">
+          <div className="flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-[13px] text-blue-100 ring-1 ring-white/10 backdrop-blur">
+            <span className="inline-flex items-center gap-1.5">
+              <Shield className="h-4 w-4 opacity-90" />
+              Private by design
+            </span>
+            <span className="opacity-30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <RefreshCcw className="h-4 w-4 opacity-90" />
+              Cancel anytime
+            </span>
+            <span className="opacity-30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Smartphone className="h-4 w-4 opacity-90" />
+              Works on iOS &amp; Android
+            </span>
+          </div>
         </div>
       </section>
 
       {/* ───────── About ───────── */}
-      <section id="about" className="max-w-3xl mx-auto text-center px-6 py-20">
-        <h2 className="text-2xl sm:text-3xl font-semibold mb-3">About MoodMap</h2>
+      <section id="about" className="max-w-3xl mx-auto text-center my-16 sm:my-20 px-6">
+        <h2 className="text-2xl font-semibold mb-3">About MoodMap</h2>
         <p className="text-blue-100">
           Built for men who want to thrive—not tiptoe—through the hormonal cycle.
           Get brutally honest survival cues, timing windows, and a visual code so
@@ -80,60 +89,65 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* ───────── Feature Cards (glass + punchy) ───────── */}
-      <section id="features" className="relative bg-primary-blue pb-24">
-        {/* subtle wash behind cards */}
-        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-12 h-64 w-[80%] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,.25),transparent_70%)] blur-2xl" />
-
-        <div className="relative max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* ───────── Feature Cards (glass + motion) ───────── */}
+      <section id="features" className="bg-primary-blue pb-24">
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+          {/* Card helper */}
           {[
             {
+              Icon: Map,
               title: "Cycle Overview",
-              body: "Map the mood. Crack the code. No guessing.",
-              Icon: Radar,
+              copy: "Map the mood. Crack the code. No guessing.",
             },
             {
-              title: "Survival Alerts",
-              body: "Heads‑up when to lean in, back off — or bring chocolate.",
               Icon: BellRing,
+              title: "Survival Alerts",
+              copy: "Know when to lean in, back off — or bring chocolate.",
             },
             {
+              Icon: Sparkles,
               title: "Tips & Intimacy",
-              body: "Blunt advice + playful nudges to keep spark (and sex) alive.",
-              Icon: Flame,
+              copy:
+                "Blunt advice + playful nudges to keep spark (and sex) alive.",
             },
             {
+              Icon: Sparkles,
               title: "Selfcards",
-              body:
+              copy:
                 "Daily rituals to sharpen presence — show up solid, for her and for you.",
-              Icon: Sparkles, // robust emoji‑safe icon
             },
-          ].map(({ title, body, Icon }) => (
-            <article
-              key={title}
-              className="group relative rounded-2xl border border-white/10 bg-neutral-900/40 text-white backdrop-blur-xl p-5 sm:p-6 shadow-[0_10px_40px_rgba(0,0,0,0.35)] transition-transform duration-200 hover:-translate-y-1 hover:scale-[1.025] hover:shadow-[0_18px_60px_rgba(0,0,0,0.45)]"
+          ].map(({ Icon, title, copy }, i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 text-left ring-1 ring-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/30"
             >
-              {/* Icon + gradient ring */}
-              <div className="mb-4 inline-flex items-center">
-                <div className="mr-3 grid size-10 place-items-center rounded-xl ring-1 ring-white/15 bg-gradient-to-b from-emerald-400/30 to-blue-500/30 transition-colors group-hover:from-emerald-400/50 group-hover:to-blue-500/50">
-                  <Icon className="size-5 text-white/95 transition-transform group-hover:scale-110" />
-                </div>
-                <h3 className="text-lg font-semibold">{title}</h3>
-              </div>
-              <p className="text-sm leading-relaxed text-blue-100">
-                {body}
+              {/* Icon with gradient ring */}
+              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10 transition-all duration-300 group-hover:scale-105 group-hover:from-emerald-300/55 group-hover:to-blue-400/55">
+                <Icon className="h-6 w-6 text-white drop-shadow" />
+              </span>
+
+              <h3 className="text-base sm:text-lg font-semibold text-white">
+                {title}
+              </h3>
+              <p className="mt-1.5 text-[13.5px] leading-relaxed text-blue-100">
+                {copy}
               </p>
 
-              {/* subtle shimmer on hover */}
-              <span className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-300"
-                    style={{ background: "linear-gradient(120deg, rgba(255,255,255,0.06), transparent 30%, transparent 70%, rgba(255,255,255,0.06))" }} />
-            </article>
+              {/* subtle corner gloss */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80"
+              />
+            </div>
           ))}
         </div>
       </section>
 
       {/* ───────── Footer ───────── */}
-      <footer id="contact" className="bg-black text-center text-white py-10 px-6">
+      <footer
+        id="contact"
+        className="bg-black text-center text-white py-8 px-6"
+      >
         <p>
           Contact us:&nbsp;
           <Link href="mailto:Moodmap.tech@gmail.com" className="underline">
@@ -145,7 +159,9 @@ export default function HomePage() {
             Privacy Policy
           </Link>
         </p>
-        <p className="mt-2">© {new Date().getFullYear()} MoodMap. All rights reserved.</p>
+        <p className="mt-2">
+          © {new Date().getFullYear()} MoodMap. All rights reserved.
+        </p>
       </footer>
     </>
   );
