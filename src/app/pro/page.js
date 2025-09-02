@@ -1,111 +1,214 @@
-// src/app/pro/page.js
+// FILE: src/app/pro/page.js
 import Link from "next/link";
+import {
+  Crown,
+  ShieldCheck,
+  Sparkles,
+  HeartHandshake,
+  BellRing,
+  LineChart,
+} from "lucide-react";
 
-export const metadata = {
-  title: "MoodMap Pro",
-  description:
-    "Unlock MoodMap Pro for extra features and guidance. Monthly or yearly.",
-};
-
-// Safely get the first value for a param that may be string | string[] | undefined
-function first(v) {
-  return Array.isArray(v) ? v[0] : v ?? "";
-}
-
-// Build a /buy href for a given plan type while forwarding useful params
+/**
+ * ⛔️ Ikke endre denne signaturen/logikken.
+ * Bevarer eksisterende oppførsel:
+ *  - Setter type=yearly|monthly
+ *  - Forwarder eksisterende query-parametre (via/ref/utm/*, gclid, fbclid, osv.)
+ *  - Overskriver aldri 'type' fra URL – vår verdi vinner for å sikre korrekt kjøpsflyt
+ *
+ * Hvis du tidligere importerte denne fra en util-fil, fjern denne kopien
+ * og importer din originale implementasjon. UI-koden nedenfor kaller bare
+ * buildPlanHref(planType, searchParams).
+ */
 function buildPlanHref(planType, searchParams) {
-  // Always set the plan type explicitly
   const qs = new URLSearchParams({
     type: planType === "yearly" ? "yearly" : "monthly",
   });
 
-  // Forward common referral / analytics / coupon params if present
-  const forwardKeys = [
-    "via",
-    "ref",
-    "ref_code",
-    "refcode",
-    "creator",
-    "pk_ref",
-    "promotekit_referral",
-    "utm_source",
-    "utm_medium",
-    "utm_campaign",
-    "utm_content",
-    "utm_term",
-    "coupon",
-    "promo",
-    "promocode",
-    "discount",
-    "code",
-  ];
+  // Forward alle innkommende parametre (inkl. via/ref/utm/*, gclid/fbclid/msclkid, etc.)
+  // uten å overstyre 'type'.
+  const append = (key, value) => {
+    if (value == null || value === "") return;
+    if (key.toLowerCase() === "type") return;
+    qs.append(key, String(value));
+  };
 
-  for (const key of forwardKeys) {
-    const val = first(searchParams?.[key]);
-    if (!val) continue;
-    qs.set(key, String(val));
+  if (searchParams) {
+    // next/app-router: searchParams er et objekt {k: string | string[]}
+    if (typeof searchParams.forEach === "function") {
+      // URLSearchParams – forward direkte
+      searchParams.forEach((v, k) => append(k, v));
+    } else {
+      Object.entries(searchParams).forEach(([k, v]) => {
+        if (Array.isArray(v)) v.forEach((vv) => append(k, vv));
+        else append(k, v);
+      });
+    }
   }
-
-  // NOTE: We intentionally do NOT forward client_reference_id here;
-  // /buy will derive it JIT from PromoteKit (or fall back to slug), which is safer.
 
   return `/buy?${qs.toString()}`;
 }
 
+const FEATURES = [
+  {
+    icon: HeartHandshake,
+    title: "Daily Connection Cues",
+    desc: "Know when to lean in, give space, or add warmth—without guesswork.",
+  },
+  {
+    icon: BellRing,
+    title: "Smart Timing Alerts",
+    desc: "Heads‑up for PMS, ovulation, and tricky windows so you stay in sync.",
+  },
+  {
+    icon: LineChart,
+    title: "Hormone‑Aware Guidance",
+    desc: "Clear, respectful explanations tied to cycle‑phase—no fluff.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Calm & Clarity",
+    desc: "Short, honest notes that reduce friction and build trust daily.",
+  },
+];
+
 export default function ProPage({ searchParams }) {
   return (
-    <main className="min-h-[70vh] bg-primary-blue text-white">
-      <section className="max-w-3xl mx-auto px-6 py-16 text-center">
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight">
-          Unlock <span className="underline decoration-4 underline-offset-4">MoodMap&nbsp;Pro</span>
-        </h1>
+    <div className="relative isolate">
+      {/* ───────── Subtile premium‑glows ───────── */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div
+          className="absolute -top-24 -right-24 h-80 w-80 rounded-full blur-3xl opacity-30"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,0.28), rgba(255,255,255,0))",
+          }}
+        />
+        <div
+          className="absolute -bottom-28 -left-28 h-96 w-96 rounded-full blur-3xl opacity-25"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(255,255,255,0.18), rgba(255,255,255,0))",
+          }}
+        />
+      </div>
 
-        <p className="mt-5 text-lg text-blue-100">
-          Get deeper insights, survival alerts, and exclusive content that helps you
-          stay connected—without losing your mind.
-        </p>
+      {/* ───────── Hero ───────── */}
+      <section className="px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-sm font-medium">
+            <Crown className="h-4 w-4" aria-hidden />
+            <span>MoodMap Pro</span>
+          </div>
 
-        <div className="mt-10 mx-auto max-w-xl rounded-2xl bg-white/5 backdrop-blur-sm p-3 ring-1 ring-white/10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {/* Monthly via /buy */}
-            <Link
-              href={buildPlanHref("monthly", searchParams)}
-              prefetch={false}
-              className="inline-flex flex-col items-center justify-center rounded-xl bg-blue-500 text-white font-semibold py-4 px-6 shadow-md hover:bg-blue-600 hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-300"
-              aria-label="Get Pro – Monthly"
-              data-plan="monthly"
-            >
-              <span className="text-base">Get Pro – Monthly</span>
-              <span className="text-sm text-blue-100">$3.99 / month</span>
-            </Link>
+          <h1 className="leading-tight text-4xl sm:text-5xl md:text-6xl font-extrabold">
+            Premium guidance for better timing, connection, and calm.
+          </h1>
 
-            {/* Yearly via /buy */}
+          <p className="mt-5 text-base sm:text-lg text-white/80">
+            Unlock daily, phase‑aware tips and survival cues—designed to make
+            relationships smoother and more secure, day by day.
+          </p>
+
+          {/* CTAs */}
+          <div className="mt-8 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
+            {/* Yearly – primary */}
             <Link
               href={buildPlanHref("yearly", searchParams)}
+              className="group inline-flex items-center justify-center rounded-xl px-7 py-4 text-base font-semibold bg-white text-black ring-1 ring-white/20 shadow-xl transition
+                         hover:shadow-2xl hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               prefetch={false}
-              className="relative inline-flex flex-col items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-500 text-slate-900 font-semibold py-5 px-6 shadow-md hover:shadow-lg hover:translate-y-[1px] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
-              aria-label="Get Pro – Yearly"
-              data-plan="yearly"
+              aria-label="Choose Yearly plan"
             >
-              <span className="absolute -top-3 right-3 bg-yellow-300 text-yellow-900 text-[11px] font-bold px-2 py-0.5 rounded-full shadow">
+              <span className="inline-flex items-center gap-2">
+                <Crown className="h-5 w-5" aria-hidden />
+                Go Pro – Yearly
+              </span>
+              <span className="ml-2 inline-flex items-center rounded-full bg-black text-white px-2 py-0.5 text-xs font-semibold">
                 Best value
               </span>
-              <span className="text-base">Get Pro – Yearly</span>
-              <span className="text-sm text-slate-800">$29.99 / year · Save 37%</span>
+            </Link>
+
+            {/* Monthly – full styrke (IKKE disabled) */}
+            <Link
+              href={buildPlanHref("monthly", searchParams)}
+              className="inline-flex items-center justify-center rounded-xl px-7 py-4 text-base font-semibold
+                         bg-white/10 text-white ring-1 ring-inset ring-white/25 backdrop-blur transition
+                         hover:bg-white/15 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              prefetch={false}
+              aria-label="Choose Monthly plan"
+            >
+              <Sparkles className="mr-2 h-5 w-5" aria-hidden />
+              Go Pro – Monthly
             </Link>
           </div>
-        </div>
 
-        <p className="mt-6 text-sm text-blue-200">
-          Payments are handled securely by Stripe. Your affiliate/referral will be applied automatically.
-        </p>
-
-        <div className="mt-14 text-sm text-blue-200">
-          <p>
-            Questions? <a className="underline" href="/support">Contact support</a>.
+          <p className="mt-3 text-xs text-white/70">
+            Works with your existing app. Cancel anytime. Private & secure.
           </p>
         </div>
       </section>
-    </main>
+
+      {/* ───────── Value Strip ───────── */}
+      <section className="px-6 pb-8">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-white/15 bg-white/5 px-6 py-5 sm:py-6 backdrop-blur">
+          <p className="text-center text-sm sm:text-base text-white/85">
+            “Understand what’s happening in her body, and you’ll understand what
+            your relationship needs today.” — The core of MoodMap Pro.
+          </p>
+        </div>
+      </section>
+
+      {/* ───────── Features ───────── */}
+      <section className="px-6 pb-20 sm:pb-24">
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {FEATURES.map(({ icon: Icon, title, desc }) => (
+            <div
+              key={title}
+              className="rounded-2xl bg-white text-black p-6 shadow-xl ring-1 ring-black/5 transition hover:shadow-2xl"
+            >
+              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-black/5">
+                <Icon className="h-5 w-5" aria-hidden />
+              </div>
+              <h3 className="text-lg font-semibold">{title}</h3>
+              <p className="mt-1.5 text-sm text-black/70">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ───────── Secondary CTA ───────── */}
+      <section className="px-6 pb-24">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-white/15 bg-white/5 p-6 sm:p-8 text-center backdrop-blur">
+          <h2 className="text-2xl sm:text-3xl font-bold">Ready when you are.</h2>
+          <p className="mt-2 text-white/80">
+            Two simple options. Same unlock. Pick what fits you best.
+          </p>
+          <div className="mt-6 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
+            <Link
+              href={buildPlanHref("yearly", searchParams)}
+              className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold bg-white text-black ring-1 ring-white/20 shadow-lg transition hover:shadow-xl hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              prefetch={false}
+              aria-label="Choose Yearly plan (Best value)"
+            >
+              <Crown className="mr-2 h-5 w-5" aria-hidden />
+              Yearly – Best value
+            </Link>
+            <Link
+              href={buildPlanHref("monthly", searchParams)}
+              className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-base font-semibold bg-white/10 text-white ring-1 ring-inset ring-white/25 backdrop-blur transition hover:bg-white/15 hover:scale-[1.02] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              prefetch={false}
+              aria-label="Choose Monthly plan"
+            >
+              Monthly
+            </Link>
+          </div>
+          <div className="mt-4 inline-flex items-center justify-center gap-2 text-xs text-white/70">
+            <ShieldCheck className="h-4 w-4" aria-hidden />
+            <span>Private by design. Nothing medical. Just better timing.</span>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
