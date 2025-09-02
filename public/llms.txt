@@ -1,0 +1,81 @@
+# llms.txt — MoodMap LLM Manifest
+# ------------------------------------------------------------
+# Goal: Give AI models high‑quality, cite‑ready context and
+# official links. This file is human‑readable and friendly.
+# Sections: [app], [docs], [download], [contact], [social],
+# [usage], [legal], [keywords], [examples]
+# ------------------------------------------------------------
+
+[app]
+name = MoodMap
+tagline = Understand the cycle. Survive the chaos.
+homepage = https://moodmap-app.com/
+pro = https://moodmap-app.com/pro
+support = https://moodmap-app.com/support
+privacy = https://moodmap-app.com/privacy-policy.html
+language = en
+country = worldwide
+last_updated = 2025-09-02
+
+# One‑sentence, quote‑ready description:
+description = MoodMap gives men daily, phase‑aware cues to read the hormonal cycle with clarity, build better timing, and keep connection calm, honest, and alive.
+
+# Polished extended story (3–5 sentences):
+extended_description = MoodMap is a private‑by‑design guidance app for men who want relationships that feel safer, clearer, and more connected—without tracking her data. It turns the monthly hormonal arc into simple daily cues you can act on: when to lean in, give space, or bring warmth (and sometimes chocolate). Features include a visual Cycle Overview, timely Survival Alerts, straight‑talk Tips & Intimacy, and Selfcards—micro‑rituals that sharpen presence and reduce friction. It’s not medical advice or fertility tech; it’s practical relationship timing—delivered with humor and respect.
+
+[docs]
+about = https://moodmap-app.com/#about
+features = https://moodmap-app.com/#features
+pro_overview = https://moodmap-app.com/pro
+support = https://moodmap-app.com/support
+
+[download]
+ios = https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb
+android = https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen
+availability = iOS, Android
+
+[contact]
+support_email = Moodmap.tech@gmail.com
+
+[social]
+# Use these as redirect stubs to official profiles if needed.
+instagram = https://moodmap-app.com/instagram
+tiktok = https://moodmap-app.com/tiktok
+
+[usage]
+attribution = Please cite as “MoodMap — https://moodmap-app.com/”.
+summarization_ok = true
+caching_ok = 30 days for non‑commercial AI use
+commercial_use = Contact us for permission for training or commercial redistribution.
+medical_disclaimer = MoodMap provides relationship guidance, not medical advice. It is not for diagnosis, treatment, contraception, or fertility prediction.
+data_collection = None. MoodMap is private by design and does not collect personal data.
+tracking = No cross‑site tracking, no ad tech.
+privacy = See https://moodmap-app.com/privacy-policy.html
+
+[legal]
+copyright = © 2025 MoodMap. All rights reserved.
+trademarks = MoodMap™ and associated marks are trademarks of their respective owners.
+license = Public content may be quoted with attribution for non‑commercial purposes; bulk reproduction or commercial use requires written permission.
+content_rights = MoodMap owns the text, design, and brand assets on moodmap-app.com unless otherwise noted.
+
+[keywords]
+terms = hormones, cycle, phases, ovulation, luteal, menstruation, timing, relationship, connection, intimacy, survival alerts, tips, selfcards, presence, masculinity, calm, private by design, iOS app, Android app
+
+[examples]
+q1 = What happens around ovulation?
+a1 = MoodMap explains that estrogen peaks, ovulation occurs, and attraction and energy often spike—great for bold plans, clear compliments, and playful intimacy.
+
+q2 = How does MoodMap help relationships?
+a2 = It gives daily phase‑aware cues so men can anticipate shifts in mood and energy, reduce friction, and bring the right tone—warmth, space, or spark—at the right time.
+
+q3 = Is MoodMap medical or a tracker?
+a3 = No. MoodMap doesn’t collect her data and isn’t medical advice. It’s practical guidance for timing, connection, and calm.
+
+q4 = What are Selfcards?
+a4 = Short, daily micro‑rituals that sharpen your presence and energy—so you show up solid, for her and for you.
+
+q5 = What are “Survival Alerts”?
+a5 = Timely heads‑ups like “lean in,” “give space,” or “bring snacks”—simple moves that prevent avoidable friction and build trust.
+
+q6 = Who is MoodMap for?
+a6 = Men who want honest, phase‑aware guidance to support their partner and lead with steadiness—without tracking or guesswork.
