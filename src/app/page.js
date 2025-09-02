@@ -1,74 +1,171 @@
 // src/app/page.js
 import Link from "next/link";
-
-const LINKS = {
-  monthly: "https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03",
-  yearly:  "https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04", // bytt hvis $29.99 har egen URL
-};
+import {
+  Apple,
+  Play,
+  HeartHandshake,
+  BellRing,
+  Sparkles,
+  Brain,
+  ShieldCheck,
+  Smartphone,
+  Timer,
+} from "lucide-react";
 
 export default function HomePage() {
   return (
     <>
-      {/* ───────── Hero ───────── */}
-      <section id="hero" className="bg-primary-blue text-center px-6 pt-16 pb-10">
-        <h1 className="text-4xl sm:text-5xl font-extrabold leading-tight max-w-4xl mx-auto">
-          Understand the cycle. <span className="block">Survive the chaos.</span>
-        </h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-blue-100">
-          MoodMap helps you track and survive the hormonal cycle with clarity, humor,
-          and daily guidance for staying connected—and sane.
-        </p>
+      {/* ───────────────── Hero / Download anchor ───────────────── */}
+      <section
+        id="hero"
+        className="relative isolate overflow-hidden bg-primary-blue px-6 pt-20 pb-16 text-center sm:pt-24 sm:pb-20"
+      >
+        {/* Anchor for header nav */}
+        <span id="download" className="sr-only" />
 
-        {/* Store buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
-          <a
-            href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-black px-5 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
-          >
-            Download on the App Store
-          </a>
-          <a
-            href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-[#34A853] px-5 text-sm font-semibold text-white transition hover:bg-[#2f9a49] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#34A853]"
-          >
-            Get it on Google Play
-          </a>
+        {/* Premium glows */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-40 right-1/2 h-[36rem] w-[36rem] translate-x-1/2 rounded-full blur-3xl opacity-40"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(16,185,129,.45), rgba(59,130,246,.35), transparent 70%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -bottom-48 left-1/2 h-[42rem] w-[42rem] -translate-x-1/2 rounded-full blur-3xl opacity-40"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(59,130,246,.45), rgba(99,102,241,.35), transparent 70%)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-5xl">
+          <p className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-medium text-blue-100 backdrop-blur">
+            MoodMap
+          </p>
+
+          <h1 className="mx-auto max-w-4xl text-4xl font-extrabold tracking-tight sm:text-6xl">
+            Understand the cycle.
+            <span className="block">Survive the chaos.</span>
+          </h1>
+
+          <p className="mx-auto mt-5 max-w-2xl text-base text-blue-100 sm:text-lg">
+            Brutally honest cues, phase‑aware tips, and simple rituals that keep
+            connection strong—and your sanity intact.
+          </p>
+
+          {/* Store CTA buttons */}
+          <div className="mx-auto mt-8 flex max-w-md flex-col items-stretch gap-4 sm:max-w-none sm:flex-row sm:justify-center">
+            <a
+              href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
+              className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-gradient-to-b from-neutral-900 to-black px-6 py-3 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_24px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.16),0_18px_30px_rgba(0,0,0,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            >
+              <Apple className="h-5 w-5 opacity-90" />
+              <span className="text-sm font-semibold tracking-wide">
+                Download on the App&nbsp;Store
+              </span>
+            </a>
+
+            <a
+              href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
+              className="group relative inline-flex items-center justify-center gap-3 rounded-xl bg-blue-600 px-6 py-3 text-white shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_24px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition will-change-transform hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-[0_0_0_1px_rgba(255,255,255,0.16),0_18px_30px_rgba(0,0,0,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            >
+              <Play className="h-5 w-5 opacity-90" />
+              <span className="text-sm font-semibold tracking-wide">
+                Get it on Google&nbsp;Play
+              </span>
+            </a>
+          </div>
+
+          {/* Trust strip */}
+          <div className="mx-auto mt-6 flex w-full flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-blue-100">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 backdrop-blur">
+              <ShieldCheck className="h-4 w-4" /> Private by design
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 backdrop-blur">
+              <Timer className="h-4 w-4" /> Cancel anytime
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 backdrop-blur">
+              <Smartphone className="h-4 w-4" /> Works on iOS &amp; Android
+            </span>
+          </div>
         </div>
-        <p className="text-sm text-blue-200 mt-3">Available on iOS and Android</p>
-		</section>
+      </section>
 
-   
-      {/* ───────── About ───────── */}
-      <section id="about" className="max-w-3xl mx-auto text-center my-20 px-6">
-        <h2 className="text-2xl font-semibold mb-3">About MoodMap</h2>
-        <p className="text-blue-100">
-          MoodMap is built for men who want to survive—and even thrive—while navigating
-          their partner’s hormonal cycle. With brutally honest reminders and an interactive
-          color code, it’s your ultimate toolkit for better intimacy, timing, and day-to-day
-          peacekeeping.
+      {/* ───────────────── About ───────────────── */}
+      <section id="about" className="mx-auto my-20 max-w-3xl px-6 text-center">
+        <h2 className="text-2xl font-semibold">About MoodMap</h2>
+        <p className="mt-3 text-blue-100">
+          Built for men who want clarity, timing, and calm.
+          MoodMap decodes the hormonal cycle and gives you
+          clear, phase‑aware guidance so you can support her
+          —and show up steady.
         </p>
       </section>
 
-      {/* ───────── Feature Cards ───────── */}
-      <section id="features" className="bg-primary-blue pb-24">
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white text-black rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition">
-            <h3 className="text-xl font-semibold mb-2">❤️‍🩹 Cycle Overview</h3>
-            <p>Quick-glance insight into what day it is—and what mood to expect.</p>
+      {/* ───────────────── Features (glass cards) ───────────────── */}
+      <section id="features" className="relative bg-primary-blue pb-24 pt-2">
+        {/* subtle background glow behind cards */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-24 mx-auto h-72 w-[48rem] rounded-full blur-3xl opacity-40"
+          style={{
+            background:
+              "radial-gradient(closest-side, rgba(16,185,129,.35), rgba(59,130,246,.35), transparent 65%)",
+          }}
+        />
+
+        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 px-6 md:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1 */}
+          <div className="group rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-md transition hover:bg-white/15 hover:shadow-[0_0_0_1px_rgba(255,255,255,.2)]">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+              <HeartHandshake className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold">❤️‍🩹 Cycle Overview</h3>
+            <p className="mt-2 text-sm text-blue-100">
+              Know the day. Decode the vibe. No more guesswork.
+            </p>
           </div>
-          <div className="bg-white text-black rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition">
-            <h3 className="text-xl font-semibold mb-2">⏰ Survival Alerts</h3>
-            <p>Timely notifications for when to lean in, back off, or just bring snacks.</p>
+
+          {/* Card 2 */}
+          <div className="group rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-md transition hover:bg-white/15 hover:shadow-[0_0_0_1px_rgba(255,255,255,.2)]">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+              <BellRing className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold">⏰ Survival Alerts</h3>
+            <p className="mt-2 text-sm text-blue-100">
+              Heads‑up cues on when to lean in, back off—or just bring chocolate.
+            </p>
           </div>
-          <div className="bg-white text-black rounded-2xl p-6 shadow-xl hover:shadow-2xl hover:-translate-y-1 transition">
-            <h3 className="text-xl font-semibold mb-2">🍑 Tips & Intimacy</h3>
-            <p>Useful (and sometimes hilarious) tips to keep connection and sex alive through all phases.</p>
+
+          {/* Card 3 */}
+          <div className="group rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-md transition hover:bg-white/15 hover:shadow-[0_0_0_1px_rgba(255,255,255,.2)]">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+              <Sparkles className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold">🍑 Tips &amp; Intimacy</h3>
+            <p className="mt-2 text-sm text-blue-100">
+              Straight talk + playful nudges to keep connection—and sex—alive through every phase.
+            </p>
+          </div>
+
+          {/* Card 4 */}
+          <div className="group rounded-2xl border border-white/10 bg-white/10 p-6 text-white shadow-2xl backdrop-blur-md transition hover:bg-white/15 hover:shadow-[0_0_0_1px_rgba(255,255,255,.2)]">
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/10">
+              <Brain className="h-5 w-5" />
+            </div>
+            <h3 className="text-lg font-semibold">🪞 Selfcards</h3>
+            <p className="mt-2 text-sm text-blue-100">
+              Daily micro‑rituals to sharpen your presence and energy—so you show up at your best, not just for her but for you.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ───────── Footer ───────── */}
-      <footer id="contact" className="bg-black text-center text-white py-8 px-6">
+      {/* ───────────────── Footer (unchanged structure) ───────────────── */}
+      <footer id="contact" className="bg-black px-6 py-10 text-center text-white">
         <p>
           Contact us:&nbsp;
           <Link href="mailto:Moodmap.tech@gmail.com" className="underline">
