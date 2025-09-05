@@ -43,7 +43,7 @@ export default function HomePage() {
         </p>
 
         {/* Store CTA buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4">
+        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4" id="download">
           <a
             href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
             className="inline-flex h-11 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
@@ -92,7 +92,6 @@ export default function HomePage() {
       {/* ───────── Feature Cards (glass + motion) ───────── */}
       <section id="features" className="bg-primary-blue pb-24">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {/* Card helper */}
           {[
             {
               Icon: Map,
@@ -144,10 +143,7 @@ export default function HomePage() {
       </section>
 
       {/* ───────── Footer ───────── */}
-      <footer
-        id="contact"
-        className="bg-black text-center text-white py-8 px-6"
-      >
+      <footer id="contact" className="bg-black text-center text-white py-8 px-6">
         <p>
           Contact us:&nbsp;
           <Link href="mailto:support@moodmap-app.com" className="underline">
@@ -155,7 +151,8 @@ export default function HomePage() {
           </Link>
         </p>
         <p className="mt-1">
-          <Link href="/privacy-policy.html" className="underline">
+          {/* Updated to Next.js page (no .html) */}
+          <Link href="/privacy-policy" className="underline">
             Privacy Policy
           </Link>
         </p>
