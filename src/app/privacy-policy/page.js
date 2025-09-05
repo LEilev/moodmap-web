@@ -1,5 +1,6 @@
 // src/app/privacy-policy/page.js
 import Link from "next/link";
+import Script from "next/script";
 import {
   Database,
   BarChart3,
@@ -32,12 +33,12 @@ const toc = [
   { id: "section10", label: "10. Contact Us" },
 ];
 
-// Felles UI-snutter (matcher Pro/Support-stilen)
+// UI helpers (matcher Pro/Support)
 function IconRing({ children }) {
   return (
     <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl
                      bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20
-                     shadow-inner shadow-emerald-500/10 transition-all">
+                     shadow-inner shadow-emerald-500/10">
       {children}
     </span>
   );
@@ -70,7 +71,6 @@ export default function PrivacyPolicyPage() {
       {/* Hero */}
       <section className="px-6 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
         <div className="mx-auto max-w-3xl">
-          {/* Last updated-badge (synlig, men juridisk tekst beholdes også nedenfor) */}
           <div className="inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-xs font-semibold text-blue-100">
             <span>Last updated: April 24, 2025</span>
           </div>
@@ -88,17 +88,20 @@ export default function PrivacyPolicyPage() {
             <summary className="list-none cursor-pointer select-none px-4 py-3 font-semibold">
               <span className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm
                                text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                               shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all">
+                               shadow-[0_8px_24px_rgba(59,130,246,0.35)]">
                 Jump to section
               </span>
             </summary>
-            <nav className="px-4 pb-3 pt-2" role="navigation" aria-label="Table of contents">
+            <nav className="px-4 pb-3 pt-2" role="navigation" aria-label="Table of contents" data-pp-toc>
               <ul className="space-y-1.5">
                 {toc.map((item) => (
                   <li key={item.id}>
                     <a
                       href={`#${item.id}`}
-                      className="block rounded-md px-2 py-1 text-sm text-blue-100 hover:text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+                      className="block rounded-md px-2 py-1 text-sm text-blue-100
+                                 hover:text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2
+                                 focus-visible:outline-offset-2 focus-visible:outline-blue-300
+                                 transition-colors duration-200"
                     >
                       {item.label}
                     </a>
@@ -113,6 +116,7 @@ export default function PrivacyPolicyPage() {
             className="hidden sm:block rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl p-5"
             role="navigation"
             aria-label="Table of contents"
+            data-pp-toc
           >
             <div className="mb-2 text-sm font-semibold text-white/90">Table of contents</div>
             <ul className="grid grid-cols-2 gap-y-1.5">
@@ -120,7 +124,10 @@ export default function PrivacyPolicyPage() {
                 <li key={item.id}>
                   <a
                     href={`#${item.id}`}
-                    className="inline-block rounded-md px-2 py-1 text-sm text-blue-100 hover:text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300"
+                    className="inline-block rounded-md px-2 py-1 text-sm text-blue-100
+                               hover:text-white hover:bg-white/10 focus-visible:outline focus-visible:outline-2
+                               focus-visible:outline-offset-2 focus-visible:outline-blue-300
+                               transition-colors duration-200"
                   >
                     {item.label}
                   </a>
@@ -240,10 +247,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2 text-sm leading-relaxed">
               You have the right to request the deletion of your personal data. To submit a data deletion request, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>. We will process your request in accordance with applicable privacy laws, such as GDPR, and delete your data from our systems and those of our service providers (e.g., RevenueCat and Expo) within a reasonable timeframe.
             </p>
           </GlassCard>
@@ -287,10 +294,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-3 text-sm leading-relaxed">
               To exercise these rights, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>.
             </p>
           </GlassCard>
@@ -315,10 +322,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2 text-sm leading-relaxed">
               If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>.
             </p>
           </GlassCard>
@@ -333,7 +340,7 @@ export default function PrivacyPolicyPage() {
           {/* Kontakt-CTA + Back to app */}
           <div className="pt-2 text-center">
             <a
-              href="mailto:Moodmap.tech@gmail.com?subject=Privacy%20question"
+              href="mailto:support@moodmap-app.com?subject=Privacy%20question"
               className="group relative inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold
                          text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
                          shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all
@@ -353,6 +360,98 @@ export default function PrivacyPolicyPage() {
           </div>
         </div>
       </section>
+
+      {/* IntersectionObserver for aktiv seksjons-markering (lett og performant) */}
+      <Script id="pp-toc-active" strategy="afterInteractive">
+        {`
+(function () {
+  try {
+    var sectionIds = ${JSON.stringify(toc.map((t) => t.id))};
+    var tocNavs = Array.from(document.querySelectorAll('[data-pp-toc]'));
+    if (!tocNavs.length) return;
+
+    var allLinks = [];
+    tocNavs.forEach(function(nav){
+      allLinks = allLinks.concat(Array.from(nav.querySelectorAll('a[href^="#"]')));
+    });
+
+    // Map id -> tilhørende <a> (både mobil og desktop)
+    var idToLinks = new Map();
+    sectionIds.forEach(function (id) {
+      var matches = allLinks.filter(function (a) {
+        var href = a.getAttribute('href') || '';
+        var hash = href.startsWith('#') ? href.slice(1) : (href.split('#')[1] || '');
+        return hash === id;
+      });
+      idToLinks.set(id, matches);
+    });
+
+    function clearActive() {
+      allLinks.forEach(function (a) {
+        a.classList.remove('bg-white/10', 'text-white');
+        a.classList.add('text-blue-100');
+        a.setAttribute('aria-current', 'false');
+      });
+    }
+
+    function setActive(id) {
+      clearActive();
+      var links = idToLinks.get(id) || [];
+      links.forEach(function (a) {
+        a.classList.add('bg-white/10', 'text-white');
+        a.classList.remove('text-blue-100');
+        a.setAttribute('aria-current', 'true');
+      });
+    }
+
+    // Init: hash eller første seksjon
+    var initial = (location.hash || '').replace('#','');
+    if (sectionIds.indexOf(initial) !== -1) setActive(initial);
+    else setActive(sectionIds[0]);
+
+    // Observer: marker seksjon nær toppen (35% offset)
+    var visible = new Set();
+    var currentId = initial || sectionIds[0];
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var id = entry.target.id;
+        if (entry.isIntersecting) visible.add(id);
+        else visible.delete(id);
+      });
+
+      // plukk første synlige i dokument-rekkefølge
+      for (var i = 0; i < sectionIds.length; i++) {
+        var id2 = sectionIds[i];
+        if (visible.has(id2)) {
+          if (id2 !== currentId) {
+            currentId = id2;
+            setActive(currentId);
+          }
+          break;
+        }
+      }
+    }, { root: null, rootMargin: '-35% 0px -55% 0px', threshold: 0.01 });
+
+    sectionIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    // Gi umiddelbar feedback ved klikk på TOC-lenker
+    allLinks.forEach(function (a) {
+      a.addEventListener('click', function () {
+        var href = a.getAttribute('href') || '';
+        var id = href.startsWith('#') ? href.slice(1) : (href.split('#')[1] || '');
+        if (id) setActive(id);
+      });
+    });
+
+    // Rydd opp
+    window.addEventListener('pagehide', function(){ observer.disconnect(); });
+  } catch (_) {}
+})();
+        `}
+      </Script>
     </main>
   );
 }
