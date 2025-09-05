@@ -150,8 +150,8 @@ export default function HomePage() {
       >
         <p>
           Contact us:&nbsp;
-          <Link href="mailto:Moodmap.tech@gmail.com" className="underline">
-            Moodmap.tech@gmail.com
+          <Link href="mailto:support@moodmap-app.com" className="underline">
+            support@moodmap-app.com
           </Link>
         </p>
         <p className="mt-1">

@@ -24,8 +24,8 @@ export default function SupportPage() {
           <article className="rounded-2xl bg-white/10 backdrop-blur p-6">
             <h2 className="text-2xl font-semibold mb-2">Email</h2>
             <p>
-              <a className="underline" href="mailto:moodmap.tech@gmail.com">
-                moodmap.tech@gmail.com
+              <a className="underline" href="mailto:support@moodmap-app.com">
+                support@moodmap-app.com
               </a>
             </p>
           </article>
