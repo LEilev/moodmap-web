@@ -130,10 +130,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2 text-sm leading-relaxed">
               You have the right to request the deletion of your personal data. To submit a data deletion request, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>. We will process your request in accordance with applicable privacy laws, such as GDPR, and delete your data from our systems and those of our service providers (e.g., RevenueCat and Expo) within a reasonable timeframe.
             </p>
           </article>
@@ -168,10 +168,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-3 text-sm leading-relaxed">
               To exercise these rights, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>.
             </p>
           </article>
@@ -190,10 +190,10 @@ export default function PrivacyPolicyPage() {
             <p className="mt-2 text-sm leading-relaxed">
               If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at{" "}
               <a
-                href="mailto:Moodmap.tech@gmail.com"
+                href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
-                Moodmap.tech@gmail.com
+                support@moodmap-app.com
               </a>.
             </p>
             <p className="mt-3 text-sm leading-relaxed">
@@ -204,7 +204,7 @@ export default function PrivacyPolicyPage() {
           {/* Contact CTA */}
           <div className="pt-2 text-center">
             <a
-              href="mailto:Moodmap.tech@gmail.com?subject=Privacy%20question"
+              href="mailto:support@moodmap-app.com?subject=Privacy%20question"
               className="group relative inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold
                          text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
                          shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all
