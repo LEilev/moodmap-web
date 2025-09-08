@@ -1,15 +1,6 @@
-// FILE: pages/buy.js
-// -----------------------------------------------------------------------------
+// pages/buy.js
 // v3.6.0 • Client-side redirect to Stripe (Monthly & Yearly)
-// - Preserves pk_* params and sets client_reference_id with strict priority:
-//   1) Respect preexisting client_reference_id on the target URL
-//   2) window.promotekit_referral (unique ID) — read right before redirect
-//   3) (Optional API resolve skipped by default, see logs)
-//   4) Fallback to human slug (?via/ref)
-//   5) Final fallback: "default"
-// - Works in Instagram/TikTok in-app browsers (small delay + visible fallback)
-// - Optional: stashes {uniqueId, slug} for webhook (non-blocking)
-// -----------------------------------------------------------------------------
+// + GA4: fires begin_checkout right before redirect (no flow changes)
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
@@ -26,13 +17,18 @@ function isInAppBrowser() {
   const ua = navigator.userAgent || navigator.vendor || "";
   return /Instagram|FBAN|FBAV|TikTok|Twitter|Snapchat|Pinterest|Line\/|KAKAOTALK/i.test(ua);
 }
+const first = (val) => (Array.isArray(val) ? (val[0] ?? "") : (val ?? ""));
+const validSlug = (s) => typeof s === "string" && /^[\w-]{1,32}$/.test(s);
 
-function first(val) {
-  return Array.isArray(val) ? (val[0] ?? "") : (val ?? "");
-}
-
-function validSlug(s) {
-  return typeof s === "string" && /^[\w-]{1,32}$/.test(s);
+// Safe GA helper (no PII)
+function gaBeginCheckout(params) {
+  try {
+    const fn =
+      (typeof window !== "undefined" && window.mmGaEvent) ||
+      (typeof window !== "undefined" && typeof window.gtag === "function" && ((n, p) => window.gtag("event", n, p)));
+    if (fn) fn("begin_checkout", params || {});
+    if (process.env.NODE_ENV !== "production") console.log("[GA4] begin_checkout", params);
+  } catch {}
 }
 
 export default function BuyClient() {
@@ -44,18 +40,17 @@ export default function BuyClient() {
   const visibleLinkRef = useRef(null);
   const hiddenLinkRef = useRef(null);
 
-  // Build a base Stripe URL early (without client_reference_id). Preserve pk_* + type.
+  // Build a base Stripe URL early (without client_reference_id). Preserve pk_* + type + optional entry.
   const ctx = useMemo(() => {
-    if (!router.isReady) return { type: "monthly", slug: "", pkParams: {} };
+    if (!router.isReady) return { type: "monthly", slug: "", pkParams: {}, entry: "paywall" };
     const q = router.query || {};
     const type = first(q.type) === "yearly" ? "yearly" : "monthly";
     const rawSlug = first(q.ref) || first(q.via) || "";
     const slug = validSlug(rawSlug) ? rawSlug : "";
+    const entry = first(q.entry) || "paywall";
     const pkParams = {};
-    Object.entries(q).forEach(([k, v]) => {
-      if (k.startsWith("pk_")) pkParams[k] = String(first(v));
-    });
-    return { type, slug, pkParams };
+    Object.entries(q).forEach(([k, v]) => { if (k.startsWith("pk_")) pkParams[k] = String(first(v)); });
+    return { type, slug, entry, pkParams };
   }, [router.isReady, router.query]);
 
   // Compute the base href (without client_reference_id).
@@ -101,9 +96,6 @@ export default function BuyClient() {
             clientRef = pkRef;
             source = "promotekit_referral";
           } else {
-            // 3) Optional API resolve (slug -> uniqueId) — intentionally skipped to avoid
-            //    dependency on undocumented endpoints. If you later add it, keep timeout ≤1000ms.
-
             // 4) Fallback: human slug from ?via/ref
             if (ctx.slug) {
               clientRef = ctx.slug;
@@ -120,11 +112,9 @@ export default function BuyClient() {
         if (clientRef && clientRef !== "default" && ctx.slug && clientRef !== ctx.slug) {
           try {
             const qs = new URLSearchParams({ uid: clientRef, slug: ctx.slug });
-            // Non-blocking; keepalive prevents unload cancellation
             fetch(`/api/pk-stash?${qs}`, { method: "GET", keepalive: true }).catch(() => {});
-          } catch {
-            /* no-op */
-          }
+          } catch {}
+
         }
 
         // Mutate URL only if it doesn't already have client_reference_id
@@ -141,7 +131,15 @@ export default function BuyClient() {
         if (aHidden) aHidden.setAttribute("href", href);
         if (aVisible) aVisible.setAttribute("href", href);
 
-        // Log once
+        // ---- GA4: logg begin_checkout rett FØR vi klikker (ingen PII) ----
+        gaBeginCheckout({
+          plan: ctx.type,
+          ref_code: ctx.slug || "(none)",
+          entry: ctx.entry || "paywall",
+          client_reference_hint: clientRef || "(none)",
+        });
+
+        // Log once for debugging
         const short = clientRef ? String(clientRef).slice(0, 6) + "…" : "(none)";
         console.info("[buy] client_ref", short, { source, type: ctx.type });
 
@@ -153,7 +151,7 @@ export default function BuyClient() {
     }, delay);
 
     return () => clearTimeout(timer);
-  }, [baseHref, ctx.type, ctx.slug, inApp]);
+  }, [baseHref, ctx.type, ctx.slug, ctx.entry, inApp]);
 
   return (
     <>

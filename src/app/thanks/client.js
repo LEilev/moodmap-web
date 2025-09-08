@@ -1,7 +1,7 @@
-// src/app/thanks/client.js   v2.5.0   • sends mail on button‑click only
+// src/app/thanks/client.js   v2.5.0 + GA4: thanks_opened on mount (no PII)
 "use client";
 
-import { useMemo, useState, useRef, useCallback } from "react";
+import { useMemo, useState, useRef, useCallback, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { Copy } from "lucide-react";
@@ -25,7 +25,20 @@ export default function ThanksClient({ deepLink: serverLink = "" }) {
 
   /* ---------- Session‑ID + email (if supplied by server via ?ce=) ---------- */
   const sessionId = params?.get("s") || params?.get("cs") || "";
-  const autoEmail = params?.get("ce") || "";              // added in Thanks Page
+  const autoEmail = params?.get("ce") || "";              // added in Thanks Page
+
+  /* ---------- GA4: thanks_opened ---------- */
+  useEffect(() => {
+    try {
+      const fn =
+        (typeof window !== "undefined" && window.mmGaEvent) ||
+        (typeof window !== "undefined" && typeof window.gtag === "function" && ((n, p) => window.gtag("event", n, p)));
+      if (fn) fn("thanks_opened", { source: "stripe_redirect", deep_link_rendered: !!deepLink });
+      if (process.env.NODE_ENV !== "production")
+        console.log("[GA4] thanks_opened", { deep_link_rendered: !!deepLink });
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [!!deepLink]);
 
   /* ---------- Send‑once helper ---------- */
   const sendReceiptOnce = useCallback(async () => {
