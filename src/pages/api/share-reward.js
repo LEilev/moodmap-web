@@ -1,5 +1,5 @@
 // pages/api/share-reward.js (Node/Next.js API Route)
-import fetch from 'node-fetch';  // (If node-fetch is not available globally, install or ensure Node 18+ for global fetch)
+
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
