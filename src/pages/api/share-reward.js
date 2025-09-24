@@ -1,105 +1,81 @@
-// pages/api/share-reward.js
-import fetch from 'node-fetch';  // (If using Node 18+, the global fetch is available and this import can be removed)
+// pages/api/share-reward.js (Node/Next.js API Route)
+import fetch from 'node-fetch';  // (If node-fetch is not available globally, install or ensure Node 18+ for global fetch)
 
-// This API route grants a 7-day "pro" entitlement to a user who shared, if eligible.
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
-    return res.status(405).end('Method Not Allowed');
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { userId } = req.body || {};
+  const { userId } = req.body || {};  // expecting JSON body with { userId }
   if (!userId) {
-    return res.status(400).json({ ok: false, error: 'userId is required' });
+    return res.status(400).json({ ok: false, error: 'Missing userId' });
   }
 
-  // Load environment variables for RevenueCat and Upstash
-  const RC_SECRET_KEY = process.env.RC_SECRET_API_KEY || process.env.RC_API_KEY;
+  // Environment keys
+  const RC_SECRET_KEY = process.env.RC_SECRET_KEY;
   const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
   const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!RC_SECRET_KEY) {
-    console.error('[share-reward] Missing RevenueCat secret API key');
+    console.error('[share-reward] Missing RC_SECRET_KEY');
     return res.status(500).json({ ok: false, error: 'Server configuration error' });
   }
 
-  // Redis rate-limit check (1 reward per user per week)
-  const redisKey = `share-reward:${userId}`;
-  if (UPSTASH_URL && UPSTASH_TOKEN) {
-    try {
-      const url = `${UPSTASH_URL}/get/${encodeURIComponent(redisKey)}`;
-      const redisRes = await fetch(url, {
+  try {
+    // **1. Rate-limit check** – Has this user claimed in the last 7 days?
+    if (UPSTASH_URL && UPSTASH_TOKEN) {
+      const key = `share:${userId}`;
+      const checkRes = await fetch(`${UPSTASH_URL}/get/${encodeURIComponent(key)}`, {
         headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
-        cache: 'no-store',
+        cache: 'no-store'
       });
-      if (redisRes.ok) {
-        const data = await redisRes.json().catch(() => null);
-        if (data?.result) {
-          // Key exists means user already claimed within TTL
-          return res.status(429).json({ ok: false, error: 'Already claimed in the last 7 days' });
+      if (checkRes.ok) {
+        const data = await checkRes.json().catch(() => ({}));
+        if (data && data.result) {
+          // Key exists => already claimed recently
+          console.info(`[share-reward] User ${userId} already claimed a share reward – blocking repeat.`);
+          return res.status(200).json({ ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
         }
       }
-      // (If Redis returns nothing or key missing, proceed)
-    } catch (err) {
-      console.warn('[share-reward] Redis check failed:', err);
-      // If Redis fails, we choose to proceed rather than block, to not penalize user.
+      // (If Redis is not configured or checkRes not ok, we proceed without a stored flag – allows reward.)
     }
-  }
 
-  // Prepare RevenueCat API call to grant entitlement
-  const entitlement = 'pro';
-  const now = Date.now();
-  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
-  const expiresAtMs = now + ONE_WEEK_MS;
-  const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements/${entitlement}`;
-  const body = {
-    // Grant promotional entitlement until a specific time
-    end_time_ms: expiresAtMs
-    // (We could also use "duration": {"unit": "day", "value": 7}, but end_time_ms is more direct.)
-  };
-
-  try {
-    const rcResponse = await fetch(`${rcUrl}`, {
+    // **2. Call RevenueCat API** to grant 7-day "pro" entitlement
+    const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements/pro/promotional`;
+    const rcRes = await fetch(rcUrl, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${RC_SECRET_KEY}`,
         'Content-Type': 'application/json',
+        Accept: 'application/json'
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ duration: '7d' })
     });
-    const rcData = await rcResponse.json().catch(() => null);
-
-    if (rcResponse.status >= 200 && rcResponse.status < 300) {
-      // Successfully granted in RevenueCat
-      console.info('[share-reward] Granted 7-day Pro to user:', userId);
-      // Set Redis key to prevent another claim for 7 days
+    const rcBody = await rcRes.json().catch(() => ({}));  // parse response if possible
+    if (rcRes.ok) {
+      console.info(`[share-reward] Granted 7 days Pro via share to user: ${userId}`);
+      // Record the claim in Redis with 7-day TTL
       if (UPSTASH_URL && UPSTASH_TOKEN) {
-        const setUrl = `${UPSTASH_URL}/setex`;
-        const ttlSeconds = 7 * 24 * 60 * 60;  // 7 days in seconds
-        const value = '1';
-        try {
-          await fetch(setUrl, {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${UPSTASH_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify([redisKey, value, ttlSeconds]),
-          });
-        } catch (err) {
-          console.error('[share-reward] Failed to set Redis TTL key:', err);
-          // Not critical if this fails; just logs.
-        }
+        const key = `share:${userId}`;
+        const value = '1';  // could also store timestamp or user info
+        // Set key with expiry of 604800 seconds (7 days)
+        await fetch(`${UPSTASH_URL}/setex`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${UPSTASH_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify([key, value, 604800])
+        });
       }
-      // Respond with success and the expiration timestamp (ISO string for convenience)
-      return res.status(200).json({ ok: true, expiresAt: new Date(expiresAtMs).toISOString() });
+      // Determine expiration date (7 days from now). We use this for client feedback.
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      return res.status(200).json({ ok: true, expiresAt });
     } else {
-      // RevenueCat API returned an error (e.g., invalid user or other issue)
-      console.error('[share-reward] RevenueCat API error:', rcResponse.status, rcData);
-      const errorMsg = rcData?.message || rcData?.error || 'Failed to grant entitlement';
-      return res.status(500).json({ ok: false, error: errorMsg });
+      console.error('[share-reward] RevenueCat API error', rcRes.status, rcBody);
+      return res.status(500).json({ ok: false, error: 'Failed to grant entitlement', status: rcRes.status });
     }
   } catch (err) {
-    console.error('[share-reward] Request failed:', err);
-    return res.status(500).json({ ok: false, error: 'Internal server error' });
+    console.error('[share-reward] Unexpected error', err);
+    return res.status(500).json({ ok: false, error: 'Internal server error', message: String(err) });
   }
 }
