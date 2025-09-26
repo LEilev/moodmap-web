@@ -25,21 +25,15 @@ function timingSafeEqualHex(aHex, bHex) {
 }
 
 function hmacHexSha256(payload, secret) {
-  return crypto
-    .createHmac('sha256', secret)
-    .update(String(payload), 'utf8')
-    .digest('hex');
+  return crypto.createHmac('sha256', secret).update(String(payload), 'utf8').digest('hex');
 }
 
+// Upstash REST helpers (send command as JSON array body)
 async function upstashSetNxEx(url, token, key, value, ttlSec) {
-  // Send the whole command in the request body as a JSON array.
   const command = ['SET', key, value, 'EX', String(ttlSec), 'NX'];
   const resp = await fetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(command),
   });
   if (!resp.ok) {
@@ -47,22 +41,18 @@ async function upstashSetNxEx(url, token, key, value, ttlSec) {
     throw new Error(`Upstash SET NX EX failed: ${resp.status} ${txt}`);
   }
   const data = await resp.json().catch(() => ({}));
-  return data?.result === 'OK'; // true if set; false (null) if key existed
+  return data?.result === 'OK'; // true if set; false/null if key already exists
 }
 
 async function upstashDel(url, token, key) {
-  // Send the DEL command in the request body as a JSON array.
   try {
     await fetch(url, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify(['DEL', key]),
     });
   } catch {
-    // best-effort (ignore errors)
+    // best-effort
   }
 }
 
@@ -74,7 +64,6 @@ export default async function handler(req, res) {
     return res.status(405).end('Method Not Allowed');
   }
 
-  // Track userId for error logs even if something throws midway
   let currentUserId = undefined;
 
   try {
@@ -89,6 +78,7 @@ export default async function handler(req, res) {
     const { userId, sig } = req.body || {};
     currentUserId = userId;
 
+    // Request arrival log (never prints secrets)
     console.log(
       '[share-reward] Incoming request:',
       `userId=${userId || 'none'}`,
@@ -96,11 +86,10 @@ export default async function handler(req, res) {
     );
 
     if (!userId || typeof userId !== 'string') {
-      console.warn('[share-reward] Missing userId in request');
       return json(res, 400, { ok: false, error: 'Missing userId' });
     }
 
-    // 1) Verify HMAC signature if secret is configured
+    // 1) HMAC signature verification (if configured)
     if (HMAC_SECRET) {
       if (!sig || typeof sig !== 'string') {
         console.warn('[share-reward] Missing signature for userId', userId);
@@ -116,7 +105,7 @@ export default async function handler(req, res) {
       console.warn('[share-reward] HMAC_SECRET is not set — signature check is disabled!');
     }
 
-    // 2) Check required server config
+    // 2) Required server config
     if (!RC_SECRET_API_KEY) {
       console.error('[share-reward] Missing RC_SECRET_API_KEY');
       return json(res, 500, { ok: false, error: 'Server configuration error (RC key)' });
@@ -129,7 +118,7 @@ export default async function handler(req, res) {
     const claimKey = `share-reward:${userId}`;
     const nowMs = Date.now();
 
-    // 3) Attempt to set Redis key with NX (no overwrite) and EX (expiration in 7 days)
+    // 3) Weekly rate limit via Redis (SET NX EX 7d)
     const reserved = await upstashSetNxEx(
       UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN,
@@ -137,70 +126,56 @@ export default async function handler(req, res) {
       String(nowMs),
       WEEK_SECONDS
     );
-
     if (!reserved) {
       console.log('[share-reward] Already claimed within 7 days:', userId);
-      return json(res, 429, {
-        ok: false,
-        code: 'already_claimed',
-        message: 'Reward already claimed this week',
-      });
+      return json(res, 429, { ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
     }
 
-    // 4) Grant 7-day Pro entitlement via RevenueCat
-    try {
-      const entitlement = encodeURIComponent(RC_ENTITLEMENT_ID);
-      const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(
-        userId
-      )}/entitlements/${entitlement}`;
-      const expiresAtMs = nowMs + WEEK_SECONDS * 1000; // 7 days from now in ms
+    // 4) Grant 7-day promotional entitlement via RevenueCat
+    const expiresAtISO = new Date(nowMs + WEEK_SECONDS * 1000).toISOString();
+    const entitlementId = RC_ENTITLEMENT_ID;
+    const rcUrl = 'https://api.revenuecat.com/v1/promotional_entitlements';
+    const rcPayload = {
+      entitlement_id: entitlementId,
+      app_user_id: userId,
+      expires_at: expiresAtISO,
+    };
 
-      const rcResp = await fetch(rcUrl, {
+    console.log('[share-reward] RC request', { url: rcUrl, entitlement_id: entitlementId, expiresAt: expiresAtISO });
+
+    let rcResp, rcBody;
+    try {
+      rcResp = await fetch(rcUrl, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${RC_SECRET_API_KEY}`,
           'Content-Type': 'application/json',
           Accept: 'application/json',
         },
-        body: JSON.stringify({
-          // RevenueCat promotional entitlement with explicit expiration time
-          end_time_ms: expiresAtMs,
-        }),
+        body: JSON.stringify(rcPayload),
       });
-      const rcBody = await rcResp.json().catch(() => ({}));
-
-      if (!rcResp.ok) {
-        console.error(
-          '[share-reward] RC error for userId',
-          userId,
-          rcResp.status,
-          rcBody
-        );
-        // Roll back Redis key so user can retry later if granting failed
-        await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-        return json(res, 500, { ok: false, error: 'Failed to grant entitlement' });
-      }
-
-      // 5) Success – return expiration date to client
-      console.log(
-        '[share-reward] Pro granted to userId',
-        userId,
-        'expiresAt',
-        new Date(expiresAtMs).toISOString()
-      );
-      return json(res, 200, { ok: true, expiresAt: new Date(expiresAtMs).toISOString() });
+      rcBody = await rcResp.json().catch(() => ({}));
     } catch (e) {
-      console.error('[share-reward] RC grant threw for userId', userId, e);
-      // Roll back Redis lock on exception
+      console.error('[share-reward] RC network error for userId', userId, e);
+      // Roll back Redis reservation so user can retry
       await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-      return json(res, 500, { ok: false, error: 'Grant failed' });
+      return json(res, 500, { ok: false, error: 'RevenueCat network error' });
     }
+
+    if (!rcResp.ok) {
+      console.error('[share-reward] RC error for userId', userId, rcResp.status, rcBody);
+      // Roll back Redis reservation so user can retry later
+      await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
+      return json(res, 500, { ok: false, error: 'Failed to grant entitlement' });
+    }
+
+    console.log('[share-reward] Pro granted to userId', userId, 'expiresAt', expiresAtISO);
+
+    // 5) Success
+    return json(res, 200, { ok: true, expiresAt: expiresAtISO });
+
   } catch (err) {
-    console.error(
-      '[share-reward] Unexpected error for userId',
-      typeof currentUserId !== 'undefined' ? currentUserId : 'unknown',
-      err
-    );
+    console.error('[share-reward] Unexpected error for userId', typeof currentUserId !== 'undefined' ? currentUserId : 'unknown', err);
     return json(res, 500, { ok: false, error: 'Internal server error' });
   }
 }
