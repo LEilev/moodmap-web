@@ -1,7 +1,4 @@
 // pages/api/share-reward.js
-// Node 18+ on Vercel: global fetch is available — no need for node-fetch.
-// Grants a 7-day promotional Pro entitlement after sharing (with HMAC verification).
-
 import crypto from 'crypto';
 
 const WEEK_SECONDS = 7 * 24 * 60 * 60;
@@ -11,7 +8,7 @@ function json(res, status, body) {
 }
 
 function cors(res) {
-  res.setHeader('Access-Control-Allow-Origin', '*'); // allow all origins (mobile app, etc.)
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'content-type');
 }
@@ -28,40 +25,43 @@ function timingSafeEqualHex(aHex, bHex) {
 }
 
 function hmacHexSha256(payload, secret) {
-  return crypto.createHmac('sha256', secret).update(String(payload), 'utf8').digest('hex');
+  return crypto.createHmac('sha256', secret)
+               .update(String(payload), 'utf8')
+               .digest('hex');
 }
 
 async function upstashSetNxEx(url, token, key, value, ttlSec) {
-  // POST /set with ["key","value","EX","604800","NX"]
-  const resp = await fetch(`${url}/set`, {
+  // Send the whole command in the request body as a JSON array.
+  const command = ['SET', key, value, 'EX', String(ttlSec), 'NX'];
+  const resp = await fetch(url, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify([key, value, 'EX', String(ttlSec), 'NX']),
+    body: JSON.stringify(command),
   });
   if (!resp.ok) {
     const txt = await resp.text().catch(() => '');
     throw new Error(`Upstash SET NX EX failed: ${resp.status} ${txt}`);
   }
   const data = await resp.json().catch(() => ({}));
-  return data?.result === 'OK'; // true if set; false if key existed
+  return data?.result === 'OK'; // true if set; false if key already existed returns null
 }
 
 async function upstashDel(url, token, key) {
-  // POST /del with ["key"]
+  // Send the DEL command in the request body as a JSON array.
   try {
-    await fetch(`${url}/del`, {
+    await fetch(url, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify([key]),
+      body: JSON.stringify(['DEL', key]),
     });
   } catch {
-    // best effort (no throw)
+    // best effort (ignore errors)
   }
 }
 
@@ -87,26 +87,21 @@ export default async function handler(req, res) {
       return json(res, 400, { ok: false, error: 'Missing userId' });
     }
 
-    // Debug logging for signature verification
-    console.log(`[share-reward] userId=${userId}, sig=${sig}, HMAC_SECRET=${HMAC_SECRET}`);
-
-    // Require HMAC if configured (enforced in production)
+    // 1. Verify HMAC signature if secret is configured
     if (HMAC_SECRET) {
       if (!sig || typeof sig !== 'string') {
-        console.warn(`[share-reward] Missing signature for user ${userId}`);
         return json(res, 401, { ok: false, error: 'Missing signature' });
       }
       const expected = hmacHexSha256(userId, HMAC_SECRET);
-      const ok = timingSafeEqualHex(expected, sig);
-      if (!ok) {
-        console.warn(`[share-reward] Invalid signature for user ${userId}. Expected ${expected}, got ${sig}`);
+      const valid = timingSafeEqualHex(expected, sig);
+      if (!valid) {
         return json(res, 401, { ok: false, error: 'Invalid signature' });
       }
     } else {
-      // If you see this in logs in production, fix your env ASAP.
       console.warn('[share-reward] HMAC_SECRET is not set — signature check is disabled!');
     }
 
+    // 2. Check required server config
     if (!RC_SECRET_API_KEY) {
       console.error('[share-reward] Missing RC_SECRET_API_KEY');
       return json(res, 500, { ok: false, error: 'Server configuration error (RC key)' });
@@ -119,7 +114,7 @@ export default async function handler(req, res) {
     const claimKey = `share-reward:${userId}`;
     const nowMs = Date.now();
 
-    // 1) Atomic lock – attempt to set a key with 7-day expiry, only if not already set
+    // 3. Attempt to set Redis key with NX (no overwrite) and EX (expiration in 7 days)
     const reserved = await upstashSetNxEx(
       UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN,
@@ -127,18 +122,20 @@ export default async function handler(req, res) {
       String(nowMs),
       WEEK_SECONDS
     );
-
     if (!reserved) {
-      // Already claimed within last 7 days
-      console.log('[share-reward] User already claimed share-reward in last 7d:', userId);
-      return json(res, 429, { ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
+      // Key already exists -> user has claimed within the last 7 days
+      return json(res, 429, {
+        ok: false,
+        code: 'already_claimed',
+        message: 'Reward already claimed this week',
+      });
     }
 
-    // 2) Grant via RevenueCat — set Pro entitlement end time to now + 7d
+    // 4. Grant 7-day Pro entitlement via RevenueCat
     try {
       const entitlement = encodeURIComponent(RC_ENTITLEMENT_ID);
       const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements/${entitlement}`;
-      const expiresAtMs = nowMs + WEEK_SECONDS * 1000;
+      const expiresAtMs = nowMs + WEEK_SECONDS * 1000; // 7 days from now in milliseconds
 
       const rcResp = await fetch(rcUrl, {
         method: 'POST',
@@ -148,31 +145,29 @@ export default async function handler(req, res) {
           Accept: 'application/json',
         },
         body: JSON.stringify({
-          // RevenueCat Promotional Entitlement – set explicit end time
+          // RevenueCat promotional entitlement with explicit expiration time
           end_time_ms: expiresAtMs,
         }),
       });
-
       const rcBody = await rcResp.json().catch(() => ({}));
 
       if (!rcResp.ok) {
-        console.error('[share-reward] RC error for user', userId, rcResp.status, rcBody);
-        // Roll back Redis cooldown so user can retry
+        console.error('[share-reward] RC error', rcResp.status, rcBody);
+        // Roll back Redis key so user can retry later if granting failed
         await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
         return json(res, 500, { ok: false, error: 'Failed to grant entitlement' });
       }
 
-      // 3) Success – log and return result
-      console.log('[share-reward] Grant success for user', userId, 'expiresAt', new Date(expiresAtMs).toISOString());
+      // 5. Success – return expiration date to client
       return json(res, 200, { ok: true, expiresAt: new Date(expiresAtMs).toISOString() });
     } catch (e) {
-      console.error('[share-reward] RC grant threw for user', userId, e);
-      // Roll back lock on error
+      console.error('[share-reward] RC grant threw', e);
+      // Roll back Redis lock on exception
       await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
       return json(res, 500, { ok: false, error: 'Grant failed' });
     }
   } catch (err) {
-    console.error('[share-reward] Unexpected error for user', req.body?.userId, err);
+    console.error('[share-reward] Unexpected error', err);
     return json(res, 500, { ok: false, error: 'Internal server error' });
   }
 }
