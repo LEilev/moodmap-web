@@ -1,0 +1,18 @@
+{
+  "brand": "MoodMap",
+  "nav": {
+    "about": "À propos",
+    "download": "Télécharger",
+    "support": "Support",
+    "pro": "Pro"
+  },
+  "cta": {
+    "appStore": "Télécharger sur l'App Store",
+    "playStore": "Disponible sur Google Play"
+  },
+  "footer": {
+    "privacyPolicy": "Politique de confidentialité",
+    "backToApp": "← Retour à l'application",
+    "copyright": "© 2025 MoodMap. Tous droits réservés."
+  }
+}

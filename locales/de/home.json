@@ -1,0 +1,37 @@
+{
+  "metaTitle": "MoodMap — Verstehe den Zyklus. Überlebe das Chaos.",
+  "metaDescription": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit und Humor zu verfolgen und zu überstehen, mit täglicher Anleitung, um verbunden – und bei Verstand – zu bleiben.",
+  "hero": {
+    "title": "Verstehe den Zyklus. Überlebe das Chaos.",
+    "description": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit und Humor zu verfolgen und zu überstehen, mit täglicher Anleitung, um verbunden – und bei Verstand – zu bleiben."
+  },
+  "cta": {
+    "subnote": "Datenschutz schon im Design•Jederzeit kündbar•Funktioniert auf iOS & Android"
+  },
+  "about": {
+    "heading": "Über MoodMap",
+    "body": "Entwickelt für Männer, die den hormonellen Zyklus nicht nur überstehen, sondern darin aufblühen wollen – ohne auf Zehenspitzen zu gehen. Erhalte schonungslos ehrliche Überlebenshinweise, Timing-Fenster und einen visuellen Code, damit du Wärme geben kannst, wenn es zählt, und Abstand, wenn es den Tag rettet."
+  },
+  "features": {
+    "cycleOverview": {
+      "title": "Zyklusüberblick",
+      "body": "Stimmung kartieren. Code knacken. Kein Raten."
+    },
+    "survivalAlerts": {
+      "title": "Überlebens-Alerts",
+      "body": "Wisse, wann du dich nähern, zurückziehen – oder Schokolade bringen solltest."
+    },
+    "tipsIntimacy": {
+      "title": "Tipps & Intimität",
+      "body": "Klare Ratschläge + spielerische Anstupser, um die Leidenschaft (und Sex) am Leben zu halten."
+    },
+    "selfcards": {
+      "title": "Selfcards",
+      "body": "Tägliche Rituale, um Präsenz zu schärfen – sei präsent, für sie und dich selbst."
+    }
+  },
+  "contact": {
+    "label": "Kontaktieren Sie uns:",
+    "email": "support@moodmap-app.com"
+  }
+}

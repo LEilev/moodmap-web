@@ -1,0 +1,37 @@
+{
+  "metaTitle": "MoodMap — Forstå syklusen. Overlev kaoset.",
+  "metaDescription": "MoodMap hjelper deg med å spore og overleve hormonelle sykluser med klarhet, humor og daglige veiledninger for å holde kontakten – og forbli ved fornuft.",
+  "hero": {
+    "title": "Forstå syklusen. Overlev kaoset.",
+    "description": "MoodMap hjelper deg med å spore og overleve hormonelle sykluser med klarhet, humor og daglige veiledninger for å holde kontakten – og forbli ved fornuft."
+  },
+  "cta": {
+    "subnote": "Personvern i fokus•Kan kanselleres når som helst•Fungerer på iOS og Android"
+  },
+  "about": {
+    "heading": "Om MoodMap",
+    "body": "Bygget for menn som vil trives – ikke liste seg – gjennom hormon syklusen. Få brutalt ærlige overlevelsesråd, tidsvinduer og en visuell kode slik at du kan gi varme når det trengs og avstand når det redder dagen."
+  },
+  "features": {
+    "cycleOverview": {
+      "title": "Syklusoversikt",
+      "body": "Kartlegg humøret. Knekk koden. Ingen gjetting."
+    },
+    "survivalAlerts": {
+      "title": "Overlevelsesvarsler",
+      "body": "Vit når du skal by på nærhet, trekke deg tilbake – eller komme med sjokolade."
+    },
+    "tipsIntimacy": {
+      "title": "Tips og intimitet",
+      "body": "Direkte råd + lekne puff for å holde gnisten (og sexen) i live."
+    },
+    "selfcards": {
+      "title": "Selfcards",
+      "body": "Daglige ritualer for å skjerpe tilstedeværelsen – still opp stødig, for henne og for deg selv."
+    }
+  },
+  "contact": {
+    "label": "Kontakt oss:",
+    "email": "support@moodmap-app.com"
+  }
+}

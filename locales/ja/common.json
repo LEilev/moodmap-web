@@ -1,0 +1,18 @@
+{
+  "brand": "MoodMap",
+  "nav": {
+    "about": "概要",
+    "download": "ダウンロード",
+    "support": "サポート",
+    "pro": "Pro"
+  },
+  "cta": {
+    "appStore": "App Store でダウンロード",
+    "playStore": "Google Play で入手"
+  },
+  "footer": {
+    "privacyPolicy": "プライバシーポリシー",
+    "backToApp": "← アプリに戻る",
+    "copyright": "© 2025 MoodMap. 無断転載を禁じます。"
+  }
+}

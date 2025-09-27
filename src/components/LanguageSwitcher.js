@@ -5,19 +5,27 @@ import React from 'react';
 import {useLocale} from 'next-intl';
 import {createNavigation} from 'next-intl/navigation';
 
-// Merk: utvid denne listen når dere legger til språk i next.config.mjs
-const locales = ['en'];
+// Alle språkene dere støtter
+const locales = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
 
 // Bruk next-intl sine locale-bevisste navigasjons-APIer
 const {usePathname, useRouter} = createNavigation({
   locales,
-  // Bruk 'as-needed': default-locale uten prefiks, andre med prefiks når dere legger dem til
+  // 'as-needed' = ingen prefiks for defaultLocale (en), prefiks for andre
   localePrefix: 'as-needed'
 });
 
-// Valgfri mapping for visningsnavn/flagg
+// Mapping for visningsnavn/flagg
 const LABELS = {
-  en: {name: 'English', flag: 'EN'} // Bytt gjerne til SVG/PNG: /public/flags/en.svg
+  en: {name: 'English', flag: 'EN'},
+  no: {name: 'Norsk', flag: 'NO'},
+  de: {name: 'Deutsch', flag: 'DE'},
+  fr: {name: 'Français', flag: 'FR'},
+  it: {name: 'Italiano', flag: 'IT'},
+  es: {name: 'Español', flag: 'ES'},
+  'pt-BR': {name: 'Português (BR)', flag: 'PT'},
+  'zh-CN': {name: '简体中文', flag: 'ZH'},
+  ja: {name: '日本語', flag: 'JA'}
 };
 
 export default function LanguageSwitcher() {
@@ -48,7 +56,7 @@ export default function LanguageSwitcher() {
   return (
     <div className="relative">
       <button
-        className="inline-flex items-center gap-2 rounded border px-2 py-1 text-sm"
+        className="inline-flex items-center gap-2 rounded border px-2 py-1 text-sm bg-white text-black"
         aria-haspopup="listbox"
         aria-label="Change language"
       >
@@ -56,7 +64,7 @@ export default function LanguageSwitcher() {
       </button>
 
       <ul
-        className="absolute right-0 z-10 mt-2 min-w-[8rem] rounded border bg-white p-1 shadow-lg"
+        className="absolute right-0 z-10 mt-2 min-w-[10rem] rounded border bg-white text-black p-1 shadow-lg"
         role="listbox"
       >
         {locales

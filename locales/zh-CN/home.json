@@ -1,0 +1,37 @@
+{
+  "metaTitle": "MoodMap — 理解周期，生存于混乱。",
+  "metaDescription": "MoodMap 帮助您以清晰和幽默的方式追踪并度过荷尔蒙周期，并提供每日指导以保持联系——并保持理智。",
+  "hero": {
+    "title": "理解周期，生存于混乱。",
+    "description": "MoodMap 帮助您以清晰和幽默的方式追踪并度过荷尔蒙周期，并提供每日指导以保持联系——并保持理智。"
+  },
+  "cta": {
+    "subnote": "以隐私为本•随时可取消•适用于 iOS 和 Android"
+  },
+  "about": {
+    "heading": "关于 MoodMap",
+    "body": "专为希望在荷尔蒙周期中茁壮成长（而非畏缩度日）的男性打造。获取毫不避讳的生存提示、时机窗口和一套视觉代码，让你在关键时刻带来温暖，在需要时保持距离。"
+  },
+  "features": {
+    "cycleOverview": {
+      "title": "周期概览",
+      "body": "绘制情绪图谱。破解情绪密码。不再猜测。"
+    },
+    "survivalAlerts": {
+      "title": "生存提醒",
+      "body": "知道何时靠近，何时退后 —— 或备好巧克力。"
+    },
+    "tipsIntimacy": {
+      "title": "贴士与亲密",
+      "body": "直率建议 + 俏皮提醒，让火花（和性生活）保持活跃。"
+    },
+    "selfcards": {
+      "title": "自我卡片",
+      "body": "日常仪式以提高存在感 —— 稳健地出现，为她也为你自己。"
+    }
+  },
+  "contact": {
+    "label": "联系我们：",
+    "email": "support@moodmap-app.com"
+  }
+}

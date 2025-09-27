@@ -1,0 +1,20 @@
+{
+  "metaTitle": "Support – MoodMap",
+  "metaDescription": "¿Necesitas una mano? MoodMap está desarrollado de forma independiente (por mí, Eilev). Leo cada mensaje personalmente.",
+  "title": "¿Necesitas una mano?",
+  "subtitle": "MoodMap está desarrollado de forma independiente (por mí, Eilev). Leo cada mensaje personalmente.",
+  "dm": "¿Prefieres un DM? También estoy en Instagram, pero el correo electrónico es más rápido para soporte.",
+  "labels": {
+    "email": "Email",
+    "phone": "Teléfono",
+    "address": "Dirección postal"
+  },
+  "values": {
+    "email": "support@moodmap-app.com",
+    "phone": "+47 929 97 273",
+    "addressLine1": "MoodMap",
+    "addressLine2": "Fageråsveien 4",
+    "addressLine3": "1415 Oppegård",
+    "addressLine4": "Norway"
+  }
+}

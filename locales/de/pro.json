@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "Schalte tägliche, phasenbewusste Tipps und Überlebenshinweise frei – entwickelt, um Beziehungen Tag für Tag reibungsloser und sicherer zu machen.",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "Premium-Ratgeber für besseres Timing, mehr Verbundenheit und Gelassenheit.",
+    "subtitle": "Schalte tägliche, phasenbewusste Tipps und Überlebenshinweise frei – entwickelt, um Beziehungen Tag für Tag reibungsloser und sicherer zu machen."
+  },
+  "cta": {
+    "yearly": {
+      "label": "Pro werden – Jährlich",
+      "hint": "Bestes Angebot",
+      "aria": "Jahresplan auswählen"
+    },
+    "monthly": {
+      "label": "Pro werden – Monatlich",
+      "aria": "Monatsplan auswählen"
+    },
+    "disclaimer": "Funktioniert mit deiner vorhandenen App. Jederzeit kündbar. Privat und sicher."
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "Tägliche Beziehungsimpulse",
+      "desc": "Wisse, wann du Nähe geben, Freiraum lassen oder Wärme hinzufügen solltest – ganz ohne Ratespiel."
+    },
+    "smartTiming": {
+      "title": "Intelligente Timing-Warnungen",
+      "desc": "Hinweise für PMS, Eisprung und heikle Phasen, damit du im Einklang bleibst."
+    },
+    "hormoneAware": {
+      "title": "Hormonbewusste Anleitung",
+      "desc": "Klare, respektvolle Erläuterungen zu den Zyklusphasen – ohne Schnickschnack."
+    },
+    "calmClarity": {
+      "title": "Ruhe & Klarheit",
+      "desc": "Kurze, ehrliche Notizen, die Reibungen reduzieren und täglich Vertrauen aufbauen."
+    }
+  },
+  "ready": {
+    "title": "Bereit, wenn du es bist.",
+    "subtitle": "Zwei einfache Optionen. Gleiche Freischaltung. Wähle, was am besten zu dir passt.",
+    "yearlyButton": "Jährlich – Bestes Angebot",
+    "monthlyButton": "Monatlich",
+    "disclaimer": "Datenschutzfreundlich gestaltet. Gestützt auf echte Hormonwissenschaft – vereinfacht für den Alltag."
+  }
+}

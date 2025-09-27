@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "Sblocca consigli quotidiani consapevoli delle fasi — progettati per rendere le relazioni più fluide e sicure, giorno dopo giorno.",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "Guida premium per un tempismo migliore, più connessione e calma.",
+    "subtitle": "Sblocca consigli quotidiani consapevoli delle fasi — progettati per rendere le relazioni più fluide e sicure, giorno dopo giorno."
+  },
+  "cta": {
+    "yearly": {
+      "label": "Diventa Pro – Annuale",
+      "hint": "Miglior offerta",
+      "aria": "Scegli il piano annuale"
+    },
+    "monthly": {
+      "label": "Diventa Pro – Mensile",
+      "aria": "Scegli il piano mensile"
+    },
+    "disclaimer": "Funziona con la tua app esistente. Annullabile in qualsiasi momento. Privato e sicuro."
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "Segnali quotidiani di connessione",
+      "desc": "Scopri quando dare sostegno, concedere spazio o offrire calore — senza dover indovinare."
+    },
+    "smartTiming": {
+      "title": "Avvisi di tempismo intelligente",
+      "desc": "Preavvisi per PMS, ovulazione e momenti critici così rimani in sintonia."
+    },
+    "hormoneAware": {
+      "title": "Consigli basati sugli ormoni",
+      "desc": "Spiegazioni chiare e rispettose legate alla fase del ciclo — senza fronzoli."
+    },
+    "calmClarity": {
+      "title": "Calma & Chiarezza",
+      "desc": "Note brevi e sincere che riducono gli attriti e costruiscono fiducia quotidianamente."
+    }
+  },
+  "ready": {
+    "title": "Pronto quando lo sei tu.",
+    "subtitle": "Due opzioni semplici. Stesso sblocco. Scegli quella che fa per te.",
+    "yearlyButton": "Annuale – Miglior offerta",
+    "monthlyButton": "Mensile",
+    "disclaimer": "Privato per concezione. Basato su vera scienza ormonale — reso semplice per la vita quotidiana."
+  }
+}

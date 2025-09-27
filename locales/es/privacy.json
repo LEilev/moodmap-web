@@ -1,0 +1,93 @@
+{
+  "metaTitle": "Política de Privacidad | MoodMap™",
+  "metaDescription": "Cómo recopilamos, usamos y protegemos su información cuando utiliza la aplicación MoodMap.",
+  "hero": {
+    "badge": "Última actualización: 24 de abril de 2025",
+    "title": "Política de Privacidad de MoodMap™"
+  },
+  "toc": {
+    "mobile": "Ir a la sección",
+    "title": "Índice",
+    "sections": {
+      "section1": "1. Información que recopilamos",
+      "section2": "2. Cómo usamos sus datos",
+      "section3": "3. Servicios de terceros",
+      "section4": "4. Seguridad de los datos",
+      "section5": "5. Eliminación de datos",
+      "section6": "6. Sin datos de salud",
+      "section7": "7. Notificaciones por correo (opcional)",
+      "section8": "8. Sus derechos",
+      "section9": "9. Cambios en esta política",
+      "section10": "10. Contáctenos"
+    }
+  },
+  "intro": {
+    "lastUpdated": "Última actualización",
+    "date": "24 de abril de 2025",
+    "text": "MoodMap se compromete a proteger su privacidad. Esta Política de Privacidad explica cómo recopilamos, usamos y protegemos su información cuando utiliza la aplicación MoodMap. Al usar la aplicación, usted acepta los términos de esta Política de Privacidad."
+  },
+  "section1": {
+    "title": "1. Información que recopilamos",
+    "desc": "Recopilamos los siguientes tipos de datos para proporcionar y mejorar nuestros servicios:",
+    "items": [
+      "<strong>Información financiera (historial de compras)</strong>: Recopilamos el historial de compras a través de RevenueCat para procesar compras dentro de la aplicación y suscripciones. Estos datos se utilizan para la funcionalidad de la aplicación (por ejemplo, validar compras) y análisis (por ejemplo, entender patrones de uso).",
+      "<strong>Información de la aplicación y rendimiento (registros de fallos)</strong>: Recopilamos registros de fallos a través de Expo para monitorear el rendimiento de la aplicación, diagnosticar problemas y mejorar la estabilidad. Estos datos son opcionales y se utilizan únicamente con fines analíticos.",
+      "<strong>Identificadores de dispositivo u otros</strong>: Recopilamos identificadores de dispositivo para validar compras y rastrear el uso con fines analíticos. Estos datos son necesarios para la funcionalidad de la aplicación y para el análisis."
+    ],
+    "note": "<strong>Nota:</strong> No recopilamos información de identificación personal (como nombres o direcciones de correo electrónico) a menos que usted elija proporcionarla (por ejemplo, para notificaciones o solicitudes de soporte)."
+  },
+  "section2": {
+    "title": "2. Cómo usamos sus datos",
+    "desc": "Utilizamos los datos recopilados para los siguientes propósitos:",
+    "items": [
+      "<strong>Funcionalidad de la aplicación</strong>: Para procesar compras dentro de la app, validar transacciones y asegurar que la aplicación funcione según lo previsto.",
+      "<strong>Análisis</strong>: Para monitorear el rendimiento de la aplicación, entender patrones de uso y mejorar la experiencia del usuario."
+    ]
+  },
+  "section3": {
+    "title": "3. Servicios de terceros",
+    "desc": "MoodMap utiliza los siguientes servicios de terceros, que pueden recopilar datos según lo descrito en sus propias políticas de privacidad:",
+    "items": [
+      "<strong>RevenueCat</strong>: Se utiliza para gestionar compras dentro de la app y suscripciones. RevenueCat recopila el historial de compras y los identificadores de dispositivo. Para más información, consulte la Política de Privacidad de RevenueCat.",
+      "<strong>Expo</strong>: Se utiliza para el desarrollo y monitoreo de la aplicación. Expo recopila registros de fallos e identificadores de dispositivo con fines analíticos. Para más información, consulte la Política de Privacidad de Expo."
+    ]
+  },
+  "section4": {
+    "title": "4. Seguridad de los datos",
+    "body": "Todos los datos recopilados se cifran durante la transmisión mediante HTTPS para garantizar una transmisión segura. Tomamos medidas razonables para proteger sus datos, pero ningún método de transmisión a través de Internet es completamente seguro."
+  },
+  "section5": {
+    "title": "5. Eliminación de datos",
+    "body": "Usted tiene derecho a solicitar la eliminación de sus datos personales. Para enviar una solicitud de eliminación de datos, por favor contáctenos en support@moodmap-app.com. Procesaremos su solicitud de acuerdo con las leyes de privacidad aplicables, como el RGPD, y eliminaremos sus datos de nuestros sistemas y de los de nuestros proveedores de servicios (por ejemplo, RevenueCat y Expo) dentro de un plazo razonable."
+  },
+  "section6": {
+    "title": "6. Sin datos de salud",
+    "body": "MoodMap no recopila, almacena ni procesa ningún dato personal de salud o menstrual. La aplicación está diseñada para proporcionar consejos generales basados en el ciclo y no está destinada a fines médicos o de diagnóstico."
+  },
+  "section7": {
+    "title": "7. Notificaciones por correo (opcional)",
+    "body": "Si se suscribe a las notificaciones, su dirección de correo electrónico se almacenará de forma segura y se utilizará únicamente para informarle sobre actualizaciones o lanzamientos de la aplicación. Puede darse de baja en cualquier momento siguiendo las instrucciones en los correos electrónicos de notificación."
+  },
+  "section8": {
+    "title": "8. Sus derechos",
+    "desc": "Según su ubicación, es posible que tenga los siguientes derechos con respecto a sus datos:",
+    "items": [
+      "<strong>Acceso</strong>: Solicitar una copia de los datos que tenemos sobre usted.",
+      "<strong>Eliminación</strong>: Solicitar la eliminación de sus datos.",
+      "<strong>Oposición</strong>: Oponerse a ciertos tipos de procesamiento de datos."
+    ],
+    "note": "Para ejercer estos derechos, contáctenos en support@moodmap-app.com."
+  },
+  "section9": {
+    "title": "9. Cambios en esta política",
+    "body": "Podemos actualizar esta Política de Privacidad periódicamente. Cualquier cambio se reflejará en esta página, y la fecha de \"Última actualización\" se revisará en consecuencia. Le recomendamos revisar esta política periódicamente."
+  },
+  "section10": {
+    "title": "10. Contáctenos",
+    "body": "Si tiene alguna pregunta o inquietud acerca de esta Política de Privacidad o nuestras prácticas de datos, contáctenos en support@moodmap-app.com."
+  },
+  "closing": "Al usar la aplicación MoodMap, usted acepta los términos de esta Política de Privacidad.",
+  "cta": {
+    "email": "Envíenos un correo electrónico sobre privacidad"
+  }
+}

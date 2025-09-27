@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "Desbloqueie dicas diárias conscientes das fases — projetadas para tornar os relacionamentos mais tranquilos e seguros, dia após dia.",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "Orientação premium para melhor timing, conexão e calma.",
+    "subtitle": "Desbloqueie dicas diárias conscientes das fases — projetadas para tornar os relacionamentos mais tranquilos e seguros, dia após dia."
+  },
+  "cta": {
+    "yearly": {
+      "label": "Torne-se Pro – Anual",
+      "hint": "Melhor custo-benefício",
+      "aria": "Escolher plano anual"
+    },
+    "monthly": {
+      "label": "Torne-se Pro – Mensal",
+      "aria": "Escolher plano mensal"
+    },
+    "disclaimer": "Funciona com seu aplicativo existente. Cancele a qualquer momento. Privado e seguro."
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "Sinais diários de conexão",
+      "desc": "Saiba quando demonstrar carinho, dar espaço ou aquecer o clima — sem chute."
+    },
+    "smartTiming": {
+      "title": "Alertas de sincronização inteligente",
+      "desc": "Avisos para TPM, ovulação e fases complicadas para você se manter em sintonia."
+    },
+    "hormoneAware": {
+      "title": "Orientação adaptada ao ciclo hormonal",
+      "desc": "Explicações claras e respeitosas vinculadas à fase do ciclo — sem enrolação."
+    },
+    "calmClarity": {
+      "title": "Calma & Clareza",
+      "desc": "Notas curtas e sinceras que reduzem atritos e constroem confiança diariamente."
+    }
+  },
+  "ready": {
+    "title": "Pronto quando você estiver.",
+    "subtitle": "Duas opções simples. Mesmo desbloqueio. Escolha o que for melhor para você.",
+    "yearlyButton": "Anual – Melhor valor",
+    "monthlyButton": "Mensal",
+    "disclaimer": "Privativo por design. Apoiado por ciência hormonal real — simplificado para o dia a dia."
+  }
+}

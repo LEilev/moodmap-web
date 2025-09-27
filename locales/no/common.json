@@ -1,0 +1,18 @@
+{
+  "brand": "MoodMap",
+  "nav": {
+    "about": "Om",
+    "download": "Last ned",
+    "support": "Support",
+    "pro": "Pro"
+  },
+  "cta": {
+    "appStore": "Last ned fra App Store",
+    "playStore": "Last ned fra Google Play"
+  },
+  "footer": {
+    "privacyPolicy": "Personvernerklæring",
+    "backToApp": "← Tilbake til appen",
+    "copyright": "© 2025 MoodMap. Alle rettigheter forbeholdt."
+  }
+}

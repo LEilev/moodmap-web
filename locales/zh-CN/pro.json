@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "解锁每日的、贴合周期阶段的提示和生存指引 —— 旨在让关系日趋顺畅、安全。",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "提供更佳时机、联结与平静的高级指南。",
+    "subtitle": "解锁每日的、贴合周期阶段的提示和生存指引 —— 旨在让关系日趋顺畅、安全。"
+  },
+  "cta": {
+    "yearly": {
+      "label": "升级至 Pro – 年度订阅",
+      "hint": "最划算",
+      "aria": "选择年度计划"
+    },
+    "monthly": {
+      "label": "升级至 Pro – 月度订阅",
+      "aria": "选择月度计划"
+    },
+    "disclaimer": "可与您现有的应用配合使用。随时可取消。私密且安全。"
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "每日沟通提示",
+      "desc": "无需猜测，即可知晓何时给予关怀、留出空间或增添温暖。"
+    },
+    "smartTiming": {
+      "title": "智能时机提醒",
+      "desc": "针对经前综合症、排卵期和棘手时期的提醒，让你保持同步。"
+    },
+    "hormoneAware": {
+      "title": "贴合激素的指导",
+      "desc": "清晰而尊重的解释，与周期阶段相对应 —— 无空话赘述。"
+    },
+    "calmClarity": {
+      "title": "冷静与清晰",
+      "desc": "简短坦诚的提示，每天减少摩擦、建立信任。"
+    }
+  },
+  "ready": {
+    "title": "您准备好了，我们随时准备好。",
+    "subtitle": "两个简单的方案，同样的解锁。选择最适合您的。",
+    "yearlyButton": "年度 – 最划算",
+    "monthlyButton": "月度",
+    "disclaimer": "以隐私为本。基于真实的激素科学 —— 为日常生活简化。"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "metaTitle": "MoodMap — Comprendi il ciclo. Sopravvivi al caos.",
+  "metaDescription": "MoodMap ti aiuta a tracciare e superare il ciclo ormonale con chiarezza, umorismo e guide quotidiane per rimanere connesso — e sano di mente.",
+  "hero": {
+    "title": "Comprendi il ciclo. Sopravvivi al caos.",
+    "description": "MoodMap ti aiuta a tracciare e superare il ciclo ormonale con chiarezza, umorismo e guide quotidiane per rimanere connesso — e sano di mente."
+  },
+  "cta": {
+    "subnote": "Privato per concezione•Annullabile in qualsiasi momento•Funziona su iOS e Android"
+  },
+  "about": {
+    "heading": "Informazioni su MoodMap",
+    "body": "Realizzato per uomini che vogliono prosperare — non camminare sulle uova — attraverso il ciclo ormonale. Ricevi suggerimenti di sopravvivenza brutalmente onesti, finestre temporali e un codice visivo per offrire calore quando conta e spazio quando fa la differenza."
+  },
+  "features": {
+    "cycleOverview": {
+      "title": "Panoramica del ciclo",
+      "body": "Mappa l'umore. Decifra il codice. Niente supposizioni."
+    },
+    "survivalAlerts": {
+      "title": "Avvisi di sopravvivenza",
+      "body": "Scopri quando avvicinarti, fare un passo indietro — o portare del cioccolato."
+    },
+    "tipsIntimacy": {
+      "title": "Consigli & Intimità",
+      "body": "Consigli schietti + spunti giocosi per mantenere viva la scintilla (e il sesso)."
+    },
+    "selfcards": {
+      "title": "Selfcards",
+      "body": "Rituali quotidiani per affinare la presenza — fatti trovare pronto, per lei e per te."
+    }
+  },
+  "contact": {
+    "label": "Contattaci:",
+    "email": "support@moodmap-app.com"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "Déverrouillez des conseils quotidiens adaptés aux phases du cycle – conçus pour rendre les relations plus fluides et sécurisées, jour après jour.",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "Guidance Premium pour un meilleur timing, une meilleure connexion et plus de calme.",
+    "subtitle": "Déverrouillez des conseils quotidiens adaptés aux phases du cycle – conçus pour rendre les relations plus fluides et sécurisées, jour après jour."
+  },
+  "cta": {
+    "yearly": {
+      "label": "Passer Pro – Annuel",
+      "hint": "Meilleure offre",
+      "aria": "Choisir l'offre annuelle"
+    },
+    "monthly": {
+      "label": "Passer Pro – Mensuel",
+      "aria": "Choisir l'offre mensuelle"
+    },
+    "disclaimer": "Fonctionne avec votre application existante. Annulable à tout moment. Privé et sécurisé."
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "Signaux de connexion quotidiens",
+      "desc": "Sachez quand apporter de la chaleur, laisser de l'espace ou vous rapprocher – sans tâtonnements."
+    },
+    "smartTiming": {
+      "title": "Alertes de synchronisation intelligentes",
+      "desc": "Avertissements pour le SPM, l'ovulation et les périodes délicates afin de rester synchronisé."
+    },
+    "hormoneAware": {
+      "title": "Conseils adaptés aux hormones",
+      "desc": "Des explications claires et respectueuses liées aux phases du cycle – sans superflu."
+    },
+    "calmClarity": {
+      "title": "Calme & Clarté",
+      "desc": "Notes courtes et honnêtes qui réduisent les frictions et renforcent la confiance au quotidien."
+    }
+  },
+  "ready": {
+    "title": "Prêt quand vous l'êtes.",
+    "subtitle": "Deux options simples. Même déverrouillage. Choisissez ce qui vous convient le mieux.",
+    "yearlyButton": "Annuel – Meilleure offre",
+    "monthlyButton": "Mensuel",
+    "disclaimer": "Conçu pour la confidentialité. Soutenu par une véritable science hormonale – simplifié pour la vie quotidienne."
+  }
+}

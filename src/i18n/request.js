@@ -1,6 +1,5 @@
 // src/i18n/request.js
 export default {
-  // start kun med engelsk
-  locales: ['en'],
+  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
   defaultLocale: 'en'
 };

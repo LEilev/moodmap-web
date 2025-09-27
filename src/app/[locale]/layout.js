@@ -8,9 +8,19 @@ import {NextIntlClientProvider} from 'next-intl';
 export const dynamic = 'force-static';
 
 export async function generateStaticParams() {
-  // I denne runden kun 'en'
-  return [{locale: 'en'}];
+  return [
+    { locale: 'en' },
+    { locale: 'no' },
+    { locale: 'de' },
+    { locale: 'fr' },
+    { locale: 'it' },
+    { locale: 'es' },
+    { locale: 'pt-BR' },
+    { locale: 'zh-CN' },
+    { locale: 'ja' }
+  ];
 }
+
 
 async function loadMessages(locale) {
   // Slå sammen namespaces til ett messages-objekt

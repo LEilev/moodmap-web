@@ -1,0 +1,46 @@
+{
+  "metaTitle": "MoodMap Pro",
+  "metaDescription": "Lås opp daglige, fasebevisste tips og overlevelsesråd – designet for å gjøre forholdet smidigere og tryggere, dag for dag.",
+  "hero": {
+    "badge": "MoodMap Pro",
+    "title": "Premium veiledning for bedre timing, kontakt og ro.",
+    "subtitle": "Lås opp daglige, fasebevisste tips og overlevelsesråd – designet for å gjøre forholdet smidigere og tryggere, dag for dag."
+  },
+  "cta": {
+    "yearly": {
+      "label": "Bli Pro – Årlig",
+      "hint": "Beste verdi",
+      "aria": "Velg årlig plan"
+    },
+    "monthly": {
+      "label": "Bli Pro – Månedlig",
+      "aria": "Velg månedlig plan"
+    },
+    "disclaimer": "Fungerer med din eksisterende app. Kan kanselleres når som helst. Privat og sikker."
+  },
+  "features": {
+    "dailyConnection": {
+      "title": "Daglige nærhetssignaler",
+      "desc": "Vit når du skal gi ekstra oppmerksomhet, gi plass eller tilføre varme – uten gjetting."
+    },
+    "smartTiming": {
+      "title": "Smarte tidsvarsler",
+      "desc": "Varsler for PMS, eggløsning og krevende perioder, slik at du kan holde deg i takt."
+    },
+    "hormoneAware": {
+      "title": "Hormonbevisst veiledning",
+      "desc": "Klare, respektfulle forklaringer knyttet til syklusfaser – uten utenomsnakk."
+    },
+    "calmClarity": {
+      "title": "Ro & klarhet",
+      "desc": "Korte, ærlige notater som reduserer friksjon og bygger tillit daglig."
+    }
+  },
+  "ready": {
+    "title": "Klar når du er det.",
+    "subtitle": "To enkle alternativer. Samme oppgradering. Velg det som passer best for deg.",
+    "yearlyButton": "Årlig – Beste verdi",
+    "monthlyButton": "Månedlig",
+    "disclaimer": "Utviklet med personvern i fokus. Basert på reell hormonkunnskap – gjort enkelt for hverdagen."
+  }
+}

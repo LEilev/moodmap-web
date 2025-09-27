@@ -1,0 +1,20 @@
+{
+  "metaTitle": "Support – MoodMap",
+  "metaDescription": "需要帮忙吗？MoodMap 是独立开发的（由我 Eilev）。每一条消息我都会亲自阅读。",
+  "title": "需要帮忙吗？",
+  "subtitle": "MoodMap 是独立开发的（由我 Eilev）。每一条消息我都会亲自阅读。",
+  "dm": "喜欢私信吗？我也在 Instagram 上，但对于支持，电子邮件是最快的。",
+  "labels": {
+    "email": "电子邮件",
+    "phone": "电话",
+    "address": "邮寄地址"
+  },
+  "values": {
+    "email": "support@moodmap-app.com",
+    "phone": "+47 929 97 273",
+    "addressLine1": "MoodMap",
+    "addressLine2": "Fageråsveien 4",
+    "addressLine3": "1415 Oppegård",
+    "addressLine4": "Norway"
+  }
+}
