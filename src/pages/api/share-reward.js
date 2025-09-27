@@ -1,16 +1,15 @@
 // pages/api/share-reward.js
-// Drop-in backend for “share to unlock 7 days Pro”
-// - HMAC verification (userId + sig)
-// - 7d rate-limit via Upstash Redis
-// - RevenueCat: POST /v1/subscribers/{id}/entitlements/{entitlement}/promotional
-//   Primary body uses end_time_ms; fallback to duration: "seven_days" if needed
-// - Structured logging + safe rollback
+// Share → unlock 7d Pro in RevenueCat
+// v2.3 — ensures subscriber exists before granting, robust fallbacks + logging
 
 import crypto from 'crypto';
 
 const WEEK_SECONDS = 7 * 24 * 60 * 60;
 
-function withCors(res) {
+// ───────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ───────────────────────────────────────────────────────────────────────────────
+function cors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'content-type');
@@ -31,44 +30,96 @@ function timingSafeEqualHex(aHex, bHex) {
     return false;
   }
 }
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// ---------- Upstash helpers ----------
-async function upstashCmd(url, token, command) {
+// Upstash
+async function upstash(url, token, command) {
   const r = await fetch(url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(command),
   });
-  if (!r.ok) throw new Error(`Upstash error ${r.status}: ${await r.text().catch(()=>'')}`);
+  if (!r.ok) throw new Error(`Upstash ${r.status} ${await r.text().catch(()=>'')}`);
   return r.json().catch(() => ({}));
 }
-async function reserveWeeklyClaim(url, token, key, ttlSec) {
-  // SET key value EX ttl NX -> result === 'OK' if reserved, null if already exists
-  const data = await upstashCmd(url, token, ['SET', key, String(Date.now()), 'EX', String(ttlSec), 'NX']);
+async function reserveWeekly(url, token, key, ttlSec) {
+  const data = await upstash(url, token, ['SET', key, String(Date.now()), 'EX', String(ttlSec), 'NX']);
   return data?.result === 'OK';
 }
 async function releaseReserve(url, token, key) {
-  try { await upstashCmd(url, token, ['DEL', key]); } catch {}
+  try { await upstash(url, token, ['DEL', key]); } catch {}
 }
 
-// ---------- RevenueCat helpers ----------
-async function rcPostJson(url, apiKey, body) {
+// RevenueCat helpers
+async function rcRequest(url, method, apiKey, body) {
   const resp = await fetch(url, {
-    method: 'POST',
+    method,
     headers: {
       Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
       Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body),
+    body: body ? JSON.stringify(body) : undefined,
   });
   let json;
   try { json = await resp.json(); } catch { json = {}; }
   return { ok: resp.ok, status: resp.status, body: json };
 }
 
+// Ensure subscriber exists (GET will create if missing)
+async function ensureSubscriberExists(userId, apiKey, reqId) {
+  const url = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}`;
+  const r = await rcRequest(url, 'GET', apiKey, null);
+  console.log(`[share-reward]#${reqId} ensure-subscriber GET status=${r.status}`);
+  return r.ok;
+}
+
+// Grant promo — primary with duration, fallback to end_time_ms, with retry on 404/7259
+async function grantPromo(userId, entitlement, expiresMs, apiKey, reqId) {
+  const base = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements/${encodeURIComponent(entitlement)}/promotional`;
+
+  // Variant A: duration (widely supported)
+  const bodyA = { duration: 'seven_days' };
+  console.log(`[share-reward]#${reqId} RC grant (A:duration)`, { url: base, entitlement, duration: bodyA.duration });
+  let r = await rcRequest(base, 'POST', apiKey, bodyA);
+  if (r.ok) return { ok: true, variant: 'duration' };
+
+  const code = r?.body?.code || r.status;
+  const msg = r?.body?.message || '';
+  console.warn(`[share-reward]#${reqId} RC grant (A) failed: ${r.status} ${code} ${msg}`);
+
+  // If 404 subscriber not found (7259), try a short backoff + retry A once
+  if (r.status === 404 && String(code).includes('7259')) {
+    await sleep(350);
+    console.log(`[share-reward]#${reqId} retry RC grant (A:duration) after ensure + backoff`);
+    r = await rcRequest(base, 'POST', apiKey, bodyA);
+    if (r.ok) return { ok: true, variant: 'duration_retry' };
+    console.warn(`[share-reward]#${reqId} RC grant (A retry) failed: ${r.status} ${r?.body?.code} ${r?.body?.message}`);
+  }
+
+  // Variant B: end_time_ms (custom end date)
+  const bodyB = { end_time_ms: expiresMs };
+  console.log(`[share-reward]#${reqId} RC grant (B:end_time_ms)`, { url: base, entitlement, end_time_ms: bodyB.end_time_ms });
+  r = await rcRequest(base, 'POST', apiKey, bodyB);
+  if (r.ok) return { ok: true, variant: 'end_time_ms' };
+
+  // If 404 again, one last retry after a tiny wait
+  if (r.status === 404) {
+    await sleep(350);
+    console.log(`[share-reward]#${reqId} retry RC grant (B:end_time_ms)`);
+    const r2 = await rcRequest(base, 'POST', apiKey, bodyB);
+    if (r2.ok) return { ok: true, variant: 'end_time_ms_retry' };
+    return { ok: false, last: r2 };
+  }
+
+  return { ok: false, last: r };
+}
+
+// ───────────────────────────────────────────────────────────────────────────────
+// Handler
+// ───────────────────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  withCors(res);
+  cors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
@@ -87,112 +138,72 @@ export default async function handler(req, res) {
     } = process.env;
 
     const { userId, sig } = req.body || {};
+    console.log(`[share-reward]#${reqId} Incoming: userId=${userId || 'null'} sig_present=${!!sig}`);
 
-    console.log(
-      `[share-reward]#${reqId} Incoming request: userId=${userId || 'null'} sig_present=${!!sig}`
-    );
-
-    // Validate input
+    // Basic validation + signature
     if (!userId || typeof userId !== 'string') {
       return send(res, 400, { ok: false, code: 'bad_request', error: 'Missing userId' });
     }
-    if (!HMAC_SECRET) {
-      console.warn(`[share-reward]#${reqId} HMAC_SECRET missing – signature check disabled`);
-    } else {
+    if (HMAC_SECRET) {
       if (!sig || typeof sig !== 'string') {
-        console.warn(`[share-reward]#${reqId} Missing signature`);
         return send(res, 401, { ok: false, code: 'missing_sig', error: 'Missing signature' });
       }
       const expected = hmacHexSha256(userId, HMAC_SECRET);
       if (!timingSafeEqualHex(expected, sig)) {
-        console.warn(`[share-reward]#${reqId} Invalid signature`);
         return send(res, 401, { ok: false, code: 'bad_sig', error: 'Invalid signature' });
       }
+    } else {
+      console.warn(`[share-reward]#${reqId} HMAC_SECRET not set — signature check disabled`);
     }
     if (!RC_SECRET_API_KEY) {
       console.error(`[share-reward]#${reqId} Missing RC_SECRET_API_KEY`);
       return send(res, 500, { ok: false, code: 'server_config', error: 'Missing RC key' });
     }
     if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
-      console.error(`[share-reward]#${reqId} Missing Upstash env`);
+      console.error(`[share-reward]#${reqId} Missing Upstash Redis env`);
       return send(res, 500, { ok: false, code: 'server_config', error: 'Missing Redis config' });
     }
 
     // Weekly rate-limit
     const claimKey = `share-reward:${userId}`;
-    const reserved = await reserveWeeklyClaim(
-      UPSTASH_REDIS_REST_URL,
-      UPSTASH_REDIS_REST_TOKEN,
-      claimKey,
-      WEEK_SECONDS,
-    );
+    const reserved = await reserveWeekly(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey, WEEK_SECONDS);
     if (!reserved) {
-      console.log(`[share-reward]#${reqId} Already claimed last 7d: ${userId}`);
+      console.log(`[share-reward]#${reqId} Already claimed within 7d`);
       return send(res, 429, { ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
     }
 
-    // Compute expiry (7d)
+    // 1) Ensure subscriber exists (GET will create if missing)
+    const ensured = await ensureSubscriberExists(userId, RC_SECRET_API_KEY, reqId);
+    if (!ensured) {
+      console.error(`[share-reward]#${reqId} ensure-subscriber failed`);
+      await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
+      return send(res, 500, { ok: false, code: 'rc_get_failed', error: 'Failed to ensure subscriber' });
+    }
+
+    // 2) Grant promo (duration first, then end_time_ms)
     const nowMs = Date.now();
     const expiresMs = nowMs + WEEK_SECONDS * 1000;
     const expiresAtISO = new Date(expiresMs).toISOString();
 
-    // RC v1: POST /v1/subscribers/{app_user_id}/entitlements/{entitlement_id}/promotional
-    const encodedUserId = encodeURIComponent(userId);
-    const encodedEnt = encodeURIComponent(RC_ENTITLEMENT_ID);
-    const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodedUserId}/entitlements/${encodedEnt}/promotional`;
+    const result = await grantPromo(userId, RC_ENTITLEMENT_ID, expiresMs, RC_SECRET_API_KEY, reqId);
 
-    // Primary body: end_time_ms (recommended by RC)
-    const bodyEndTime = { end_time_ms: expiresMs };
-    console.log(`[share-reward]#${reqId} RC request`, {
-      url: rcUrl,
-      variant: 'end_time_ms',
-      entitlement: RC_ENTITLEMENT_ID,
-      expiresAt: expiresAtISO,
-    });
-
-    let rcResp = await rcPostJson(rcUrl, RC_SECRET_API_KEY, bodyEndTime);
-
-    if (!rcResp.ok) {
-      // If parameter error or endpoint rejects end_time_ms, try duration as fallback
-      const code = rcResp?.body?.code || rcResp?.status;
-      const msg = rcResp?.body?.message || '';
-      console.warn(`[share-reward]#${reqId} RC end_time_ms failed: ${rcResp.status} ${code} ${msg}`);
-
-      // 401/403/404 → permanent error (bad key/route/permission)
-      if (rcResp.status === 401 || rcResp.status === 403 || rcResp.status === 404) {
-        await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-        return send(res, 500, { ok: false, code: 'rc_auth_or_route', error: 'RevenueCat auth/route not allowed' });
-      }
-
-      // Try fallback with duration
-      const bodyDuration = { duration: 'seven_days' };
-      console.log(`[share-reward]#${reqId} RC retry with duration`, {
-        url: rcUrl,
-        variant: 'duration',
-        entitlement: RC_ENTITLEMENT_ID,
+    if (!result.ok) {
+      const last = result.last || {};
+      console.error(`[share-reward]#${reqId} RC grant failed`, {
+        status: last.status,
+        code: last?.body?.code,
+        message: last?.body?.message,
       });
-      const rcResp2 = await rcPostJson(rcUrl, RC_SECRET_API_KEY, bodyDuration);
-
-      if (!rcResp2.ok) {
-        console.error(
-          `[share-reward]#${reqId} RC failed (both variants)`,
-          { end_time_ms: { status: rcResp.status, body: rcResp.body }, duration: { status: rcResp2.status, body: rcResp2.body } }
-        );
-        await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-        return send(res, 500, { ok: false, code: 'rc_failed', error: 'Failed to grant entitlement' });
-      }
-
-      // success on duration fallback
-      console.log(`[share-reward]#${reqId} Pro granted via RC (duration fallback) → ${expiresAtISO}`);
-      return send(res, 200, { ok: true, expiresAt: expiresAtISO });
+      await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
+      return send(res, 500, { ok: false, code: 'rc_failed', error: 'Failed to grant entitlement' });
     }
 
-    // success on primary end_time_ms
-    console.log(`[share-reward]#${reqId} Pro granted via RC (end_time_ms) → ${expiresAtISO}`);
+    console.log(
+      `[share-reward]#${reqId} Pro granted (variant=${result.variant}) → ${expiresAtISO}`
+    );
     return send(res, 200, { ok: true, expiresAt: expiresAtISO });
-
   } catch (err) {
-    console.error('[share-reward] Unexpected error', err);
+    console.error(`[share-reward]#${reqId} Unexpected error`, err);
     return send(res, 500, { ok: false, code: 'server_error', error: 'Internal server error' });
   }
 }
