@@ -1,94 +1,81 @@
 // pages/api/share-reward.js
+// Drop-in backend for “share to unlock 7 days Pro”
+// - HMAC verification (userId + sig)
+// - 7d rate-limit via Upstash Redis
+// - RevenueCat: POST /v1/subscribers/{id}/entitlements/{entitlement}/promotional
+//   Primary body uses end_time_ms; fallback to duration: "seven_days" if needed
+// - Structured logging + safe rollback
+
 import crypto from 'crypto';
 
 const WEEK_SECONDS = 7 * 24 * 60 * 60;
 
-function json(res, status, body) {
-  res.status(status).json(body);
-}
-
-function cors(res) {
+function withCors(res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'content-type');
 }
-
+function send(res, status, body) {
+  res.status(status).json(body);
+}
+function hmacHexSha256(payload, secret) {
+  return crypto.createHmac('sha256', secret).update(String(payload), 'utf8').digest('hex');
+}
 function timingSafeEqualHex(aHex, bHex) {
   try {
-    const ab = Buffer.from(String(aHex).toLowerCase(), 'hex');
-    const bb = Buffer.from(String(bHex).toLowerCase(), 'hex');
-    if (ab.length !== bb.length) return false;
-    return crypto.timingSafeEqual(ab, bb);
+    const a = Buffer.from(String(aHex), 'hex');
+    const b = Buffer.from(String(bHex), 'hex');
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
   } catch {
     return false;
   }
 }
 
-function hmacHexSha256(payload, secret) {
-  return crypto.createHmac('sha256', secret).update(String(payload), 'utf8').digest('hex');
-}
-
-// ---------- Upstash (rate limit 7d) ----------
-async function upstashSetNxEx(url, token, key, value, ttlSec) {
-  const command = ['SET', key, value, 'EX', String(ttlSec), 'NX'];
-  const resp = await fetch(url, {
+// ---------- Upstash helpers ----------
+async function upstashCmd(url, token, command) {
+  const r = await fetch(url, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(command),
   });
-  if (!resp.ok) {
-    const txt = await resp.text().catch(() => '');
-    throw new Error(`Upstash SET NX EX failed: ${resp.status} ${txt}`);
-  }
-  const data = await resp.json().catch(() => ({}));
-  return data?.result === 'OK'; // true if reserved; null/false if key exists
+  if (!r.ok) throw new Error(`Upstash error ${r.status}: ${await r.text().catch(()=>'')}`);
+  return r.json().catch(() => ({}));
 }
-
-async function upstashDel(url, token, key) {
-  try {
-    await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(['DEL', key]),
-    });
-  } catch {
-    // best-effort
-  }
+async function reserveWeeklyClaim(url, token, key, ttlSec) {
+  // SET key value EX ttl NX -> result === 'OK' if reserved, null if already exists
+  const data = await upstashCmd(url, token, ['SET', key, String(Date.now()), 'EX', String(ttlSec), 'NX']);
+  return data?.result === 'OK';
+}
+async function releaseReserve(url, token, key) {
+  try { await upstashCmd(url, token, ['DEL', key]); } catch {}
 }
 
 // ---------- RevenueCat helpers ----------
-async function rcJson(url, method, apiKey, bodyObj) {
+async function rcPostJson(url, apiKey, body) {
   const resp = await fetch(url, {
-    method,
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       Accept: 'application/json',
     },
-    body: bodyObj ? JSON.stringify(bodyObj) : undefined,
+    body: JSON.stringify(body),
   });
-  let body;
-  try { body = await resp.json(); } catch { body = {}; }
-  return { ok: resp.ok, status: resp.status, body };
-}
-
-function isPromoEndpointUnavailable({ status, body }) {
-  // Common signals when endpoint is not available for the account/plan or route not recognized
-  if (status === 404) return true; // "Page not found" (code 7117)
-  if (status === 403) return true; // plan/permission block
-  if (Number(body?.code) === 7117) return true; // RC "Page not found"
-  return false;
+  let json;
+  try { json = await resp.json(); } catch { json = {}; }
+  return { ok: resp.ok, status: resp.status, body: json };
 }
 
 export default async function handler(req, res) {
-  cors(res);
+  withCors(res);
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(405).end('Method Not Allowed');
   }
 
-  let currentUserId = undefined;
+  const reqId = Math.random().toString(36).slice(2, 9);
 
   try {
     const {
@@ -100,157 +87,112 @@ export default async function handler(req, res) {
     } = process.env;
 
     const { userId, sig } = req.body || {};
-    currentUserId = userId;
 
     console.log(
-      '[share-reward] Incoming request:',
-      `userId=${userId || 'none'}`,
-      `sig_provided=${!!sig}`
+      `[share-reward]#${reqId} Incoming request: userId=${userId || 'null'} sig_present=${!!sig}`
     );
 
+    // Validate input
     if (!userId || typeof userId !== 'string') {
-      return json(res, 400, { ok: false, error: 'Missing userId' });
+      return send(res, 400, { ok: false, code: 'bad_request', error: 'Missing userId' });
     }
-
-    // 1) Verify HMAC
-    if (HMAC_SECRET) {
+    if (!HMAC_SECRET) {
+      console.warn(`[share-reward]#${reqId} HMAC_SECRET missing – signature check disabled`);
+    } else {
       if (!sig || typeof sig !== 'string') {
-        console.warn('[share-reward] Missing signature for userId', userId);
-        return json(res, 401, { ok: false, error: 'Missing signature' });
+        console.warn(`[share-reward]#${reqId} Missing signature`);
+        return send(res, 401, { ok: false, code: 'missing_sig', error: 'Missing signature' });
       }
       const expected = hmacHexSha256(userId, HMAC_SECRET);
-      const valid = timingSafeEqualHex(expected, sig);
-      if (!valid) {
-        console.warn('[share-reward] Invalid signature for userId', userId);
-        return json(res, 401, { ok: false, error: 'Invalid signature' });
+      if (!timingSafeEqualHex(expected, sig)) {
+        console.warn(`[share-reward]#${reqId} Invalid signature`);
+        return send(res, 401, { ok: false, code: 'bad_sig', error: 'Invalid signature' });
       }
-    } else {
-      console.warn('[share-reward] HMAC_SECRET is not set — signature check is disabled!');
     }
-
-    // 2) Server config
     if (!RC_SECRET_API_KEY) {
-      console.error('[share-reward] Missing RC_SECRET_API_KEY');
-      return json(res, 500, { ok: false, error: 'Server configuration error (RC key)' });
+      console.error(`[share-reward]#${reqId} Missing RC_SECRET_API_KEY`);
+      return send(res, 500, { ok: false, code: 'server_config', error: 'Missing RC key' });
     }
     if (!UPSTASH_REDIS_REST_URL || !UPSTASH_REDIS_REST_TOKEN) {
-      console.error('[share-reward] Missing Upstash Redis env');
-      return json(res, 500, { ok: false, error: 'Server configuration error (Redis)' });
+      console.error(`[share-reward]#${reqId} Missing Upstash env`);
+      return send(res, 500, { ok: false, code: 'server_config', error: 'Missing Redis config' });
     }
 
+    // Weekly rate-limit
     const claimKey = `share-reward:${userId}`;
-    const nowMs = Date.now();
-
-    // 3) Weekly rate-limit
-    const reserved = await upstashSetNxEx(
+    const reserved = await reserveWeeklyClaim(
       UPSTASH_REDIS_REST_URL,
       UPSTASH_REDIS_REST_TOKEN,
       claimKey,
-      String(nowMs),
-      WEEK_SECONDS
+      WEEK_SECONDS,
     );
     if (!reserved) {
-      console.log('[share-reward] Already claimed within 7 days:', userId);
-      return json(res, 429, { ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
+      console.log(`[share-reward]#${reqId} Already claimed last 7d: ${userId}`);
+      return send(res, 429, { ok: false, code: 'already_claimed', message: 'Reward already claimed this week' });
     }
 
-    // 4) Try Promotional Entitlements (primary)
-    const expiresAtISO = new Date(nowMs + WEEK_SECONDS * 1000).toISOString();
-    const promoUrl = 'https://api.revenuecat.com/v1/promotional_entitlements';
-    const promoPayload = {
-      entitlement_id: RC_ENTITLEMENT_ID, // per your setup (e.g. "pro")
-      app_user_id: userId,
-      expires_at: expiresAtISO,
-    };
+    // Compute expiry (7d)
+    const nowMs = Date.now();
+    const expiresMs = nowMs + WEEK_SECONDS * 1000;
+    const expiresAtISO = new Date(expiresMs).toISOString();
 
-    console.log('[share-reward] RC request', { url: promoUrl, entitlement_id: RC_ENTITLEMENT_ID, expiresAt: expiresAtISO });
-    let promoResp;
-    try {
-      promoResp = await rcJson(promoUrl, 'POST', RC_SECRET_API_KEY, promoPayload);
-    } catch (e) {
-      console.error('[share-reward] RC promo network error for userId', userId, e);
-      await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-      return json(res, 500, { ok: false, error: 'RevenueCat network error (promo)' });
-    }
+    // RC v1: POST /v1/subscribers/{app_user_id}/entitlements/{entitlement_id}/promotional
+    const encodedUserId = encodeURIComponent(userId);
+    const encodedEnt = encodeURIComponent(RC_ENTITLEMENT_ID);
+    const rcUrl = `https://api.revenuecat.com/v1/subscribers/${encodedUserId}/entitlements/${encodedEnt}/promotional`;
 
-    if (promoResp.ok) {
-      console.log('[share-reward] Pro granted via promo endpoint to userId', userId, 'expiresAt', expiresAtISO);
-      return json(res, 200, { ok: true, expiresAt: expiresAtISO });
-    }
+    // Primary body: end_time_ms (recommended by RC)
+    const bodyEndTime = { end_time_ms: expiresMs };
+    console.log(`[share-reward]#${reqId} RC request`, {
+      url: rcUrl,
+      variant: 'end_time_ms',
+      entitlement: RC_ENTITLEMENT_ID,
+      expiresAt: expiresAtISO,
+    });
 
-    // 5) Fallback path if promo endpoint unavailable (404/403/7117)
-    if (isPromoEndpointUnavailable(promoResp)) {
-      console.warn('[share-reward] Promo endpoint unavailable, falling back to subscriber entitlements path…');
+    let rcResp = await rcPostJson(rcUrl, RC_SECRET_API_KEY, bodyEndTime);
 
-      // 5a) Ensure subscriber exists by posting an attribute (safe no-op if exists)
-      const attrUrl = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/attributes`;
-      const attrPayload = {
-        attributes: {
-          share_reward: {
-            value: 'true',
-            updated_at_ms: nowMs,
-          },
-        },
-      };
-      let attrResp;
-      try {
-        attrResp = await rcJson(attrUrl, 'POST', RC_SECRET_API_KEY, attrPayload);
-      } catch (e) {
-        console.warn('[share-reward] RC attributes network error (will still attempt entitlement)', e?.message || e);
-      }
-      console.log('[share-reward] RC ensure-subscriber (attributes) status', attrResp?.status ?? 'n/a');
+    if (!rcResp.ok) {
+      // If parameter error or endpoint rejects end_time_ms, try duration as fallback
+      const code = rcResp?.body?.code || rcResp?.status;
+      const msg = rcResp?.body?.message || '';
+      console.warn(`[share-reward]#${reqId} RC end_time_ms failed: ${rcResp.status} ${code} ${msg}`);
 
-      // 5b) Try: POST /v1/subscribers/{id}/entitlements/{entitlement}
-      const entUrlA = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements/${encodeURIComponent(RC_ENTITLEMENT_ID)}`;
-      const entBodyA = { expires_at: expiresAtISO };
-
-      console.log('[share-reward] RC fallback A request', { url: entUrlA, expiresAt: expiresAtISO });
-      let entRespA;
-      try {
-        entRespA = await rcJson(entUrlA, 'POST', RC_SECRET_API_KEY, entBodyA);
-      } catch (e) {
-        console.error('[share-reward] RC fallback A network error for userId', userId, e);
+      // 401/403/404 → permanent error (bad key/route/permission)
+      if (rcResp.status === 401 || rcResp.status === 403 || rcResp.status === 404) {
+        await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
+        return send(res, 500, { ok: false, code: 'rc_auth_or_route', error: 'RevenueCat auth/route not allowed' });
       }
 
-      if (entRespA?.ok) {
-        console.log('[share-reward] Pro granted via fallback A to userId', userId, 'expiresAt', expiresAtISO);
-        return json(res, 200, { ok: true, expiresAt: expiresAtISO });
-      }
-
-      // 5c) Extra fallback: POST /v1/subscribers/{id}/entitlements (body with identifier)
-      const entUrlB = `https://api.revenuecat.com/v1/subscribers/${encodeURIComponent(userId)}/entitlements`;
-      const entBodyB = { entitlement_id: RC_ENTITLEMENT_ID, expires_at: expiresAtISO };
-
-      console.log('[share-reward] RC fallback B request', { url: entUrlB, entitlement_id: RC_ENTITLEMENT_ID, expiresAt: expiresAtISO });
-      let entRespB;
-      try {
-        entRespB = await rcJson(entUrlB, 'POST', RC_SECRET_API_KEY, entBodyB);
-      } catch (e) {
-        console.error('[share-reward] RC fallback B network error for userId', userId, e);
-      }
-
-      if (entRespB?.ok) {
-        console.log('[share-reward] Pro granted via fallback B to userId', userId, 'expiresAt', expiresAtISO);
-        return json(res, 200, { ok: true, expiresAt: expiresAtISO });
-      }
-
-      // Fallbacks failed → roll back Redis and bubble up
-      console.error('[share-reward] RC fallback failed for userId', userId, {
-        promo: { status: promoResp.status, code: promoResp?.body?.code, message: promoResp?.body?.message },
-        entA: { status: entRespA?.status, code: entRespA?.body?.code, message: entRespA?.body?.message },
-        entB: { status: entRespB?.status, code: entRespB?.body?.code, message: entRespB?.body?.message },
+      // Try fallback with duration
+      const bodyDuration = { duration: 'seven_days' };
+      console.log(`[share-reward]#${reqId} RC retry with duration`, {
+        url: rcUrl,
+        variant: 'duration',
+        entitlement: RC_ENTITLEMENT_ID,
       });
-      await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-      return json(res, 500, { ok: false, error: 'Failed to grant entitlement (RC fallbacks exhausted)' });
+      const rcResp2 = await rcPostJson(rcUrl, RC_SECRET_API_KEY, bodyDuration);
+
+      if (!rcResp2.ok) {
+        console.error(
+          `[share-reward]#${reqId} RC failed (both variants)`,
+          { end_time_ms: { status: rcResp.status, body: rcResp.body }, duration: { status: rcResp2.status, body: rcResp2.body } }
+        );
+        await releaseReserve(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
+        return send(res, 500, { ok: false, code: 'rc_failed', error: 'Failed to grant entitlement' });
+      }
+
+      // success on duration fallback
+      console.log(`[share-reward]#${reqId} Pro granted via RC (duration fallback) → ${expiresAtISO}`);
+      return send(res, 200, { ok: true, expiresAt: expiresAtISO });
     }
 
-    // Promo endpoint returned some other error (e.g. 400 with validation) → rollback and bubble up
-    console.error('[share-reward] RC promo error for userId', userId, promoResp.status, promoResp.body);
-    await upstashDel(UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN, claimKey);
-    return json(res, 500, { ok: false, error: 'Failed to grant entitlement (promo)' });
+    // success on primary end_time_ms
+    console.log(`[share-reward]#${reqId} Pro granted via RC (end_time_ms) → ${expiresAtISO}`);
+    return send(res, 200, { ok: true, expiresAt: expiresAtISO });
 
   } catch (err) {
-    console.error('[share-reward] Unexpected error for userId', typeof currentUserId !== 'undefined' ? currentUserId : 'unknown', err);
-    return json(res, 500, { ok: false, error: 'Internal server error' });
+    console.error('[share-reward] Unexpected error', err);
+    return send(res, 500, { ok: false, code: 'server_error', error: 'Internal server error' });
   }
 }
