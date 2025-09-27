@@ -1,0 +1,37 @@
+{
+  "metaTitle": "MoodMap — Understand the cycle. Survive the chaos.",
+  "metaDescription": "MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane.",
+  "hero": {
+    "title": "Understand the cycle. Survive the chaos.",
+    "description": "MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane."
+  },
+  "cta": {
+    "subnote": "Private by design•Cancel anytime•Works on iOS & Android"
+  },
+  "about": {
+    "heading": "About MoodMap",
+    "body": "Built for men who want to thrive—not tiptoe—through the hormonal cycle. Get brutally honest survival cues, timing windows, and a visual code so you can bring warmth when it matters and space when it saves the day."
+  },
+  "features": {
+    "cycleOverview": {
+      "title": "Cycle Overview",
+      "body": "Map the mood. Crack the code. No guessing."
+    },
+    "survivalAlerts": {
+      "title": "Survival Alerts",
+      "body": "Know when to lean in, back off — or bring chocolate."
+    },
+    "tipsIntimacy": {
+      "title": "Tips & Intimacy",
+      "body": "Blunt advice + playful nudges to keep spark (and sex) alive."
+    },
+    "selfcards": {
+      "title": "Selfcards",
+      "body": "Daily rituals to sharpen presence — show up solid, for her and for you."
+    }
+  },
+  "contact": {
+    "label": "Contact us:",
+    "email": "support@moodmap-app.com"
+  }
+}
