@@ -1,31 +1,29 @@
-// components/LanguageSwitcher.js
 'use client';
 
 import React from 'react';
 import {useLocale} from 'next-intl';
 import {createNavigation} from 'next-intl/navigation';
 
-// Alle språkene dere støtter
+// All supported locales
 const locales = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
 
-// Bruk next-intl sine locale-bevisste navigasjons-APIer
+// Use next-intl’s locale-aware navigation APIs
 const {usePathname, useRouter} = createNavigation({
   locales,
-  // 'as-needed' = ingen prefiks for defaultLocale (en), prefiks for andre
-  localePrefix: 'as-needed'
+  localePrefix: 'as-needed'  // Default locale without prefix, others with prefix
 });
 
-// Mapping for visningsnavn/flagg
+// Display labels (flag icons and language names)
 const LABELS = {
-  en: {name: 'English', flag: 'EN'},
-  no: {name: 'Norsk', flag: 'NO'},
-  de: {name: 'Deutsch', flag: 'DE'},
-  fr: {name: 'Français', flag: 'FR'},
-  it: {name: 'Italiano', flag: 'IT'},
-  es: {name: 'Español', flag: 'ES'},
-  'pt-BR': {name: 'Português (BR)', flag: 'PT'},
-  'zh-CN': {name: '简体中文', flag: 'ZH'},
-  ja: {name: '日本語', flag: 'JA'}
+  en: {name: 'English', flag: '/flags/en.svg'},
+  no: {name: 'Norsk', flag: '/flags/no.svg'},
+  de: {name: 'Deutsch', flag: '/flags/de.svg'},
+  fr: {name: 'Français', flag: '/flags/fr.svg'},
+  it: {name: 'Italiano', flag: '/flags/it.svg'},
+  es: {name: 'Español', flag: '/flags/es.svg'},
+  'pt-BR': {name: 'Português (Brasil)', flag: '/flags/pt-BR.svg'},
+  'zh-CN': {name: '中文 (简体)', flag: '/flags/zh-CN.svg'},
+  ja: {name: '日本語', flag: '/flags/ja.svg'}
 };
 
 export default function LanguageSwitcher() {
@@ -33,7 +31,7 @@ export default function LanguageSwitcher() {
   const pathname = usePathname();
   const current = useLocale();
 
-  // Skjul velger hvis det kun finnes ett språk
+  // Hide switcher if only one locale is available
   if (locales.length <= 1) {
     return (
       <span
@@ -41,46 +39,69 @@ export default function LanguageSwitcher() {
         className="inline-flex items-center rounded border px-2 py-1 text-xs opacity-70"
         title={LABELS[current]?.name || current.toUpperCase()}
       >
-        {LABELS[current]?.flag || current.toUpperCase()}
+        {LABELS[current]?.flag ? (
+          <img 
+            src={LABELS[current].flag}
+            alt={LABELS[current]?.name || current.toUpperCase()}
+            className="h-4 w-4 inline-block align-text-bottom"
+          />
+        ) : (
+          current.toUpperCase()
+        )}
       </span>
     );
   }
 
   const switchTo = (locale) => {
-    // Husk brukerens valg (1 år)
+    // Remember user’s choice for 1 year
     document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${60 * 60 * 24 * 365}`;
-    // Bytt til samme path i valgt språk
+    // Navigate to the same pathname in the selected locale
     router.replace(pathname, {locale});
   };
 
   return (
     <div className="relative">
       <button
-        className="inline-flex items-center gap-2 rounded border px-2 py-1 text-sm bg-white text-black"
+        className="inline-flex items-center gap-2 rounded border px-2 py-1 text-sm"
         aria-haspopup="listbox"
         aria-label="Change language"
       >
-        {LABELS[current]?.flag || current.toUpperCase()}
+        {LABELS[current]?.flag ? (
+          <img 
+            src={LABELS[current].flag}
+            alt={LABELS[current]?.name || current.toUpperCase()}
+            className="h-4 w-4 inline-block align-text-bottom"
+          />
+        ) : (
+          current.toUpperCase()
+        )}
       </button>
 
       <ul
-        className="absolute right-0 z-10 mt-2 min-w-[10rem] rounded border bg-white text-black p-1 shadow-lg"
+        className="absolute right-0 z-10 mt-2 min-w-[8rem] rounded border bg-white p-1 shadow-lg"
         role="listbox"
       >
-        {locales
-          .filter((l) => l !== current)
-          .map((l) => (
-            <li key={l}>
-              <button
-                className="w-full rounded px-3 py-2 text-left text-sm hover:bg-gray-100"
-                role="option"
-                aria-selected={false}
-                onClick={() => switchTo(l)}
-              >
-                {LABELS[l]?.flag || l.toUpperCase()} {LABELS[l]?.name ? `— ${LABELS[l].name}` : ''}
-              </button>
-            </li>
-          ))}
+        {locales.filter((l) => l !== current).map((l) => (
+          <li key={l}>
+            <button
+              className="w-full rounded px-3 py-2 text-left text-sm hover:bg-gray-100"
+              role="option"
+              aria-selected={false}
+              onClick={() => switchTo(l)}
+            >
+              {LABELS[l]?.flag ? (
+                <img 
+                  src={LABELS[l].flag}
+                  alt={LABELS[l]?.name || l.toUpperCase()}
+                  className="h-4 w-4 inline-block align-text-bottom mr-1"
+                />
+              ) : (
+                <span className="uppercase mr-1">{l}</span>
+              )}
+              {LABELS[l]?.name ? `— ${LABELS[l].name}` : ''}
+            </button>
+          </li>
+        ))}
       </ul>
     </div>
   );

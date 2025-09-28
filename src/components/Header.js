@@ -1,4 +1,3 @@
-// components/Header.js
 'use client';
 
 import React from 'react';
@@ -16,7 +15,8 @@ export default function Header() {
           {t('brand')}
         </Link>
 
-        <nav className="hidden gap-6 sm:flex">
+        {/* Desktop navigation */}
+        <nav className="hidden sm:flex gap-6">
           <Link href="/#about" className="hover:opacity-80">{t('nav.about')}</Link>
           <Link href="/#download" className="hover:opacity-80">{t('nav.download')}</Link>
           <Link href="/support" className="hover:opacity-80">{t('nav.support')}</Link>
@@ -27,6 +27,14 @@ export default function Header() {
           <LanguageSwitcher />
         </div>
       </div>
+
+      {/* Mobile navigation (shows below header on small screens) */}
+      <nav className="sm:hidden px-4 pb-3 flex flex-col gap-2 text-[0.95rem]">
+        <Link href="/#about" className="hover:opacity-80">{t('nav.about')}</Link>
+        <Link href="/#download" className="hover:opacity-80">{t('nav.download')}</Link>
+        <Link href="/support" className="hover:opacity-80">{t('nav.support')}</Link>
+        <Link href="/pro" className="font-semibold hover:opacity-80">{t('nav.pro')}</Link>
+      </nav>
     </header>
   );
 }
