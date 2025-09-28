@@ -1,108 +1,92 @@
+// src/components/LanguageSwitcher.js
 'use client';
 
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useLocale} from 'next-intl';
 import {createNavigation} from 'next-intl/navigation';
 
-// All supported locales
-const locales = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
+// Støttede språk
+const allLocales = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
+// Menyen skal alltid vise "de andre" (alle unntatt en)
+const menuLocales = ['no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
 
-// Use next-intl’s locale-aware navigation APIs
-const {usePathname, useRouter} = createNavigation({
-  locales,
-  localePrefix: 'as-needed'  // Default locale without prefix, others with prefix
-});
-
-// Display labels (flag icons and language names)
+// Emoji-flagg (unngår behov for bildefiler)
 const LABELS = {
-  en: {name: 'English', flag: '/flags/en.svg'},
-  no: {name: 'Norsk', flag: '/flags/no.svg'},
-  de: {name: 'Deutsch', flag: '/flags/de.svg'},
-  fr: {name: 'Français', flag: '/flags/fr.svg'},
-  it: {name: 'Italiano', flag: '/flags/it.svg'},
-  es: {name: 'Español', flag: '/flags/es.svg'},
-  'pt-BR': {name: 'Português (Brasil)', flag: '/flags/pt-BR.svg'},
-  'zh-CN': {name: '中文 (简体)', flag: '/flags/zh-CN.svg'},
-  ja: {name: '日本語', flag: '/flags/ja.svg'}
+  en:    {name: 'English',        flag: '🇬🇧'},
+  no:    {name: 'Norsk',          flag: '🇳🇴'},
+  de:    {name: 'Deutsch',        flag: '🇩🇪'},
+  fr:    {name: 'Français',       flag: '🇫🇷'},
+  it:    {name: 'Italiano',       flag: '🇮🇹'},
+  es:    {name: 'Español',        flag: '🇪🇸'},
+  'pt-BR': {name: 'Português (BR)', flag: '🇧🇷'},
+  'zh-CN': {name: '简体中文',       flag: '🇨🇳'},
+  ja:    {name: '日本語',          flag: '🇯🇵'}
 };
 
+const {usePathname, useRouter} = createNavigation({
+  locales: allLocales,
+  localePrefix: 'as-needed'
+});
+
 export default function LanguageSwitcher() {
+  const current = useLocale();
   const router = useRouter();
   const pathname = usePathname();
-  const current = useLocale();
+  const [open, setOpen] = useState(false);
+  const popoverRef = useRef(null);
 
-  // Hide switcher if only one locale is available
-  if (locales.length <= 1) {
-    return (
-      <span
-        aria-label="Current language"
-        className="inline-flex items-center rounded border px-2 py-1 text-xs opacity-70"
-        title={LABELS[current]?.name || current.toUpperCase()}
-      >
-        {LABELS[current]?.flag ? (
-          <img 
-            src={LABELS[current].flag}
-            alt={LABELS[current]?.name || current.toUpperCase()}
-            className="h-4 w-4 inline-block align-text-bottom"
-          />
-        ) : (
-          current.toUpperCase()
-        )}
-      </span>
-    );
-  }
+  // Lukk meny ved klikk utenfor
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (!popoverRef.current) return;
+      if (!popoverRef.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
 
   const switchTo = (locale) => {
-    // Remember user’s choice for 1 year
+    // Husk valg i cookie (1 år)
     document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${60 * 60 * 24 * 365}`;
-    // Navigate to the same pathname in the selected locale
     router.replace(pathname, {locale});
+    setOpen(false);
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={popoverRef}>
       <button
-        className="inline-flex items-center gap-2 rounded border px-2 py-1 text-sm"
+        type="button"
+        onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
+        aria-expanded={open}
         aria-label="Change language"
+        title={LABELS[current]?.name || current.toUpperCase()}
+        className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/90 px-2 py-1 text-sm text-black shadow"
       >
-        {LABELS[current]?.flag ? (
-          <img 
-            src={LABELS[current].flag}
-            alt={LABELS[current]?.name || current.toUpperCase()}
-            className="h-4 w-4 inline-block align-text-bottom"
-          />
-        ) : (
-          current.toUpperCase()
-        )}
+        {/* Krav: Vis engelsk flagg (🇬🇧) på knappen */}
+        <span aria-hidden="true">{LABELS.en.flag}</span>
       </button>
 
-      <ul
-        className="absolute right-0 z-10 mt-2 min-w-[8rem] rounded border bg-white p-1 shadow-lg"
-        role="listbox"
-      >
-        {locales.filter((l) => l !== current).map((l) => (
-          <li key={l}>
-            <button
-              className="w-full rounded px-3 py-2 text-left text-sm hover:bg-gray-100"
-              role="option"
-              aria-selected={false}
-              onClick={() => switchTo(l)}
-            >
-              {LABELS[l]?.flag ? (
-                <img 
-                  src={LABELS[l].flag}
-                  alt={LABELS[l]?.name || l.toUpperCase()}
-                  className="h-4 w-4 inline-block align-text-bottom mr-1"
-                />
-              ) : (
-                <span className="uppercase mr-1">{l}</span>
-              )}
-              {LABELS[l]?.name ? `— ${LABELS[l].name}` : ''}
-            </button>
-          </li>
-        ))}
-      </ul>
+      {open && (
+        <ul
+          role="listbox"
+          className="absolute right-0 z-20 mt-2 min-w-[12rem] rounded border border-black/10 bg-white p-1 text-black shadow-lg"
+        >
+          {menuLocales.map((l) => (
+            <li key={l}>
+              <button
+                role="option"
+                aria-selected={current === l}
+                onClick={() => switchTo(l)}
+                className="w-full rounded px-3 py-2 text-left text-sm hover:bg-gray-100"
+              >
+                <span className="mr-2" aria-hidden="true">{LABELS[l].flag}</span>
+                <span>{LABELS[l].name}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

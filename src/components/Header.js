@@ -1,9 +1,16 @@
 'use client';
 
+// src/components/Header.js
 import React from 'react';
 import {useTranslations} from 'next-intl';
-import Link from 'next-intl/link';
+import {createNavigation} from 'next-intl/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
+
+// Locale-bevisst Link (erstatter next-intl/link)
+const {Link} = createNavigation({
+  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
+  localePrefix: 'as-needed' // ingen prefix for default (en), prefix for øvrige
+});
 
 export default function Header() {
   const t = useTranslations('common');
@@ -28,7 +35,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile navigation (shows below header on small screens) */}
+      {/* Mobile navigation */}
       <nav className="sm:hidden px-4 pb-3 flex flex-col gap-2 text-[0.95rem]">
         <Link href="/#about" className="hover:opacity-80">{t('nav.about')}</Link>
         <Link href="/#download" className="hover:opacity-80">{t('nav.download')}</Link>
