@@ -25,6 +25,7 @@ const LABELS = {
 
 const {usePathname, useRouter} = createNavigation({
   locales: allLocales,
+  defaultLocale: 'en',
   localePrefix: 'as-needed'
 });
 

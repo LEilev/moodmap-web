@@ -42,7 +42,8 @@
     "items": [
       "<strong>App-Funktionalität</strong>: Um In-App-Käufe zu verarbeiten, Transaktionen zu validieren und sicherzustellen, dass die App wie vorgesehen funktioniert.",
       "<strong>Analyse</strong>: Um die App-Leistung zu überwachen, Nutzungsverhalten zu verstehen und das Benutzererlebnis zu verbessern."
-    ]
+    ],
+    "note": ""
   },
   "section3": {
     "title": "3. Dienste von Drittanbietern",
@@ -50,23 +51,32 @@
     "items": [
       "<strong>RevenueCat</strong>: Wird verwendet, um In-App-Käufe und Abonnements zu verwalten. RevenueCat erfasst Kaufverläufe und Gerätekennungen. Weitere Informationen finden Sie in der Datenschutzrichtlinie von RevenueCat.",
       "<strong>Expo</strong>: Wird für App-Entwicklung und -Überwachung verwendet. Expo erfasst Absturzprotokolle und Gerätekennungen für Analysezwecke. Weitere Informationen finden Sie in der Datenschutzrichtlinie von Expo."
-    ]
+    ],
+    "note": ""
   },
   "section4": {
     "title": "4. Datensicherheit",
-    "body": "Alle gesammelten Daten werden während der Übertragung mittels HTTPS verschlüsselt, um eine sichere Übermittlung zu gewährleisten. Wir ergreifen angemessene Maßnahmen zum Schutz Ihrer Daten, aber keine Übertragungsmethode über das Internet ist vollkommen sicher."
+    "desc": "Alle gesammelten Daten werden während der Übertragung mittels HTTPS verschlüsselt, um eine sichere Übermittlung zu gewährleisten. Wir ergreifen angemessene Maßnahmen zum Schutz Ihrer Daten, aber keine Übertragungsmethode über das Internet ist vollkommen sicher.",
+    "items": [],
+    "note": ""
   },
   "section5": {
     "title": "5. Datenlöschung",
-    "body": "Sie haben das Recht, die Löschung Ihrer persönlichen Daten zu verlangen. Um eine Löschanfrage zu stellen, kontaktieren Sie uns bitte unter support@moodmap-app.com. Wir werden Ihre Anfrage im Einklang mit den geltenden Datenschutzgesetzen, wie der GDPR, bearbeiten und Ihre Daten aus unseren Systemen und denen unserer Dienstleister (z.B. RevenueCat und Expo) innerhalb eines angemessenen Zeitraums löschen."
+    "desc": "Sie haben das Recht, die Löschung Ihrer persönlichen Daten zu verlangen. Um eine Löschanfrage zu stellen, kontaktieren Sie uns bitte unter support@moodmap-app.com. Wir werden Ihre Anfrage im Einklang mit den geltenden Datenschutzgesetzen, wie der GDPR, bearbeiten und Ihre Daten aus unseren Systemen und denen unserer Dienstleister (z.B. RevenueCat und Expo) innerhalb eines angemessenen Zeitraums löschen.",
+    "items": [],
+    "note": ""
   },
   "section6": {
     "title": "6. Keine Gesundheitsdaten",
-    "body": "MoodMap erfasst, speichert oder verarbeitet keine persönlichen Gesundheits- oder Menstruationsdaten. Die App ist darauf ausgelegt, allgemeine zyklusbasierte Tipps bereitzustellen und ist nicht für medizinische oder diagnostische Zwecke gedacht."
+    "desc": "MoodMap erfasst, speichert oder verarbeitet keine persönlichen Gesundheits- oder Menstruationsdaten. Die App ist darauf ausgelegt, allgemeine zyklusbasierte Tipps bereitzustellen und ist nicht für medizinische oder diagnostische Zwecke gedacht.",
+    "items": [],
+    "note": ""
   },
   "section7": {
     "title": "7. E-Mail-Benachrichtigungen (optional)",
-    "body": "Wenn Sie sich für Benachrichtigungen anmelden, wird Ihre E-Mail-Adresse sicher gespeichert und nur dazu verwendet, Sie über App-Updates oder -Veröffentlichungen zu informieren. Sie können sich jederzeit abmelden, indem Sie den Anweisungen in den Benachrichtigungs-E-Mails folgen."
+    "desc": "Wenn Sie sich für Benachrichtigungen anmelden, wird Ihre E-Mail-Adresse sicher gespeichert und nur dazu verwendet, Sie über App-Updates oder -Veröffentlichungen zu informieren. Sie können sich jederzeit abmelden, indem Sie den Anweisungen in den Benachrichtigungs-E-Mails folgen.",
+    "items": [],
+    "note": ""
   },
   "section8": {
     "title": "8. Ihre Rechte",
@@ -80,13 +90,17 @@
   },
   "section9": {
     "title": "9. Änderungen dieser Datenschutzrichtlinie",
-    "body": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Alle Änderungen werden auf dieser Seite veröffentlicht, und das Datum \"Zuletzt aktualisiert\" wird entsprechend angepasst. Wir empfehlen Ihnen, diese Richtlinie regelmäßig zu überprüfen."
+    "desc": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Alle Änderungen werden auf dieser Seite veröffentlicht, und das Datum \"Zuletzt aktualisiert\" wird entsprechend angepasst. Wir empfehlen Ihnen, diese Richtlinie regelmäßig zu überprüfen.",
+    "items": [],
+    "note": ""
   },
   "section10": {
     "title": "10. Kontaktieren Sie uns",
-    "body": "Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter support@moodmap-app.com."
+    "desc": "Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter support@moodmap-app.com.",
+    "items": [],
+    "note": ""
   },
-  "closing": "Durch die Nutzung der MoodMap-App stimmen Sie den Bestimmungen dieser Datenschutzrichtlinie zu.",
+  "closing": "Durch die Nutzung der MoodMap-App stimmen Sie den Bestimmungen dieser Datenschutzerklärung zu.",
   "cta": {
     "email": "Schicken Sie uns eine E-Mail zum Thema Datenschutz"
   }

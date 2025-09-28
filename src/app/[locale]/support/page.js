@@ -1,30 +1,26 @@
 // src/app/[locale]/support/page.js
-import { useTranslations } from 'next-intl';
+import {getTranslations} from 'next-intl/server';
 import Link from '@/components/LocaleLink';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import {Mail, Phone, MapPin} from 'lucide-react';
 
-export async function generateMetadata({ params }) {
-  const { locale } = await params;
-  const supportMessages = (await import(`../../../../locales/${locale}/support.json`)).default;
-  return {
-    title: supportMessages.metaTitle,
-    description: supportMessages.metaDescription
-  };
+export async function generateMetadata({params}) {
+  const {locale} = await params;
+  const t = await getTranslations({locale, namespace: 'support'});
+  return { title: t('metaTitle'), description: t('metaDescription') };
 }
 
-export default function SupportPage() {
-  const t = useTranslations('support');
+export default async function SupportPage({params}) {
+  const {locale} = await params;
+  const t = await getTranslations({locale, namespace: 'support'});
 
   return (
     <main className="relative isolate min-h-screen flex flex-col items-center bg-primary-blue text-white px-6 py-16">
-      {/* Background glows */}
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] 
         rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10" />
       <div aria-hidden="true" className="pointer-events-none absolute -right-44 top-48 h-[36rem] w-[36rem] 
         rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10" />
 
       <div className="max-w-xl w-full space-y-10">
-        {/* Header */}
         <header className="text-center">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
             {t('title')}
@@ -33,9 +29,7 @@ export default function SupportPage() {
           <p className="mt-2 text-sm text-blue-100/90">{t('dm')}</p>
         </header>
 
-        {/* Contact cards */}
         <section className="grid gap-6">
-          {/* Email Card */}
           <article className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 ring-1 ring-white/10 backdrop-blur-xl">
             <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl 
               bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10">
@@ -51,7 +45,6 @@ export default function SupportPage() {
               bg-gradient-to-br from-white/10 to-transparent blur-2xl" />
           </article>
 
-          {/* Phone Card */}
           <article className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 ring-1 ring-white/10 backdrop-blur-xl">
             <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl 
               bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10">
@@ -67,7 +60,6 @@ export default function SupportPage() {
               bg-gradient-to-br from-white/10 to-transparent blur-2xl" />
           </article>
 
-          {/* Address Card */}
           <article className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 ring-1 ring-white/10 backdrop-blur-xl">
             <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl 
               bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10">
@@ -85,7 +77,6 @@ export default function SupportPage() {
           </article>
         </section>
 
-        {/* Back CTA */}
         <footer className="text-center pt-6">
           <Link 
             href="/" 

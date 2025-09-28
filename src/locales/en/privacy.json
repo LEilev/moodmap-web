@@ -42,7 +42,8 @@
     "items": [
       "<strong>App Functionality</strong>: To process in-app purchases, validate transactions, and ensure the app functions as intended.",
       "<strong>Analytics</strong>: To monitor app performance, understand usage patterns, and improve the user experience."
-    ]
+    ],
+    "note": ""
   },
   "section3": {
     "title": "3. Third-Party Services",
@@ -50,23 +51,32 @@
     "items": [
       "<strong>RevenueCat</strong>: Used to manage in-app purchases and subscriptions. RevenueCat collects purchase history and device identifiers. For more information, see RevenueCat's Privacy Policy.",
       "<strong>Expo</strong>: Used for app development and monitoring. Expo collects crash logs and device identifiers for analytics purposes. For more information, see Expo's Privacy Policy."
-    ]
+    ],
+    "note": ""
   },
   "section4": {
     "title": "4. Data Security",
-    "body": "All data collected is encrypted in transit using HTTPS to ensure secure transmission. We take reasonable measures to protect your data, but no method of transmission over the internet is completely secure."
+    "desc": "All data collected is encrypted in transit using HTTPS to ensure secure transmission. We take reasonable measures to protect your data, but no method of transmission over the internet is completely secure.",
+    "items": [],
+    "note": ""
   },
   "section5": {
     "title": "5. Data Deletion",
-    "body": "You have the right to request the deletion of your personal data. To submit a data deletion request, please contact us at support@moodmap-app.com. We will process your request in accordance with applicable privacy laws, such as GDPR, and delete your data from our systems and those of our service providers (e.g., RevenueCat and Expo) within a reasonable timeframe."
+    "desc": "You have the right to request the deletion of your personal data. To submit a data deletion request, please contact us at support@moodmap-app.com. We will process your request in accordance with applicable privacy laws, such as GDPR, and delete your data from our systems and those of our service providers (e.g., RevenueCat and Expo) within a reasonable timeframe.",
+    "items": [],
+    "note": ""
   },
   "section6": {
     "title": "6. No Health Data",
-    "body": "MoodMap does not collect, store, or process any personal health or menstrual data. The app is designed to provide general cycle-based tips and is not intended for medical or diagnostic purposes."
+    "desc": "MoodMap does not collect, store, or process any personal health or menstrual data. The app is designed to provide general cycle-based tips and is not intended for medical or diagnostic purposes.",
+    "items": [],
+    "note": ""
   },
   "section7": {
     "title": "7. Email Notifications (Optional)",
-    "body": "If you sign up for notifications, your email address will be securely stored and used only to inform you about app updates or releases. You can unsubscribe at any time by following the instructions in the notification emails."
+    "desc": "If you sign up for notifications, your email address will be securely stored and used only to inform you about app updates or releases. You can unsubscribe at any time by following the instructions in the notification emails.",
+    "items": [],
+    "note": ""
   },
   "section8": {
     "title": "8. Your Rights",
@@ -80,11 +90,15 @@
   },
   "section9": {
     "title": "9. Changes to This Policy",
-    "body": "We may update this Privacy Policy from time to time. Any changes will be reflected on this page, and the \"Last updated\" date will be revised accordingly. We encourage you to review this policy periodically."
+    "desc": "We may update this Privacy Policy from time to time. Any changes will be reflected on this page, and the \"Last updated\" date will be revised accordingly. We encourage you to review this policy periodically.",
+    "items": [],
+    "note": ""
   },
   "section10": {
     "title": "10. Contact Us",
-    "body": "If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at support@moodmap-app.com."
+    "desc": "If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at support@moodmap-app.com.",
+    "items": [],
+    "note": ""
   },
   "closing": "By using the MoodMap app, you agree to the terms of this Privacy Policy.",
   "cta": {

@@ -1,46 +1,31 @@
 // src/app/[locale]/pro/page.js
-import { useTranslations } from 'next-intl';
+import {getTranslations} from 'next-intl/server';
 import Link from '@/components/LocaleLink';
-import { Crown, ShieldCheck, Sparkles, HeartHandshake, BellRing, LineChart } from 'lucide-react';
+import {Crown, ShieldCheck, Sparkles, HeartHandshake, BellRing, LineChart} from 'lucide-react';
 
-/**
- * ⛔️ Ikke rør – bevarer kjøpsflyten.
- * Bygger /buy URL med plan + viderefører evt. via/ref/utm.
- */
 function buildPlanHref(planType, searchParams) {
-  const qs = new URLSearchParams({ type: planType === 'yearly' ? 'yearly' : 'monthly' });
-  const append = (key, value) => {
-    if (value == null || value === '') return;
-    if (key.toLowerCase() === 'type') return;
-    qs.append(key, String(value));
-  };
+  const qs = new URLSearchParams({type: planType === 'yearly' ? 'yearly' : 'monthly'});
+  const append = (k, v) => { if (v == null || v === '' || k.toLowerCase() === 'type') return; qs.append(k, String(v)); };
   if (searchParams) {
     if (typeof searchParams.forEach === 'function') {
-      // searchParams is a URLSearchParams
       searchParams.forEach((v, k) => append(k, v));
     } else {
-      // searchParams is a plain object
-      Object.entries(searchParams).forEach(([k, v]) => {
-        if (Array.isArray(v)) v.forEach((vv) => append(k, vv));
-        else append(k, v);
-      });
+      Object.entries(searchParams).forEach(([k, v]) => Array.isArray(v) ? v.forEach(vv => append(k, vv)) : append(k, v));
     }
   }
   return `/buy?${qs.toString()}`;
 }
 
-export async function generateMetadata({ params }) {
-  const { locale } = await params;
-  const proMessages = (await import(`../../../../locales/${locale}/pro.json`)).default;
-  return {
-    title: proMessages.metaTitle,
-    description: proMessages.metaDescription
-  };
+export async function generateMetadata({params}) {
+  const {locale} = await params;
+  const t = await getTranslations({locale, namespace: 'pro'});
+  return { title: t('metaTitle'), description: t('metaDescription') };
 }
 
-export default async function ProPage({ searchParams }) {
-  const t = useTranslations('pro');
-  const paramsObj = await searchParams;
+export default async function ProPage({params, searchParams}) {
+  const {locale} = await params;
+  const t = await getTranslations({locale, namespace: 'pro'});
+  const sp = await searchParams; // Next 15
 
   const features = [
     { icon: HeartHandshake, title: t('features.dailyConnection.title'), desc: t('features.dailyConnection.desc') },
@@ -49,19 +34,16 @@ export default async function ProPage({ searchParams }) {
     { icon: ShieldCheck,    title: t('features.calmClarity.title'),    desc: t('features.calmClarity.desc') }
   ];
 
-  // Preserve purchase flow: use locale={false} on Links and build /buy URLs with search params.
-  const yearlyHref = buildPlanHref('yearly', paramsObj);
-  const monthlyHref = buildPlanHref('monthly', paramsObj);
+  const yearlyHref = buildPlanHref('yearly', sp);
+  const monthlyHref = buildPlanHref('monthly', sp);
 
   return (
     <div className="relative isolate bg-primary-blue text-white">
-      {/* Background glows */}
       <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] 
         rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10" />
       <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] 
         rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10" />
 
-      {/* Hero */}
       <section className="px-6 pt-16 pb-12 sm:pt-20 sm:pb-16 text-center">
         <div className="mx-auto max-w-3xl">
           <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-sm font-medium">
@@ -77,7 +59,7 @@ export default async function ProPage({ searchParams }) {
             {t('hero.subtitle')}
           </p>
 
-          {/* CTA Buttons – keep purchase flow (locale={false}) */}
+          {/* CTA – kjøpsflyt urørt */}
           <div className="mt-8 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
             <Link
               href={yearlyHref}
@@ -96,9 +78,6 @@ export default async function ProPage({ searchParams }) {
               <span className="ml-2 inline-flex items-center rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-xs font-semibold">
                 {t('cta.yearly.hint')}
               </span>
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" 
-                style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.00))' }} 
-              />
             </Link>
 
             <Link
@@ -113,16 +92,12 @@ export default async function ProPage({ searchParams }) {
             >
               <Sparkles className="mr-2 h-5 w-5" aria-hidden="true" />
               {t('cta.monthly.label')}
-              <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" 
-                style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.00))' }} 
-              />
             </Link>
           </div>
           <p className="mt-3 text-xs text-blue-100">{t('cta.disclaimer')}</p>
         </div>
       </section>
 
-      {/* Features */}
       <section className="px-6 pb-20 sm:pb-24">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:gap-7 md:grid-cols-2 lg:grid-cols-4">
           {features.map(({ icon: Icon, title, desc }) => (

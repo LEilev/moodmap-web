@@ -1,5 +1,5 @@
-// middleware.js – Handles default locale redirection and locale prefixes
-import { NextResponse } from 'next/server';
+// middleware.js
+import {NextResponse} from 'next/server';
 
 const PUBLIC_FILE = /\.(.*)$/;
 const SUPPORTED_LOCALES = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
@@ -7,7 +7,7 @@ const SUPPORTED_LOCALES = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN',
 export function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  // Ignore requests for static files, API routes, and non-localized pages (purchase flow)
+  // Bypass for static, API og kjøpsflyt
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
@@ -21,20 +21,26 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // Redirect root ("/") to default or saved locale
+  // Root → valgt cookie-locale eller 'en'
   if (pathname === '/' || pathname === '') {
-    // Use locale from cookie if available, otherwise fallback to English
     const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
     const locale = cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale) ? cookieLocale : 'en';
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }
 
-  // If path has no supported locale prefix, prepend "en" as default
+  // Mangler locale-prefiks? Prepend 'en'
   const firstSegment = pathname.split('/')[1];
   if (!SUPPORTED_LOCALES.includes(firstSegment)) {
     return NextResponse.redirect(new URL(`/en${pathname}`, request.url));
   }
 
-  // If a valid locale prefix is present, continue as normal
   return NextResponse.next();
 }
+
+// ✅ Sørg for at middleware trigger i dev/prod
+export const config = {
+  matcher: [
+    '/',
+    '/((?!_next|api|buy|go|thanks|activate|account|.*\\..*).*)'
+  ]
+};
