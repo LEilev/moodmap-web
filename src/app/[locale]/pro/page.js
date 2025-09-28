@@ -1,6 +1,6 @@
 // src/app/[locale]/pro/page.js
 import {useTranslations} from 'next-intl';
-import {createNavigation} from 'next-intl/navigation';
+import Link from '../../components/LocaleLink';
 import {Crown, ShieldCheck, Sparkles, HeartHandshake, BellRing, LineChart} from 'lucide-react';
 import {getTranslations} from 'next-intl/server';
 
@@ -27,12 +27,6 @@ function buildPlanHref(planType, searchParams) {
   }
   return `/buy?${qs.toString()}`;
 }
-
-// Locale-aware Link (erstatter next-intl/link)
-const {Link} = createNavigation({
-  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
-  localePrefix: 'as-needed'
-});
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'pro'});

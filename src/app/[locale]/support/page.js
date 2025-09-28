@@ -1,13 +1,8 @@
 // src/app/[locale]/support/page.js
 import {useTranslations} from 'next-intl';
-import {createNavigation} from 'next-intl/navigation';
+import Link from '../../components/LocaleLink';
 import {Mail, Phone, MapPin} from 'lucide-react';
 import {getTranslations} from 'next-intl/server';
-
-const {Link} = createNavigation({
-  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
-  localePrefix: 'as-needed'
-});
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'support'});
@@ -29,9 +24,15 @@ export default function SupportPage() {
       <div className="max-w-xl w-full space-y-10">
         {/* Header */}
         <header className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">{t('title')}</h1>
-          <p className="text-lg text-blue-100">{t('subtitle')}</p>
-          <p className="mt-2 text-sm text-blue-100/90">{t('dm')}</p>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
+            {t('title')}
+          </h1>
+          <p className="text-lg text-blue-100">
+            {t('subtitle')}
+          </p>
+          <p className="mt-2 text-sm text-blue-100/90">
+            {t('dm')}
+          </p>
         </header>
 
         {/* Kontaktkort */}
@@ -86,7 +87,6 @@ export default function SupportPage() {
             href="/"
             className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10 shadow-[0_8px_24px_rgba(59,130,246,0.35)] hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
           >
-            {/* Bruk eksisterende streng fra common/footer om ønskelig */}
             ← Back to the app
           </Link>
         </footer>

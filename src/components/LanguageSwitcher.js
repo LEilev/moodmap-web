@@ -5,22 +5,22 @@ import React, {useEffect, useRef, useState} from 'react';
 import {useLocale} from 'next-intl';
 import {createNavigation} from 'next-intl/navigation';
 
-// Støttede språk
+// Alle språk
 const allLocales = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
-// Menyen skal alltid vise "de andre" (alle unntatt en)
+// Menyen viser de åtte øvrige språkene (kravet: knappen viser alltid engelsk)
 const menuLocales = ['no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
 
-// Emoji-flagg (unngår behov for bildefiler)
+// Emoji-flagg for tydelig visuell visning
 const LABELS = {
-  en:    {name: 'English',        flag: '🇬🇧'},
-  no:    {name: 'Norsk',          flag: '🇳🇴'},
-  de:    {name: 'Deutsch',        flag: '🇩🇪'},
-  fr:    {name: 'Français',       flag: '🇫🇷'},
-  it:    {name: 'Italiano',       flag: '🇮🇹'},
-  es:    {name: 'Español',        flag: '🇪🇸'},
-  'pt-BR': {name: 'Português (BR)', flag: '🇧🇷'},
-  'zh-CN': {name: '简体中文',       flag: '🇨🇳'},
-  ja:    {name: '日本語',          flag: '🇯🇵'}
+  en:     {name: 'English',        flag: '🇬🇧'},
+  no:     {name: 'Norsk',          flag: '🇳🇴'},
+  de:     {name: 'Deutsch',        flag: '🇩🇪'},
+  fr:     {name: 'Français',       flag: '🇫🇷'},
+  it:     {name: 'Italiano',       flag: '🇮🇹'},
+  es:     {name: 'Español',        flag: '🇪🇸'},
+  'pt-BR':{name: 'Português (BR)', flag: '🇧🇷'},
+  'zh-CN':{name: '简体中文',        flag: '🇨🇳'},
+  ja:     {name: '日本語',          flag: '🇯🇵'}
 };
 
 const {usePathname, useRouter} = createNavigation({
@@ -46,7 +46,7 @@ export default function LanguageSwitcher() {
   }, []);
 
   const switchTo = (locale) => {
-    // Husk valg i cookie (1 år)
+    // Lagre valg i cookie (1 år)
     document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${60 * 60 * 24 * 365}`;
     router.replace(pathname, {locale});
     setOpen(false);
@@ -63,7 +63,7 @@ export default function LanguageSwitcher() {
         title={LABELS[current]?.name || current.toUpperCase()}
         className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/90 px-2 py-1 text-sm text-black shadow"
       >
-        {/* Krav: Vis engelsk flagg (🇬🇧) på knappen */}
+        {/* Krav: Vis engelsk flagg (🇬🇧) på knappen uansett */}
         <span aria-hidden="true">{LABELS.en.flag}</span>
       </button>
 

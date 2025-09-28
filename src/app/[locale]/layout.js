@@ -20,7 +20,7 @@ export async function generateStaticParams() {
 }
 
 async function loadMessages(locale) {
-  // NB: /locales ligger på prosjektroten. Fra src/app/[locale] er det tre nivåer opp.
+  // NB: /locales ligger på prosjekt-roten. Fra src/app/[locale] er det tre nivåer opp.
   const common  = (await import(`../../../locales/${locale}/common.json`)).default;
   const home    = (await import(`../../../locales/${locale}/home.json`)).default;
   const pro     = (await import(`../../../locales/${locale}/pro.json`)).default;

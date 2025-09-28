@@ -3,14 +3,8 @@
 // src/components/Header.js
 import React from 'react';
 import {useTranslations} from 'next-intl';
-import {createNavigation} from 'next-intl/navigation';
+import Link from './LocaleLink';
 import LanguageSwitcher from './LanguageSwitcher';
-
-// Locale-bevisst Link (erstatter next-intl/link)
-const {Link} = createNavigation({
-  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
-  localePrefix: 'as-needed' // ingen prefix for default (en), prefix for øvrige
-});
 
 export default function Header() {
   const t = useTranslations('common');

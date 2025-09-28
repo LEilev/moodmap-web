@@ -1,14 +1,8 @@
 // src/app/[locale]/page.js
 import {useTranslations} from 'next-intl';
-import {createNavigation} from 'next-intl/navigation';
+import Link from '../../components/LocaleLink';
 import {Map, BellRing, Sparkles, Shield, Smartphone, RefreshCcw} from 'lucide-react';
 import {getTranslations} from 'next-intl/server';
-
-// Locale-aware Link
-const {Link} = createNavigation({
-  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
-  localePrefix: 'as-needed'
-});
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'home'});
@@ -22,7 +16,7 @@ export default function HomePage() {
   const t = useTranslations('home');
   const tCommon = useTranslations('common');
 
-  // Del tittel i to linjer ved første punktum
+  // Del hero-tittel i to linjer ved første punktum
   const tagline = t('hero.title');
   let taglinePart1 = tagline;
   let taglinePart2 = '';
@@ -55,12 +49,9 @@ export default function HomePage() {
             {taglinePart1}
           </span>
           {taglinePart2 && (
-            <>
-              {' '}
-              <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-                {taglinePart2}
-              </span>
-            </>
+            <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
+              {taglinePart2}
+            </span>
           )}
         </h1>
 
@@ -90,13 +81,11 @@ export default function HomePage() {
             {trustSegments.map((text, i) => {
               const IconTag = trustIcons[i];
               return (
-                <React.Fragment key={i}>
+                <span key={i} className="inline-flex items-center gap-1.5">
                   {i > 0 && <span className="opacity-30">•</span>}
-                  <span className="inline-flex items-center gap-1.5">
-                    {IconTag && <IconTag className="h-4 w-4 opacity-90" aria-hidden="true" />}
-                    {text}
-                  </span>
-                </React.Fragment>
+                  {IconTag && <IconTag className="h-4 w-4 opacity-90" aria-hidden="true" />}
+                  {text}
+                </span>
               );
             })}
           </div>

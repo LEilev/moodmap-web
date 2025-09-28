@@ -1,26 +1,12 @@
 // src/app/[locale]/privacy-policy/page.js
 import {useTranslations} from 'next-intl';
 import {getTranslations} from 'next-intl/server';
-import {createNavigation} from 'next-intl/navigation';
+import Link from '../../components/LocaleLink';
 import Script from 'next/script';
 import {
-  Database,
-  BarChart3,
-  Share2,
-  Shield,
-  Trash2,
-  HeartOff,
-  Bell,
-  CheckCircle2,
-  RefreshCcw,
-  Mail
+  Database, BarChart3, Share2, Shield, Trash2,
+  HeartOff, Bell, CheckCircle2, RefreshCcw, Mail
 } from 'lucide-react';
-
-// Locale-aware Link (erstatter next-intl/link)
-const {Link} = createNavigation({
-  locales: ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'],
-  localePrefix: 'as-needed'
-});
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'privacy'});
@@ -70,7 +56,7 @@ export default function PrivacyPolicyPage() {
       {/* Innholdsfortegnelse */}
       <section className="px-6 pb-8">
         <div className="mx-auto max-w-4xl">
-          {/* Mobil (collapsible) */}
+          {/* Mobil */}
           <details className="sm:hidden rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl">
             <summary className="list-none cursor-pointer select-none px-4 py-3 font-semibold">
               <span className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10 shadow-[0_8px_24px_rgba(59,130,246,0.35)]">
@@ -224,7 +210,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-sm leading-relaxed">{t('closing')}</p>
           </GlassCard>
 
-          {/* Kontakt & tilbake-lenk */}
+          {/* Kontakt & tilbake-lenke */}
           <div className="pt-2 text-center">
             <a
               href="mailto:support@moodmap-app.com?subject=Privacy%20question"
