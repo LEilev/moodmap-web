@@ -5,7 +5,7 @@ import Header from '../../components/Header';
 
 export const dynamic = 'force-static';
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
   return [
     {locale: 'en'},
     {locale: 'no'},
