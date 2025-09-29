@@ -5,7 +5,7 @@ const SUPPORTED_LOCALES = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN',
 const DEFAULT_LOCALE = 'en';
 const NAMESPACES = ['common', 'home', 'pro', 'support', 'privacy'];
 
-// Statisk import-kart (sikkert for bundleren)
+// Eksplisitt import-kart (sikkert for bundleren i prod)
 const IMPORTS = {
   en: {
     common: () => import('../locales/en/common.json'),
@@ -74,42 +74,38 @@ const IMPORTS = {
 
 function deepMerge(base, override) {
   if (Array.isArray(base) || Array.isArray(override)) return override ?? base;
-  const out = {...base};
+  const out = {...(base || {})};
   for (const [k, v] of Object.entries(override || {})) {
     out[k] = v && typeof v === 'object' && !Array.isArray(v)
-      ? deepMerge(base?.[k] ?? {}, v)
+      ? deepMerge(base?.[k], v)
       : v;
   }
   return out;
 }
 
-async function loadNamespace(ns, locale) {
+async function loadNS(ns, locale) {
   const en = (await IMPORTS.en[ns]()).default;
   if (locale === DEFAULT_LOCALE) return en;
-
   try {
     const importer = IMPORTS[locale]?.[ns];
     if (!importer) return en;
     const override = (await importer()).default;
     return deepMerge(en, override);
   } catch {
-    // Manglende fil → fallback til engelsk
-    return en;
+    return en; // manglende fil => fallback engelsk
   }
 }
 
-export default getRequestConfig(async ({requestLocale}) => {
-  // v4: requestLocale er awaitable ved statisk rendering
-  const requested = await requestLocale;
+export default getRequestConfig(async (ctx) => {
+  // next-intl v4: bruk request-scoped locale
+  const maybe = ctx?.requestLocale ?? ctx?.locale;
+  const requested = typeof maybe === 'string' ? maybe : await maybe;
   const locale = SUPPORTED_LOCALES.includes(requested) ? requested : DEFAULT_LOCALE;
 
   const messages = {};
   for (const ns of NAMESPACES) {
-    messages[ns] = await loadNamespace(ns, locale);
+    messages[ns] = await loadNS(ns, locale);
   }
 
-  return {
-    locale,
-    messages
-  };
+  return {locale, messages};
 });

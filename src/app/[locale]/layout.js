@@ -2,17 +2,7 @@
 import {NextIntlClientProvider} from 'next-intl';
 import {setRequestLocale, getMessages} from 'next-intl/server';
 
-const SUPPORTED_LOCALES = [
-  'en',
-  'no',
-  'de',
-  'fr',
-  'it',
-  'es',
-  'pt-BR',
-  'zh-CN',
-  'ja'
-];
+const SUPPORTED_LOCALES = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.map((locale) => ({locale}));
@@ -21,13 +11,10 @@ export function generateStaticParams() {
 export default async function LocaleLayout({children, params}) {
   const {locale} = await params;
 
-  // Hvis noen prøver et språk som ikke støttes → fall tilbake til engelsk
+  // Path-locale er fasit; valider og sett request-locale tidlig
   const activeLocale = SUPPORTED_LOCALES.includes(locale) ? locale : 'en';
+  setRequestLocale(activeLocale); // må kalles før getMessages/useTranslations :contentReference[oaicite:12]{index=12}
 
-  // Kritisk: gjør locale tilgjengelig for hele request-træret
-  setRequestLocale(activeLocale);
-
-  // Hent meldinger for valgt språk (inkl. fallback til engelsk der nødvendig)
   const messages = await getMessages();
 
   return (
