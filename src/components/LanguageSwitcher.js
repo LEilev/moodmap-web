@@ -45,7 +45,7 @@ export default function LanguageSwitcher() {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, []);
 
-  // Bytt språk uten full reload: sett cookie + client-side replace
+  // Bytt språk uten full reload: sett cookie (kun convenience) + client-side replace
   const switchTo = (locale) => {
     document.cookie = `NEXT_LOCALE=${locale}; Path=/; Max-Age=${60 * 60 * 24 * 365}`;
     router.replace(pathname, {locale});
