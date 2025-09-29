@@ -1,34 +1,39 @@
 // src/app/[locale]/layout.js
 import {NextIntlClientProvider} from 'next-intl';
-import {setRequestLocale, getMessages, hasLocale} from 'next-intl/server';
-import {notFound} from 'next/navigation';
+import {setRequestLocale, getMessages} from 'next-intl/server';
 
-const SUPPORTED_LOCALES = ['en', 'no', 'de', 'fr', 'it', 'es', 'pt-BR', 'zh-CN', 'ja'];
+const SUPPORTED_LOCALES = [
+  'en',
+  'no',
+  'de',
+  'fr',
+  'it',
+  'es',
+  'pt-BR',
+  'zh-CN',
+  'ja'
+];
 
 export function generateStaticParams() {
-  // Bygg statisk for alle språk (eller delsett hvis ønsket).
-  return SUPPORTED_LOCALES.map(locale => ({locale}));
+  return SUPPORTED_LOCALES.map((locale) => ({locale}));
 }
 
 export default async function LocaleLayout({children, params}) {
-  // Next 15: params er awaitable i server-komponenter
   const {locale} = await params;
 
-  if (!hasLocale(SUPPORTED_LOCALES, locale)) {
-    notFound();
-  }
+  // Hvis noen prøver et språk som ikke støttes → fall tilbake til engelsk
+  const activeLocale = SUPPORTED_LOCALES.includes(locale) ? locale : 'en';
 
-  // Kritisk: gjør locale tilgjengelig for next-intl i hele request-træret
-  // før hooks som useTranslations/getMessages kalles.
-  setRequestLocale(locale); // :contentReference[oaicite:13]{index=13}
+  // Kritisk: gjør locale tilgjengelig for hele request-træret
+  setRequestLocale(activeLocale);
 
-  // Hent meldinger via request-config (src/i18n/request.js)
+  // Hent meldinger for valgt språk (inkl. fallback til engelsk der nødvendig)
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
+    <html lang={activeLocale}>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={activeLocale} messages={messages}>
           {children}
         </NextIntlClientProvider>
       </body>
