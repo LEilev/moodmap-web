@@ -1,6 +1,6 @@
 // src/app/[locale]/layout.js
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages, unstable_setRequestLocale} from 'next-intl/server';
+import {getMessages} from 'next-intl/server';
 import {locales} from '../../i18n.js';
 
 export function generateStaticParams() {
@@ -8,8 +8,8 @@ export function generateStaticParams() {
 }
 
 export default async function LocaleLayout({children, params: {locale}}) {
-  unstable_setRequestLocale(locale);
-  const messages = await getMessages();
+  // Ikke bruk unstable_setRequestLocale – hent meldinger direkte med locale
+  const messages = await getMessages({locale});
 
   return (
     <html lang={locale}>

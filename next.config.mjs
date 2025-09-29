@@ -1,13 +1,14 @@
 // next.config.mjs
 import createNextIntlPlugin from 'next-intl/plugin';
 
-// Pek på i18n request-configen (JS)
+// Pek på JS-konfigen vår
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true
-  // Legg til annen prosjektspesifikk config her ved behov
+  reactStrictMode: true,
+  // Unngå at Vercel-build krever at eslint er installert
+  eslint: { ignoreDuringBuilds: true }
 };
 
 export default withNextIntl(nextConfig);

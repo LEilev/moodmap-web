@@ -8,9 +8,9 @@ export default createMiddleware({
   localePrefix
 });
 
-// Viktig: ekskluder sensitive/frittstående paths
 export const config = {
   matcher: [
+    // Ikke prefiks følgende paths:
     '/((?!_next|.*\\..*|api|buy|checkout|activate|thanks|promokit|affiliate|webhooks|stripe).*)'
   ]
 };

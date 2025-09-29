@@ -3,14 +3,11 @@ import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'pro'});
-  return {
-    title: t('metaTitle'),
-    description: t('metaDescription')
-  };
+  return { title: t('metaTitle'), description: t('metaDescription') };
 }
 
-export default async function ProPage() {
-  const t = await getTranslations('pro');
+export default async function ProPage({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'pro'});
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
@@ -43,12 +40,8 @@ export default async function ProPage() {
         <h2 className="text-2xl font-semibold">{t('ready.title')}</h2>
         <p className="opacity-90">{t('ready.subtitle')}</p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <button className="rounded-md border px-3 py-2">
-            {t('cta.yearly.label')}
-          </button>
-          <button className="rounded-md border px-3 py-2">
-            {t('cta.monthly.label')}
-          </button>
+          <button className="rounded-md border px-3 py-2">{t('cta.yearly.label')}</button>
+          <button className="rounded-md border px-3 py-2">{t('cta.monthly.label')}</button>
         </div>
         <p className="text-xs opacity-70">{t('cta.disclaimer')}</p>
       </section>

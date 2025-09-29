@@ -3,14 +3,11 @@ import {getTranslations} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'support'});
-  return {
-    title: t('metaTitle'),
-    description: t('metaDescription')
-  };
+  return { title: t('metaTitle'), description: t('metaDescription') };
 }
 
-export default async function SupportPage() {
-  const t = await getTranslations('support');
+export default async function SupportPage({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'support'});
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">

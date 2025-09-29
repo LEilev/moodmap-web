@@ -4,21 +4,18 @@ import {locales as supported, defaultLocale} from '../i18n.js';
 
 const NAMESPACES = ['common', 'home', 'pro', 'support', 'privacy'];
 
-// Enkel, trygg deep-merge for plain objects/arrays
+// Dyp sammenfletting for plain objects/arrayer, så oversatte deler beholdes
 function deepMerge(base, override) {
   if (Array.isArray(base) && Array.isArray(override)) {
-    // For lister (som bullets i privacy): bruk override dersom det finnes, ellers base.
     return override.length ? override : base;
   }
   if (isObject(base) && isObject(override)) {
     const out = {...base};
     for (const key of Object.keys(override)) {
-      out[key] =
-        key in base ? deepMerge(base[key], override[key]) : override[key];
+      out[key] = key in base ? deepMerge(base[key], override[key]) : override[key];
     }
     return out;
   }
-  // Primitiver eller ulike typer -> override om satt, ellers base
   return override ?? base;
 }
 function isObject(v) {
@@ -36,7 +33,7 @@ export default getRequestConfig(async ({locale}) => {
       // NB: mappe-/filnavn må matche eksakt språkkode ('pt-BR', 'zh-CN', 'ja', osv.)
       loc = (await import(`../locales/${locale}/${ns}.json`)).default;
     } catch {
-      // Mangler fil: behold engelsk
+      // Mangler fil -> behold engelsk
     }
     messages[ns] = deepMerge(base, loc);
   }

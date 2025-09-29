@@ -26,7 +26,6 @@ const LABELS = {
 };
 
 export default function LanguageSwitcher({current: currentProp}) {
-  // Fungerer både med og uten 'current' prop (bakoverkompatibelt)
   const localeFromHook = useLocale();
   const current = currentProp || localeFromHook;
 
@@ -38,19 +37,16 @@ export default function LanguageSwitcher({current: currentProp}) {
   function onSelect(nextLocale) {
     setOpen(false);
     if (nextLocale === current) return;
-
-    const search = searchParams.toString();
-    const target = search ? `${pathname}?${search}` : pathname;
-
-    // Bevar path + query, bytt kun locale
-    router.replace(target, {locale: nextLocale});
+    const qs = searchParams.toString();
+    const target = qs ? `${pathname}?${qs}` : pathname;
+    router.replace(target, {locale: nextLocale}); // Bytter kun locale
   }
 
   return (
     <div className="relative">
       <button
         aria-label="Change language"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(v => !v)}
         className="flex items-center gap-2 rounded-md border px-2 py-1"
       >
         <Image
@@ -64,10 +60,7 @@ export default function LanguageSwitcher({current: currentProp}) {
       </button>
 
       {open && (
-        <ul
-          role="listbox"
-          className="absolute right-0 z-50 mt-2 min-w-40 rounded-md border bg-white p-2 shadow-lg"
-        >
+        <ul role="listbox" className="absolute right-0 z-50 mt-2 min-w-40 rounded-md border bg-white p-2 shadow-lg">
           {locales.map((lng) => (
             <li key={lng} role="option" aria-selected={lng === current}>
               <button
