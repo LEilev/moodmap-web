@@ -1,7 +1,7 @@
-// src/app/[locale]/privacy/page.js
 import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations({locale, namespace: 'privacy'});
   return { title: t('metaTitle'), description: t('metaDescription') };
 }

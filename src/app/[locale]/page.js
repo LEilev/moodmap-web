@@ -1,8 +1,8 @@
-// src/app/[locale]/page.js
 import {getTranslations} from 'next-intl/server';
 import {unstable_setRequestLocale} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
+  unstable_setRequestLocale(locale);
   const t = await getTranslations({locale, namespace: 'home'});
   return { title: t('metaTitle'), description: t('metaDescription') };
 }
