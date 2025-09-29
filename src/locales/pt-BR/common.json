@@ -2,7 +2,7 @@
   "brand": "MoodMap",
   "nav": {
     "about": "Sobre",
-    "download": "Download",
+    "download": "Baixar",
     "support": "Suporte",
     "pro": "Pro"
   },
@@ -14,5 +14,10 @@
     "privacyPolicy": "Política de Privacidade",
     "backToApp": "← Voltar ao app",
     "copyright": "© 2025 MoodMap. Todos os direitos reservados."
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "body": "Desculpe, não conseguimos encontrar essa página.",
+    "back": "Voltar para a home"
   }
 }

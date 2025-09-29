@@ -3,16 +3,21 @@
   "nav": {
     "about": "À propos",
     "download": "Télécharger",
-    "support": "Support",
+    "support": "Assistance",
     "pro": "Pro"
   },
   "cta": {
-    "appStore": "Télécharger sur l'App Store",
-    "playStore": "Disponible sur Google Play"
+    "appStore": "Télécharger dans l’App Store",
+    "playStore": "Obtenir sur Google Play"
   },
   "footer": {
     "privacyPolicy": "Politique de confidentialité",
-    "backToApp": "← Retour à l'application",
+    "backToApp": "← Retour à l’app",
     "copyright": "© 2025 MoodMap. Tous droits réservés."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "body": "Désolé, nous n’avons pas trouvé cette page.",
+    "back": "Retour à l’accueil"
   }
 }

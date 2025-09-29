@@ -9,38 +9,41 @@
   "cta": {
     "yearly": {
       "label": "Bli Pro – Årlig",
-      "hint": "Beste verdi",
+      "hint": "Beste pris",
       "aria": "Velg årlig plan"
     },
     "monthly": {
       "label": "Bli Pro – Månedlig",
       "aria": "Velg månedlig plan"
     },
-    "disclaimer": "Fungerer med din eksisterende app. Kan kanselleres når som helst. Privat og sikker."
+    "disclaimer": "Fungerer med din eksisterende app. Kan avsluttes når som helst. Privat & sikker."
   },
   "features": {
     "dailyConnection": {
-      "title": "Daglige nærhetssignaler",
-      "desc": "Vit når du skal gi ekstra oppmerksomhet, gi plass eller tilføre varme – uten gjetting."
+      "title": "Daglige tilknytningstips",
+      "desc": "Vit når du skal by på nærhet, gi plass eller tilføre varme – uten gjettelek."
     },
     "smartTiming": {
-      "title": "Smarte tidsvarsler",
-      "desc": "Varsler for PMS, eggløsning og krevende perioder, slik at du kan holde deg i takt."
+      "title": "Smarte timing-varsler",
+      "desc": "Varsler om PMS, eggløsning og vanskelige perioder, så du kan være i synk."
     },
     "hormoneAware": {
       "title": "Hormonbevisst veiledning",
-      "desc": "Klare, respektfulle forklaringer knyttet til syklusfaser – uten utenomsnakk."
+      "desc": "Tydelige, respektfulle forklaringer knyttet til syklusfase – uten fluff."
     },
     "calmClarity": {
-      "title": "Ro & klarhet",
-      "desc": "Korte, ærlige notater som reduserer friksjon og bygger tillit daglig."
+      "title": "Ro & Klarhet",
+      "desc": "Korte, ærlige notiser som demper friksjon og bygger tillit hver dag."
     }
   },
   "ready": {
-    "title": "Klar når du er det.",
-    "subtitle": "To enkle alternativer. Samme oppgradering. Velg det som passer best for deg.",
-    "yearlyButton": "Årlig – Beste verdi",
+    "title": "Klar når du er.",
+    "subtitle": "To enkle alternativer. Samme innhold. Velg det som passer deg best.",
+    "yearlyButton": "Årlig – Beste pris",
     "monthlyButton": "Månedlig",
-    "disclaimer": "Utviklet med personvern i fokus. Basert på reell hormonkunnskap – gjort enkelt for hverdagen."
-  }
+    "disclaimer": "Personvern i høysetet. Bygger på reell hormonkunnskap – forenklet for hverdagen."
+  },
+  "intro": "Få daglige, syklusbevisste råd og tips med MoodMap Pro.",
+  "ctaLabel": "Abonner nå",
+  "back": "Tilbake"
 }

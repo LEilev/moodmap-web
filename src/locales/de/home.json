@@ -1,37 +1,38 @@
 {
-  "metaTitle": "MoodMap — Verstehe den Zyklus. Überlebe das Chaos.",
-  "metaDescription": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit und Humor zu verfolgen und zu überstehen, mit täglicher Anleitung, um verbunden – und bei Verstand – zu bleiben.",
+  "metaTitle": "MoodMap — Den Zyklus verstehen. Das Chaos überleben.",
+  "metaDescription": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit, Humor und täglicher Anleitung zu verfolgen und zu überstehen.",
   "hero": {
-    "title": "Verstehe den Zyklus. Überlebe das Chaos.",
-    "description": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit und Humor zu verfolgen und zu überstehen, mit täglicher Anleitung, um verbunden – und bei Verstand – zu bleiben."
+    "title": "Den Zyklus verstehen. Das Chaos überleben.",
+    "description": "MoodMap hilft dir, den hormonellen Zyklus mit Klarheit, Humor und täglicher Anleitung zu verfolgen und zu überstehen."
   },
   "cta": {
-    "subnote": "Datenschutz schon im Design•Jederzeit kündbar•Funktioniert auf iOS & Android"
+    "subnote": "Von Grund auf privat • Jederzeit kündbar • Läuft auf iOS & Android"
   },
   "about": {
     "heading": "Über MoodMap",
-    "body": "Entwickelt für Männer, die den hormonellen Zyklus nicht nur überstehen, sondern darin aufblühen wollen – ohne auf Zehenspitzen zu gehen. Erhalte schonungslos ehrliche Überlebenshinweise, Timing-Fenster und einen visuellen Code, damit du Wärme geben kannst, wenn es zählt, und Abstand, wenn es den Tag rettet."
+    "body": "Entwickelt für Männer, die im hormonellen Zyklus nicht herumtänzeln, sondern darin aufblühen möchten. Erhalte schonungslose Überlebenshinweise, Timing‑Fenster und einen visuellen Code, damit du Wärme bringst, wenn es zählt – und Raum gibst, wenn er Wunder wirkt."
   },
   "features": {
     "cycleOverview": {
       "title": "Zyklusüberblick",
-      "body": "Stimmung kartieren. Code knacken. Kein Raten."
+      "body": "Stimmung kartieren. Code knacken. Kein Rätselraten."
     },
     "survivalAlerts": {
-      "title": "Überlebens-Alerts",
-      "body": "Wisse, wann du dich nähern, zurückziehen – oder Schokolade bringen solltest."
+      "title": "Survival‑Alerts",
+      "body": "Wissen, wann du näher rücken, Abstand halten — oder Schokolade bringen solltest."
     },
     "tipsIntimacy": {
       "title": "Tipps & Intimität",
-      "body": "Klare Ratschläge + spielerische Anstupser, um die Leidenschaft (und Sex) am Leben zu halten."
+      "body": "Klartext + spielerische Stupser, um den Funken (und Sex) am Leben zu halten."
     },
     "selfcards": {
       "title": "Selfcards",
-      "body": "Tägliche Rituale, um Präsenz zu schärfen – sei präsent, für sie und dich selbst."
+      "body": "Tägliche Rituale, um Präsenz zu schärfen — sei solide da, für sie und für dich."
     }
   },
   "contact": {
-    "label": "Kontaktieren Sie uns:",
+    "label": "Kontaktiere uns:",
     "email": "support@moodmap-app.com"
-  }
+  },
+  "back": "Zurück"
 }

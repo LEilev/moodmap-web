@@ -1,16 +1,16 @@
 {
   "metaTitle": "MoodMap — Forstå syklusen. Overlev kaoset.",
-  "metaDescription": "MoodMap hjelper deg med å spore og overleve hormonelle sykluser med klarhet, humor og daglige veiledninger for å holde kontakten – og forbli ved fornuft.",
+  "metaDescription": "MoodMap hjelper deg med å spore og overleve den hormonelle syklusen med klarhet, humor og daglige veiledninger for å holde kontakten – og beholde fornuften.",
   "hero": {
     "title": "Forstå syklusen. Overlev kaoset.",
-    "description": "MoodMap hjelper deg med å spore og overleve hormonelle sykluser med klarhet, humor og daglige veiledninger for å holde kontakten – og forbli ved fornuft."
+    "description": "MoodMap hjelper deg med å spore og overleve den hormonelle syklusen med klarhet, humor og daglige veiledninger for å holde kontakten – og beholde fornuften."
   },
   "cta": {
-    "subnote": "Personvern i fokus•Kan kanselleres når som helst•Fungerer på iOS og Android"
+    "subnote": "Personvern i fokus • Kan kanselleres når som helst • Fungerer på iOS og Android"
   },
   "about": {
     "heading": "Om MoodMap",
-    "body": "Bygget for menn som vil trives – ikke liste seg – gjennom hormon syklusen. Få brutalt ærlige overlevelsesråd, tidsvinduer og en visuell kode slik at du kan gi varme når det trengs og avstand når det redder dagen."
+    "body": "Bygget for menn som vil trives – ikke liste seg – gjennom hormonsyklusen. Få brutalt ærlige overlevelsesråd, tidsvinduer og en visuell kode slik at du kan gi varme når det trengs og avstand når det redder dagen."
   },
   "features": {
     "cycleOverview": {
@@ -23,7 +23,7 @@
     },
     "tipsIntimacy": {
       "title": "Tips og intimitet",
-      "body": "Direkte råd + lekne puff for å holde gnisten (og sexen) i live."
+      "body": "Direkte råd + leken puff for å holde gnisten (og sexen) i live."
     },
     "selfcards": {
       "title": "Selfcards",
@@ -33,5 +33,6 @@
   "contact": {
     "label": "Kontakt oss:",
     "email": "support@moodmap-app.com"
-  }
+  },
+  "back": "Tilbake"
 }

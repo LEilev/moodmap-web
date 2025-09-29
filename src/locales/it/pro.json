@@ -1,46 +1,49 @@
 {
   "metaTitle": "MoodMap Pro",
-  "metaDescription": "Sblocca consigli quotidiani consapevoli delle fasi — progettati per rendere le relazioni più fluide e sicure, giorno dopo giorno.",
+  "metaDescription": "Sblocca suggerimenti quotidiani, sensibili alle fasi — per relazioni più fluide e serene, giorno dopo giorno.",
   "hero": {
     "badge": "MoodMap Pro",
-    "title": "Guida premium per un tempismo migliore, più connessione e calma.",
-    "subtitle": "Sblocca consigli quotidiani consapevoli delle fasi — progettati per rendere le relazioni più fluide e sicure, giorno dopo giorno."
+    "title": "Guida premium per timing, connessione e calma migliori.",
+    "subtitle": "Sblocca suggerimenti quotidiani e segnali di sopravvivenza — pensati per rendere le relazioni più semplici e sicure, giorno dopo giorno."
   },
   "cta": {
     "yearly": {
-      "label": "Diventa Pro – Annuale",
-      "hint": "Miglior offerta",
+      "label": "Passa a Pro – Annuale",
+      "hint": "Miglior valore",
       "aria": "Scegli il piano annuale"
     },
     "monthly": {
-      "label": "Diventa Pro – Mensile",
+      "label": "Passa a Pro – Mensile",
       "aria": "Scegli il piano mensile"
     },
-    "disclaimer": "Funziona con la tua app esistente. Annullabile in qualsiasi momento. Privato e sicuro."
+    "disclaimer": "Funziona con la tua app attuale. Annulla in qualsiasi momento. Privata e sicura."
   },
   "features": {
     "dailyConnection": {
-      "title": "Segnali quotidiani di connessione",
-      "desc": "Scopri quando dare sostegno, concedere spazio o offrire calore — senza dover indovinare."
+      "title": "Segnali di connessione quotidiani",
+      "desc": "Sapere quando avvicinarti, lasciare spazio o aggiungere calore — senza indovinare."
     },
     "smartTiming": {
-      "title": "Avvisi di tempismo intelligente",
-      "desc": "Preavvisi per PMS, ovulazione e momenti critici così rimani in sintonia."
+      "title": "Avvisi di timing intelligenti",
+      "desc": "Promemoria per PMS, ovulazione e finestre difficili, così restate sincronizzati."
     },
     "hormoneAware": {
-      "title": "Consigli basati sugli ormoni",
+      "title": "Guida consapevole degli ormoni",
       "desc": "Spiegazioni chiare e rispettose legate alla fase del ciclo — senza fronzoli."
     },
     "calmClarity": {
-      "title": "Calma & Chiarezza",
-      "desc": "Note brevi e sincere che riducono gli attriti e costruiscono fiducia quotidianamente."
+      "title": "Calma & chiarezza",
+      "desc": "Note brevi e oneste che riducono l’attrito e costruiscono fiducia ogni giorno."
     }
   },
   "ready": {
     "title": "Pronto quando lo sei tu.",
-    "subtitle": "Due opzioni semplici. Stesso sblocco. Scegli quella che fa per te.",
+    "subtitle": "Due opzioni semplici. Stesso sblocco. Scegli ciò che preferisci.",
     "yearlyButton": "Annuale – Miglior offerta",
     "monthlyButton": "Mensile",
-    "disclaimer": "Privato per concezione. Basato su vera scienza ormonale — reso semplice per la vita quotidiana."
-  }
+    "disclaimer": "Privata per progettazione. Basata su vera scienza ormonale — resa semplice per la vita quotidiana."
+  },
+  "intro": "Ottieni una guida quotidiana, consapevole del ciclo, con MoodMap Pro.",
+  "ctaLabel": "Abbonati ora",
+  "back": "Indietro"
 }

@@ -7,12 +7,17 @@
     "pro": "Pro"
   },
   "cta": {
-    "appStore": "Laden im App Store",
+    "appStore": "Im App Store laden",
     "playStore": "Bei Google Play herunterladen"
   },
   "footer": {
-    "privacyPolicy": "Datenschutzerklärung",
+    "privacyPolicy": "Datenschutzrichtlinie",
     "backToApp": "← Zurück zur App",
     "copyright": "© 2025 MoodMap. Alle Rechte vorbehalten."
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "body": "Diese Seite konnten wir leider nicht finden.",
+    "back": "Zur Startseite"
   }
 }

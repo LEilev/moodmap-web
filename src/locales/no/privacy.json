@@ -32,16 +32,16 @@
     "items": [
       "<strong>Finansiell informasjon (kjøpshistorikk)</strong>: Vi samler inn kjøpshistorikk gjennom RevenueCat for å behandle kjøp i appen og abonnementer. Disse dataene brukes for app-funksjonalitet (for eksempel validering av kjøp) og analyse (for eksempel for å forstå bruksmønstre).",
       "<strong>App-informasjon og ytelse (krasjlogger)</strong>: Vi samler inn krasjlogger gjennom Expo for å overvåke appens ytelse, diagnostisere problemer og forbedre stabiliteten. Disse dataene er valgfrie og brukes utelukkende til analyse.",
-      "<strong>Enhets- eller andre ID-er</strong>: Vi samler inn enhetsidentifikatorer for å validere kjøp og spore bruk for analyseformål. Disse dataene er nødvendige for app-funksjonalitet og analyse."
+      "<strong>Enhets- eller andre ID-er</strong>: Vi samler inn enhetsidentifikatorer for å validere kjøp og spore bruk for analyseformål. Disse dataene er påkrevd for app-funksjonalitet og analyse."
     ],
-    "note": "<strong>Merk:</strong> Vi samler ikke inn personlig identifiserbar informasjon (så som navn eller e-postadresser) med mindre du velger å oppgi det (for eksempel for varsler eller supporthenvendelser)."
+    "note": "<strong>Merk:</strong> Vi samler ikke inn personlig identifiserbar informasjon (slik som navn eller e-postadresser) med mindre du velger å oppgi det (f.eks. for varsler eller supporthenvendelser)."
   },
   "section2": {
     "title": "2. Hvordan vi bruker dataene dine",
     "desc": "Vi bruker de innsamlede dataene til følgende formål:",
     "items": [
-      "<strong>App-funksjonalitet</strong>: Å behandle kjøp i appen, validere transaksjoner og sikre at appen fungerer som den skal.",
-      "<strong>Analyse</strong>: Å overvåke appytelse, forstå bruksmønstre og forbedre brukeropplevelsen."
+      "<strong>App-funksjonalitet</strong>: For å behandle kjøp i appen, validere transaksjoner og sikre at appen fungerer som den skal.",
+      "<strong>Analyse</strong>: For å overvåke appens ytelse, forstå bruksmønstre og forbedre brukeropplevelsen."
     ],
     "note": ""
   },
@@ -49,59 +49,60 @@
     "title": "3. Tredjepartstjenester",
     "desc": "MoodMap bruker følgende tredjepartstjenester, som kan samle inn data som beskrevet i sine egne personvernerklæringer:",
     "items": [
-      "<strong>RevenueCat</strong>: Brukes til å administrere kjøp i appen og abonnementer. RevenueCat samler inn kjøpshistorikk og enhetsidentifikatorer. For mer informasjon, se RevenueCats personvernerklæring.",
-      "<strong>Expo</strong>: Brukes til apputvikling og overvåking. Expo samler inn krasjlogger og enhetsidentifikatorer for analyseformål. For mer informasjon, se Expos personvernerklæring."
+      "<strong>RevenueCat</strong>: Brukes for å håndtere kjøp i appen og abonnementer. RevenueCat samler inn kjøpshistorikk og enhetsidentifikatorer. For mer informasjon, se RevenueCats personvernerklæring.",
+      "<strong>Expo</strong>: Brukes for apputvikling og -overvåkning. Expo samler inn krasjlogger og enhetsidentifikatorer for analyseformål. For mer informasjon, se Expos personvernerklæring."
     ],
     "note": ""
   },
   "section4": {
     "title": "4. Datasikkerhet",
-    "desc": "Alle innsamlede data krypteres under overføring ved hjelp av HTTPS for å sikre sikker overføring. Vi tar rimelige tiltak for å beskytte dataene dine, men ingen metode for overføring over internett er fullstendig sikker.",
+    "desc": "All innsamlet data krypteres under overføring ved bruk av HTTPS for å sikre trygg transmisjon. Vi iverksetter rimelige tiltak for å beskytte dataene dine, men ingen metode for overføring over internett er fullstendig sikker.",
     "items": [],
     "note": ""
   },
   "section5": {
     "title": "5. Sletting av data",
-    "desc": "Du har rett til å be om sletting av dine personopplysninger. For å sende inn en forespørsel om sletting av data, vennligst kontakt oss på support@moodmap-app.com. Vi vil behandle forespørselen din i samsvar med gjeldende personvernlovgivning, som GDPR, og slette dataene dine fra våre systemer og våre tjenesteleverandørers systemer (f.eks. RevenueCat og Expo) innen rimelig tid.",
+    "desc": "Du har rett til å be om sletting av dine personopplysninger. For å sende inn en forespørsel om sletting, vennligst kontakt oss på support@moodmap-app.com. Vi vil behandle forespørselen i samsvar med gjeldende personvernlovgivning, som GDPR, og slette dine data fra våre systemer og våre tjenesteleverandørers systemer (f.eks. RevenueCat og Expo) innen rimelig tid.",
     "items": [],
     "note": ""
   },
   "section6": {
     "title": "6. Ingen helsedata",
-    "desc": "MoodMap samler ikke inn, lagrer eller behandler noen personlige helse- eller menstruasjonsdata. Appen er utformet for å gi generelle syklusbaserte tips og er ikke ment for medisinske eller diagnostiske formål.",
+    "desc": "MoodMap samler ikke inn, lagrer eller behandler noen personlige helse- eller menstruasjonsdata. Appen er utformet for å gi generelle tips basert på sykluser, og er ikke ment for medisinske eller diagnostiske formål.",
     "items": [],
     "note": ""
   },
   "section7": {
     "title": "7. E-postvarsler (valgfritt)",
-    "desc": "Hvis du melder deg på varsler, vil e-postadressen din bli lagret sikkert og kun brukt til å informere deg om appoppdateringer eller nye versjoner. Du kan når som helst melde deg av ved å følge instruksjonene i e-postvarslene.",
+    "desc": "Hvis du registrerer deg for varsler, vil e-postadressen din bli lagret på en sikker måte og kun brukes til å informere deg om oppdateringer eller nye versjoner av appen. Du kan når som helst avslutte varsler ved å følge instruksjonene i e-postene.",
     "items": [],
     "note": ""
   },
   "section8": {
     "title": "8. Dine rettigheter",
-    "desc": "Avhengig av hvor du befinner deg, kan du ha følgende rettigheter angående dine data:",
+    "desc": "Avhengig av hvor du bor, kan du ha følgende rettigheter knyttet til dine data:",
     "items": [
       "<strong>Innsyn</strong>: Be om en kopi av dataene vi har om deg.",
-      "<strong>Sletting</strong>: Be om sletting av dataene dine.",
-      "<strong>Innsigelse</strong>: Motsette deg visse typer databehandling."
+      "<strong>Sletting</strong>: Be om at dine data slettes.",
+      "<strong>Protest</strong>: Protestere mot visse typer databehandling."
     ],
     "note": "For å utøve disse rettighetene, vennligst kontakt oss på support@moodmap-app.com."
   },
   "section9": {
     "title": "9. Endringer i denne personvernerklæringen",
-    "desc": "Vi kan oppdatere denne personvernerklæringen fra tid til annen. Eventuelle endringer vil bli gjenspeilet på denne siden, og \"Sist oppdatert\"-datoen vil bli oppdatert tilsvarende. Vi oppfordrer deg til å gjennomgå denne personvernerklæringen med jevne mellomrom.",
+    "desc": "Vi kan oppdatere denne personvernerklæringen fra tid til annen. Eventuelle endringer vil bli publisert på denne siden, og \"Sist oppdatert\"-datoen vil bli oppdatert tilsvarende. Vi oppfordrer deg til å gjennomgå denne erklæringen med jevne mellomrom.",
     "items": [],
     "note": ""
   },
   "section10": {
     "title": "10. Kontakt oss",
-    "desc": "Hvis du har spørsmål eller bekymringer angående denne personvernerklæringen eller vår datahåndtering, vennligst kontakt oss på support@moodmap-app.com.",
+    "desc": "Hvis du har noen spørsmål eller bekymringer angående denne personvernerklæringen eller vår håndtering av data, vennligst kontakt oss på support@moodmap-app.com.",
     "items": [],
     "note": ""
   },
   "closing": "Ved å bruke MoodMap-appen godtar du vilkårene i denne personvernerklæringen.",
   "cta": {
-    "email": "Send oss en e-post om personvern"
-  }
+    "email": "Kontakt oss om personvern"
+  },
+  "back": "Tilbake"
 }

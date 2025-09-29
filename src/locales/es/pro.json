@@ -1,46 +1,49 @@
 {
   "metaTitle": "MoodMap Pro",
-  "metaDescription": "Desbloquea consejos diarios conscientes de las fases — diseñados para hacer las relaciones más fluidas y seguras, día a día.",
+  "metaDescription": "Desbloquea consejos diarios, sensibles a cada fase — para que la relación sea más fluida y segura, día a día.",
   "hero": {
     "badge": "MoodMap Pro",
-    "title": "Guía premium para un mejor timing, conexión y calma.",
-    "subtitle": "Desbloquea consejos diarios conscientes de las fases — diseñados para hacer las relaciones más fluidas y seguras, día a día."
+    "title": "Guía premium para mejor timing, conexión y calma.",
+    "subtitle": "Desbloquea consejos diarios y señales de supervivencia — diseñados para que las relaciones fluyan y se sientan seguras, cada día."
   },
   "cta": {
     "yearly": {
       "label": "Hazte Pro – Anual",
-      "hint": "Mejor oferta",
-      "aria": "Seleccionar plan anual"
+      "hint": "Mejor valor",
+      "aria": "Elegir plan anual"
     },
     "monthly": {
       "label": "Hazte Pro – Mensual",
-      "aria": "Seleccionar plan mensual"
+      "aria": "Elegir plan mensual"
     },
-    "disclaimer": "Funciona con tu aplicación existente. Cancela en cualquier momento. Privado y seguro."
+    "disclaimer": "Funciona con tu app actual. Cancela cuando quieras. Privado y seguro."
   },
   "features": {
     "dailyConnection": {
       "title": "Señales de conexión diarias",
-      "desc": "Sabe cuándo brindar cercanía, dar espacio o agregar calidez — sin adivinar."
+      "desc": "Saber cuándo acercarte, dar espacio o sumar calidez — sin adivinar."
     },
     "smartTiming": {
-      "title": "Alertas de sincronización inteligente",
-      "desc": "Avisos para PMS, ovulación y momentos complicados para que te mantengas en sintonía."
+      "title": "Alertas de timing inteligentes",
+      "desc": "Avisos de SPM, ovulación y ventanas delicadas para mantenerse en sintonía."
     },
     "hormoneAware": {
-      "title": "Orientación adaptada al ciclo hormonal",
-      "desc": "Explicaciones claras y respetuosas ligadas a la fase del ciclo — sin rodeos."
+      "title": "Guía consciente de hormonas",
+      "desc": "Explicaciones claras y respetuosas por fase del ciclo — sin relleno."
     },
     "calmClarity": {
-      "title": "Calma & Claridad",
-      "desc": "Notas breves y sinceras que reducen la fricción y generan confianza a diario."
+      "title": "Calma y claridad",
+      "desc": "Notas breves y honestas que reducen la fricción y construyen confianza a diario."
     }
   },
   "ready": {
     "title": "Listo cuando tú lo estés.",
-    "subtitle": "Dos opciones sencillas. El mismo desbloqueo. Elige lo que más te convenga.",
-    "yearlyButton": "Anual – Mejor oferta",
+    "subtitle": "Dos opciones simples. El mismo desbloqueo. Elige la que te encaje.",
+    "yearlyButton": "Anual — Mejor oferta",
     "monthlyButton": "Mensual",
-    "disclaimer": "Privado por diseño. Respaldado por ciencia hormonal real—simplificado para la vida cotidiana."
-  }
+    "disclaimer": "Privado por diseño. Basado en ciencia real de hormonas — simplificado para la vida diaria."
+  },
+  "intro": "Obtén guía y consejos diarios, conscientes del ciclo, con MoodMap Pro.",
+  "ctaLabel": "Suscribirse ahora",
+  "back": "Volver"
 }

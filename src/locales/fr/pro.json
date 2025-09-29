@@ -1,46 +1,49 @@
 {
   "metaTitle": "MoodMap Pro",
-  "metaDescription": "Déverrouillez des conseils quotidiens adaptés aux phases du cycle – conçus pour rendre les relations plus fluides et sécurisées, jour après jour.",
+  "metaDescription": "Débloquez des conseils quotidiens, sensibles aux phases — pour des relations plus fluides et sereines, jour après jour.",
   "hero": {
     "badge": "MoodMap Pro",
-    "title": "Guidance Premium pour un meilleur timing, une meilleure connexion et plus de calme.",
-    "subtitle": "Déverrouillez des conseils quotidiens adaptés aux phases du cycle – conçus pour rendre les relations plus fluides et sécurisées, jour après jour."
+    "title": "Conseils premium pour le bon timing, la connexion et le calme.",
+    "subtitle": "Débloquez des conseils quotidiens et des repères de survie, adaptés aux phases — pour rendre la relation plus simple et plus sûre au quotidien."
   },
   "cta": {
     "yearly": {
-      "label": "Passer Pro – Annuel",
-      "hint": "Meilleure offre",
-      "aria": "Choisir l'offre annuelle"
+      "label": "Passer en Pro – Annuel",
+      "hint": "Meilleur rapport qualité/prix",
+      "aria": "Choisir l’offre annuelle"
     },
     "monthly": {
-      "label": "Passer Pro – Mensuel",
-      "aria": "Choisir l'offre mensuelle"
+      "label": "Passer en Pro – Mensuel",
+      "aria": "Choisir l’offre mensuelle"
     },
-    "disclaimer": "Fonctionne avec votre application existante. Annulable à tout moment. Privé et sécurisé."
+    "disclaimer": "Fonctionne avec votre app existante. Résiliable à tout moment. Privé & sécurisé."
   },
   "features": {
     "dailyConnection": {
-      "title": "Signaux de connexion quotidiens",
-      "desc": "Sachez quand apporter de la chaleur, laisser de l'espace ou vous rapprocher – sans tâtonnements."
+      "title": "Repères de connexion quotidiens",
+      "desc": "Savoir quand se rapprocher, laisser de l’espace ou ajouter de la chaleur — sans deviner."
     },
     "smartTiming": {
-      "title": "Alertes de synchronisation intelligentes",
-      "desc": "Avertissements pour le SPM, l'ovulation et les périodes délicates afin de rester synchronisé."
+      "title": "Alertes de timing intelligentes",
+      "desc": "Alerte pour le SPM, l’ovulation et les fenêtres délicates, afin de rester synchronisés."
     },
     "hormoneAware": {
-      "title": "Conseils adaptés aux hormones",
-      "desc": "Des explications claires et respectueuses liées aux phases du cycle – sans superflu."
+      "title": "Conseils sensibles aux hormones",
+      "desc": "Explications claires et respectueuses liées à la phase du cycle — sans blabla."
     },
     "calmClarity": {
-      "title": "Calme & Clarté",
-      "desc": "Notes courtes et honnêtes qui réduisent les frictions et renforcent la confiance au quotidien."
+      "title": "Calme & clarté",
+      "desc": "Notes courtes et honnêtes qui réduisent les frictions et construisent la confiance au quotidien."
     }
   },
   "ready": {
-    "title": "Prêt quand vous l'êtes.",
-    "subtitle": "Deux options simples. Même déverrouillage. Choisissez ce qui vous convient le mieux.",
+    "title": "Prêt quand vous l’êtes.",
+    "subtitle": "Deux options simples. Le même déblocage. Choisissez ce qui vous convient.",
     "yearlyButton": "Annuel – Meilleure offre",
     "monthlyButton": "Mensuel",
-    "disclaimer": "Conçu pour la confidentialité. Soutenu par une véritable science hormonale – simplifié pour la vie quotidienne."
-  }
+    "disclaimer": "Privée par conception. Fondée sur une vraie science hormonale — simplifiée pour la vie de tous les jours."
+  },
+  "intro": "Obtenez des conseils quotidiens et sensibles au cycle avec MoodMap Pro.",
+  "ctaLabel": "S’abonner maintenant",
+  "back": "Retour"
 }

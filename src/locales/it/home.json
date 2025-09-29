@@ -1,37 +1,38 @@
 {
   "metaTitle": "MoodMap — Comprendi il ciclo. Sopravvivi al caos.",
-  "metaDescription": "MoodMap ti aiuta a tracciare e superare il ciclo ormonale con chiarezza, umorismo e guide quotidiane per rimanere connesso — e sano di mente.",
+  "metaDescription": "MoodMap ti aiuta a seguire e attraversare il ciclo ormonale con chiarezza, ironia e una guida quotidiana per restare connesso — e sano di mente.",
   "hero": {
     "title": "Comprendi il ciclo. Sopravvivi al caos.",
-    "description": "MoodMap ti aiuta a tracciare e superare il ciclo ormonale con chiarezza, umorismo e guide quotidiane per rimanere connesso — e sano di mente."
+    "description": "MoodMap ti aiuta a seguire e attraversare il ciclo ormonale con chiarezza, ironia e una guida quotidiana per restare connesso — e sano di mente."
   },
   "cta": {
-    "subnote": "Privato per concezione•Annullabile in qualsiasi momento•Funziona su iOS e Android"
+    "subnote": "Privato per progettazione • Annulla quando vuoi • Funziona su iOS e Android"
   },
   "about": {
     "heading": "Informazioni su MoodMap",
-    "body": "Realizzato per uomini che vogliono prosperare — non camminare sulle uova — attraverso il ciclo ormonale. Ricevi suggerimenti di sopravvivenza brutalmente onesti, finestre temporali e un codice visivo per offrire calore quando conta e spazio quando fa la differenza."
+    "body": "Pensata per gli uomini che vogliono prosperare — non camminare in punta di piedi — attraverso il ciclo ormonale. Ricevi segnali di sopravvivenza schietti, finestre di timing e un codice visivo per portare calore quando serve e spazio quando fa la differenza."
   },
   "features": {
     "cycleOverview": {
       "title": "Panoramica del ciclo",
-      "body": "Mappa l'umore. Decifra il codice. Niente supposizioni."
+      "body": "Mappa l’umore. Decifra il codice. Niente tentativi a caso."
     },
     "survivalAlerts": {
       "title": "Avvisi di sopravvivenza",
-      "body": "Scopri quando avvicinarti, fare un passo indietro — o portare del cioccolato."
+      "body": "Sapere quando avvicinarti, fare un passo indietro — o portare del cioccolato."
     },
     "tipsIntimacy": {
       "title": "Consigli & Intimità",
-      "body": "Consigli schietti + spunti giocosi per mantenere viva la scintilla (e il sesso)."
+      "body": "Consigli diretti + spinte giocose per mantenere viva la scintilla (e il sesso)."
     },
     "selfcards": {
       "title": "Selfcards",
-      "body": "Rituali quotidiani per affinare la presenza — fatti trovare pronto, per lei e per te."
+      "body": "Rituali quotidiani per affinare la presenza — esserci in modo solido, per lei e per te."
     }
   },
   "contact": {
     "label": "Contattaci:",
     "email": "support@moodmap-app.com"
-  }
+  },
+  "back": "Indietro"
 }

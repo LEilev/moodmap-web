@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Support – MoodMap",
-  "metaDescription": "お困りですか？MoodMapは私（Eilev）がインディーで開発しています。いただいたメッセージはすべて目を通しています。",
+  "metaTitle": "サポート – MoodMap",
+  "metaDescription": "お困りですか？MoodMap はインディー開発（私、Eilev）。すべてのメッセージに目を通しています。",
   "title": "お困りですか？",
-  "subtitle": "MoodMapは私（Eilev）がインディーで開発しています。いただいたメッセージはすべて目を通しています。",
-  "dm": "DMの方がいいですか？Instagramでも対応していますが、サポートにはメールが一番早いです。",
+  "subtitle": "MoodMap はインディー開発（私、Eilev）。すべてのメッセージに目を通しています。",
+  "dm": "DM が良いですか？Instagram にもいますが、サポートはメールが最速です。",
   "labels": {
-    "email": "メールアドレス",
+    "email": "メール",
     "phone": "電話",
-    "address": "郵送先住所"
+    "address": "住所"
   },
   "values": {
     "email": "support@moodmap-app.com",

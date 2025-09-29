@@ -30,9 +30,9 @@
     "title": "1. Information We Collect",
     "desc": "We collect the following types of data to provide and improve our services:",
     "items": [
-      "<strong>Financial Information (Purchase History)</strong>: We collect purchase history through RevenueCat to process in-app purchases and subscriptions. This data is used for app functionality (e.g., validating purchases) and analytics (e.g., understanding usage patterns).",
-      "<strong>App Information and Performance (Crash Logs)</strong>: We collect crash logs through Expo to monitor app performance, diagnose issues, and improve stability. This data is optional and used solely for analytics.",
-      "<strong>Device or Other IDs</strong>: We collect device identifiers to validate purchases and track usage for analytics purposes. This data is required for app functionality and analytics."
+      "<strong>Financial Information (Purchase History)</strong>: We collect purchase history through RevenueCat to process in-app purchases and subscriptions. These data are used for app functionality (e.g., validating purchases) and analytics (e.g., to understand usage patterns).",
+      "<strong>App Information and Performance (Crash Logs)</strong>: We collect crash logs through Expo to monitor app performance, diagnose issues, and improve stability. These data are optional and used solely for analytics.",
+      "<strong>Device or Other IDs</strong>: We collect device identifiers to validate purchases and track usage for analytics purposes. These data are required for app functionality and analytics."
     ],
     "note": "<strong>Note:</strong> We do not collect personally identifiable information (such as names or email addresses) unless you choose to provide it (e.g., for notifications or support requests)."
   },
@@ -103,5 +103,6 @@
   "closing": "By using the MoodMap app, you agree to the terms of this Privacy Policy.",
   "cta": {
     "email": "Email us about privacy"
-  }
+  },
+  "back": "Go back"
 }

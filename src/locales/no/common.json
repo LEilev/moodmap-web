@@ -14,5 +14,10 @@
     "privacyPolicy": "Personvernerklæring",
     "backToApp": "← Tilbake til appen",
     "copyright": "© 2025 MoodMap. Alle rettigheter forbeholdt."
+  },
+  "notFound": {
+    "title": "Siden finnes ikke",
+    "body": "Beklager, vi fant ikke den siden.",
+    "back": "Gå til forsiden"
   }
 }

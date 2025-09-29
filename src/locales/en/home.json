@@ -6,7 +6,7 @@
     "description": "MoodMap helps you track and survive the hormonal cycle with clarity, humor, and daily guidance for staying connected—and sane."
   },
   "cta": {
-    "subnote": "Private by design•Cancel anytime•Works on iOS & Android"
+    "subnote": "Private by design • Cancel anytime • Works on iOS & Android"
   },
   "about": {
     "heading": "About MoodMap",
@@ -23,7 +23,7 @@
     },
     "tipsIntimacy": {
       "title": "Tips & Intimacy",
-      "body": "Blunt advice + playful nudges to keep spark (and sex) alive."
+      "body": "Blunt advice + playful nudges to keep the spark (and sex) alive."
     },
     "selfcards": {
       "title": "Selfcards",
@@ -33,5 +33,6 @@
   "contact": {
     "label": "Contact us:",
     "email": "support@moodmap-app.com"
-  }
+  },
+  "back": "Go back"
 }

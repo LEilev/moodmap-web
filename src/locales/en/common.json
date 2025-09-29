@@ -14,5 +14,10 @@
     "privacyPolicy": "Privacy Policy",
     "backToApp": "← Back to the app",
     "copyright": "© 2025 MoodMap. All rights reserved."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "Sorry, we couldn't find that page.",
+    "back": "Go back home"
   }
 }

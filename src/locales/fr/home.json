@@ -1,37 +1,38 @@
 {
   "metaTitle": "MoodMap — Comprendre le cycle. Survivre au chaos.",
-  "metaDescription": "MoodMap vous aide à suivre et à survivre au cycle hormonal avec clarté, humour et des conseils quotidiens pour rester connecté – et sain d'esprit.",
+  "metaDescription": "MoodMap vous aide à suivre et à traverser le cycle hormonal avec clarté, humour et des conseils quotidiens pour rester connecté — et sain d’esprit.",
   "hero": {
     "title": "Comprendre le cycle. Survivre au chaos.",
-    "description": "MoodMap vous aide à suivre et à survivre au cycle hormonal avec clarté, humour et des conseils quotidiens pour rester connecté – et sain d'esprit."
+    "description": "MoodMap vous aide à suivre et à traverser le cycle hormonal avec clarté, humour et des conseils quotidiens pour rester connecté — et sain d’esprit."
   },
   "cta": {
-    "subnote": "Conçu pour la confidentialité•Annulable à tout moment•Disponible sur iOS & Android"
+    "subnote": "Privée par conception • Annulable à tout moment • Fonctionne sur iOS et Android"
   },
   "about": {
     "heading": "À propos de MoodMap",
-    "body": "Conçu pour les hommes qui veulent prospérer – et non marcher sur des œufs – tout au long du cycle hormonal. Recevez des conseils de survie brutalement honnêtes, des fenêtres de timing, et un code visuel pour apporter de la chaleur quand c'est important et de l'espace quand ça sauve la situation."
+    "body": "Conçue pour les hommes qui veulent s’épanouir — pas marcher sur des œufs — pendant le cycle hormonal. Recevez des repères de survie francs, des fenêtres de timing et un code visuel pour apporter de la chaleur quand il le faut et de l’espace quand ça sauve la mise."
   },
   "features": {
     "cycleOverview": {
-      "title": "Vue d'ensemble du cycle",
-      "body": "Cartographiez l'humeur. Décryptez le code. Plus d'approximations."
+      "title": "Vue d’ensemble du cycle",
+      "body": "Cartographier l’humeur. Décoder le code. Sans deviner."
     },
     "survivalAlerts": {
       "title": "Alertes de survie",
-      "body": "Sachez quand vous rapprocher, prendre du recul — ou apporter du chocolat."
+      "body": "Savoir quand se rapprocher, prendre du recul — ou apporter du chocolat."
     },
     "tipsIntimacy": {
       "title": "Conseils & Intimité",
-      "body": "Des conseils directs + des encouragements ludiques pour entretenir l'étincelle (et le sexe)."
+      "body": "Des conseils cash + des clins d’œil ludiques pour garder l’étincelle (et le sexe) vivants."
     },
     "selfcards": {
       "title": "Selfcards",
-      "body": "Rituels quotidiens pour accroître votre présence – soyez solide, pour elle comme pour vous."
+      "body": "Des rituels quotidiens pour affûter votre présence — être solide, pour elle et pour vous."
     }
   },
   "contact": {
-    "label": "Contactez-nous :",
+    "label": "Contactez‑nous :",
     "email": "support@moodmap-app.com"
-  }
+  },
+  "back": "Retour"
 }

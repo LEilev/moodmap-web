@@ -1,6 +1,6 @@
 {
   "metaTitle": "Datenschutzerklärung | MoodMap™",
-  "metaDescription": "Wie wir Ihre Informationen erfassen, nutzen und schützen, wenn Sie die MoodMap-App verwenden.",
+  "metaDescription": "Wie wir deine Informationen erheben, nutzen und schützen, wenn du die MoodMap‑App verwendest.",
   "hero": {
     "badge": "Zuletzt aktualisiert: 24. April 2025",
     "title": "Datenschutzerklärung für MoodMap™"
@@ -9,99 +9,100 @@
     "mobile": "Zum Abschnitt springen",
     "title": "Inhaltsverzeichnis",
     "sections": {
-      "section1": "1. Informationen, die wir erheben",
-      "section2": "2. Wie wir Ihre Daten verwenden",
-      "section3": "3. Dienste von Drittanbietern",
+      "section1": "1. Welche Informationen wir erheben",
+      "section2": "2. Wie wir deine Daten verwenden",
+      "section3": "3. Dienste Dritter",
       "section4": "4. Datensicherheit",
       "section5": "5. Datenlöschung",
       "section6": "6. Keine Gesundheitsdaten",
-      "section7": "7. E-Mail-Benachrichtigungen (optional)",
-      "section8": "8. Ihre Rechte",
-      "section9": "9. Änderungen dieser Datenschutzrichtlinie",
-      "section10": "10. Kontaktieren Sie uns"
+      "section7": "7. E‑Mail‑Benachrichtigungen (optional)",
+      "section8": "8. Deine Rechte",
+      "section9": "9. Änderungen an dieser Richtlinie",
+      "section10": "10. Kontakt"
     }
   },
   "intro": {
     "lastUpdated": "Zuletzt aktualisiert",
     "date": "24. April 2025",
-    "text": "MoodMap verpflichtet sich, Ihre Privatsphäre zu schützen. Diese Datenschutzerklärung erklärt, wie wir Ihre Informationen erfassen, verwenden und schützen, wenn Sie die MoodMap-App verwenden. Durch die Nutzung der App stimmen Sie den Bestimmungen dieser Datenschutzerklärung zu."
+    "text": "MoodMap setzt sich für den Schutz deiner Privatsphäre ein. Diese Datenschutzerklärung erklärt, wie wir Informationen erheben, nutzen und schützen, wenn du die MoodMap‑App verwendest. Durch die Nutzung der App stimmst du den Bedingungen dieser Datenschutzerklärung zu."
   },
   "section1": {
-    "title": "1. Informationen, die wir erheben",
-    "desc": "Wir erfassen folgende Arten von Daten, um unsere Dienste bereitzustellen und zu verbessern:",
+    "title": "1. Welche Informationen wir erheben",
+    "desc": "Wir erheben die folgenden Datentypen, um unsere Dienste bereitzustellen und zu verbessern:",
     "items": [
-      "<strong>Finanzinformationen (Kaufverlauf)</strong>: Wir erfassen Kaufverläufe über RevenueCat, um In-App-Käufe und Abonnements zu verarbeiten. Diese Daten werden für die App-Funktionalität (z.B. zum Validieren von Käufen) und für Analysen (z.B. zum Verständnis von Nutzungsverhalten) verwendet.",
-      "<strong>App-Informationen und Leistung (Absturzprotokolle)</strong>: Wir sammeln Absturzprotokolle über Expo, um die Leistung der App zu überwachen, Probleme zu diagnostizieren und die Stabilität zu verbessern. Diese Daten sind optional und werden ausschließlich für Analysezwecke verwendet.",
-      "<strong>Geräte- oder andere Kennungen</strong>: Wir erfassen Gerätekennungen, um Käufe zu validieren und die Nutzung für Analysezwecke zu verfolgen. Diese Daten sind für die App-Funktionalität und Analysen erforderlich."
+      "<strong>Finanzinformationen (Kaufverlauf)</strong>: Wir erfassen den Kaufverlauf über RevenueCat, um In‑App‑Käufe und Abonnements zu verarbeiten. Diese Daten werden für die App‑Funktionalität (z. B. Validierung von Käufen) und für Analysen (z. B. um Nutzungsmuster zu verstehen) verwendet.",
+      "<strong>App‑Informationen und Leistung (Crash‑Logs)</strong>: Wir erfassen Crash‑Logs über Expo, um die App‑Leistung zu überwachen, Probleme zu diagnostizieren und die Stabilität zu verbessern. Diese Daten sind optional und werden ausschließlich für Analysen verwendet.",
+      "<strong>Geräte‑ oder andere IDs</strong>: Wir erfassen Gerätekennungen, um Käufe zu validieren und die Nutzung zu Analysezwecken zu verfolgen. Diese Daten sind für die App‑Funktionalität und Analysen erforderlich."
     ],
-    "note": "<strong>Hinweis:</strong> Wir erfassen keine personenbezogenen Daten (wie Namen oder E-Mail-Adressen), es sei denn, Sie entscheiden sich dafür, sie bereitzustellen (z.B. für Benachrichtigungen oder Supportanfragen)."
+    "note": "<strong>Hinweis:</strong> Wir erheben keine personenbezogenen Daten (wie Namen oder E‑Mail‑Adressen), es sei denn, du entscheidest dich, sie bereitzustellen (z. B. für Benachrichtigungen oder Support‑Anfragen)."
   },
   "section2": {
-    "title": "2. Wie wir Ihre Daten verwenden",
-    "desc": "Wir verwenden die gesammelten Daten für folgende Zwecke:",
+    "title": "2. Wie wir deine Daten verwenden",
+    "desc": "Wir nutzen die erhobenen Daten für folgende Zwecke:",
     "items": [
-      "<strong>App-Funktionalität</strong>: Um In-App-Käufe zu verarbeiten, Transaktionen zu validieren und sicherzustellen, dass die App wie vorgesehen funktioniert.",
-      "<strong>Analyse</strong>: Um die App-Leistung zu überwachen, Nutzungsverhalten zu verstehen und das Benutzererlebnis zu verbessern."
+      "<strong>App‑Funktionalität</strong>: Zur Verarbeitung von In‑App‑Käufen, Validierung von Transaktionen und Sicherstellung des ordnungsgemäßen App‑Betriebs.",
+      "<strong>Analysen</strong>: Zur Überwachung der App‑Leistung, zum Verständnis von Nutzungsmustern und zur Verbesserung der Nutzererfahrung."
     ],
     "note": ""
   },
   "section3": {
-    "title": "3. Dienste von Drittanbietern",
-    "desc": "MoodMap nutzt die folgenden Dienste von Drittanbietern, die möglicherweise Daten entsprechend ihren eigenen Datenschutzrichtlinien sammeln:",
+    "title": "3. Dienste Dritter",
+    "desc": "MoodMap nutzt die folgenden Dienste Dritter, die Daten gemäß ihren eigenen Datenschutzrichtlinien erheben können:",
     "items": [
-      "<strong>RevenueCat</strong>: Wird verwendet, um In-App-Käufe und Abonnements zu verwalten. RevenueCat erfasst Kaufverläufe und Gerätekennungen. Weitere Informationen finden Sie in der Datenschutzrichtlinie von RevenueCat.",
-      "<strong>Expo</strong>: Wird für App-Entwicklung und -Überwachung verwendet. Expo erfasst Absturzprotokolle und Gerätekennungen für Analysezwecke. Weitere Informationen finden Sie in der Datenschutzrichtlinie von Expo."
+      "<strong>RevenueCat</strong>: Verwaltung von In‑App‑Käufen und Abonnements. RevenueCat erhebt Kaufverläufe und Gerätekennungen. Weitere Informationen findest du in der Datenschutzrichtlinie von RevenueCat.",
+      "<strong>Expo</strong>: App‑Entwicklung und Monitoring. Expo erhebt Crash‑Logs und Gerätekennungen zu Analysezwecken. Weitere Informationen findest du in der Datenschutzrichtlinie von Expo."
     ],
     "note": ""
   },
   "section4": {
     "title": "4. Datensicherheit",
-    "desc": "Alle gesammelten Daten werden während der Übertragung mittels HTTPS verschlüsselt, um eine sichere Übermittlung zu gewährleisten. Wir ergreifen angemessene Maßnahmen zum Schutz Ihrer Daten, aber keine Übertragungsmethode über das Internet ist vollkommen sicher.",
+    "desc": "Alle erhobenen Daten werden während der Übertragung per HTTPS verschlüsselt, um eine sichere Übermittlung zu gewährleisten. Wir ergreifen angemessene Maßnahmen, um deine Daten zu schützen, aber keine Übertragungsmethode über das Internet ist vollständig sicher.",
     "items": [],
     "note": ""
   },
   "section5": {
     "title": "5. Datenlöschung",
-    "desc": "Sie haben das Recht, die Löschung Ihrer persönlichen Daten zu verlangen. Um eine Löschanfrage zu stellen, kontaktieren Sie uns bitte unter support@moodmap-app.com. Wir werden Ihre Anfrage im Einklang mit den geltenden Datenschutzgesetzen, wie der GDPR, bearbeiten und Ihre Daten aus unseren Systemen und denen unserer Dienstleister (z.B. RevenueCat und Expo) innerhalb eines angemessenen Zeitraums löschen.",
+    "desc": "Du hast das Recht, die Löschung deiner personenbezogenen Daten zu verlangen. Sende dazu eine Anfrage an support@moodmap-app.com. Wir bearbeiten deine Anfrage gemäß den geltenden Datenschutzgesetzen (z. B. DSGVO) und löschen deine Daten aus unseren Systemen und denen unserer Dienstleister (z. B. RevenueCat und Expo) innerhalb eines angemessenen Zeitrahmens.",
     "items": [],
     "note": ""
   },
   "section6": {
     "title": "6. Keine Gesundheitsdaten",
-    "desc": "MoodMap erfasst, speichert oder verarbeitet keine persönlichen Gesundheits- oder Menstruationsdaten. Die App ist darauf ausgelegt, allgemeine zyklusbasierte Tipps bereitzustellen und ist nicht für medizinische oder diagnostische Zwecke gedacht.",
+    "desc": "MoodMap erhebt, speichert oder verarbeitet keine persönlichen Gesundheits‑ oder Menstruationsdaten. Die App liefert allgemeine zyklusbasierte Tipps und ist nicht für medizinische oder diagnostische Zwecke gedacht.",
     "items": [],
     "note": ""
   },
   "section7": {
-    "title": "7. E-Mail-Benachrichtigungen (optional)",
-    "desc": "Wenn Sie sich für Benachrichtigungen anmelden, wird Ihre E-Mail-Adresse sicher gespeichert und nur dazu verwendet, Sie über App-Updates oder -Veröffentlichungen zu informieren. Sie können sich jederzeit abmelden, indem Sie den Anweisungen in den Benachrichtigungs-E-Mails folgen.",
+    "title": "7. E‑Mail‑Benachrichtigungen (optional)",
+    "desc": "Wenn du dich für Benachrichtigungen anmeldest, wird deine E‑Mail‑Adresse sicher gespeichert und ausschließlich verwendet, um dich über App‑Updates oder Releases zu informieren. Du kannst dich jederzeit abmelden, indem du den Anweisungen in den E‑Mails folgst.",
     "items": [],
     "note": ""
   },
   "section8": {
-    "title": "8. Ihre Rechte",
-    "desc": "Abhängig von Ihrem Standort haben Sie möglicherweise die folgenden Rechte in Bezug auf Ihre Daten:",
+    "title": "8. Deine Rechte",
+    "desc": "Je nach deinem Standort kannst du folgende Rechte in Bezug auf deine Daten haben:",
     "items": [
-      "<strong>Zugriff</strong>: Fordern Sie eine Kopie der Daten an, die wir über Sie gespeichert haben.",
-      "<strong>Löschung</strong>: Fordern Sie die Löschung Ihrer Daten an.",
-      "<strong>Widerspruch</strong>: Legen Sie Widerspruch gegen bestimmte Arten der Datenverarbeitung ein."
+      "<strong>Zugang</strong>: Fordere eine Kopie der Daten an, die wir über dich speichern.",
+      "<strong>Löschung</strong>: Verlange die Löschung deiner Daten.",
+      "<strong>Widerspruch</strong>: Lege Widerspruch gegen bestimmte Arten der Datenverarbeitung ein."
     ],
-    "note": "Um diese Rechte auszuüben, kontaktieren Sie uns bitte unter support@moodmap-app.com."
+    "note": "Um diese Rechte auszuüben, kontaktiere uns unter support@moodmap-app.com."
   },
   "section9": {
-    "title": "9. Änderungen dieser Datenschutzrichtlinie",
-    "desc": "Wir können diese Datenschutzrichtlinie von Zeit zu Zeit aktualisieren. Alle Änderungen werden auf dieser Seite veröffentlicht, und das Datum \"Zuletzt aktualisiert\" wird entsprechend angepasst. Wir empfehlen Ihnen, diese Richtlinie regelmäßig zu überprüfen.",
+    "title": "9. Änderungen an dieser Richtlinie",
+    "desc": "Wir können diese Datenschutzerklärung von Zeit zu Zeit aktualisieren. Änderungen werden auf dieser Seite angezeigt, und das Datum „Zuletzt aktualisiert“ wird entsprechend angepasst. Bitte prüfe diese Richtlinie regelmäßig.",
     "items": [],
     "note": ""
   },
   "section10": {
-    "title": "10. Kontaktieren Sie uns",
-    "desc": "Wenn Sie Fragen oder Bedenken zu dieser Datenschutzrichtlinie oder unseren Datenpraktiken haben, kontaktieren Sie uns bitte unter support@moodmap-app.com.",
+    "title": "10. Kontakt",
+    "desc": "Wenn du Fragen oder Bedenken zu dieser Datenschutzerklärung oder unseren Datenpraktiken hast, kontaktiere uns unter support@moodmap-app.com.",
     "items": [],
     "note": ""
   },
-  "closing": "Durch die Nutzung der MoodMap-App stimmen Sie den Bestimmungen dieser Datenschutzerklärung zu.",
+  "closing": "Durch die Nutzung der MoodMap‑App stimmst du den Bedingungen dieser Datenschutzerklärung zu.",
   "cta": {
-    "email": "Schicken Sie uns eine E-Mail zum Thema Datenschutz"
-  }
+    "email": "E‑Mail zum Thema Datenschutz"
+  },
+  "back": "Zurück"
 }

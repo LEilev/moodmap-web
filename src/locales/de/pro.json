@@ -1,46 +1,49 @@
 {
   "metaTitle": "MoodMap Pro",
-  "metaDescription": "Schalte tägliche, phasenbewusste Tipps und Überlebenshinweise frei – entwickelt, um Beziehungen Tag für Tag reibungsloser und sicherer zu machen.",
+  "metaDescription": "Schalte tägliche, phasenbewusste Tipps und Überlebenshinweise frei—für Beziehungen, die Tag für Tag ruhiger und verbundener laufen.",
   "hero": {
     "badge": "MoodMap Pro",
-    "title": "Premium-Ratgeber für besseres Timing, mehr Verbundenheit und Gelassenheit.",
-    "subtitle": "Schalte tägliche, phasenbewusste Tipps und Überlebenshinweise frei – entwickelt, um Beziehungen Tag für Tag reibungsloser und sicherer zu machen."
+    "title": "Premium‑Anleitung für besseres Timing, Verbindung und Ruhe.",
+    "subtitle": "Schalte tägliche, phasenbewusste Tipps und Survival‑Cues frei—damit Beziehungen Tag für Tag reibungsloser und sicherer werden."
   },
   "cta": {
     "yearly": {
       "label": "Pro werden – Jährlich",
-      "hint": "Bestes Angebot",
-      "aria": "Jahresplan auswählen"
+      "hint": "Bestes Preis‑Leistungs‑Verhältnis",
+      "aria": "Jahresplan wählen"
     },
     "monthly": {
       "label": "Pro werden – Monatlich",
-      "aria": "Monatsplan auswählen"
+      "aria": "Monatsplan wählen"
     },
-    "disclaimer": "Funktioniert mit deiner vorhandenen App. Jederzeit kündbar. Privat und sicher."
+    "disclaimer": "Funktioniert mit deiner bestehenden App. Jederzeit kündbar. Privat & sicher."
   },
   "features": {
     "dailyConnection": {
-      "title": "Tägliche Beziehungsimpulse",
-      "desc": "Wisse, wann du Nähe geben, Freiraum lassen oder Wärme hinzufügen solltest – ganz ohne Ratespiel."
+      "title": "Tägliche Verbindungshinweise",
+      "desc": "Wissen, wann du näher rücken, Raum geben oder Wärme hinzufügen solltest—ohne Rätselraten."
     },
     "smartTiming": {
-      "title": "Intelligente Timing-Warnungen",
-      "desc": "Hinweise für PMS, Eisprung und heikle Phasen, damit du im Einklang bleibst."
+      "title": "Smart‑Timing‑Warnungen",
+      "desc": "Heads‑up für PMS, Ovulation und knifflige Fenster, damit ihr in Sync bleibt."
     },
     "hormoneAware": {
-      "title": "Hormonbewusste Anleitung",
-      "desc": "Klare, respektvolle Erläuterungen zu den Zyklusphasen – ohne Schnickschnack."
+      "title": "Hormon‑bewusste Guidance",
+      "desc": "Klare, respektvolle Erklärungen je Zyklusphase—ohne Schnickschnack."
     },
     "calmClarity": {
       "title": "Ruhe & Klarheit",
-      "desc": "Kurze, ehrliche Notizen, die Reibungen reduzieren und täglich Vertrauen aufbauen."
+      "desc": "Kurze, ehrliche Notizen, die Reibung reduzieren und täglich Vertrauen aufbauen."
     }
   },
   "ready": {
     "title": "Bereit, wenn du es bist.",
-    "subtitle": "Zwei einfache Optionen. Gleiche Freischaltung. Wähle, was am besten zu dir passt.",
-    "yearlyButton": "Jährlich – Bestes Angebot",
+    "subtitle": "Zwei einfache Optionen. Gleiche Freischaltung. Wähle, was dir passt.",
+    "yearlyButton": "Jährlich – Beste Wahl",
     "monthlyButton": "Monatlich",
-    "disclaimer": "Datenschutzfreundlich gestaltet. Gestützt auf echte Hormonwissenschaft – vereinfacht für den Alltag."
-  }
+    "disclaimer": "Von Grund auf privat. Gestützt auf echte Hormonwissenschaft—vereinfacht für den Alltag."
+  },
+  "intro": "Erhalte tägliche, zyklusbewusste Guidance und Tipps mit MoodMap Pro.",
+  "ctaLabel": "Jetzt abonnieren",
+  "back": "Zurück"
 }

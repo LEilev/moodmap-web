@@ -1,13 +1,13 @@
 {
   "metaTitle": "Support – MoodMap",
-  "metaDescription": "Brauchst du Hilfe? MoodMap ist Indie-entwickelt (von mir, Eilev). Ich lese jede einzelne Nachricht.",
+  "metaDescription": "Brauche Hilfe? MoodMap ist indie‑entwickelt (von mir, Eilev). Ich lese jede einzelne Nachricht.",
   "title": "Brauchst du Hilfe?",
-  "subtitle": "MoodMap ist Indie-entwickelt (von mir, Eilev). Ich lese jede einzelne Nachricht.",
-  "dm": "Lieber DM? Ich bin auch auf Instagram, aber per E-Mail geht es am schnellsten für Support.",
+  "subtitle": "MoodMap ist indie‑entwickelt (von mir, Eilev). Ich lese jede einzelne Nachricht.",
+  "dm": "Lieber per DM? Ich bin auch auf Instagram, aber E‑Mail ist für Support am schnellsten.",
   "labels": {
-    "email": "E-Mail",
+    "email": "E‑Mail",
     "phone": "Telefon",
-    "address": "Postanschrift"
+    "address": "Adresse"
   },
   "values": {
     "email": "support@moodmap-app.com",

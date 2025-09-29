@@ -42,5 +42,8 @@
     "yearlyButton": "Yearly – Best value",
     "monthlyButton": "Monthly",
     "disclaimer": "Private by design. Backed by real hormone science—made simple for daily life."
-  }
+  },
+  "intro": "Get daily, cycle-aware guidance and tips with MoodMap Pro.",
+  "ctaLabel": "Subscribe Now",
+  "back": "Go back"
 }

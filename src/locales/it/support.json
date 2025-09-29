@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Support – MoodMap",
-  "metaDescription": "Hai bisogno di una mano? MoodMap è sviluppato in modo indipendente (da me, Eilev). Leggo ogni singolo messaggio.",
-  "title": "Hai bisogno di una mano?",
-  "subtitle": "MoodMap è sviluppato in modo indipendente (da me, Eilev). Leggo ogni singolo messaggio.",
-  "dm": "Preferisci un DM? Sono anche su Instagram, ma l'email è il modo più veloce per il supporto.",
+  "metaTitle": "Supporto – MoodMap",
+  "metaDescription": "Serve aiuto? MoodMap è sviluppata in modo indipendente (da me, Eilev). Leggo ogni singolo messaggio.",
+  "title": "Serve aiuto?",
+  "subtitle": "MoodMap è sviluppata in modo indipendente (da me, Eilev). Leggo ogni singolo messaggio.",
+  "dm": "Preferisci i DM? Sono anche su Instagram, ma l’e‑mail è il canale più rapido per il supporto.",
   "labels": {
-    "email": "Email",
+    "email": "E‑mail",
     "phone": "Telefono",
-    "address": "Indirizzo postale"
+    "address": "Indirizzo"
   },
   "values": {
     "email": "support@moodmap-app.com",

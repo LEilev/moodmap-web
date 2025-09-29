@@ -1,13 +1,13 @@
 {
-  "metaTitle": "Support – MoodMap",
-  "metaDescription": "需要帮忙吗？MoodMap 是独立开发的（由我 Eilev）。每一条消息我都会亲自阅读。",
-  "title": "需要帮忙吗？",
-  "subtitle": "MoodMap 是独立开发的（由我 Eilev）。每一条消息我都会亲自阅读。",
-  "dm": "喜欢私信吗？我也在 Instagram 上，但对于支持，电子邮件是最快的。",
+  "metaTitle": "支持 – MoodMap",
+  "metaDescription": "需要帮助？MoodMap 由我（Eilev）独立开发。我会阅读每一条消息。",
+  "title": "需要帮助？",
+  "subtitle": "MoodMap 由我（Eilev）独立开发。我会阅读每一条消息。",
+  "dm": "更喜欢私信？我也在 Instagram，不过就支持而言，电子邮件最快。",
   "labels": {
-    "email": "电子邮件",
+    "email": "邮箱",
     "phone": "电话",
-    "address": "邮寄地址"
+    "address": "地址"
   },
   "values": {
     "email": "support@moodmap-app.com",

@@ -8,11 +8,16 @@
   },
   "cta": {
     "appStore": "Scarica su App Store",
-    "playStore": "Disponibile su Google Play"
+    "playStore": "Scarica su Google Play"
   },
   "footer": {
     "privacyPolicy": "Informativa sulla privacy",
-    "backToApp": "← Torna all'app",
+    "backToApp": "← Torna all’app",
     "copyright": "© 2025 MoodMap. Tutti i diritti riservati."
+  },
+  "notFound": {
+    "title": "Pagina non trovata",
+    "body": "Spiacenti, non siamo riusciti a trovare quella pagina.",
+    "back": "Torna alla home"
   }
 }
