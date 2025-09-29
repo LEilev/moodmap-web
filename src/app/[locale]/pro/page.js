@@ -1,5 +1,6 @@
 // src/app/[locale]/pro/page.js
 import {getTranslations} from 'next-intl/server';
+import {unstable_setRequestLocale} from 'next-intl/server';
 
 export async function generateMetadata({params: {locale}}) {
   const t = await getTranslations({locale, namespace: 'pro'});
@@ -7,6 +8,8 @@ export async function generateMetadata({params: {locale}}) {
 }
 
 export default async function ProPage({params: {locale}}) {
+  unstable_setRequestLocale(locale);
+
   const t = await getTranslations({locale, namespace: 'pro'});
 
   return (
