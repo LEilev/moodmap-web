@@ -1,27 +1,22 @@
 // next.config.mjs
 import createNextIntlPlugin from 'next-intl/plugin';
 
-// Knytter next-intl til vår request-config
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.js');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.js', {
+  // Viktig for stabil oppførsel:
+  localeDetection: false,   // ikke bruk cookie til å “autobytte” språk
+  localePrefix: 'always'    // forvent alltid /{locale}/... i URL
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
 
-  // Bygg‑tid redirect av "/" → "/en" (ikke bare runtime via middleware)
+  // Build-tid redirect: / → /en
   async redirects() {
     return [
-      {
-        source: '/',
-        destination: '/en',
-        permanent: false
-      }
+      {source: '/', destination: '/en', permanent: false}
     ];
-  },
-
-  // Krav: slå av automatisk locale-detection
-  // (merk: vi bruker egen middleware/lenker for locale)
-  localeDetection: false
+  }
 };
 
 export default withNextIntl(nextConfig);
