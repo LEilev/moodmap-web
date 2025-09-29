@@ -1,14 +1,15 @@
-import {getTranslations} from 'next-intl/server';
-import {unstable_setRequestLocale} from 'next-intl/server';
+// src/app/[locale]/pro/page.js
+import {getTranslations, setRequestLocale} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
-  unstable_setRequestLocale(locale);
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'pro'});
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return {title: t('metaTitle'), description: t('metaDescription')};
 }
 
-export default async function ProPage({params: {locale}}) {
-  unstable_setRequestLocale(locale);
+export default async function ProPage({params}) {
+  const {locale} = await params;
+  setRequestLocale(locale);
 
   const t = await getTranslations({locale, namespace: 'pro'});
 

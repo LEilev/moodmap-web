@@ -1,9 +1,10 @@
-import {getTranslations, unstable_setRequestLocale} from 'next-intl/server';
+// src/app/[locale]/privacy-policy/page.js
+import {getTranslations, setRequestLocale} from 'next-intl/server';
 
-export async function generateMetadata({params: {locale}}) {
-  unstable_setRequestLocale(locale);
+export async function generateMetadata({params}) {
+  const {locale} = await params;
   const t = await getTranslations({locale, namespace: 'privacy'});
-  return { title: t('metaTitle'), description: t('metaDescription') };
+  return {title: t('metaTitle'), description: t('metaDescription')};
 }
 
 function HtmlList({items}) {
@@ -17,9 +18,9 @@ function HtmlList({items}) {
   );
 }
 
-export default async function PrivacyPage({params: {locale}}) {
-  // 👇 Viktig: setter locale riktig for SSG
-  unstable_setRequestLocale(locale);
+export default async function PrivacyPage({params}) {
+  const {locale} = await params;
+  setRequestLocale(locale);
 
   const t = await getTranslations({locale, namespace: 'privacy'});
 
