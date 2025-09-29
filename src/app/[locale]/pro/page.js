@@ -1,123 +1,57 @@
 // src/app/[locale]/pro/page.js
 import {getTranslations} from 'next-intl/server';
-import Link from '@/components/LocaleLink';
-import {Crown, ShieldCheck, Sparkles, HeartHandshake, BellRing, LineChart} from 'lucide-react';
 
-function buildPlanHref(planType, searchParams) {
-  const qs = new URLSearchParams({type: planType === 'yearly' ? 'yearly' : 'monthly'});
-  const append = (k, v) => { if (v == null || v === '' || k.toLowerCase() === 'type') return; qs.append(k, String(v)); };
-  if (searchParams) {
-    if (typeof searchParams.forEach === 'function') {
-      searchParams.forEach((v, k) => append(k, v));
-    } else {
-      Object.entries(searchParams).forEach(([k, v]) => Array.isArray(v) ? v.forEach(vv => append(k, vv)) : append(k, v));
-    }
-  }
-  return `/buy?${qs.toString()}`;
+export async function generateMetadata({params: {locale}}) {
+  const t = await getTranslations({locale, namespace: 'pro'});
+  return {
+    title: t('metaTitle'),
+    description: t('metaDescription')
+  };
 }
 
-export async function generateMetadata({params}) {
-  const {locale} = await params;
-  const t = await getTranslations({locale, namespace: 'pro'});
-  return { title: t('metaTitle'), description: t('metaDescription') };
-}
-
-export default async function ProPage({params, searchParams}) {
-  const {locale} = await params;
-  const t = await getTranslations({locale, namespace: 'pro'});
-  const sp = await searchParams; // Next 15
-
-  const features = [
-    { icon: HeartHandshake, title: t('features.dailyConnection.title'), desc: t('features.dailyConnection.desc') },
-    { icon: BellRing,       title: t('features.smartTiming.title'),    desc: t('features.smartTiming.desc') },
-    { icon: LineChart,      title: t('features.hormoneAware.title'),   desc: t('features.hormoneAware.desc') },
-    { icon: ShieldCheck,    title: t('features.calmClarity.title'),    desc: t('features.calmClarity.desc') }
-  ];
-
-  const yearlyHref = buildPlanHref('yearly', sp);
-  const monthlyHref = buildPlanHref('monthly', sp);
+export default async function ProPage() {
+  const t = await getTranslations('pro');
 
   return (
-    <div className="relative isolate bg-primary-blue text-white">
-      <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] 
-        rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] 
-        rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10" />
+    <main className="mx-auto max-w-5xl px-4 py-12">
+      <header className="text-center space-y-3 mb-10">
+        <div className="text-xs uppercase opacity-70">{t('hero.badge')}</div>
+        <h1 className="text-3xl font-bold">{t('hero.title')}</h1>
+        <p className="opacity-90">{t('hero.subtitle')}</p>
+      </header>
 
-      <section className="px-6 pt-16 pb-12 sm:pt-20 sm:pb-16 text-center">
-        <div className="mx-auto max-w-3xl">
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-sm font-medium">
-            <Crown className="h-4 w-4" aria-hidden="true" />
-            <span>{t('hero.badge')}</span>
-          </div>
-          <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
-            <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-              {t('hero.title')}
-            </span>
-          </h1>
-          <p className="mt-5 text-pretty text-base sm:text-lg text-blue-100">
-            {t('hero.subtitle')}
-          </p>
-
-          {/* CTA – kjøpsflyt urørt */}
-          <div className="mt-8 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
-            <Link
-              href={yearlyHref}
-              locale={false}
-              prefetch={false}
-              aria-label={t('cta.yearly.aria')}
-              className="group relative inline-flex items-center justify-center rounded-xl px-7 py-4 text-base font-semibold text-white 
-                bg-gradient-to-r from-emerald-400 to-emerald-500 shadow-[0_10px_30px_rgba(16,185,129,0.35)] ring-1 ring-emerald-300/40 transition 
-                hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(16,185,129,0.45)] focus-visible:outline focus-visible:outline-2 
-                focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Crown className="h-5 w-5" aria-hidden="true" />
-                {t('cta.yearly.label')}
-              </span>
-              <span className="ml-2 inline-flex items-center rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-xs font-semibold">
-                {t('cta.yearly.hint')}
-              </span>
-            </Link>
-
-            <Link
-              href={monthlyHref}
-              locale={false}
-              prefetch={false}
-              aria-label={t('cta.monthly.aria')}
-              className="group relative inline-flex items-center justify-center rounded-xl px-7 py-4 text-base font-semibold text-white 
-                bg-gradient-to-r from-blue-500 to-blue-600 shadow-[0_10px_30px_rgba(59,130,246,0.35)] ring-1 ring-blue-300/45 transition 
-                hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)] focus-visible:outline focus-visible:outline-2 
-                focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
-            >
-              <Sparkles className="mr-2 h-5 w-5" aria-hidden="true" />
-              {t('cta.monthly.label')}
-            </Link>
-          </div>
-          <p className="mt-3 text-xs text-blue-100">{t('cta.disclaimer')}</p>
-        </div>
+      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+        <article className="rounded-xl border p-4">
+          <h3 className="font-semibold">{t('features.dailyConnection.title')}</h3>
+          <p className="text-sm opacity-90">{t('features.dailyConnection.desc')}</p>
+        </article>
+        <article className="rounded-xl border p-4">
+          <h3 className="font-semibold">{t('features.smartTiming.title')}</h3>
+          <p className="text-sm opacity-90">{t('features.smartTiming.desc')}</p>
+        </article>
+        <article className="rounded-xl border p-4">
+          <h3 className="font-semibold">{t('features.hormoneAware.title')}</h3>
+          <p className="text-sm opacity-90">{t('features.hormoneAware.desc')}</p>
+        </article>
+        <article className="rounded-xl border p-4">
+          <h3 className="font-semibold">{t('features.calmClarity.title')}</h3>
+          <p className="text-sm opacity-90">{t('features.calmClarity.desc')}</p>
+        </article>
       </section>
 
-      <section className="px-6 pb-20 sm:pb-24">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:gap-7 md:grid-cols-2 lg:grid-cols-4">
-          {features.map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 text-left ring-1 ring-white/10 backdrop-blur-xl 
-                transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/30"
-            >
-              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl 
-                bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10 
-                transition-all duration-300 group-hover:scale-105 group-hover:from-emerald-300/55 group-hover:to-blue-400/55"
-              >
-                <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
-              </span>
-              <h3 className="text-base sm:text-lg font-semibold text-white">{title}</h3>
-              <p className="mt-1.5 text-[13.5px] leading-relaxed text-blue-100">{desc}</p>
-            </div>
-          ))}
+      <section className="text-center space-y-3">
+        <h2 className="text-2xl font-semibold">{t('ready.title')}</h2>
+        <p className="opacity-90">{t('ready.subtitle')}</p>
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button className="rounded-md border px-3 py-2">
+            {t('cta.yearly.label')}
+          </button>
+          <button className="rounded-md border px-3 py-2">
+            {t('cta.monthly.label')}
+          </button>
         </div>
+        <p className="text-xs opacity-70">{t('cta.disclaimer')}</p>
       </section>
-    </div>
+    </main>
   );
 }
