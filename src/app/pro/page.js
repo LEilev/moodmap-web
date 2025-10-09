@@ -256,6 +256,20 @@ export default function ProPage({ searchParams }) {
           </div>
         </div>
       </section>
+
+      {/* ───────── Footer: Back to the app (emerald/blue button) ───────── */}
+      <footer className="px-6 pb-16 text-center">
+        <Link
+          href="/"
+          className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold
+                     text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
+                     shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all
+                     hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)]
+                     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+        >
+          ← Back to the app
+        </Link>
+      </footer>
     </div>
   );
 }

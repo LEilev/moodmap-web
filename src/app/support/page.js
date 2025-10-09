@@ -89,6 +89,41 @@ export default function SupportPage() {
             />
           </article>
 
+          {/* Discord */}
+          <article className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 ring-1 ring-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30">
+            <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-indigo-500/10 transition-all duration-300 group-hover:scale-105 group-hover:from-indigo-300/55 group-hover:to-blue-400/55">
+              {/* Discord logo (inline SVG) */}
+              <svg
+                aria-hidden
+                className="h-6 w-6 text-white drop-shadow"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M20.317 4.369A19.791 19.791 0 0016.557 3.5c-.18.333-.37.77-.507 1.12a18.128 18.128 0 00-5.09 0 13.078 13.078 0 00-.517-1.12 19.736 19.736 0 00-3.76.869C3.866 7.363 3.3 10.262 3.5 13.106a19.9 19.9 0 005.965 3.022c.244-.333.465-.686.66-1.056-.363-.139-.716-.308-1.056-.509.089-.064.175-.13.257-.198a13.021 13.021 0 007.256 0c.083.068.169.134.257.198-.34.201-.693.37-1.056.509.195.37.416.723.66 1.056a19.9 19.9 0 005.964-3.022c.336-3.076-.573-5.94-2.296-8.737zM9.438 12.192c-.832 0-1.508-.781-1.508-1.742 0-.96.676-1.742 1.508-1.742.832 0 1.508.781 1.508 1.742 0 .96-.676 1.742-1.508 1.742zm5.125 0c-.832 0-1.508-.781-1.508-1.742 0-.96.676-1.742 1.508-1.742.832 0 1.508.781 1.508 1.742 0 .96-.676 1.742-1.508 1.742z" />
+              </svg>
+            </span>
+            <h2 className="text-xl font-semibold">Discord</h2>
+            <p className="mt-1">
+              <a
+                className="underline decoration-white/40 hover:decoration-white/70"
+                href="https://discord.gg/eeP9vBK6Vn"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Join the MoodMap Lounge
+              </a>
+            </p>
+            <p className="mt-1.5 text-sm text-blue-100">
+              Chat, feedback & early access.
+            </p>
+            {/* gloss */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80"
+            />
+          </article>
+
           {/* Address */}
           <article className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 ring-1 ring-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30">
             <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10 transition-all duration-300 group-hover:scale-105 group-hover:from-emerald-300/55 group-hover:to-blue-400/55">
