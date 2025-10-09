@@ -1,167 +1,180 @@
-// src/app/api/partner-feedback/route.js
-export const runtime = 'edge';
-
-import { redis, hincr, expire } from '@/lib/redis.js';
-import { FeedbackSchema, validate } from '@/lib/validate.js';
-import { nextMidnightPlus2h } from '@/lib/date.js';
-
-const STATE_TTL_SEC = 30 * 60 * 60; // ~30h
-const RL_PAIR_LIMIT_PER_MIN = 60;
-const RL_WINDOW_SEC = 60;
-const TIP_ID_REGEX = /^[A-Za-z0-9:_-]{1,64}$/;
-
+// src/lib/validate.js
 /**
- * JSON response helper with proper headers.
+ * Purpose:
+ *   Zero-dependency, Edge-safe validation helpers for Partner Mode payloads.
+ *   Replaces the previous Zod-based module to avoid a build-time dependency on "zod".
+ *
+ * Exports:
+ *   - FeedbackSchema (token)
+ *   - ConnectSchema  (token)
+ *   - validate(schemaToken, data) -> { success, value?, error? }
+ *
+ * Usage:
+ *   import { FeedbackSchema, validate } from '@/lib/validate.js';
+ *   const result = await validate(FeedbackSchema, reqBody);
+ *   if (!result.success) return json({ ok:false, error: result.error }, 400);
+ *
+ * Notes:
+ *   - Enforces payload size < 1 KB
+ *   - tips[] ≤ 10, unique, and ID format checked
+ *   - ownerDate must be "YYYYMMDD"
+ *   - readiness: integer 0..10 OR a short string label (≤ 32 chars)
+ *   - code (connect) must be 10–12 chars unambiguous Base32
  */
-function json(body, status = 200, extra = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store, private, max-age=0',
-      ...extra
-    }
-  });
-}
 
-/**
- * Fixed-window rate limit using Redis INCR + EXPIRE.
- * Scope: arbitrary key (e.g., per pairId).
- * Returns { allowed: boolean, retryAfter: number }
- */
-async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC) {
+// ---- Schema tokens (keeps same API surface as the Zod-based version) ----
+export const FeedbackSchema = Symbol('FeedbackSchema');
+export const ConnectSchema = Symbol('ConnectSchema');
+
+// ---- Regex/limits ----
+const OWNER_DATE_RE = /^\d{8}$/; // YYYYMMDD
+const CODE_RE = /^[A-HJ-NP-Z2-9]{10,12}$/; // unambiguous Base32 (no I, O, 0, 1)
+const TIP_ID_RE = /^[A-Za-z0-9:_-]{1,64}$/; // conservative whitelist
+const MAX_TIPS = 10;
+const MAX_PAYLOAD_BYTES = 1024;
+
+// ---- Helpers ----
+function byteSize(obj) {
   try {
-    if (!redis) return { allowed: true, retryAfter: 0 }; // fail open if Redis misconfigured
-    const windowId = Math.floor(Date.now() / (windowSec * 1000));
-    const k = `${key}:${windowId}`;
-    const count = await redis.incr(k);
-    if (count === 1) {
-      await expire(k, windowSec);
-    }
-    if (count > limit) {
-      const ttl = await redis.ttl(k);
-      return { allowed: false, retryAfter: Math.max(1, ttl ?? windowSec) };
-    }
-    return { allowed: true, retryAfter: 0 };
-  } catch (err) {
-    console.error('[partner-feedback][limitByKey] error:', err?.message || err);
-    return { allowed: true, retryAfter: 0 };
+    return new TextEncoder().encode(JSON.stringify(obj ?? {})).length;
+  } catch {
+    return Infinity;
   }
 }
 
+function isString(v) {
+  return typeof v === 'string';
+}
+function nonEmptyString(v, max = 256) {
+  return isString(v) && v.length >= 1 && v.length <= max;
+}
+function optionalString(v, max = 256) {
+  return v == null || (isString(v) && v.length <= max);
+}
+function intInRange(v, min, max) {
+  return Number.isInteger(v) && v >= min && v <= max;
+}
+function uniq(arr) {
+  return Array.from(new Set(arr));
+}
+
+// ---- Core validator ----
 /**
- * POST /api/partner-feedback
- * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe, readiness, tips[] }
- * Success: { ok:true, version, lastUpdated }
- * Idempotent: same updateId => NO-OP (same version)
+ * validate - Run schema-specific checks and enforce payload size < 1 KB.
+ * @param {symbol} schemaToken - FeedbackSchema | ConnectSchema
+ * @param {*} data - input payload
+ * @returns {Promise<{ success: boolean, value?: any, error?: string }>}
  */
-export async function POST(req) {
-  try {
-    if (!redis) {
-      return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
+export async function validate(schemaToken, data) {
+  // Global size gate
+  const size = byteSize(data);
+  if (size > MAX_PAYLOAD_BYTES) {
+    return { success: false, error: 'Payload too large (> 1KB)' };
+  }
+
+  if (schemaToken === FeedbackSchema) {
+    return validateFeedback(data);
+  }
+  if (schemaToken === ConnectSchema) {
+    return validateConnect(data);
+  }
+
+  return { success: false, error: 'Unknown schema' };
+}
+
+// ---- Schema implementations ----
+
+function validateFeedback(input) {
+  if (input == null || typeof input !== 'object') {
+    return { success: false, error: 'Invalid payload' };
+  }
+
+  const { pairId, ownerDate, updateId, vibe, readiness, tips } = input;
+
+  // pairId
+  if (!nonEmptyString(pairId, 128) || String(pairId).length < 6) {
+    return { success: false, error: 'Invalid pairId' };
+  }
+
+  // ownerDate
+  if (!isString(ownerDate) || !OWNER_DATE_RE.test(ownerDate)) {
+    return { success: false, error: 'ownerDate must be YYYYMMDD' };
+  }
+
+  // updateId
+  if (!nonEmptyString(updateId, 64) || String(updateId).length < 6) {
+    return { success: false, error: 'Invalid updateId' };
+  }
+
+  // vibe
+  if (!nonEmptyString(vibe, 64)) {
+    return { success: false, error: 'Invalid vibe' };
+  }
+
+  // readiness: int 0..10 OR short string label ≤ 32
+  let readinessOut = readiness;
+  if (typeof readiness === 'number') {
+    if (!intInRange(readiness, 0, 10)) {
+      return { success: false, error: 'Invalid readiness' };
     }
-
-    // Parse + validate body with Zod (includes <1KB enforcement, tips ≤ 10)
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return json({ ok: false, error: 'Invalid JSON' }, 400);
+  } else if (typeof readiness === 'string') {
+    if (!optionalString(readiness, 32)) {
+      return { success: false, error: 'Invalid readiness' };
     }
+  } else if (readiness != null) {
+    return { success: false, error: 'Invalid readiness' };
+  }
 
-    const v = await validate(FeedbackSchema, body);
-    if (!v.success) {
-      return json({ ok: false, error: v.error || 'Invalid payload' }, 400);
+  // tips: array of strings, ≤ 10, unique, each matches TIP_ID_RE
+  let tipsArr = [];
+  if (tips != null) {
+    if (!Array.isArray(tips)) {
+      return { success: false, error: 'tips must be an array' };
     }
-
-    const { pairId, ownerDate, updateId, vibe } = v.value;
-    const readiness = v.value.readiness;
-    const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
-
-    // Additional whitelist-style check for tip IDs (sanity)
+    if (tips.length > MAX_TIPS) {
+      return { success: false, error: 'tips cannot exceed 10 items' };
+    }
     for (const t of tips) {
-      if (!TIP_ID_REGEX.test(t)) {
-        return json({ ok: false, error: 'Invalid tip id' }, 400);
+      if (!isString(t) || !TIP_ID_RE.test(t)) {
+        return { success: false, error: 'Invalid tip id' };
       }
     }
-
-    // Optional per-pair rate limit (≤ 60/min)
-    const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, RL_PAIR_LIMIT_PER_MIN, RL_WINDOW_SEC);
-    if (!rl.allowed) {
-      return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
-        'Retry-After': String(rl.retryAfter ?? RL_WINDOW_SEC)
-      });
-    }
-
-    // Blocklist check
-    const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) {
-      return json({ ok: false, error: 'Partner disconnected' }, 403);
-    }
-
-    const feedbackKey = `feedback:${pairId}:${ownerDate}`;
-    const stateKey = `state:${pairId}`;
-    const nowIso = new Date().toISOString();
-
-    // Read existing state (lastUpdateId, version, lastUpdated)
-    // Use HGETALL for simplicity; returns null or object
-    const current = await redis.hgetall(feedbackKey);
-    const currentLastUpdateId = current?.lastUpdateId || null;
-    const currentVersion = current?.version != null ? Number(current.version) : null;
-
-    // Idempotency: if same updateId, return current without increment
-    if (currentLastUpdateId && currentLastUpdateId === updateId) {
-      const lastUpdated = current?.lastUpdated || nowIso;
-      const version = currentVersion != null && Number.isFinite(currentVersion) ? currentVersion : 1;
-
-      // Keep state:<pairId> in sync (optional; not strictly required on NO-OP)
-      await redis.hset(stateKey, {
-        currentDate: ownerDate,
-        version: String(version),
-        lastUpdated
-      });
-      await expire(stateKey, STATE_TTL_SEC);
-
-      return json({ ok: true, version, lastUpdated }, 200);
-    }
-
-    // Write new fields (full overwrite semantics for vibe/readiness/tips)
-    const tipsJson = JSON.stringify(tips);
-    await redis.hset(feedbackKey, {
-      vibe,
-      readiness: String(readiness),
-      tips: tipsJson,
-      lastUpdateId: updateId,
-      lastUpdated: nowIso
-    });
-
-    // Increment or initialize version atomically
-    const newVersion = await hincr(feedbackKey, 'version', 1);
-    const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
-
-    // Ensure TTL ≈ next local midnight + 2h (or 26h fallback)
-    try {
-      const ttl = await redis.ttl(feedbackKey);
-      if (ttl == null || ttl <= 0) {
-        const exp = nextMidnightPlus2h(ownerDate);
-        await expire(feedbackKey, exp);
-      }
-    } catch (e) {
-      console.error('[partner-feedback][ttl] error:', e?.message || e);
-      // best-effort; continue
-    }
-
-    // Update state:<pairId> mirror
-    await redis.hset(stateKey, {
-      currentDate: ownerDate,
-      version: String(version),
-      lastUpdated: nowIso
-    });
-    await expire(stateKey, STATE_TTL_SEC);
-
-    return json({ ok: true, version, lastUpdated: nowIso }, 200);
-  } catch (err) {
-    console.error('[partner-feedback][POST] error:', err?.message || err);
-    return json({ ok: false, error: 'Internal error' }, 500);
+    tipsArr = uniq(tips);
   }
+
+  const value = {
+    pairId: String(pairId),
+    ownerDate,
+    updateId: String(updateId),
+    vibe: String(vibe),
+    readiness: readinessOut,
+    tips: tipsArr
+  };
+
+  return { success: true, value };
+}
+
+function validateConnect(input) {
+  if (input == null || typeof input !== 'object') {
+    return { success: false, error: 'Invalid payload' };
+  }
+
+  const code = isString(input.code) ? input.code.trim().toUpperCase() : '';
+  if (!CODE_RE.test(code)) {
+    return { success: false, error: 'Invalid code format' };
+  }
+
+  const pairIdOpt = input.pairId;
+  if (pairIdOpt != null) {
+    if (!nonEmptyString(pairIdOpt, 128) || String(pairIdOpt).length < 6) {
+      return { success: false, error: 'Invalid pairId' };
+    }
+  }
+
+  const value = {
+    code,
+    ...(pairIdOpt != null ? { pairId: String(pairIdOpt) } : {})
+  };
+
+  return { success: true, value };
 }
