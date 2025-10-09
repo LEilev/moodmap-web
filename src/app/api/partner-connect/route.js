@@ -2,7 +2,7 @@
 export const runtime = 'edge';
 
 import { getdel, redis } from '@/lib/redis.js';
-import { limitByIP, limitByKey } from '@/lib/ratelimit.js';
+import * as RL from '@/lib/ratelimit.js';
 
 const RL_IP_LIMIT_PER_MIN = 30;   // ≤ 30 / minute / IP
 const RL_CODE_LIMIT_PER_MIN = 10; // ≤ 10 / minute / code
@@ -45,6 +45,56 @@ function getClientIP(req) {
 }
 
 /**
+ * Fallback fixed-window rate limit using Redis INCR + EXPIRE.
+ * Returns { allowed: boolean, retryAfter: number }
+ */
+async function fallbackLimitByKey(key, limit, windowSec) {
+  try {
+    if (!redis) return { allowed: true, retryAfter: 0 }; // fail open if no Redis
+    const windowId = Math.floor(Date.now() / (windowSec * 1000));
+    const k = `${key}:${windowId}`;
+    const count = await redis.incr(k);
+    if (count === 1) {
+      await redis.expire(k, windowSec);
+    }
+    if (count > limit) {
+      const ttl = await redis.ttl(k);
+      return { allowed: false, retryAfter: Math.max(1, ttl ?? windowSec) };
+    }
+    return { allowed: true, retryAfter: 0 };
+  } catch (err) {
+    console.error('[partner-connect][fallbackLimitByKey] error:', err?.message || err);
+    return { allowed: true, retryAfter: 0 };
+  }
+}
+
+/**
+ * Wrapper: prefer RL.limitByIP / RL.limitByKey if available; otherwise fallback.
+ */
+async function rateLimitIP(ip, limit, windowSec) {
+  if (typeof RL.limitByIP === 'function') {
+    try {
+      return await RL.limitByIP(ip, limit, windowSec);
+    } catch (e) {
+      console.error('[partner-connect][limitByIP helper] error:', e?.message || e);
+    }
+  }
+  return fallbackLimitByKey(`rl:partner-connect:ip:${ip}`, limit, windowSec);
+}
+
+async function rateLimitCode(code, limit, windowSec) {
+  if (typeof RL.limitByKey === 'function') {
+    try {
+      // Pass a stable key string to helper
+      return await RL.limitByKey(`rl:partner-connect:code:${code}`, limit, windowSec);
+    } catch (e) {
+      console.error('[partner-connect][limitByKey helper] error:', e?.message || e);
+    }
+  }
+  return fallbackLimitByKey(`rl:partner-connect:code:${code}`, limit, windowSec);
+}
+
+/**
  * POST /api/partner-connect
  * Body: { code }
  * Success: { pairId }
@@ -54,7 +104,7 @@ export async function POST(req) {
   try {
     // Rate limit by IP
     const ip = getClientIP(req);
-    const ipRL = await limitByIP(ip, RL_IP_LIMIT_PER_MIN, RL_WINDOW_SEC);
+    const ipRL = await rateLimitIP(ip, RL_IP_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (ipRL && ipRL.allowed === false) {
       return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
         'Retry-After': String(ipRL.retryAfter ?? RL_WINDOW_SEC)
@@ -74,8 +124,7 @@ export async function POST(req) {
     }
 
     // Rate limit by code (to prevent brute force)
-    const codeKey = `rl:partner-connect:code:${rawCode}`;
-    const codeRL = await limitByKey(codeKey, RL_CODE_LIMIT_PER_MIN, RL_WINDOW_SEC);
+    const codeRL = await rateLimitCode(rawCode, RL_CODE_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (codeRL && codeRL.allowed === false) {
       return json({ ok: false, error: 'Too many attempts for this code' }, 429, {
         'Retry-After': String(codeRL.retryAfter ?? RL_WINDOW_SEC)
