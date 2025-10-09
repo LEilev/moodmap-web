@@ -41,7 +41,7 @@ export default function SupportPage() {
             >
               Instagram
             </a>
-            , but email is fastest for support.
+            , but email or Discord are fastest for support.
           </p>
         </header>
 
