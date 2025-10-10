@@ -25,8 +25,7 @@ function json(body, status = 200, extra = {}) {
 }
 
 /**
- * Fixed-window rate limit using Redis INCR + EXPIRE.
- * Scope: arbitrary key (e.g., per pairId).
+ * Fixed-window rate limit using Redis INCR + EXPIRE (per key).
  * Returns { allowed: boolean, retryAfter: number }
  */
 async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC) {
@@ -52,7 +51,7 @@ async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WIN
 /**
  * POST /api/partner-feedback
  * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe, readiness, tips[] }
- * Success: { ok:true, version, lastUpdated }
+ * Success: { ok: true, version, lastUpdated }
  * Idempotent: same updateId => NO-OP (same version)
  */
 export async function POST(req) {
@@ -61,14 +60,13 @@ export async function POST(req) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
     }
 
-    // Parse + validate body with Zod (includes <1KB enforcement, tips ≤ 10)
+    // Parse + validate body (includes <1KB size and tips ≤ 10 constraints)
     let body;
     try {
       body = await req.json();
     } catch {
       return json({ ok: false, error: 'Invalid JSON' }, 400);
     }
-
     const v = await validate(FeedbackSchema, body);
     if (!v.success) {
       return json({ ok: false, error: v.error || 'Invalid payload' }, 400);
@@ -78,16 +76,17 @@ export async function POST(req) {
     const readiness = v.value.readiness;
     const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
 
-    // Additional whitelist-style check for tip IDs (sanity)
+    // Additional whitelist check for tip IDs (defense in depth)
     for (const t of tips) {
       if (!TIP_ID_REGEX.test(t)) {
         return json({ ok: false, error: 'Invalid tip id' }, 400);
       }
     }
 
-    // Optional per-pair rate limit (≤ 60/min)
+    // Per-pair rate limit (≤ 60/min)
     const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, RL_PAIR_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (!rl.allowed) {
+      console.warn('[partner-feedback] Rate limit exceeded for pairId', pairId);
       return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
         'Retry-After': String(rl.retryAfter ?? RL_WINDOW_SEC)
       });
@@ -96,6 +95,7 @@ export async function POST(req) {
     // Blocklist check
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
+      console.log('[partner-feedback] Blocked pairId', pairId, '- update rejected');
       return json({ ok: false, error: 'Partner disconnected' }, 403);
     }
 
@@ -103,29 +103,27 @@ export async function POST(req) {
     const stateKey = `state:${pairId}`;
     const nowIso = new Date().toISOString();
 
-    // Read existing state (lastUpdateId, version, lastUpdated)
-    // Use HGETALL for simplicity; returns null or object
+    // Read current feedback state (if any)
     const current = await redis.hgetall(feedbackKey);
     const currentLastUpdateId = current?.lastUpdateId || null;
     const currentVersion = current?.version != null ? Number(current.version) : null;
 
-    // Idempotency: if same updateId, return current without increment
+    // Idempotency: if same updateId seen, return existing version without incrementing
     if (currentLastUpdateId && currentLastUpdateId === updateId) {
       const lastUpdated = current?.lastUpdated || nowIso;
-      const version = currentVersion != null && Number.isFinite(currentVersion) ? currentVersion : 1;
-
-      // Keep state:<pairId> in sync (optional; not strictly required on NO-OP)
+      const version = (currentVersion != null && Number.isFinite(currentVersion)) ? currentVersion : 1;
+      // Refresh state (optional on NO-OP)
       await redis.hset(stateKey, {
         currentDate: ownerDate,
         version: String(version),
         lastUpdated
       });
       await expire(stateKey, STATE_TTL_SEC);
-
+      console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
       return json({ ok: true, version, lastUpdated }, 200);
     }
 
-    // Write new fields (full overwrite semantics for vibe/readiness/tips)
+    // Write new feedback fields (overwriting vibe/readiness/tips)
     const tipsJson = JSON.stringify(tips);
     await redis.hset(feedbackKey, {
       vibe,
@@ -135,11 +133,11 @@ export async function POST(req) {
       lastUpdated: nowIso
     });
 
-    // Increment or initialize version atomically
+    // Atomically increment or initialize the version counter
     const newVersion = await hincr(feedbackKey, 'version', 1);
     const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
 
-    // Ensure TTL ≈ next local midnight + 2h (or 26h fallback)
+    // Ensure TTL ≈ next local midnight + 2h (fallback to 26h if tz unknown)
     try {
       const ttl = await redis.ttl(feedbackKey);
       if (ttl == null || ttl <= 0) {
@@ -151,7 +149,7 @@ export async function POST(req) {
       // best-effort; continue
     }
 
-    // Update state:<pairId> mirror
+    // Update state mirror (current date, version, lastUpdated)
     await redis.hset(stateKey, {
       currentDate: ownerDate,
       version: String(version),
@@ -159,6 +157,7 @@ export async function POST(req) {
     });
     await expire(stateKey, STATE_TTL_SEC);
 
+    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version);
     return json({ ok: true, version, lastUpdated: nowIso }, 200);
   } catch (err) {
     console.error('[partner-feedback][POST] error:', err?.message || err);

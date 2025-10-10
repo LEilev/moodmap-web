@@ -97,8 +97,8 @@ async function rateLimitCode(code, limit, windowSec) {
 /**
  * POST /api/partner-connect
  * Body: { code }
- * Success: { pairId }
- * Failure: 400 { error: "Invalid or expired code" } | 429 with Retry-After
+ * Success: { ok: true, pairId }
+ * Failure: 400 { ok: false, error: "Invalid or expired code" } | 429 with Retry-After
  */
 export async function POST(req) {
   try {
@@ -139,10 +139,16 @@ export async function POST(req) {
     // Atomically consume the pairing code
     const pairId = await getdel(`pairCode:${rawCode}`);
     if (!pairId) {
-      return json({ error: 'Invalid or expired code' }, 400);
+      console.log('[partner-connect] Invalid or expired code:', rawCode);
+      return json({ ok: false, error: 'Invalid or expired code' }, 400);
     }
 
-    return json({ pairId }, 200);
+    // Initialize state for the pair session
+    await redis.hset(`state:${pairId}`, { version: '0' });
+    await redis.expire(`state:${pairId}`, 30 * 60 * 60);
+
+    console.log('[partner-connect] Code', rawCode, 'consumed -> pairId', pairId);
+    return json({ ok: true, pairId }, 200);
   } catch (err) {
     console.error('[partner-connect][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);

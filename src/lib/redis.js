@@ -1,6 +1,5 @@
+// src/lib/redis.js
 /**
- * src/lib/redis.js
- *
  * Purpose:
  *   Unified, Edge-safe Upstash Redis helper used by all Partner Mode routes.
  *   Consolidates dedupe patterns (SET NX EX) and common Redis ops into one module.
@@ -10,7 +9,7 @@
  *
  *   const ok = await setNX(`pairCode:${code}`, pairId, 600);
  *   const v  = await get(`feedback:${pairId}:${date}`);
- *   const x  = await getdel(`pairCode:${code}`); // atomic on supported servers
+ *   const x  = await getdel(`pairCode:${code}`);
  *   const n  = await hincr(`feedback:${pairId}:${date}`, 'version', 1);
  *   const e  = await expire(`feedback:${pairId}:${date}`, 26*3600);
  */

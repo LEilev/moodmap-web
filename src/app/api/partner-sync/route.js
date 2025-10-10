@@ -1,7 +1,7 @@
 // src/app/api/partner-sync/route.js
 export const runtime = 'edge';
 
-import { redis, setNX, expire } from '../../../lib/redis.js';
+import { redis, setNX, expire } from '@/lib/redis.js';
 
 const CODE_TTL_SEC = 600;            // 10 minutes
 const RL_LIMIT_PER_MIN = 5;          // ≤ 5 / minute / IP
@@ -52,7 +52,7 @@ async function limitByIP(ip, limit = RL_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC
       // If Redis is not configured, fail open (allow) to avoid false 429s.
       return { allowed: true, retryAfter: 0 };
     }
-    const windowId = Math.floor(Date.now() / (windowSec * 1000)); // current minute bucket
+    const windowId = Math.floor(Date.now() / (windowSec * 1000));
     const key = `rl:partner-sync:ip:${ip}:${windowId}`;
 
     const count = await redis.incr(key);
@@ -74,8 +74,8 @@ async function limitByIP(ip, limit = RL_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC
 }
 
 /**
- * Generate a cryptographically-strong pairing code of given length
- * using an unambiguous Base32 alphabet. 256 % 32 == 0 → no modulo bias with & 31.
+ * Generate a cryptographically-strong pairing code of given length.
+ * Uses an unambiguous Base32 alphabet. (256 % 32 == 0 → no modulo bias with & 31)
  */
 function generateCode(len = CODE_LEN) {
   const bytes = new Uint8Array(len);
@@ -89,11 +89,11 @@ function generateCode(len = CODE_LEN) {
 
 /**
  * POST /api/partner-sync
- * → { code, expiresInSec: 600 }
+ * Response: { ok: true, code, expiresInSec: 600 }
  */
 export async function POST(req) {
   try {
-    // Rate limit
+    // Rate limit by IP
     const ip = getClientIP(req);
     const rl = await limitByIP(ip, RL_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (!rl.allowed) {
@@ -107,21 +107,21 @@ export async function POST(req) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
     }
 
-    // Allocate code with SET NX EX; retry a few times on rare collisions
+    // Allocate pairing code with SETNX (retry on rare collisions)
     const pairId = crypto.randomUUID();
     let code = '';
     let acquired = false;
-
     for (let attempt = 0; attempt < 5 && !acquired; attempt++) {
       code = generateCode(CODE_LEN);
       acquired = await setNX(`pairCode:${code}`, pairId, CODE_TTL_SEC);
     }
-
     if (!acquired) {
+      console.error('[partner-sync] Failed to allocate code for pairId', pairId);
       return json({ ok: false, error: 'Could not allocate pairing code' }, 500);
     }
 
-    return json({ code, expiresInSec: CODE_TTL_SEC }, 200);
+    console.log('[partner-sync] Allocated pairId', pairId, 'with code', code);
+    return json({ ok: true, code, expiresInSec: CODE_TTL_SEC }, 200);
   } catch (err) {
     console.error('[partner-sync][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);
