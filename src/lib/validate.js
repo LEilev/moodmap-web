@@ -1,165 +1,77 @@
-// src/app/api/partner-feedback/route.js
-export const runtime = 'edge';
+/**
+ * src/lib/validate.js
+ *
+ * Purpose:
+ *   Zod-based input validation for Partner Mode routes (Edge-safe).
+ *   Enforces payload size (< 1 KB), tip array limits, and basic shapes.
+ *
+ * Usage:
+ *   import { FeedbackSchema, ConnectSchema, validate } from '@/lib/validate.js';
+ *
+ *   const result = await validate(FeedbackSchema, body);
+ *   if (!result.success) return json({ ok:false, error: result.error }, 400);
+ */
 
-import { redis, hincr, expire } from '@/lib/redis.js';
-import { FeedbackSchema, validate } from '@/lib/validate.js';
-import { nextMidnightPlus2h } from '@/lib/date.js';
+import { z } from 'zod';
 
-const STATE_TTL_SEC = 30 * 60 * 60; // ~30h
-const RL_PAIR_LIMIT_PER_MIN = 60;
-const RL_WINDOW_SEC = 60;
-const TIP_ID_REGEX = /^[A-Za-z0-9:_-]{1,64}$/;
+// Reusable primitive schemas
+const NonEmptyStr = z.string().min(1).max(256);
+const OwnerDate = z.string().regex(/^\d{8}$/, 'ownerDate must be YYYYMMDD');
+const UpdateId = z.string().min(6).max(64); // ULID/UUID/short id
+const PairId = z.string().min(6).max(128);
+const Code = z.string().min(6).max(64).regex(/^[A-Za-z0-9%\-]+$/, 'code must be URL/QR-safe');
+
+// Tips: up to 10 string IDs, unique, sane length
+const TipId = z.string().min(1).max(64);
+const TipsArray = z
+  .array(TipId)
+  .max(10, 'tips cannot exceed 10 items')
+  .transform((arr) => Array.from(new Set(arr))); // de-dup
+
+// readiness can be an int (0–10) or a small label
+const Readiness = z.union([
+  z.number().int().min(0).max(10),
+  z.string().min(0).max(32)
+]);
+
+/** Feedback payload: owner upserts the daily shared state */
+export const FeedbackSchema = z.object({
+  pairId: PairId,
+  ownerDate: OwnerDate,
+  updateId: UpdateId,
+  vibe: NonEmptyStr.max(64),
+  readiness: Readiness,
+  tips: TipsArray.default([]),
+});
+
+/** Connect payload: consume code (pairId optional for future flows) */
+export const ConnectSchema = z.object({
+  code: Code,
+  pairId: PairId.optional(),
+});
 
 /**
- * JSON response helper with proper headers.
+ * validate - Run zod validation and enforce payload size < 1 KB.
+ * @param {import('zod').ZodSchema} schema
+ * @param {unknown} data
+ * @returns {Promise<{ success: boolean, value?: any, error?: string }>}
  */
-function json(body, status = 200, extra = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store, private, max-age=0',
-      ...extra
-    }
-  });
-}
-
-/**
- * Fixed-window rate limit using Redis INCR + EXPIRE (per key).
- * Returns { allowed: boolean, retryAfter: number }
- */
-async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC) {
+export async function validate(schema, data) {
   try {
-    if (!redis) return { allowed: true, retryAfter: 0 }; // fail open if Redis misconfigured
-    const windowId = Math.floor(Date.now() / (windowSec * 1000));
-    const k = `${key}:${windowId}`;
-    const count = await redis.incr(k);
-    if (count === 1) {
-      await expire(k, windowSec);
+    // Enforce < 1 KB (bytes) using TextEncoder
+    const size = new TextEncoder().encode(JSON.stringify(data ?? {})).length;
+    if (size > 1024) {
+      return { success: false, error: 'Payload too large (> 1KB)' };
     }
-    if (count > limit) {
-      const ttl = await redis.ttl(k);
-      return { allowed: false, retryAfter: Math.max(1, ttl ?? windowSec) };
+
+    const parsed = schema.safeParse(data);
+    if (!parsed.success) {
+      // Return a compact message (no sensitive details)
+      return { success: false, error: parsed.error.issues?.[0]?.message || 'Invalid payload' };
     }
-    return { allowed: true, retryAfter: 0 };
+    return { success: true, value: parsed.data };
   } catch (err) {
-    console.error('[partner-feedback][limitByKey] error:', err?.message || err);
-    return { allowed: true, retryAfter: 0 };
+    console.error('[validate] error:', err?.message || err);
+    return { success: false, error: 'Validation error' };
   }
 }
-
-/**
- * POST /api/partner-feedback
- * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe, readiness, tips[] }
- * Success: { ok:true, version, lastUpdated }
- * Idempotent: same updateId => NO-OP (same version)
- */
-export const POST = async (req) => {
-  try {
-    if (!redis) {
-      return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
-    }
-
-    // Parse + validate body (includes <1KB enforcement, tips ≤ 10)
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return json({ ok: false, error: 'Invalid JSON' }, 400);
-    }
-
-    const v = await validate(FeedbackSchema, body);
-    if (!v.success) {
-      return json({ ok: false, error: v.error || 'Invalid payload' }, 400);
-    }
-
-    const { pairId, ownerDate, updateId, vibe } = v.value;
-    const readiness = v.value.readiness;
-    const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
-
-    // Additional whitelist check for tip IDs (defense in depth)
-    for (const t of tips) {
-      if (!TIP_ID_REGEX.test(t)) {
-        return json({ ok: false, error: 'Invalid tip id' }, 400);
-      }
-    }
-
-    // Optional per-pair rate limit (≤ 60/min)
-    const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, RL_PAIR_LIMIT_PER_MIN, RL_WINDOW_SEC);
-    if (!rl.allowed) {
-      return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
-        'Retry-After': String(rl.retryAfter ?? RL_WINDOW_SEC)
-      });
-    }
-
-    // Blocklist check
-    const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) {
-      return json({ ok: false, error: 'Partner disconnected' }, 403);
-    }
-
-    const feedbackKey = `feedback:${pairId}:${ownerDate}`;
-    const stateKey = `state:${pairId}`;
-    const nowIso = new Date().toISOString();
-
-    // Read existing minimal fields
-    const current = await redis.hgetall(feedbackKey);
-    const currentLastUpdateId = current?.lastUpdateId || null;
-    const currentVersion = current?.version != null ? Number(current.version) : null;
-
-    // Idempotency: same updateId => NO-OP (return current version/lastUpdated)
-    if (currentLastUpdateId && currentLastUpdateId === updateId) {
-      const lastUpdated = current?.lastUpdated || nowIso;
-      const version = currentVersion != null && Number.isFinite(currentVersion) ? currentVersion : 1;
-
-      // Keep state mirror fresh (optional on NO-OP)
-      await redis.hset(stateKey, {
-        currentDate: ownerDate,
-        version: String(version),
-        lastUpdated
-      });
-      await expire(stateKey, STATE_TTL_SEC);
-
-      return json({ ok: true, version, lastUpdated }, 200);
-    }
-
-    // Write new fields (full overwrite semantics for vibe/readiness/tips)
-    const tipsJson = JSON.stringify(tips);
-    await redis.hset(feedbackKey, {
-      vibe,
-      readiness: String(readiness),
-      tips: tipsJson,
-      lastUpdateId: updateId,
-      lastUpdated: nowIso
-    });
-
-    // Increment or initialize version atomically
-    const newVersion = await hincr(feedbackKey, 'version', 1);
-    const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
-
-    // Ensure TTL ≈ next local midnight + 2h (or 26h fallback)
-    try {
-      const ttl = await redis.ttl(feedbackKey);
-      if (ttl == null || ttl <= 0) {
-        const exp = nextMidnightPlus2h(ownerDate);
-        await expire(feedbackKey, exp);
-      }
-    } catch (e) {
-      console.error('[partner-feedback][ttl] error:', e?.message || e);
-      // best-effort
-    }
-
-    // Update state mirror
-    await redis.hset(stateKey, {
-      currentDate: ownerDate,
-      version: String(version),
-      lastUpdated: nowIso
-    });
-    await expire(stateKey, STATE_TTL_SEC);
-
-    return json({ ok: true, version, lastUpdated: nowIso }, 200);
-  } catch (err) {
-    console.error('[partner-feedback][POST] error:', err?.message || err);
-    return json({ ok: false, error: 'Internal error' }, 500);
-  }
-};
