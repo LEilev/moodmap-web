@@ -1,5 +1,4 @@
-// src/app/api/partner-status/route.js
-export const runtime = 'edge';
+export const runtime = 'edge'; // ✅ Edge-runtime for Upstash
 
 import { redis, expire } from '@/lib/redis.js';
 
@@ -7,6 +6,10 @@ const RL_PAIR_LIMIT_PER_MIN = 60;
 const RL_WINDOW_SEC = 60;
 const UUID_REGEX =
   /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/;
+
+/* -------------------------------------------------------------------------- */
+/*                               Helper functions                             */
+/* -------------------------------------------------------------------------- */
 
 function json(body, status = 200, extra = {}) {
   return new Response(JSON.stringify(body), {
@@ -19,15 +22,14 @@ function json(body, status = 200, extra = {}) {
   });
 }
 
+// ✅ Rate limiter per pairId / minute
 async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC) {
   try {
     if (!redis) return { allowed: true, retryAfter: 0 };
     const windowId = Math.floor(Date.now() / (windowSec * 1000));
     const k = `rl:partner-status:${key}:${windowId}`;
     const count = await redis.incr(k);
-    if (count === 1) {
-      await expire(k, windowSec);
-    }
+    if (count === 1) await expire(k, windowSec);
     if (count > limit) {
       const ttl = await redis.ttl(k);
       return { allowed: false, retryAfter: Math.max(1, ttl ?? windowSec) };
@@ -53,6 +55,7 @@ export async function GET(req) {
       return json({ ok: false, error: 'Invalid or missing pairId' }, 400);
     }
 
+    // ✅ Rate limit
     const rl = await limitByKey(`pair:${pairId}`, RL_PAIR_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (!rl.allowed) {
       return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
@@ -60,32 +63,36 @@ export async function GET(req) {
       });
     }
 
+    // ✅ Redis sanity check
     if (!redis) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
     }
 
-    // Blocked pair?
+    // ✅ Blocklist check
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
       console.log('[status] Blocked pairId', pairId, '- access denied');
       return json({ ok: false, error: 'Partner disconnected' }, 403);
     }
 
-    // Read current state to compute ETag
+    // ✅ Read current state to compute ETag
     const stateKey = `state:${pairId}`;
     const state = await redis.hgetall(stateKey);
     const currentVersion = state?.version || '0';
     const ifNoneMatch = req.headers.get('if-none-match');
 
-    // If client already has this version, return 304
+    // ✅ 304 if unchanged
     if (ifNoneMatch && ifNoneMatch.replace(/"/g, '') === currentVersion) {
       return new Response(null, {
         status: 304,
-        headers: { 'cache-control': 'no-store, max-age=0', 'ETag': `"${currentVersion}"` },
+        headers: {
+          'cache-control': 'no-store, max-age=0',
+          'ETag': `"${currentVersion}"`,
+        },
       });
     }
 
-    // No feedback yet → version 0
+    // ✅ No feedback yet → version 0
     if (!state || !state.version || state.version === '0') {
       console.log('[status] No feedback for pairId', pairId);
       return json({ ok: true, version: 0, hasData: false }, 200, { 'ETag': '"0"' });
@@ -95,13 +102,16 @@ export async function GET(req) {
     const versionNum = Number(state.version) || 0;
     const lastUpdated = state.lastUpdated || '';
 
+    // ✅ Load feedback for current date
     const feedbackKey = `feedback:${pairId}:${currentDateRaw}`;
     const feedback = await redis.hgetall(feedbackKey);
     if (!feedback) {
       console.warn('[status] Feedback missing for key', feedbackKey, '(possibly expired)');
-      return json({ ok: false, error: 'Feedback not available' }, 404);
+      // FIX: treat expired/missing feedback as harmless “no data”
+      return json({ ok: true, version: 0, hasData: false }, 200, { 'ETag': '"0"' });
     }
 
+    // ✅ Extract safe typed fields
     const vibe =
       typeof feedback.vibe === 'string' && feedback.vibe.length > 0 ? feedback.vibe : null;
 
@@ -113,13 +123,18 @@ export async function GET(req) {
 
     let tips = [];
     if (typeof feedback.tips === 'string' && feedback.tips.length > 0) {
-      try { const parsed = JSON.parse(feedback.tips); if (Array.isArray(parsed)) tips = parsed; }
-      catch { tips = []; }
+      try {
+        const parsed = JSON.parse(feedback.tips);
+        if (Array.isArray(parsed)) tips = parsed;
+      } catch {
+        tips = [];
+      }
     }
 
     const currentDate =
       Number.isFinite(Number(currentDateRaw)) ? Number(currentDateRaw) : currentDateRaw;
 
+    // ✅ Structured debug logging (non-sensitive)
     console.log('[status]', {
       pairId,
       feedbackKey,
@@ -129,8 +144,17 @@ export async function GET(req) {
       tipsCount: tips.length,
     });
 
+    // ✅ Final JSON payload
     return json(
-      { ok: true, currentDate, version: versionNum, lastUpdated, vibe, readiness, tips },
+      {
+        ok: true,
+        currentDate,
+        version: versionNum,
+        lastUpdated,
+        vibe,
+        readiness,
+        tips,
+      },
       200,
       { 'ETag': `"${versionNum}"` }
     );
