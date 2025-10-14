@@ -1,11 +1,11 @@
-// src/app/api/partner-feedback/route.ts
+// src/app/api/partner-feedback/route.js
 import { redis, hincr, expire } from '@/lib/redis';
 import { FeedbackSchema, validate } from '@/lib/validate';
 import { nextMidnightPlus2h } from '@/lib/date';
 
 export const runtime = 'edge';
 
-function json(body: any, status = 200, extra: Record<string, string> = {}) {
+function json(body, status = 200, extra = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
@@ -16,7 +16,7 @@ function json(body: any, status = 200, extra: Record<string, string> = {}) {
   });
 }
 
-async function limitByKey(key: string, limit = 60, windowSec = 60) {
+async function limitByKey(key, limit = 60, windowSec = 60) {
   try {
     if (!redis) return { allowed: true, retryAfter: 0 };
     const windowId = Math.floor(Date.now() / (windowSec * 1000));
@@ -42,7 +42,7 @@ async function limitByKey(key: string, limit = 60, windowSec = 60) {
  * Success: { ok: true, version, lastUpdated, tipCount }
  * Idempotent: same updateId => NO-OP (same version)
  */
-export async function POST(req: Request) {
+export async function POST(req) {
   try {
     if (!redis) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
@@ -55,6 +55,7 @@ export async function POST(req: Request) {
     } catch {
       return json({ ok: false, error: 'Invalid JSON' }, 400);
     }
+
     const v = await validate(FeedbackSchema, body);
     if (!v.success) {
       return json({ ok: false, error: v.error || 'Invalid payload' }, 400);
@@ -101,6 +102,7 @@ export async function POST(req: Request) {
     if (currentLastUpdateId && currentLastUpdateId === updateId) {
       const lastUpdated = current?.lastUpdated || nowIso;
       const version = (currentVersion != null && Number.isFinite(currentVersion)) ? currentVersion : 1;
+
       // Refresh state (optional on NO-OP)
       await redis.hset(stateKey, {
         currentDate: ownerDate,
@@ -108,8 +110,9 @@ export async function POST(req: Request) {
         lastUpdated,
       });
       await expire(stateKey, 30 * 60 * 60);
+
       console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
-      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200);  // FIX: include tipCount in duplicate response
+      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200);
     }
 
     // Write new feedback fields (overwriting vibe/readiness/tips)
@@ -146,8 +149,8 @@ export async function POST(req: Request) {
     });
     await expire(stateKey, 30 * 60 * 60);
 
-    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);  // FIX: log tip count for verification
-    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200);  // FIX: include tipCount in success response
+    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);
+    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200);
   } catch (err) {
     console.error('[partner-feedback][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);
