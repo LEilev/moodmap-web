@@ -1,36 +1,24 @@
-// src/app/api/partner-feedback/route.js
+// src/app/api/partner-feedback/route.ts
+import { redis, hincr, expire } from '@/lib/redis';
+import { FeedbackSchema, validate } from '@/lib/validate';
+import { nextMidnightPlus2h } from '@/lib/date';
+
 export const runtime = 'edge';
 
-import { redis, hincr, expire } from '@/lib/redis.js';
-import { FeedbackSchema, validate } from '@/lib/validate.js';
-import { nextMidnightPlus2h } from '@/lib/date.js';
-
-const STATE_TTL_SEC = 30 * 60 * 60; // ~30h
-const RL_PAIR_LIMIT_PER_MIN = 60;
-const RL_WINDOW_SEC = 60;
-const TIP_ID_REGEX = /^[A-Za-z0-9:_-]{1,64}$/;
-
-/**
- * JSON response helper with proper headers.
- */
-function json(body, status = 200, extra = {}) {
+function json(body: any, status = 200, extra: Record<string, string> = {}) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store, private, max-age=0',
-      ...extra
-    }
+      ...extra,
+    },
   });
 }
 
-/**
- * Fixed-window rate limit using Redis INCR + EXPIRE (per key).
- * Returns { allowed: boolean, retryAfter: number }
- */
-async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WINDOW_SEC) {
+async function limitByKey(key: string, limit = 60, windowSec = 60) {
   try {
-    if (!redis) return { allowed: true, retryAfter: 0 }; // fail open if Redis misconfigured
+    if (!redis) return { allowed: true, retryAfter: 0 };
     const windowId = Math.floor(Date.now() / (windowSec * 1000));
     const k = `${key}:${windowId}`;
     const count = await redis.incr(k);
@@ -51,10 +39,10 @@ async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WIN
 /**
  * POST /api/partner-feedback
  * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe, readiness, tips[] }
- * Success: { ok: true, version, lastUpdated }
+ * Success: { ok: true, version, lastUpdated, tipCount }
  * Idempotent: same updateId => NO-OP (same version)
  */
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     if (!redis) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
@@ -77,6 +65,7 @@ export async function POST(req) {
     const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
 
     // Additional whitelist check for tip IDs (defense in depth)
+    const TIP_ID_REGEX = /^[A-Za-z0-9:_-]{1,64}$/;
     for (const t of tips) {
       if (!TIP_ID_REGEX.test(t)) {
         return json({ ok: false, error: 'Invalid tip id' }, 400);
@@ -84,11 +73,11 @@ export async function POST(req) {
     }
 
     // Per-pair rate limit (≤ 60/min)
-    const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, RL_PAIR_LIMIT_PER_MIN, RL_WINDOW_SEC);
+    const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, 60, 60);
     if (!rl.allowed) {
       console.warn('[partner-feedback] Rate limit exceeded for pairId', pairId);
       return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
-        'Retry-After': String(rl.retryAfter ?? RL_WINDOW_SEC)
+        'Retry-After': String(rl.retryAfter ?? 60),
       });
     }
 
@@ -116,11 +105,11 @@ export async function POST(req) {
       await redis.hset(stateKey, {
         currentDate: ownerDate,
         version: String(version),
-        lastUpdated
+        lastUpdated,
       });
-      await expire(stateKey, STATE_TTL_SEC);
+      await expire(stateKey, 30 * 60 * 60);
       console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
-      return json({ ok: true, version, lastUpdated }, 200);
+      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200);  // FIX: include tipCount in duplicate response
     }
 
     // Write new feedback fields (overwriting vibe/readiness/tips)
@@ -130,7 +119,7 @@ export async function POST(req) {
       readiness: String(readiness),
       tips: tipsJson,
       lastUpdateId: updateId,
-      lastUpdated: nowIso
+      lastUpdated: nowIso,
     });
 
     // Atomically increment or initialize the version counter
@@ -153,12 +142,12 @@ export async function POST(req) {
     await redis.hset(stateKey, {
       currentDate: ownerDate,
       version: String(version),
-      lastUpdated: nowIso
+      lastUpdated: nowIso,
     });
-    await expire(stateKey, STATE_TTL_SEC);
+    await expire(stateKey, 30 * 60 * 60);
 
-    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version);
-    return json({ ok: true, version, lastUpdated: nowIso }, 200);
+    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);  // FIX: log tip count for verification
+    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200);  // FIX: include tipCount in success response
   } catch (err) {
     console.error('[partner-feedback][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);
