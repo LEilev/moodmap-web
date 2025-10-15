@@ -1,8 +1,46 @@
-// src/app/api/partner-feedback/route.js
+// app/api/partner-feedback/route.js
 // :contentReference[oaicite:0]{index=0}
 import { redis, hincr, expire } from '@/lib/redis';
 import { FeedbackSchema, validate } from '@/lib/validate';
 import { nextMidnightPlus2h } from '@/lib/date';
+
+// --- hybrid helpers (from o5-pro modern version) --- // hybrid:
+const TIP_RE = /^[a-z0-9]+(\.[a-z0-9]+)*$/i;
+const DATE_RE = /^[0-9]{8}$/;
+const HOURS = 60 * 60;
+
+function normalizeTips(body) { // hybrid:
+  let src = body?.tips ?? body?.highlightedTips ?? body?.tipsJson ?? [];
+  if (typeof src === 'string') {
+    try { src = JSON.parse(src); }
+    catch { console.warn('[partner-feedback] tips payload malformed'); src = []; }
+  }
+  const arr = Array.isArray(src) ? src : [];
+  const seen = new Set();
+  const out = [];
+  for (const v of arr) {
+    if (typeof v !== 'string') continue;
+    const k = v.trim().toLowerCase();
+    if (!k || !TIP_RE.test(k)) continue;
+    if (!seen.has(k)) { seen.add(k); out.push(k); }
+  }
+  return out.slice(0, 32);
+}
+
+function ttlFromOwnerDate(ownerDate, hours) { // hybrid:
+  if (!DATE_RE.test(ownerDate)) return hours * HOURS;
+  const y = Number(ownerDate.slice(0, 4));
+  const m = Number(ownerDate.slice(4, 6));
+  const d = Number(ownerDate.slice(6, 8));
+  const anchorMs = Date.UTC(y, m - 1, d, 0, 0, 0);
+  const target = anchorMs + hours * 3600 * 1000;
+  const delta = Math.floor((target - Date.now()) / 1000);
+  return Math.max(1, delta);
+}
+
+function buildETag(version) { // hybrid:
+  return `W/"${String(version)}"`;
+}
 
 export const runtime = 'edge';
 
@@ -64,7 +102,8 @@ export async function POST(req) {
 
     const { pairId, ownerDate, updateId, vibe } = v.value;
     const readiness = v.value.readiness;
-    const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
+    // Use normalizeTips() instead of direct array cast // hybrid:
+    const tips = normalizeTips(v.value);
 
     // Additional whitelist check for tip IDs (defense in depth)
     const TIP_ID_REGEX = /^[A-Za-z0-9:._-]{1,64}$/; // FIX: allow dot
@@ -113,7 +152,8 @@ export async function POST(req) {
       await expire(stateKey, 30 * 60 * 60);
 
       console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
-      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200);
+      const etag = buildETag(version); // hybrid: ETag
+      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200, { ETag: etag }); // hybrid:
     }
 
     // Write new feedback fields (overwriting vibe/readiness/tips)
@@ -134,7 +174,10 @@ export async function POST(req) {
     try {
       const ttl = await redis.ttl(feedbackKey);
       if (ttl == null || ttl <= 0) {
-        const exp = nextMidnightPlus2h(ownerDate);
+        // FIX: Add fallback TTL using ttlFromOwnerDate()
+        let exp;
+        try { exp = nextMidnightPlus2h(ownerDate); }
+        catch { exp = ttlFromOwnerDate(ownerDate, 26); }
         await expire(feedbackKey, exp);
       }
     } catch (e) {
@@ -151,7 +194,8 @@ export async function POST(req) {
     await expire(stateKey, 30 * 60 * 60);
 
     console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);
-    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200);
+    const etag = buildETag(version); // hybrid: ETag
+    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200, { ETag: etag }); // hybrid:
   } catch (err) {
     console.error('[partner-feedback][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);
