@@ -1,3 +1,5 @@
+// src/app/api/partner-status/route.js
+// :contentReference[oaicite:1]{index=1}
 export const runtime = 'edge'; // ✅ Edge-runtime for Upstash
 
 import { redis, expire } from '@/lib/redis.js';
@@ -42,15 +44,16 @@ async function limitByKey(key, limit = RL_PAIR_LIMIT_PER_MIN, windowSec = RL_WIN
 }
 
 /**
- * GET /api/partner-status?pairId=<uuid>
+ * GET /api/partner-status?pairId=<uuid>&ownerDate=YYYYMMDD
  * Success: { ok: true, currentDate, version, lastUpdated, vibe, readiness, tips[] }
- * If no state/version: { ok: true, version: 0, hasData: false }
- * 304 when If-None-Match matches current version.
+ * If no state/version or no feedback for requested date: { ok: true, version: 0, hasData: false }
+ * 304 when If-None-Match matches composite ETag "<date>:<version>" (version > 0 only).
  */
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const pairId = (searchParams.get('pairId') || '').trim();
+    const ownerDateParam = (searchParams.get('ownerDate') || '').trim(); // FIX: respect ownerDate query param
     if (!pairId || !UUID_REGEX.test(pairId)) {
       return json({ ok: false, error: 'Invalid or missing pairId' }, 400);
     }
@@ -75,40 +78,46 @@ export async function GET(req) {
       return json({ ok: false, error: 'Partner disconnected' }, 403);
     }
 
-    // ✅ Read current state to compute ETag
+    // ✅ Read current state (for version & default date)
     const stateKey = `state:${pairId}`;
     const state = await redis.hgetall(stateKey);
     const currentVersion = state?.version || '0';
-    const ifNoneMatch = req.headers.get('if-none-match');
+    const stateDate = state?.currentDate || null;
+    const lastUpdated = state?.lastUpdated || '';
 
-    // ✅ 304 if unchanged
-    if (ifNoneMatch && ifNoneMatch.replace(/"/g, '') === currentVersion) {
-      return new Response(null, {
-        status: 304,
-        headers: {
-          'cache-control': 'no-store, max-age=0',
-          'ETag': `"${currentVersion}"`,
-        },
-      });
-    }
+    // Determine which date to read feedback for
+    const effectiveDate = ownerDateParam || stateDate || null; // FIX: explicit date selection
 
-    // ✅ No feedback yet → version 0
-    if (!state || !state.version || state.version === '0') {
+    // If no version or no known date → treat as no data (ETag "0")
+    if (!state || !state.version || state.version === '0' || !effectiveDate) {
       console.log('[status] No feedback for pairId', pairId);
       return json({ ok: true, version: 0, hasData: false }, 200, { 'ETag': '"0"' });
     }
 
-    const currentDateRaw = state.currentDate;
-    const versionNum = Number(state.version) || 0;
-    const lastUpdated = state.lastUpdated || '';
-
-    // ✅ Load feedback for current date
-    const feedbackKey = `feedback:${pairId}:${currentDateRaw}`;
+    // ✅ Load feedback for effective date BEFORE ETag comparison (FIX)
+    const feedbackKey = `feedback:${pairId}:${effectiveDate}`;
     const feedback = await redis.hgetall(feedbackKey);
+
+    // If feedback missing (expired or different day) → return no data (ETag "0")
     if (!feedback) {
-      console.warn('[status] Feedback missing for key', feedbackKey, '(possibly expired)');
-      // FIX: treat expired/missing feedback as harmless “no data”
-      return json({ ok: true, version: 0, hasData: false }, 200, { 'ETag': '"0"' });
+      console.warn('[status] Feedback missing for key', feedbackKey, '(possibly expired or different day)');
+      return json({ ok: true, version: 0, hasData: false }, 200, { 'ETag': '"0"' }); // FIX
+    }
+
+    // Build composite ETag including date to avoid stale 304 on day changes
+    const versionNum = Number(currentVersion) || 0;
+    const compositeETag = `"${String(effectiveDate)}:${String(versionNum)}"`; // FIX: composite ETag
+
+    // Only allow 304 when version > 0 and If-None-Match matches composite
+    const ifNoneMatch = req.headers.get('if-none-match');
+    if (versionNum > 0 && ifNoneMatch && ifNoneMatch.replace(/"/g, '') === `${effectiveDate}:${versionNum}`) {
+      return new Response(null, {
+        status: 304,
+        headers: {
+          'cache-control': 'no-store, max-age=0',
+          'ETag': compositeETag,
+        },
+      });
     }
 
     // ✅ Extract safe typed fields
@@ -121,10 +130,16 @@ export async function GET(req) {
       readiness = Number.isFinite(r) ? r : null;
     }
 
+    // Robust tips parsing with fallback to tipsJson/highlightedTips (FIX)
     let tips = [];
-    if (typeof feedback.tips === 'string' && feedback.tips.length > 0) {
+    let rawTips = '';
+    if (typeof feedback.tips === 'string' && feedback.tips.length > 0) rawTips = feedback.tips;
+    else if (typeof feedback.tipsJson === 'string' && feedback.tipsJson.length > 0) rawTips = feedback.tipsJson;
+    else if (typeof feedback.highlightedTips === 'string' && feedback.highlightedTips.length > 0) rawTips = feedback.highlightedTips;
+
+    if (rawTips) {
       try {
-        const parsed = JSON.parse(feedback.tips);
+        const parsed = JSON.parse(rawTips);
         if (Array.isArray(parsed)) tips = parsed;
       } catch {
         tips = [];
@@ -132,7 +147,7 @@ export async function GET(req) {
     }
 
     const currentDate =
-      Number.isFinite(Number(currentDateRaw)) ? Number(currentDateRaw) : currentDateRaw;
+      Number.isFinite(Number(effectiveDate)) ? Number(effectiveDate) : effectiveDate;
 
     // ✅ Structured debug logging (non-sensitive)
     console.log('[status]', {
@@ -156,7 +171,7 @@ export async function GET(req) {
         tips,
       },
       200,
-      { 'ETag': `"${versionNum}"` }
+      { 'ETag': compositeETag } // FIX: composite ETag
     );
   } catch (err) {
     console.error('[partner-status][GET] error:', err?.message || err);

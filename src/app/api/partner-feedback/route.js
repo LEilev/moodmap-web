@@ -1,4 +1,5 @@
 // src/app/api/partner-feedback/route.js
+// :contentReference[oaicite:0]{index=0}
 import { redis, hincr, expire } from '@/lib/redis';
 import { FeedbackSchema, validate } from '@/lib/validate';
 import { nextMidnightPlus2h } from '@/lib/date';
@@ -66,7 +67,7 @@ export async function POST(req) {
     const tips = Array.isArray(v.value.tips) ? v.value.tips : [];
 
     // Additional whitelist check for tip IDs (defense in depth)
-    const TIP_ID_REGEX = /^[A-Za-z0-9:_-]{1,64}$/;
+    const TIP_ID_REGEX = /^[A-Za-z0-9:._-]{1,64}$/; // FIX: allow dot
     for (const t of tips) {
       if (!TIP_ID_REGEX.test(t)) {
         return json({ ok: false, error: 'Invalid tip id' }, 400);
@@ -116,7 +117,7 @@ export async function POST(req) {
     }
 
     // Write new feedback fields (overwriting vibe/readiness/tips)
-    const tipsJson = JSON.stringify(tips);
+    const tipsJson = JSON.stringify(tips); // FIX: stringify exactly once
     await redis.hset(feedbackKey, {
       vibe,
       readiness: String(readiness),
