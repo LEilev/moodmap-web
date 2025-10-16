@@ -1,3 +1,4 @@
+// fileciteturn0file3
 // app/api/partner-feedback/route.js
 // :contentReference[oaicite:0]{index=0}
 import { redis, hincr, expire } from '@/lib/redis';
@@ -8,6 +9,23 @@ import { nextMidnightPlus2h } from '@/lib/date';
 const TIP_RE = /^[a-z0-9]+(\.[a-z0-9]+)*$/i;
 const DATE_RE = /^[0-9]{8}$/;
 const HOURS = 60 * 60;
+
+
+// FIX: compute TTL (seconds) until 02:00 LOCAL time on the day after ownerDate,
+// using tzOffsetMin where local = UTC + tzOffsetMin
+function ttlUntilNextLocal2am(ownerDate, tzOffsetMin) {
+  try {
+    if (!DATE_RE.test(ownerDate)) return 26 * HOURS;
+    const y = Number(ownerDate.slice(0, 4));
+    const m = Number(ownerDate.slice(4, 6)) - 1;
+    const d = Number(ownerDate.slice(6, 8));
+    const safe = Number.isFinite(tzOffsetMin) ? Math.max(-14*60, Math.min(14*60, Math.trunc(tzOffsetMin))) : 0;
+    const localTargetUTCms = Date.UTC(y, m, d + 1, 2, 0, 0); // 02:00 local next day (in "local wall clock")
+    const targetUtcMs = localTargetUTCms - safe * 60 * 1000; // convert local -> UTC
+    const secs = Math.max(0, Math.floor((targetUtcMs - Date.now()) / 1000));
+    return Math.max(secs, 26 * HOURS); // minimum 26h
+  } catch { return 26 * HOURS; }
+}
 
 function normalizeTips(body) { // hybrid:
   let src = body?.tips ?? body?.highlightedTips ?? body?.tipsJson ?? [];
@@ -101,6 +119,7 @@ export async function POST(req) {
     }
 
     const { pairId, ownerDate, updateId, vibe } = v.value;
+    const tzOffsetMin = Number.isFinite(body?.tzOffsetMin) ? Math.trunc(body.tzOffsetMin) : undefined; // FIX: accept tz offset
     const readiness = v.value.readiness;
     // Use normalizeTips() instead of direct array cast // hybrid:
     const tips = normalizeTips(v.value);
@@ -149,7 +168,7 @@ export async function POST(req) {
         version: String(version),
         lastUpdated,
       });
-      await expire(stateKey, 30 * 60 * 60);
+      // FIX: TTL already set via tz-aware function above
 
       console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
       const etag = buildETag(version); // hybrid: ETag
@@ -170,19 +189,13 @@ export async function POST(req) {
     const newVersion = await hincr(feedbackKey, 'version', 1);
     const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
 
-    // Ensure TTL ≈ next local midnight + 2h (fallback to 26h if tz unknown)
+    // Ensure TTL with tzOffsetMin (min 26h) for both feedback and state
     try {
-      const ttl = await redis.ttl(feedbackKey);
-      if (ttl == null || ttl <= 0) {
-        // FIX: Add fallback TTL using ttlFromOwnerDate()
-        let exp;
-        try { exp = nextMidnightPlus2h(ownerDate); }
-        catch { exp = ttlFromOwnerDate(ownerDate, 26); }
-        await expire(feedbackKey, exp);
-      }
+      const ttl = ttlUntilNextLocal2am(ownerDate, tzOffsetMin);
+      await expire(feedbackKey, ttl);
+      await expire(stateKey, ttl);
     } catch (e) {
       console.error('[partner-feedback][ttl] error:', e?.message || e);
-      // best-effort; continue
     }
 
     // Update state mirror (current date, version, lastUpdated)
@@ -191,7 +204,7 @@ export async function POST(req) {
       version: String(version),
       lastUpdated: nowIso,
     });
-    await expire(stateKey, 30 * 60 * 60);
+    // FIX: TTL already set via tz-aware function above
 
     console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);
     const etag = buildETag(version); // hybrid: ETag
