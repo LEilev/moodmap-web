@@ -39,8 +39,10 @@ export const FeedbackSchema = z.object({
   pairId: PairId,
   ownerDate: OwnerDate,
   updateId: UpdateId,
-  vibe: NonEmptyStr.max(64),
-  readiness: Readiness,
+  // FIX: make vibe optional (defaults to empty string)
+  vibe: z.string().max(64).default(''),
+  // FIX: make readiness optional (defaults to 0)
+  readiness: Readiness.default(0),
   tips: TipsArray.default([]),
 });
 

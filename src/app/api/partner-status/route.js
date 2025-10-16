@@ -1,4 +1,7 @@
-// app/api/partner-status/route.js
+// src/app/api/partner-status/route.js
+// Partner Mode v4.2 — status endpoint (Edge).
+// FIX: ETag-based change detection, blocklist 403, version self-heal when feedback exists, and robust JSON parsing.
+
 export const runtime = 'edge';
 
 import { NextResponse } from 'next/server';
@@ -46,7 +49,7 @@ export async function GET(req) {
 
   const tips = safeParseJsonArray(tipsRaw).filter((k) => typeof k === 'string' && TIP_RE.test(k));
 
-  // If feedback exists but state missing, re-sync state
+  // If feedback exists but state missing, re-sync state // FIX: self-heal
   if ((!state || version === 0) && tips.length > 0) {
     version = await redis.hincrby(stateKey, 'version', 1);
     await redis.hset(stateKey, { currentDate: ownerDate });

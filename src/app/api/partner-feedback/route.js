@@ -1,15 +1,14 @@
-// fileciteturn0file3
-// app/api/partner-feedback/route.js
-// :contentReference[oaicite:0]{index=0}
+// src/app/api/partner-feedback/route.js
+// Partner Mode v4.2 — feedback endpoint (Edge).
+// FIX: Accept missing vibe/readiness (defaults), normalize tips, increment version, set tz-aware TTL, and log pairId/ownerDate/tips.
+
 import { redis, hincr, expire } from '@/lib/redis';
 import { FeedbackSchema, validate } from '@/lib/validate';
-import { nextMidnightPlus2h } from '@/lib/date';
 
-// --- hybrid helpers (from o5-pro modern version) --- // hybrid:
+// --- helpers --- //
 const TIP_RE = /^[a-z0-9]+(\.[a-z0-9]+)*$/i;
 const DATE_RE = /^[0-9]{8}$/;
 const HOURS = 60 * 60;
-
 
 // FIX: compute TTL (seconds) until 02:00 LOCAL time on the day after ownerDate,
 // using tzOffsetMin where local = UTC + tzOffsetMin
@@ -27,7 +26,7 @@ function ttlUntilNextLocal2am(ownerDate, tzOffsetMin) {
   } catch { return 26 * HOURS; }
 }
 
-function normalizeTips(body) { // hybrid:
+function normalizeTips(body) {
   let src = body?.tips ?? body?.highlightedTips ?? body?.tipsJson ?? [];
   if (typeof src === 'string') {
     try { src = JSON.parse(src); }
@@ -45,18 +44,7 @@ function normalizeTips(body) { // hybrid:
   return out.slice(0, 32);
 }
 
-function ttlFromOwnerDate(ownerDate, hours) { // hybrid:
-  if (!DATE_RE.test(ownerDate)) return hours * HOURS;
-  const y = Number(ownerDate.slice(0, 4));
-  const m = Number(ownerDate.slice(4, 6));
-  const d = Number(ownerDate.slice(6, 8));
-  const anchorMs = Date.UTC(y, m - 1, d, 0, 0, 0);
-  const target = anchorMs + hours * 3600 * 1000;
-  const delta = Math.floor((target - Date.now()) / 1000);
-  return Math.max(1, delta);
-}
-
-function buildETag(version) { // hybrid:
+function buildETag(version) {
   return `W/"${String(version)}"`;
 }
 
@@ -95,7 +83,7 @@ async function limitByKey(key, limit = 60, windowSec = 60) {
 
 /**
  * POST /api/partner-feedback
- * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe, readiness, tips[] }
+ * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe?, readiness?, tips[] }
  * Success: { ok: true, version, lastUpdated, tipCount }
  * Idempotent: same updateId => NO-OP (same version)
  */
@@ -121,7 +109,7 @@ export async function POST(req) {
     const { pairId, ownerDate, updateId, vibe } = v.value;
     const tzOffsetMin = Number.isFinite(body?.tzOffsetMin) ? Math.trunc(body.tzOffsetMin) : undefined; // FIX: accept tz offset
     const readiness = v.value.readiness;
-    // Use normalizeTips() instead of direct array cast // hybrid:
+    // Use normalizeTips() instead of direct array cast
     const tips = normalizeTips(v.value);
 
     // Additional whitelist check for tip IDs (defense in depth)
@@ -168,11 +156,14 @@ export async function POST(req) {
         version: String(version),
         lastUpdated,
       });
-      // FIX: TTL already set via tz-aware function above
 
-      console.log('[partner-feedback] Duplicate updateId -> no new data for', feedbackKey, '(version', version, ')');
-      const etag = buildETag(version); // hybrid: ETag
-      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200, { ETag: etag }); // hybrid:
+      // FIX: log idempotent hit with full context
+      console.log('[partner-feedback] Duplicate updateId (NO-OP)', {
+        pairId, ownerDate, version, tips,
+      });
+
+      const etag = buildETag(version);
+      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200, { ETag: etag });
     }
 
     // Write new feedback fields (overwriting vibe/readiness/tips)
@@ -189,7 +180,7 @@ export async function POST(req) {
     const newVersion = await hincr(feedbackKey, 'version', 1);
     const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
 
-    // Ensure TTL with tzOffsetMin (min 26h) for both feedback and state
+    // Ensure TTL with tzOffsetMin (min 26h) for both feedback and state // FIX: align TTLs
     try {
       const ttl = ttlUntilNextLocal2am(ownerDate, tzOffsetMin);
       await expire(feedbackKey, ttl);
@@ -204,11 +195,14 @@ export async function POST(req) {
       version: String(version),
       lastUpdated: nowIso,
     });
-    // FIX: TTL already set via tz-aware function above
 
-    console.log('[partner-feedback] Saved feedback for', feedbackKey, 'version', version, 'tipsCount', tips.length);
-    const etag = buildETag(version); // hybrid: ETag
-    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200, { ETag: etag }); // hybrid:
+    // FIX: log with explicit pairId/ownerDate and full tips[] for diagnostics
+    console.log('[partner-feedback] Saved', {
+      pairId, ownerDate, version, tips,
+    });
+
+    const etag = buildETag(version);
+    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200, { ETag: etag });
   } catch (err) {
     console.error('[partner-feedback][POST] error:', err?.message || err);
     return json({ ok: false, error: 'Internal error' }, 500);
