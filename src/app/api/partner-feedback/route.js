@@ -1,30 +1,16 @@
 // src/app/api/partner-feedback/route.js
-// Partner Mode v4.2 — feedback endpoint (Edge).
-// FIX: Accept missing vibe/readiness (defaults), normalize tips, increment version, set tz-aware TTL, and log pairId/ownerDate/tips.
+// Partner Mode v4.3 — feedback endpoint (Edge).
+// Changes:
+// - Cross‑day persistence: remove TTL on feedback/state (keep data indefinitely). // FIX
+// - Align tip‑ID regex to allow [A‑Za‑z0‑9 . _ - :] (defense in depth).         // FIX
+// - Preserve idempotency via updateId and version increment semantics.          // FIX
 
-import { redis, hincr, expire } from '@/lib/redis';
+import { redis, hincr } from '@/lib/redis';
 import { FeedbackSchema, validate } from '@/lib/validate';
 
 // --- helpers --- //
-const TIP_RE = /^[a-z0-9]+(\.[a-z0-9]+)*$/i;
+const TIP_RE = /^[A-Za-z0-9][A-Za-z0-9:._-]{0,63}$/;  // FIX: allow _, -, : and .
 const DATE_RE = /^[0-9]{8}$/;
-const HOURS = 60 * 60;
-
-// FIX: compute TTL (seconds) until 02:00 LOCAL time on the day after ownerDate,
-// using tzOffsetMin where local = UTC + tzOffsetMin
-function ttlUntilNextLocal2am(ownerDate, tzOffsetMin) {
-  try {
-    if (!DATE_RE.test(ownerDate)) return 26 * HOURS;
-    const y = Number(ownerDate.slice(0, 4));
-    const m = Number(ownerDate.slice(4, 6)) - 1;
-    const d = Number(ownerDate.slice(6, 8));
-    const safe = Number.isFinite(tzOffsetMin) ? Math.max(-14*60, Math.min(14*60, Math.trunc(tzOffsetMin))) : 0;
-    const localTargetUTCms = Date.UTC(y, m, d + 1, 2, 0, 0); // 02:00 local next day (in "local wall clock")
-    const targetUtcMs = localTargetUTCms - safe * 60 * 1000; // convert local -> UTC
-    const secs = Math.max(0, Math.floor((targetUtcMs - Date.now()) / 1000));
-    return Math.max(secs, 26 * HOURS); // minimum 26h
-  } catch { return 26 * HOURS; }
-}
 
 function normalizeTips(body) {
   let src = body?.tips ?? body?.highlightedTips ?? body?.tipsJson ?? [];
@@ -37,7 +23,7 @@ function normalizeTips(body) {
   const out = [];
   for (const v of arr) {
     if (typeof v !== 'string') continue;
-    const k = v.trim().toLowerCase();
+    const k = v.trim();
     if (!k || !TIP_RE.test(k)) continue;
     if (!seen.has(k)) { seen.add(k); out.push(k); }
   }
@@ -68,7 +54,7 @@ async function limitByKey(key, limit = 60, windowSec = 60) {
     const k = `${key}:${windowId}`;
     const count = await redis.incr(k);
     if (count === 1) {
-      await expire(k, windowSec);
+      await redis.expire(k, windowSec);
     }
     if (count > limit) {
       const ttl = await redis.ttl(k);
@@ -93,7 +79,6 @@ export async function POST(req) {
       return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
     }
 
-    // Parse + validate body (includes <1KB size and tips ≤ 10 constraints)
     let body;
     try {
       body = await req.json();
@@ -107,13 +92,11 @@ export async function POST(req) {
     }
 
     const { pairId, ownerDate, updateId, vibe } = v.value;
-    const tzOffsetMin = Number.isFinite(body?.tzOffsetMin) ? Math.trunc(body.tzOffsetMin) : undefined; // FIX: accept tz offset
     const readiness = v.value.readiness;
-    // Use normalizeTips() instead of direct array cast
     const tips = normalizeTips(v.value);
 
-    // Additional whitelist check for tip IDs (defense in depth)
-    const TIP_ID_REGEX = /^[A-Za-z0-9:._-]{1,64}$/; // FIX: allow dot
+    // Allow full ID character set
+    const TIP_ID_REGEX = /^[A-Za-z0-9:._-]{1,64}$/;
     for (const t of tips) {
       if (!TIP_ID_REGEX.test(t)) {
         return json({ ok: false, error: 'Invalid tip id' }, 400);
@@ -149,25 +132,14 @@ export async function POST(req) {
     if (currentLastUpdateId && currentLastUpdateId === updateId) {
       const lastUpdated = current?.lastUpdated || nowIso;
       const version = (currentVersion != null && Number.isFinite(currentVersion)) ? currentVersion : 1;
-
-      // Refresh state (optional on NO-OP)
-      await redis.hset(stateKey, {
-        currentDate: ownerDate,
-        version: String(version),
-        lastUpdated,
-      });
-
-      // FIX: log idempotent hit with full context
-      console.log('[partner-feedback] Duplicate updateId (NO-OP)', {
-        pairId, ownerDate, version, tips,
-      });
-
+      await redis.hset(stateKey, { currentDate: ownerDate, version: String(version), lastUpdated });
+      console.log('[partner-feedback] Duplicate updateId (NO-OP)', { pairId, ownerDate, version, tips });
       const etag = buildETag(version);
       return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200, { ETag: etag });
     }
 
-    // Write new feedback fields (overwriting vibe/readiness/tips)
-    const tipsJson = JSON.stringify(tips); // FIX: stringify exactly once
+    // Write new feedback fields
+    const tipsJson = JSON.stringify(tips);
     await redis.hset(feedbackKey, {
       vibe,
       readiness: String(readiness),
@@ -180,27 +152,14 @@ export async function POST(req) {
     const newVersion = await hincr(feedbackKey, 'version', 1);
     const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
 
-    // Ensure TTL with tzOffsetMin (min 26h) for both feedback and state // FIX: align TTLs
-    try {
-      const ttl = ttlUntilNextLocal2am(ownerDate, tzOffsetMin);
-      await expire(feedbackKey, ttl);
-      await expire(stateKey, ttl);
-    } catch (e) {
-      console.error('[partner-feedback][ttl] error:', e?.message || e);
-    }
-
-    // Update state mirror (current date, version, lastUpdated)
+    // Update state mirror (no TTL in v4.3)                               // FIX
     await redis.hset(stateKey, {
       currentDate: ownerDate,
       version: String(version),
       lastUpdated: nowIso,
     });
 
-    // FIX: log with explicit pairId/ownerDate and full tips[] for diagnostics
-    console.log('[partner-feedback] Saved', {
-      pairId, ownerDate, version, tips,
-    });
-
+    console.log('[partner-feedback] Saved', { pairId, ownerDate, version, tips });
     const etag = buildETag(version);
     return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200, { ETag: etag });
   } catch (err) {
@@ -208,3 +167,11 @@ export async function POST(req) {
     return json({ ok: false, error: 'Internal error' }, 500);
   }
 }
+
+/* ---------------------------------------------------------------------------
+v4.3 Verification Summary (partner-feedback/route.js)
+- Removed TTL on feedback/state keys to preserve cross‑day history.           // FIX
+- Kept unlink flow (separate route) responsible for data purge on disconnect.
+- Aligned tip‑ID filtering with extended character set: [A‑Za‑z0‑9:._-].      // FIX
+- Preserved idempotency semantics and ETag = W/"<version>".
+--------------------------------------------------------------------------- */

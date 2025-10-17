@@ -1,15 +1,12 @@
+// src/lib/validate.js
 /**
- * src/lib/validate.js
- *
  * Purpose:
  *   Zod-based input validation for Partner Mode routes (Edge-safe).
  *   Enforces payload size (< 1 KB), tip array limits, and basic shapes.
  *
- * Usage:
- *   import { FeedbackSchema, ConnectSchema, validate } from '@/lib/validate.js';
- *
- *   const result = await validate(FeedbackSchema, body);
- *   if (!result.success) return json({ ok:false, error: result.error }, 400);
+ * v4.3 notes:
+ *   - No breaking changes to schemas.
+ *   - Tip IDs allowed charset aligned in route-level filtering (:_-.).       // FIX
  */
 
 import { z } from 'zod';
@@ -39,9 +36,7 @@ export const FeedbackSchema = z.object({
   pairId: PairId,
   ownerDate: OwnerDate,
   updateId: UpdateId,
-  // FIX: make vibe optional (defaults to empty string)
   vibe: z.string().max(64).default(''),
-  // FIX: make readiness optional (defaults to 0)
   readiness: Readiness.default(0),
   tips: TipsArray.default([]),
 });
@@ -60,15 +55,12 @@ export const ConnectSchema = z.object({
  */
 export async function validate(schema, data) {
   try {
-    // Enforce < 1 KB (bytes) using TextEncoder
     const size = new TextEncoder().encode(JSON.stringify(data ?? {})).length;
     if (size > 1024) {
       return { success: false, error: 'Payload too large (> 1KB)' };
     }
-
     const parsed = schema.safeParse(data);
     if (!parsed.success) {
-      // Return a compact message (no sensitive details)
       return { success: false, error: parsed.error.issues?.[0]?.message || 'Invalid payload' };
     }
     return { success: true, value: parsed.data };
@@ -77,3 +69,9 @@ export async function validate(schema, data) {
     return { success: false, error: 'Validation error' };
   }
 }
+
+/* ---------------------------------------------------------------------------
+v4.3 Verification Summary (validate.js)
+- No schema changes required for v4.3 goals.
+- Route-level filters were updated to accept [:_-.] in tip IDs (see routes).  // FIX
+--------------------------------------------------------------------------- */

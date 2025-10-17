@@ -1,6 +1,11 @@
 // src/app/api/partner-status/route.js
-// Partner Mode v4.2 — status endpoint (Edge).
-// FIX: ETag-based change detection, blocklist 403, version self-heal when feedback exists, and robust JSON parsing.
+// Partner Mode v4.3 — status endpoint (Edge).
+// Changes:
+// - Adds optional `wait` query param (1–30s) for Edge long‑poll.               // FIX
+//   If If-None-Match matches current per‑day version, the request waits until
+//   the per‑day version changes or timeout, enabling ~instant updates.
+// - TIP regex expanded to allow `_ : - .` characters.                          // FIX
+// - ETag now reflects the per‑day feedback version when available.             // FIX
 
 export const runtime = 'edge';
 
@@ -9,58 +14,77 @@ import { Redis } from '@upstash/redis';
 
 const redis = Redis.fromEnv();
 
-const TIP_RE = /^[a-z0-9]+(\.[a-z0-9]+)*$/i; // must allow dots + numbers only
+const TIP_RE = /^[A-Za-z0-9][A-Za-z0-9:._-]{0,63}$/;  // FIX
 const DATE_RE = /^[0-9]{8}$/;
 
 export async function GET(req) {
   const url = new URL(req.url);
   const pairId = String(url.searchParams.get('pairId') ?? '').trim();
   const ownerDateQ = String(url.searchParams.get('ownerDate') ?? '').trim();
+  const waitQ = url.searchParams.get('wait');
+  const waitSec = clampInt(waitQ ? Number(waitQ) : 0, 0, 30);                 // FIX
 
   if (!pairId) {
     return NextResponse.json({ error: 'pairId required' }, { status: 400 });
   }
 
-  // Blocklist → immediate 403
-  const blockKey = `blocklist:${pairId}`;
-  const isBlocked = (await redis.exists(blockKey)) === 1;
-  if (isBlocked) {
+  const blocked = (await redis.exists(`blocklist:${pairId}`)) === 1;
+  if (blocked) {
     return NextResponse.json({ error: 'Pair disconnected' }, { status: 403 });
   }
 
   const stateKey = `state:${pairId}`;
   const state = await redis.hgetall(stateKey);
-  let version = num(state?.version, 0);
   const stateDate = String(state?.currentDate ?? '').trim();
   let ownerDate = DATE_RE.test(ownerDateQ)
     ? ownerDateQ
     : (DATE_RE.test(stateDate) ? stateDate : yyyymmddUTC());
 
-  // Read-path: tips (canonical → legacy fallbacks)
   const feedbackKey = `feedback:${pairId}:${ownerDate}`;
-  let tipsRaw = await redis.hget(feedbackKey, 'tips');
 
-  if (tipsRaw == null) {
-    tipsRaw = await redis.hget(feedbackKey, 'tipsJson'); // legacy stringified array
-  }
-  if (tipsRaw == null) {
-    tipsRaw = await redis.hget(feedbackKey, 'highlightedTips'); // legacy stringified array
+  // derive per‑day version from feedback hash (preferred)                    // FIX
+  let perDayVersion = toNum(await redis.hget(feedbackKey, 'version'), 0);
+  let tipsRaw = await redis.hget(feedbackKey, 'tips');
+  if (tipsRaw == null) tipsRaw = await redis.hget(feedbackKey, 'tipsJson');
+  if (tipsRaw == null) tipsRaw = await redis.hget(feedbackKey, 'highlightedTips');
+
+  // Long‑poll: wait until version changes if client sent ETag                // FIX
+  const inm = req.headers.get('if-none-match');
+  const clientVer = parseETagVersion(inm);
+  if (waitSec > 0 && clientVer != null) {
+    const deadline = Date.now() + waitSec * 1000;
+    while (Date.now() < deadline) {
+      const blockedNow = (await redis.exists(`blocklist:${pairId}`)) === 1;
+      if (blockedNow) {
+        return new Response(JSON.stringify({ error: 'Pair disconnected' }), {
+          status: 403,
+          headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' },
+        });
+      }
+      // re-check per‑day version (fast path)
+      const vNow = toNum(await redis.hget(feedbackKey, 'version'), 0);
+      if (vNow !== clientVer) {
+        perDayVersion = vNow;
+        // break to assemble fresh response
+        tipsRaw = await redis.hget(feedbackKey, 'tips') ?? tipsRaw;
+        break;
+      }
+      // small sleep (~350ms)
+      await sleep(350);
+    }
   }
 
   const tips = safeParseJsonArray(tipsRaw).filter((k) => typeof k === 'string' && TIP_RE.test(k));
 
-  // If feedback exists but state missing, re-sync state // FIX: self-heal
-  if ((!state || version === 0) && tips.length > 0) {
-    version = await redis.hincrby(stateKey, 'version', 1);
-    await redis.hset(stateKey, { currentDate: ownerDate });
-    // keep state TTL fresh (~30h)
-    const stateTtlSec = ttlFromOwnerDate(ownerDate, 30);
-    if (stateTtlSec > 0) await redis.expire(stateKey, stateTtlSec);
-  }
+  // If version is still zero (no feedback yet), fall back to state.version
+  let version = perDayVersion > 0 ? perDayVersion : toNum(state?.version, 0);
 
+  // ETag reflects per‑day version when available
   const etag = buildETag(version);
-  const inm = req.headers.get('if-none-match');
-  if (inm && sameETag(inm, etag)) {
+
+  // Conditional GET: no change
+  const inm2 = req.headers.get('if-none-match');
+  if (inm2 && sameETag(inm2, etag)) {
     return new Response(null, {
       status: 304,
       headers: {
@@ -73,31 +97,19 @@ export async function GET(req) {
   if (tips.length === 0) {
     console.log(`[partner-status] No feedback for pairId ${pairId} (${feedbackKey})`);
   } else {
-    console.log(
-      `[partner-status] Loaded feedback for ${feedbackKey} → version ${version} tipCount ${tips.length}`
-    );
+    console.log(`[partner-status] Loaded feedback for ${feedbackKey} → version ${version} tipCount ${tips.length}`);
   }
 
   return NextResponse.json(
-    {
-      ok: true,
-      pairId,
-      ownerDate,
-      version,
-      tips,
-      tipCount: tips.length,
-    },
-    {
-      status: 200,
-      headers: {
-        ETag: etag,
-        'Cache-Control': 'no-store',
-      },
-    }
+    { ok: true, pairId, ownerDate, version, tips, tipCount: tips.length },
+    { status: 200, headers: { ETag: etag, 'Cache-Control': 'no-store' } }
   );
 }
 
 // ----------------- helpers -----------------
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 function yyyymmddUTC(now = new Date()) {
   const y = now.getUTCFullYear();
@@ -113,26 +125,12 @@ function safeParseJsonArray(v) {
     try {
       const p = JSON.parse(v);
       return Array.isArray(p) ? p : [];
-    } catch {
-      // Not JSON; reject
-      return [];
-    }
+    } catch { return []; }
   }
   return [];
 }
 
-function ttlFromOwnerDate(ownerDate, hours) {
-  if (!/^[0-9]{8}$/.test(ownerDate)) return hours * 3600;
-  const y = Number(ownerDate.slice(0, 4));
-  const m = Number(ownerDate.slice(4, 6));
-  const d = Number(ownerDate.slice(6, 8));
-  const anchorMs = Date.UTC(y, m - 1, d, 0, 0, 0);
-  const target = anchorMs + hours * 3600 * 1000;
-  const delta = Math.floor((target - Date.now()) / 1000);
-  return Math.max(1, delta);
-}
-
-function num(v, fallback = 0) {
+function toNum(v, fallback = 0) {
   const n = typeof v === 'string' ? Number(v) : v;
   return Number.isFinite(n) ? n : fallback;
 }
@@ -145,3 +143,23 @@ function sameETag(a, b) {
   const norm = (x) => String(x).replace(/^W\//, '').replace(/"/g, '');
   return norm(a) === norm(b);
 }
+
+function parseETagVersion(etag) {
+  if (!etag) return null;
+  const s = String(etag).replace(/^W\//, '').replace(/"/g, '');
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function clampInt(n, min, max) {
+  if (!Number.isFinite(n)) return min;
+  return Math.max(min, Math.min(max, Math.trunc(n)));
+}
+
+/* ---------------------------------------------------------------------------
+v4.3 Verification Summary (partner-status/route.js)
+- Added `wait` parameter with Edge long‑poll to deliver near‑instant updates. // FIX
+- ETag now aligns with per‑day feedback version for better conditional GETs.   // FIX
+- Expanded TIP regex to allow underscores, hyphens, colons, and dots.         // FIX
+- Maintains 403 on blocklist and 200/304 semantics for clients.
+--------------------------------------------------------------------------- */
