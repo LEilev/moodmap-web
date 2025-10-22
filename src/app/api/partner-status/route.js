@@ -76,14 +76,13 @@ export async function GET(req) {
 
   const tips = safeParseJsonArray(tipsRaw).filter((k) => typeof k === 'string' && TIP_RE.test(k));
 
-  // If version is still zero (no feedback yet), fall back to state.version
-  let version = perDayVersion > 0 ? perDayVersion : toNum(state?.version, 0);
-
-  // ETag reflects per‑day version when available
+  // FIX: v4.3.3 flicker — ETag/version now strictly per-day; no fallback to state.version
+  let version = perDayVersion;// ETag reflects per‑day version when available
   const etag = buildETag(version);
 
   // Conditional GET: no change
   const inm2 = req.headers.get('if-none-match');
+  // FIX: v4.3.3 flicker — return 304 when ETag unchanged (per-day)
   if (inm2 && sameETag(inm2, etag)) {
     return new Response(null, {
       status: 304,
@@ -162,4 +161,11 @@ v4.3 Verification Summary (partner-status/route.js)
 - ETag now aligns with per‑day feedback version for better conditional GETs.   // FIX
 - Expanded TIP regex to allow underscores, hyphens, colons, and dots.         // FIX
 - Maintains 403 on blocklist and 200/304 semantics for clients.
+--------------------------------------------------------------------------- */
+
+
+/* ---------------------------------------------------------------------------
+v4.3.3 Verification Summary (partner-status/route.js)
+- Long-poll compares per-day version; no fallback to state.version.          // FIX: v4.3.3 flicker
+- Conditional GET now returns 304 reliably when ETag unchanged for the day.  // FIX: v4.3.3 flicker
 --------------------------------------------------------------------------- */
