@@ -149,7 +149,7 @@ export default function PartnerPage() {
           </a>{" "}
           or join the{" "}
           <a
-            href="https://discord.gg/yourdiscordlink"
+            href="https://discord.gg/eeP9vBK6Vn"
             target="_blank"
             rel="noopener noreferrer"
             className="text-blue-400 hover:underline"
