@@ -1,4 +1,4 @@
-// src/app/page.js
+// app/page.js
 import Link from "next/link";
 import {
   Map,
@@ -43,7 +43,10 @@ export default function HomePage() {
         </p>
 
         {/* Store CTA buttons */}
-        <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4" id="download">
+        <div
+          className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4"
+          id="download"
+        >
           <a
             href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
             className="inline-flex h-11 items-center justify-center rounded-full bg-black px-5 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] ring-1 ring-white/10 transition-all hover:-translate-y-0.5 hover:shadow-[0_16px_36px_rgba(0,0,0,0.45)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
@@ -82,14 +85,20 @@ export default function HomePage() {
       {/* ───────── About ───────── */}
       <section id="about" className="max-w-3xl mx-auto text-center my-16 sm:my-20 px-6">
         <h2 className="text-2xl font-semibold mb-3">About MoodMap</h2>
-        <p className="text-blue-200 text-sm mb-3">
-          When a woman’s rhythm is seen and respected, everyday life becomes softer — for her, and for those she loves.
-        </p>
+
+        {/* About paragraph (unchanged core, with design‑philosophy close) */}
         <p className="text-blue-100">
-          Built for men who want to thrive—not tiptoe—through the hormonal cycle. 
-          Get brutally honest survival cues, timing windows, and a visual code so 
-          you can bring warmth when it matters and space when it saves the day. 
-          MoodMap is what happens when empathy meets technology. Quiet engineering beneath; warmth and small joys above.
+          Built for men who want to thrive—not tiptoe—through the hormonal
+          cycle. Get brutally honest survival cues, timing windows, and a visual
+          code so you can bring warmth when it matters and space when it saves
+          the day. MoodMap is what happens when empathy meets technology. Quiet
+          engineering beneath; warmth and small joys above.
+        </p>
+
+        {/* Partner Mode: calm, inline teaser right after About (italic, minimal) */}
+        <p className="text-blue-300 text-sm italic mt-6">
+          Coming next: Partner Mode — a shared space where couples grow together,
+          one small action at a time.
         </p>
       </section>
 
@@ -144,12 +153,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ───────── Coming Soon: Partner Mode ───────── */}
-      <section className="text-center mt-12 max-w-xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-3">Coming soon: Partner Mode 🌱</h2>
-        <p className="text-blue-100 text-base">
-          A shared space where small, caring actions can change the mood of a day — or a week. 
-          Partner Mode turns connection into something you can grow together.
+      {/* ───────── Quiet closing philosophy line (Option B) ───────── */}
+      <section className="max-w-3xl mx-auto text-center px-6 mt-16 mb-6">
+        <p className="text-blue-200 text-sm">
+          When her rhythm is understood and respected, everyday life becomes softer — for both.
         </p>
       </section>
 
@@ -165,7 +172,6 @@ export default function HomePage() {
           </Link>
         </p>
         <p className="mt-1">
-          {/* Updated to Next.js page (no .html) */}
           <Link href="/privacy-policy" className="underline">
             Privacy Policy
           </Link>
