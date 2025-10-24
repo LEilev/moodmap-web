@@ -140,22 +140,26 @@ export default function RootLayout({ children }) {
               />
             </Link>
 
-            {/* Desktop nav */}
-            <nav className="hidden sm:flex gap-6">
-              <Link href="#about" className="hover:underline">About</Link>
-              <Link href="#download" className="hover:underline">Download</Link>
-              <Link href="/support" className="hover:underline">Support</Link>
-              <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
-            </nav>
+          {/* Desktop nav */}
+<nav className="hidden sm:flex gap-6">
+  <Link href="#about" className="hover:underline">About</Link>
+  <Link href="#download" className="hover:underline">Download</Link>
+  <Link href="/support" className="hover:underline">Support</Link>
+  <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
+  {/* New Partner link */}
+  <Link href="/partner" className="hover:underline">Partner</Link>
+</nav>
           </div>
 
           {/* Mobile nav */}
-          <nav className="sm:hidden px-6 pb-3 flex flex-col gap-2">
-            <Link href="#about" className="hover:underline">About</Link>
-            <Link href="#download" className="hover:underline">Download</Link>
-            <Link href="/support" className="hover:underline">Support</Link>
-            <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
-          </nav>
+<nav className="sm:hidden px-6 pb-3 flex flex-col gap-2">
+  <Link href="#about" className="hover:underline">About</Link>
+  <Link href="#download" className="hover:underline">Download</Link>
+  <Link href="/support" className="hover:underline">Support</Link>
+  <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
+  {/* New Partner link for mobile */}
+  <Link href="/partner" className="hover:underline">Partner</Link>
+</nav>
         </header>
 
         <main className="flex-grow">{children}</main>
