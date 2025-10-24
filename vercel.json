@@ -9,5 +9,15 @@
         }
       ]
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/influencer/send?token=moodmap_cron_4J7F93gH32sd%402025&batch=10",
+      "schedule": "0 9 * * 1-5"
+    },
+    {
+      "path": "/api/influencer/send?token=moodmap_cron_4J7F93gH32sd%402025&followups=1&batch=10",
+      "schedule": "0 14 * * 1-5"
+    }
   ]
 }
