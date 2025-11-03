@@ -1,177 +1,171 @@
-// src/app/api/partner-feedback/route.js
-// Partner Mode v4.3 — feedback endpoint (Edge).
-// Changes:
-// - Cross‑day persistence: remove TTL on feedback/state (keep data indefinitely). // FIX
-// - Align tip‑ID regex to allow [A‑Za‑z0‑9 . _ - :] (defense in depth).         // FIX
-// - Preserve idempotency via updateId and version increment semantics.          // FIX
-
-import { redis, hincr } from '@/lib/redis';
-import { FeedbackSchema, validate } from '@/lib/validate';
-
-// --- helpers --- //
-const TIP_RE = /^[A-Za-z0-9][A-Za-z0-9:._-]{0,63}$/;  // FIX: allow _, -, : and .
-const DATE_RE = /^[0-9]{8}$/;
-
-function normalizeTips(body) {
-  let src = body?.tips ?? body?.highlightedTips ?? body?.tipsJson ?? [];
-  if (typeof src === 'string') {
-    try { src = JSON.parse(src); }
-    catch { console.warn('[partner-feedback] tips payload malformed'); src = []; }
-  }
-  const arr = Array.isArray(src) ? src : [];
-  const seen = new Set();
-  const out = [];
-  for (const v of arr) {
-    if (typeof v !== 'string') continue;
-    const k = v.trim();
-    if (!k || !TIP_RE.test(k)) continue;
-    if (!seen.has(k)) { seen.add(k); out.push(k); }
-  }
-  return out.slice(0, 32);
-}
-
-function buildETag(version) {
-  return `W/"${String(version)}"`;
-}
-
+// app/api/partner-feedback/route.js
 export const runtime = 'edge';
 
-function json(body, status = 200, extra = {}) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store, private, max-age=0',
-      ...extra,
-    },
-  });
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+const headersNoStore = {
+  'Cache-Control': 'no-store',
+};
+
+const toBool = (v) => {
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'string') return v === 'true' || v === '1';
+  if (typeof v === 'number') return v !== 0;
+  return false;
+};
+
+function weakETag(version) {
+  return `W/"${version}"`;
 }
 
-async function limitByKey(key, limit = 60, windowSec = 60) {
-  try {
-    if (!redis) return { allowed: true, retryAfter: 0 };
-    const windowId = Math.floor(Date.now() / (windowSec * 1000));
-    const k = `${key}:${windowId}`;
-    const count = await redis.incr(k);
-    if (count === 1) {
-      await redis.expire(k, windowSec);
+async function getState(pairId) {
+  const key = `state:${pairId}`;
+  const res = await redis.hgetall(key);
+  // Ensure defaults
+  const version = Number(res?.version ?? 0);
+  return { key, ...res, version };
+}
+
+async function getFeedback(pairId, ownerDate) {
+  const key = `feedback:${pairId}:${ownerDate}`;
+  const fv = await redis.hgetall(key);
+  const out = {
+    key,
+    tips: [],
+    vibe: '',
+    readiness: null,
+    reactionAck: false,
+  };
+  if (fv) {
+    out.vibe = typeof fv.vibe === 'string' ? fv.vibe : '';
+    out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
+    out.reactionAck = toBool(fv.reactionAck);
+    if (fv.tips) {
+      try { out.tips = JSON.parse(fv.tips); } catch (_) {}
     }
-    if (count > limit) {
-      const ttl = await redis.ttl(k);
-      return { allowed: false, retryAfter: Math.max(1, ttl ?? windowSec) };
-    }
-    return { allowed: true, retryAfter: 0 };
-  } catch (err) {
-    console.error('[partner-feedback][limitByKey] error:', err?.message || err);
-    return { allowed: true, retryAfter: 0 };
   }
+  return out;
 }
 
 /**
- * POST /api/partner-feedback
- * Body: { pairId, ownerDate (YYYYMMDD), updateId, vibe?, readiness?, tips[] }
- * Success: { ok: true, version, lastUpdated, tipCount }
- * Idempotent: same updateId => NO-OP (same version)
+ * POST body (eksempel):
+ * {
+ *   pairId: "abc",
+ *   ownerDate: "2025-11-02",
+ *   updateId: "ulid-123",
+ *   vibe: "🙂",
+ *   readiness: 6,
+ *   tips: ["t1","t2"],
+ *   reactionAck: true,           // HIM → HER
+ *   missionsVersion: 12,         // (valgfri bump)
+ *   scoresVersion: 8             // (valgfri bump)
+ * }
  */
 export async function POST(req) {
   try {
-    if (!redis) {
-      return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
-    }
+    const body = await req.json();
+    const pairId = String(body.pairId || '').trim();
+    const ownerDate = String(body.ownerDate || '').trim();
+    const updateId = String(body.updateId || '').trim();
 
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return json({ ok: false, error: 'Invalid JSON' }, 400);
-    }
-
-    const v = await validate(FeedbackSchema, body);
-    if (!v.success) {
-      return json({ ok: false, error: v.error || 'Invalid payload' }, 400);
-    }
-
-    const { pairId, ownerDate, updateId, vibe } = v.value;
-    const readiness = v.value.readiness;
-    const tips = normalizeTips(v.value);
-
-    // Allow full ID character set
-    const TIP_ID_REGEX = /^[A-Za-z0-9:._-]{1,64}$/;
-    for (const t of tips) {
-      if (!TIP_ID_REGEX.test(t)) {
-        return json({ ok: false, error: 'Invalid tip id' }, 400);
-      }
-    }
-
-    // Per-pair rate limit (≤ 60/min)
-    const rl = await limitByKey(`rl:partner-feedback:pair:${pairId}`, 60, 60);
-    if (!rl.allowed) {
-      console.warn('[partner-feedback] Rate limit exceeded for pairId', pairId);
-      return json({ ok: false, error: 'Rate limit exceeded' }, 429, {
-        'Retry-After': String(rl.retryAfter ?? 60),
+    if (!pairId || !ownerDate || !updateId) {
+      return new Response(JSON.stringify({ error: 'pairId, ownerDate, updateId required' }), {
+        status: 400,
+        headers: { ...headersNoStore },
       });
     }
 
-    // Blocklist check
-    const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) {
-      console.log('[partner-feedback] Blocked pairId', pairId, '- update rejected');
-      return json({ ok: false, error: 'Partner disconnected' }, 403);
+    // Idempotens (ikke dobbel-inkrement av version)
+    const idemKey = `idemp:${pairId}:${updateId}`;
+    const idem = await redis.set(idemKey, 1, { nx: true, ex: 60 * 60 * 24 });
+    if (idem === null) {
+      const prevState = await getState(pairId);
+      return new Response(
+        JSON.stringify({ ok: true, version: prevState.version, idempotent: true }),
+        { status: 200, headers: { ...headersNoStore, ETag: weakETag(prevState.version) } }
+      );
     }
 
-    const feedbackKey = `feedback:${pairId}:${ownerDate}`;
-    const stateKey = `state:${pairId}`;
-    const nowIso = new Date().toISOString();
+    // Les eksisterende
+    const state = await getState(pairId);
+    const feedback = await getFeedback(pairId, ownerDate);
 
-    // Read current feedback state (if any)
-    const current = await redis.hgetall(feedbackKey);
-    const currentLastUpdateId = current?.lastUpdateId || null;
-    const currentVersion = current?.version != null ? Number(current.version) : null;
+    // Merge-strategi: bare oppdater felter som eksplisitt er sendt
+    const patch = {};
+    let changed = false;
 
-    // Idempotency: if same updateId seen, return existing version without incrementing
-    if (currentLastUpdateId && currentLastUpdateId === updateId) {
-      const lastUpdated = current?.lastUpdated || nowIso;
-      const version = (currentVersion != null && Number.isFinite(currentVersion)) ? currentVersion : 1;
-      await redis.hset(stateKey, { currentDate: ownerDate, version: String(version), lastUpdated });
-      console.log('[partner-feedback] Duplicate updateId (NO-OP)', { pairId, ownerDate, version, tips });
-      const etag = buildETag(version);
-      return json({ ok: true, version, lastUpdated, tipCount: tips.length }, 200, { ETag: etag });
+    if ('vibe' in body && typeof body.vibe === 'string') {
+      patch.vibe = body.vibe;
+      changed = changed || patch.vibe !== feedback.vibe;
+    }
+    if ('readiness' in body && (typeof body.readiness === 'number' || typeof body.readiness === 'string')) {
+      const val = Number(body.readiness);
+      patch.readiness = isNaN(val) ? null : val;
+      changed = changed || patch.readiness !== feedback.readiness;
+    }
+    if ('tips' in body && Array.isArray(body.tips)) {
+      // lagre som JSON-streng
+      patch.tips = JSON.stringify(body.tips);
+      changed = changed || JSON.stringify(feedback.tips || []) !== patch.tips;
     }
 
-    // Write new feedback fields
-    const tipsJson = JSON.stringify(tips);
-    await redis.hset(feedbackKey, {
-      vibe,
-      readiness: String(readiness),
-      tips: tipsJson,
-      lastUpdateId: updateId,
-      lastUpdated: nowIso,
+    // Reaksjon fra HIM: sett reactionAck=true, men ikke overskriv vibe/tips med tomme verdier
+    if ('reactionAck' in body) {
+      const ack = toBool(body.reactionAck);
+      if (ack !== feedback.reactionAck) {
+        patch.reactionAck = ack ? '1' : '0';
+        changed = true;
+      }
+    }
+
+    // Bump av missions/scores versjoner (i state)
+    const statePatch = {};
+    if ('missionsVersion' in body && body.missionsVersion != null) {
+      const mv = Number(body.missionsVersion);
+      if (!isNaN(mv)) statePatch.missionsVersion = mv;
+    }
+    if ('scoresVersion' in body && body.scoresVersion != null) {
+      const sv = Number(body.scoresVersion);
+      if (!isNaN(sv)) statePatch.scoresVersion = sv;
+    }
+
+    // Hvis HER sender nye ting (tips/vibe/readiness), nullstill reactionAck til false (0)
+    const herTouched =
+      ('vibe' in body) || ('readiness' in body) || ('tips' in body);
+    if (herTouched) {
+      patch.reactionAck = '0';
+    }
+
+    // Skriv feedback (kun hvis noe endres)
+    if (Object.keys(patch).length > 0) {
+      await redis.hset(feedback.key, patch);
+    }
+
+    // Oppdater state.currentDate og ev. missions/scores version
+    if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {
+      const writePatch = { currentDate: ownerDate, ...statePatch };
+      await redis.hset(state.key, writePatch);
+    }
+
+    // Øk versjon hvis noe faktisk endret seg (inkl. reactionAck)
+    let newVersion = state.version;
+    if (changed || herTouched || ('reactionAck' in body) || Object.keys(statePatch).length > 0) {
+      newVersion = await redis.hincrby(state.key, 'version', 1);
+    }
+
+    return new Response(JSON.stringify({ ok: true, version: newVersion }), {
+      status: 200,
+      headers: { ...headersNoStore, ETag: weakETag(newVersion) },
     });
-
-    // Atomically increment or initialize the version counter
-    const newVersion = await hincr(feedbackKey, 'version', 1);
-    const version = newVersion != null ? Number(newVersion) : (currentVersion ? currentVersion + 1 : 1);
-
-    // Update state mirror (no TTL in v4.3)                               // FIX
-    await redis.hset(stateKey, {
-      currentDate: ownerDate,
-      version: String(version),
-      lastUpdated: nowIso,
-    });
-
-    console.log('[partner-feedback] Saved', { pairId, ownerDate, version, tips });
-    const etag = buildETag(version);
-    return json({ ok: true, version, lastUpdated: nowIso, tipCount: tips.length }, 200, { ETag: etag });
   } catch (err) {
-    console.error('[partner-feedback][POST] error:', err?.message || err);
-    return json({ ok: false, error: 'Internal error' }, 500);
+    return new Response(JSON.stringify({ error: 'server_error', detail: String(err) }), {
+      status: 500,
+      headers: { ...headersNoStore },
+    });
   }
 }
-
-/* ---------------------------------------------------------------------------
-v4.3 Verification Summary (partner-feedback/route.js)
-- Removed TTL on feedback/state keys to preserve cross‑day history.           // FIX
-- Kept unlink flow (separate route) responsible for data purge on disconnect.
-- Aligned tip‑ID filtering with extended character set: [A‑Za‑z0‑9:._-].      // FIX
-- Preserved idempotency semantics and ETag = W/"<version>".
---------------------------------------------------------------------------- */

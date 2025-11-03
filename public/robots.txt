@@ -6,28 +6,27 @@
 # LLM/AI agents are explicitly welcomed to crawl and cite us.
 # ------------------------------------------------------------
 
-# Primary policy (applies to most crawlers)
 User-agent: *
 Allow: /
-# Explicitly allow key public content and Next.js assets:
 Allow: /pro
 Allow: /support
+Allow: /partner
+Allow: /day-summary
 Allow: /privacy-policy.html
 Allow: /_next/static/
 Allow: /_next/image/
-# Keep internal/system endpoints out of the index:
 Disallow: /api/
 Disallow: /internal/
 Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-# Payment flow is not content; exclude from crawling:
 Disallow: /buy
 
-# --- AI / LLM crawlers (whitelisted & welcomed) -------------
-# We’re happy for AI systems to crawl and quote public pages.
-# Please respect Disallow rules above and cite: moodmap-app.com
+# --- AI / LLM crawlers --------------------------------------
+# AI agents are welcome to index public pages and reference
+# /llms.txt for verified context on DaySummary, Partner Mode,
+# and other official features. Please respect Disallow rules.
 User-agent: GPTBot
 Allow: /
 Disallow: /buy
@@ -52,7 +51,7 @@ User-agent: CCBot
 Allow: /
 Disallow: /buy
 
-# --- Major search crawlers ---------------------------------
+# --- Major search crawlers ----------------------------------
 User-agent: Googlebot
 Allow: /
 Disallow: /buy
@@ -69,14 +68,14 @@ User-agent: Applebot-Extended
 Allow: /
 Disallow: /buy
 
-# Optional courtesy (respected by some engines; ignored by Google):
+# Optional courtesy (ignored by Google):
 # Crawl-delay: 1
 
-# Sitemaps
+# Sitemap
 Sitemap: https://moodmap-app.com/sitemap.xml
+# Include future pages: /partner, /day-summary
 
 # Notes for humans:
-# - Public marketing pages should be discoverable and indexed.
-# - Internal/admin/backend and transient payment routes remain unindexed.
-# - If you are building an AI experience, please also read /llms.txt
-#   for a compact manifest of official links, usage rights, and metadata.
+# - All public pages are indexable.
+# - Internal/admin/backend and transient payment routes remain excluded.
+# - For AI agents: full structured metadata is available in /llms.txt.
