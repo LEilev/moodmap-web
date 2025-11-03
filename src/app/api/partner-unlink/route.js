@@ -1,4 +1,3 @@
-// src/app/api/partner-unlink/route.js
 export const runtime = 'edge';
 
 import { redis, expire } from '@/lib/redis.js';
@@ -9,7 +8,7 @@ const UUID_REGEX =
 const RL_IP_LIMIT_PER_MIN = 30;
 const RL_PAIR_LIMIT_PER_MIN = 12;
 const RL_WINDOW_SEC = 60;
-const BLOCKLIST_TTL_SEC = 2 * 24 * 60 * 60; // 172800 (48h)
+const BLOCKLIST_TTL_SEC = 300; // ~5 min (symmetrisk disconnect)
 
 /** JSON response helper */
 function json(body, status = 200, extra = {}) {
@@ -59,37 +58,37 @@ async function limitByKey(key, limit, windowSec) {
   }
 }
 
-/** Edge-safe helper: delete state:<pairId> and all feedback:<pairId>:* keys via SCAN + pipeline. */ // FIX:
-async function purgePairData(pairId) {                                                                      // FIX:
-  if (!redis) return;                                                                                       // FIX:
-  try {                                                                                                     // FIX:
-    const stateKey = `state:${pairId}`;                                                                     // FIX:
-    // Gather feedback keys with SCAN to avoid KEYS (Edge-safe)                                             // FIX:
-    let cursor = 0;                                                                                         // FIX:
-    const match = `feedback:${pairId}:*`;                                                                    // FIX:
-    const toDelete = [stateKey];                                                                            // FIX:
-    do {                                                                                                    // FIX:
-      const res = await redis.scan(cursor, { match, count: 100 });                                          // FIX:
-      const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);               // FIX:
-      const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);                                 // FIX:
-      for (const k of keys) toDelete.push(k);                                                               // FIX:
-      cursor = nextCursor;                                                                                  // FIX:
-    } while (cursor !== 0);                                                                                 // FIX:
+/** Edge-safe helper: delete state:<pairId> and all feedback:<pairId>:* keys via SCAN + pipeline. */
+async function purgePairData(pairId) {
+  if (!redis) return;
+  try {
+    const stateKey = `state:${pairId}`;
+    // Gather feedback keys with SCAN to avoid KEYS (Edge-safe)
+    let cursor = 0;
+    const match = `feedback:${pairId}:*`;
+    const toDelete = [stateKey];
+    do {
+      const res = await redis.scan(cursor, { match, count: 100 });
+      const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);
+      const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);
+      for (const k of keys) toDelete.push(k);
+      cursor = nextCursor;
+    } while (cursor !== 0);
 
-    if (toDelete.length > 0) {                                                                              // FIX:
-      const pipe = redis.pipeline();                                                                         // FIX:
-      for (const k of toDelete) pipe.del(k);                                                                 // FIX:
-      await pipe.exec();                                                                                     // FIX:
-    }                                                                                                        // FIX:
-  } catch (err) {                                                                                            // FIX:
-    console.warn('[unlink] purgePairData error:', err?.message || err);                                      // FIX:
-  }                                                                                                          // FIX:
-}                                                                                                            // FIX:
+    if (toDelete.length > 0) {
+      const pipe = redis.pipeline();
+      for (const k of toDelete) pipe.del(k);
+      await pipe.exec();
+    }
+  } catch (err) {
+    console.warn('[unlink] purgePairData error:', err?.message || err);
+  }
+}
 
 /**
  * POST /api/partner-unlink
  * Body: { pairId }
- * Effects: SET blocklist:<pairId> "1" EX 172800  + purge state/feedback  // FIX:
+ * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback
  * Success: { ok: true }
  * Errors: 400 invalid pairId, 429 RL, 503 service unavailable
  */
@@ -131,8 +130,8 @@ export async function POST(req) {
     // Blocklist: set (overwrites/refreshes TTL)
     await redis.set(`blocklist:${pairId}`, '1', { ex: BLOCKLIST_TTL_SEC });
 
-    // Best-effort purge of server-side state for this pair (Edge-safe).  // FIX:
-    await purgePairData(pairId);                                        // FIX:
+    // Best-effort purge of server-side state for this pair (Edge-safe).
+    await purgePairData(pairId);
 
     console.log('[unlink] Blocklisted pairId', pairId, 'for', BLOCKLIST_TTL_SEC, 'sec');
     return json({ ok: true }, 200);

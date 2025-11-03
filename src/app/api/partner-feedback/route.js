@@ -1,4 +1,3 @@
-// app/api/partner-feedback/route.js
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -46,7 +45,7 @@ async function getFeedback(pairId, ownerDate) {
     out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
     out.reactionAck = toBool(fv.reactionAck);
     if (fv.tips) {
-      try { out.tips = JSON.parse(fv.tips); } catch (_) {}
+      try { out.tips = JSON.parse(fv.tips); } catch {}
     }
   }
   return out;
@@ -68,7 +67,7 @@ async function getFeedback(pairId, ownerDate) {
  */
 export async function POST(req) {
   try {
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const pairId = String(body.pairId || '').trim();
     const ownerDate = String(body.ownerDate || '').trim();
     const updateId = String(body.updateId || '').trim();
@@ -78,6 +77,12 @@ export async function POST(req) {
         status: 400,
         headers: { ...headersNoStore },
       });
+    }
+
+    // 🔒 Blocklist → 403 (symmetrisk unlink)
+    const blocked = await redis.get(`blocklist:${pairId}`);
+    if (blocked) {
+      return new Response(null, { status: 403, headers: { ...headersNoStore } });
     }
 
     // Idempotens (ikke dobbel-inkrement av version)
@@ -105,7 +110,7 @@ export async function POST(req) {
     }
     if ('readiness' in body && (typeof body.readiness === 'number' || typeof body.readiness === 'string')) {
       const val = Number(body.readiness);
-      patch.readiness = isNaN(val) ? null : val;
+      patch.readiness = Number.isNaN(val) ? null : val;
       changed = changed || patch.readiness !== feedback.readiness;
     }
     if ('tips' in body && Array.isArray(body.tips)) {
@@ -127,11 +132,11 @@ export async function POST(req) {
     const statePatch = {};
     if ('missionsVersion' in body && body.missionsVersion != null) {
       const mv = Number(body.missionsVersion);
-      if (!isNaN(mv)) statePatch.missionsVersion = mv;
+      if (!Number.isNaN(mv)) statePatch.missionsVersion = mv;
     }
     if ('scoresVersion' in body && body.scoresVersion != null) {
       const sv = Number(body.scoresVersion);
-      if (!isNaN(sv)) statePatch.scoresVersion = sv;
+      if (!Number.isNaN(sv)) statePatch.scoresVersion = sv;
     }
 
     // Hvis HER sender nye ting (tips/vibe/readiness), nullstill reactionAck til false (0)

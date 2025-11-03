@@ -1,4 +1,3 @@
-// app/api/partner-status/route.js
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -31,7 +30,7 @@ function parseIfNoneMatch(req) {
   // aksepter W/"123", "123" eller 123
   const m = inm.match(/W\/"(\d+)"|\"(\d+)\"|(\d+)/);
   const v = (m && (m[1] || m[2] || m[3])) ? Number(m[1] || m[2] || m[3]) : null;
-  return isNaN(v) ? null : v;
+  return Number.isNaN(v) ? null : v;
 }
 
 async function getState(pairId) {
@@ -63,25 +62,32 @@ async function getFeedback(pairId, ownerDate) {
     out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
     out.reactionAck = toBool(fv.reactionAck);
     if (fv.tips) {
-      try { out.tips = JSON.parse(fv.tips); } catch (_) {}
+      try { out.tips = JSON.parse(fv.tips); } catch {}
     }
   }
   return out;
 }
 
 export async function GET(req) {
-  const { searchParams } = new URL(req.url);
-  const pairId = String(searchParams.get('pairId') || '').trim();
-  let ownerDate = String(searchParams.get('ownerDate') || '').trim();
-  const wait = Math.min(30, Math.max(0, Number(searchParams.get('wait') || '0')));
-
-  if (!pairId) {
-    return new Response(JSON.stringify({ error: 'pairId required' }), {
-      status: 400, headers: { ...headersNoStore },
-    });
-  }
-
   try {
+    const { searchParams } = new URL(req.url);
+    const pairId = String(searchParams.get('pairId') || '').trim();
+    let ownerDate = String(searchParams.get('ownerDate') || '').trim();
+    const wait = Math.min(30, Math.max(0, Number(searchParams.get('wait') || '0')));
+
+    if (!pairId) {
+      return new Response(JSON.stringify({ error: 'pairId required' }), {
+        status: 400,
+        headers: { ...headersNoStore },
+      });
+    }
+
+    // 🔒 Blocklist → 403 (symmetrisk unlink)
+    const blocked = await redis.get(`blocklist:${pairId}`);
+    if (blocked) {
+      return new Response(null, { status: 403, headers: { ...headersNoStore } });
+    }
+
     // Les state
     let state = await getState(pairId);
     if (!ownerDate) ownerDate = state.currentDate || new Date().toISOString().slice(0, 10);
@@ -92,24 +98,33 @@ export async function GET(req) {
       let elapsed = 0;
       const step = 1000;
       while (elapsed < wait * 1000) {
+        // tidlig blocklist-avbrudd under venting
+        const bl = await redis.get(`blocklist:${pairId}`);
+        if (bl) return new Response(null, { status: 403, headers: { ...headersNoStore } });
+
         state = await getState(pairId);
         if (state.version !== clientVersion) break;
         await sleep(step);
         elapsed += step;
       }
-    } else if (clientVersion != null) {
-      // Kort bane: etag-match uten wait
       if (state.version === clientVersion) {
         return new Response(null, {
           status: 304,
           headers: { ...headersNoStore, ETag: weakETag(state.version) },
         });
       }
+    } else if (clientVersion != null && state.version === clientVersion) {
+      // Kort bane: etag-match uten wait
+      return new Response(null, {
+        status: 304,
+        headers: { ...headersNoStore, ETag: weakETag(state.version) },
+      });
     }
 
     // Returnér payload
     const f = await getFeedback(pairId, ownerDate);
     const payload = {
+      ok: true, // konsistens med øvrige ruter
       ownerDate,
       version: state.version,
       tips: f.tips,
