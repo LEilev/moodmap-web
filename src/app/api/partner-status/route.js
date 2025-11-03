@@ -1,3 +1,4 @@
+// app/api/partner-status/route.js
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -27,7 +28,7 @@ function weakETag(version) {
 function parseIfNoneMatch(req) {
   const inm = req.headers.get('if-none-match');
   if (!inm) return null;
-  // aksepter W/"123", "123" eller 123
+  // accept W/"123", "123" or 123
   const m = inm.match(/W\/"(\d+)"|\"(\d+)\"|(\d+)/);
   const v = (m && (m[1] || m[2] || m[3])) ? Number(m[1] || m[2] || m[3]) : null;
   return Number.isNaN(v) ? null : v;
@@ -41,6 +42,7 @@ async function getState(pairId) {
   const scoresVersion = s?.scoresVersion != null ? Number(s.scoresVersion) : undefined;
   return {
     key,
+    exists: !!s, // <— presence of hash means active state
     currentDate: s?.currentDate || '',
     version,
     missionsVersion,
@@ -82,28 +84,44 @@ export async function GET(req) {
       });
     }
 
-    // 🔒 Blocklist → 403 (symmetrisk unlink)
+    // 🔒 Blocklist → 403 (symmetric unlink)
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
       return new Response(null, { status: 403, headers: { ...headersNoStore } });
     }
 
-    // Les state
+    // Fetch state and ensure it exists — if missing, treat as disconnected (permanent)
     let state = await getState(pairId);
+    if (!state.exists) {
+      // Optional JSON: { ok:false, isValidConnection:false } — client can also rely on 403 alone
+      return new Response(JSON.stringify({ ok: false, isValidConnection: false }), {
+        status: 403,
+        headers: { ...headersNoStore },
+      });
+    }
+
     if (!ownerDate) ownerDate = state.currentDate || new Date().toISOString().slice(0, 10);
 
-    // Long-poll hvis If-None-Match matcher versjonen
+    // ETag handling — MUST NOT mask invalid sessions
     const clientVersion = parseIfNoneMatch(req);
+
     if (wait > 0 && clientVersion != null) {
       let elapsed = 0;
       const step = 1000;
       while (elapsed < wait * 1000) {
-        // tidlig blocklist-avbrudd under venting
+        // Early abort: blocklist or missing state → 403
         const bl = await redis.get(`blocklist:${pairId}`);
         if (bl) return new Response(null, { status: 403, headers: { ...headersNoStore } });
 
         state = await getState(pairId);
+        if (!state.exists) {
+          return new Response(JSON.stringify({ ok: false, isValidConnection: false }), {
+            status: 403,
+            headers: { ...headersNoStore },
+          });
+        }
         if (state.version !== clientVersion) break;
+
         await sleep(step);
         elapsed += step;
       }
@@ -114,17 +132,25 @@ export async function GET(req) {
         });
       }
     } else if (clientVersion != null && state.version === clientVersion) {
-      // Kort bane: etag-match uten wait
+      // Short path: ensure still valid before 304
+      const stillExists = (await getState(pairId)).exists;
+      if (!stillExists) {
+        return new Response(JSON.stringify({ ok: false, isValidConnection: false }), {
+          status: 403,
+          headers: { ...headersNoStore },
+        });
+      }
       return new Response(null, {
         status: 304,
         headers: { ...headersNoStore, ETag: weakETag(state.version) },
       });
     }
 
-    // Returnér payload
+    // Build payload
     const f = await getFeedback(pairId, ownerDate);
     const payload = {
-      ok: true, // konsistens med øvrige ruter
+      ok: true,
+      isValidConnection: true, // <— explicit validity bit
       ownerDate,
       version: state.version,
       tips: f.tips,
@@ -141,7 +167,8 @@ export async function GET(req) {
     });
   } catch (err) {
     return new Response(JSON.stringify({ error: 'server_error', detail: String(err) }), {
-      status: 500, headers: { ...headersNoStore },
+      status: 500,
+      headers: { ...headersNoStore },
     });
   }
 }
