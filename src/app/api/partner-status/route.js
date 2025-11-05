@@ -1,142 +1,125 @@
-// app/api/partner-status/route.js
+// Next 15 Edge API — Sprint D
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
-/**
- * GET /api/partner-status
- * Aggregator som returnerer samlet partner-state.
- * - Inkludér missionsVersion, scoresVersion
- * - Inkludér featureFlags fra getFeatureFlags()
- * - v5.0 Foundation merge: utvid flags med ff_insights/ff_reactions (default false)
- * - Bevar ETag/304
- */
+import { Redis } from '@upstash/redis';
 
-import { getFeatureFlags } from '@/utils/getFeatureFlags';
-
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-
-function noStoreHeaders(extra = {}) {
-  return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
+function getRedis() {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) throw new Error('Missing Upstash Redis env');
+  return new Redis({ url, token });
 }
 
-async function redis(cmd, ...args) {
-  const url = `${UPSTASH_URL}/${cmd}/${args.map(a => encodeURIComponent(String(a))).join('/')}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` } });
-  if (!res.ok) throw new Error(`Upstash ${cmd} failed: ${res.status} ${await res.text()}`);
-  const data = await res.json();
-  return data.result;
-}
-
-async function hgetallAsObject(key) {
-  const res = await redis('hgetall', key);
-  if (!res) return {};
-  if (Array.isArray(res)) {
-    const obj = {};
-    for (let i = 0; i < res.length; i += 2) obj[res[i]] = res[i + 1];
-    return obj;
-  }
-  return res;
-}
-
-function getPairIdFromRequest(req) {
-  const url = new URL(req.url);
-  const qp = url.searchParams.get('pairId');
-  if (qp) return qp;
-  const x1 = req.headers.get('x-mm-pair') || req.headers.get('x-partner-id');
-  if (x1) return x1;
-  try {
-    const cookie = req.headers.get('cookie') || '';
-    const found = /(?:^|;\s*)mm_pair\s*=\s*([^;]+)/.exec(cookie);
-    if (found) return decodeURIComponent(found[1]);
-  } catch {}
-  return 'anon';
-}
-
-function safeJSONParse(s, fallback) { try { return JSON.parse(s); } catch { return fallback; } }
-
-function stableEtagFrom(obj) {
-  const basis = JSON.stringify({
-    version: obj.version || 0,
-    missionsVersion: obj.missionsVersion || 0,
-    scoresVersion: obj.scoresVersion || 0,
-    vibe: obj.vibe ?? null,
-    readiness: obj.readiness ?? null,
-    tipsLen: Array.isArray(obj.tips) ? obj.tips.length : 0,
-    ff: obj.featureFlags,
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extraHeaders },
   });
-  const base64 = typeof btoa === 'function' ? btoa(basis).slice(0, 32) : Buffer.from(basis).toString('base64').slice(0, 32);
-  return `W/"${base64}"`;
 }
 
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+function todayKeyUTC() {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`; // yyyy-mm-dd
+}
 
-async function snapshot(pairId) {
-  const stateKey = `state:${pairId}`;
-  const gardenKey = `garden:${pairId}`;     // tips (JSON) – best effort
-  const feedbackKey = `feedback:${pairId}`; // vibe/readiness (JSON) – best effort
+function isoWeekKey(d = new Date()) {
+  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+  const wk = String(weekNo).padStart(2, '0');
+  return `${date.getUTCFullYear()}-W${wk}`;
+}
 
-  const stateHash = await hgetallAsObject(stateKey);
-  const version = Number(stateHash.version) || 0;
-  const missionsVersion = Number(stateHash.missionsVersion) || 0;
-  const scoresVersion = Number(stateHash.scoresVersion) || 0;
+function clamp(n, min=0, max=100) { return Math.max(min, Math.min(max, n)); }
 
-  const gardenRaw = await redis('get', gardenKey).catch(() => null);
-  const feedbackRaw = await redis('get', feedbackKey).catch(() => null);
+function safeParse(jsonStr, fallback = null) {
+  try { return JSON.parse(jsonStr); } catch { return fallback; }
+}
 
-  const garden = gardenRaw ? safeJSONParse(gardenRaw, {}) : {};
-  const feedback = feedbackRaw ? safeJSONParse(feedbackRaw, {}) : {};
+async function snapshot(redis, pairId, ownerDate) {
+  const state = await redis.hgetall(`state:${pairId}`);
+  const version = Number(state?.version || 0);
+  const missionsVersion = Number(state?.missionsVersion || 0);
+  const scoresVersion = Number(state?.scoresVersion || 0);
+  const reactionsVersion = Number(state?.reactionsVersion || 0);
+  const insightsVersion = Number(state?.insightsVersion || 0);
 
-  // v5.0 Foundation merge: extend flags with new keys as safe defaults
-  const serverFlags = getFeatureFlags() || {};
-  const featureFlags = { ff_insights: false, ff_reactions: false, ...serverFlags };
+  // Feature flags (global defaults; can later be made pair-specific)
+  const ff_coachMode = true;
+  const ff_missions = true;
+  const ff_scores = true;
+  const ff_badges = String(state?.ff_badges || '').toLowerCase() === 'true' || false;
+  const ff_insights = String(process.env.FF_INSIGHTS || '').toLowerCase() === 'true' ? true : false;
+  const ff_reactions = String(process.env.FF_REACTIONS || '').toLowerCase() === 'true' ? true : false;
+  const featureFlags = { ff_coachMode, ff_missions, ff_scores, ff_badges, ff_insights, ff_reactions };
+
+  // Feedback for the given ownerDate (tips/vibe/readiness)
+  const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // legacy used yyyymmdd, fallback to today
+  const fb = await redis.hgetall(fbKey);
+  let tips = [];
+  let vibe = null;
+  let readiness = null;
+  try { tips = Array.isArray(fb?.tips) ? fb.tips : (fb?.tips ? JSON.parse(fb.tips) : []); } catch { tips = []; }
+  vibe = fb?.vibe ?? null;
+  readiness = fb?.readiness != null ? Number(fb.readiness) : null;
+
+  // Reaction for today (for HIM to display)
+  const reactKey = `reactions:${pairId}:${todayKeyUTC()}`;
+  const react = await redis.hgetall(reactKey);
+  const reactionType = react?.type || null;
 
   const payload = {
     ok: true,
-    version,
-    missionsVersion,
-    scoresVersion,
+    hasData: Boolean(tips && tips.length),
+    version, missionsVersion, scoresVersion, reactionsVersion, insightsVersion,
     featureFlags,
-    tips: Array.isArray(garden?.tips) ? garden.tips : [],
-    vibe: feedback?.vibe ?? null,
-    readiness: typeof feedback?.readiness === 'number' ? feedback.readiness : null,
+    tips, vibe, readiness,
+    reactionType,
   };
 
-  return { payload, etag: stableEtagFrom(payload) };
+  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}"`;
+  return { payload, etag: simpleEtag };
 }
+
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 export async function GET(req) {
   try {
-    if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      return new Response(JSON.stringify({ ok: false, error: 'Missing Upstash env' }), { status: 500, headers: noStoreHeaders() });
-    }
-
     const url = new URL(req.url);
-    const wait = Math.max(0, Math.min(25, Number(url.searchParams.get('wait') || 0)));
-    const pairId = getPairIdFromRequest(req);
+    const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
+    const ownerDate = url.searchParams.get('ownerDate') || null;
+    const wait = Math.min(25, Math.max(0, Number(url.searchParams.get('wait') || 0)));
+    if (!pairId) return json({ ok:false, error: 'Missing pairId' }, 400);
+
+    const redis = getRedis();
+    let { payload, etag } = await snapshot(redis, pairId, ownerDate);
+
     const ifNoneMatch = req.headers.get('if-none-match');
-
-    let { payload, etag } = await snapshot(pairId);
-
     if (ifNoneMatch && ifNoneMatch === etag) {
-      if (wait > 0) {
-        const deadline = Date.now() + wait * 1000;
-        while (Date.now() < deadline) {
-          await sleep(1000);
-          const snap = await snapshot(pairId);
-          if (snap.etag !== etag) {
-            payload = snap.payload;
-            etag = snap.etag;
-            return new Response(JSON.stringify(payload), { status: 200, headers: noStoreHeaders({ ETag: etag }) });
-          }
+      if (wait <= 0) {
+        return new Response(null, { status: 304, headers: { ETag: etag, 'Cache-Control': 'no-store' } });
+      }
+      // Long-poll until changed or timeout
+      const started = Date.now();
+      while ((Date.now() - started) < wait * 1000) {
+        await sleep(350);
+        const snap2 = await snapshot(redis, pairId, ownerDate);
+        if (snap2.etag !== etag) {
+          payload = snap2.payload;
+          etag = snap2.etag;
+          break;
         }
       }
-      return new Response(null, { status: 304, headers: noStoreHeaders({ ETag: etag }) });
     }
 
-    return new Response(JSON.stringify(payload), { status: 200, headers: noStoreHeaders({ ETag: etag }) });
-  } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
+    return json(payload, 200, { ETag: etag });
+  } catch (e) {
+    return json({ ok:false, error: String(e?.message || e) }, 500);
   }
 }
