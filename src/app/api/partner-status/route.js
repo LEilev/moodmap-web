@@ -1,4 +1,4 @@
-// /app/api/partner-status/route.js
+// app/api/partner-status/route.js
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -6,22 +6,10 @@ export const revalidate = 0;
 /**
  * GET /api/partner-status
  * Aggregator som returnerer samlet partner-state.
- * Sprint A tillegg:
- *   - Inkludér missionsVersion og scoresVersion (fra state:<pairId>)
- *   - Inkludér featureFlags fra getFeatureFlags()
- *   - Bevar ETag/304 + no-store
- *
- * Respons (eksempel):
- * {
- *   ok: true,
- *   version: 42,
- *   missionsVersion: 3,
- *   scoresVersion: 1,
- *   featureFlags: {...},
- *   vibe: 'calm' | null,
- *   readiness: 0..100 | null,
- *   tips: [...],
- * }
+ * - Inkludér missionsVersion, scoresVersion
+ * - Inkludér featureFlags fra getFeatureFlags()
+ * - v5.0 Foundation merge: utvid flags med ff_insights/ff_reactions (default false)
+ * - Bevar ETag/304
  */
 
 import { getFeatureFlags } from '@/utils/getFeatureFlags';
@@ -30,11 +18,7 @@ const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 function noStoreHeaders(extra = {}) {
-  return {
-    'Cache-Control': 'no-store',
-    'Content-Type': 'application/json; charset=utf-8',
-    ...extra,
-  };
+  return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
 }
 
 async function redis(cmd, ...args) {
@@ -70,12 +54,9 @@ function getPairIdFromRequest(req) {
   return 'anon';
 }
 
-function safeJSONParse(s, fallback) {
-  try { return JSON.parse(s); } catch { return fallback; }
-}
+function safeJSONParse(s, fallback) { try { return JSON.parse(s); } catch { return fallback; } }
 
 function stableEtagFrom(obj) {
-  // ETag basert på sentrale felt
   const basis = JSON.stringify({
     version: obj.version || 0,
     missionsVersion: obj.missionsVersion || 0,
@@ -85,10 +66,7 @@ function stableEtagFrom(obj) {
     tipsLen: Array.isArray(obj.tips) ? obj.tips.length : 0,
     ff: obj.featureFlags,
   });
-  // Weak ETag er tilstrekkelig
-  const base64 = typeof btoa === 'function'
-    ? btoa(basis).slice(0, 32)
-    : Buffer.from(basis).toString('base64').slice(0, 32);
+  const base64 = typeof btoa === 'function' ? btoa(basis).slice(0, 32) : Buffer.from(basis).toString('base64').slice(0, 32);
   return `W/"${base64}"`;
 }
 
@@ -110,7 +88,9 @@ async function snapshot(pairId) {
   const garden = gardenRaw ? safeJSONParse(gardenRaw, {}) : {};
   const feedback = feedbackRaw ? safeJSONParse(feedbackRaw, {}) : {};
 
-  const featureFlags = getFeatureFlags();
+  // v5.0 Foundation merge: extend flags with new keys as safe defaults
+  const serverFlags = getFeatureFlags() || {};
+  const featureFlags = { ff_insights: false, ff_reactions: false, ...serverFlags };
 
   const payload = {
     ok: true,
@@ -118,7 +98,7 @@ async function snapshot(pairId) {
     missionsVersion,
     scoresVersion,
     featureFlags,
-    tips: Array.isArray(garden?.tips) ? garden.tips : [],     // kompatibel med eksisterende front
+    tips: Array.isArray(garden?.tips) ? garden.tips : [],
     vibe: feedback?.vibe ?? null,
     readiness: typeof feedback?.readiness === 'number' ? feedback.readiness : null,
   };
@@ -133,16 +113,14 @@ export async function GET(req) {
     }
 
     const url = new URL(req.url);
-    const wait = Math.max(0, Math.min(25, Number(url.searchParams.get('wait') || 0))); // long-poll opptil 25s
+    const wait = Math.max(0, Math.min(25, Number(url.searchParams.get('wait') || 0)));
     const pairId = getPairIdFromRequest(req);
     const ifNoneMatch = req.headers.get('if-none-match');
 
-    // Første snapshot
     let { payload, etag } = await snapshot(pairId);
 
     if (ifNoneMatch && ifNoneMatch === etag) {
       if (wait > 0) {
-        // Long-poll: vent på endring
         const deadline = Date.now() + wait * 1000;
         while (Date.now() < deadline) {
           await sleep(1000);
@@ -154,16 +132,11 @@ export async function GET(req) {
           }
         }
       }
-      // Ingen endring
       return new Response(null, { status: 304, headers: noStoreHeaders({ ETag: etag }) });
     }
 
-    // Returnér umiddelbart (ikke-modifiserende GET)
     return new Response(JSON.stringify(payload), { status: 200, headers: noStoreHeaders({ ETag: etag }) });
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: String(err?.message || err) }), {
-      status: 500,
-      headers: noStoreHeaders(),
-    });
+    return new Response(JSON.stringify({ ok: false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }
 }

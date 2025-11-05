@@ -1,4 +1,4 @@
-// /app/api/partner-scores/route.js
+// app/api/partner-scores/route.js
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -8,21 +8,14 @@ export const revalidate = 0;
  * - Returnerer ukens score for pairId (dummy bootstrap ved første kall).
  * - Lagrer i Redis og HINCRBY state:<pairId> scoresVersion (+1) ved nyopprettelse.
  * - Respons: { ok:true, scoresVersion, data }
- *
- * Redis keys:
- *   scores:<pairId>:<week>  -> JSON.stringify({ week, peacePassion, sync, empathy, trend })
- *   state:<pairId> (hash)   -> fields: version, missionsVersion, scoresVersion
+ * - v5.0 Foundation merge: På alle feil returneres { ok:false, data:null, error }
  */
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 function noStoreHeaders(extra = {}) {
-  return {
-    'Cache-Control': 'no-store',
-    'Content-Type': 'application/json; charset=utf-8',
-    ...extra,
-  };
+  return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
 }
 
 async function redis(cmd, ...args) {
@@ -48,11 +41,9 @@ function getPairIdFromRequest(req) {
 }
 
 function isoWeekKey(d = new Date()) {
-  // ISO uke: YYYY-Www (UTC)
   const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-  // Thursday in current week decides the year.
-  const dayNr = (date.getUTCDay() + 6) % 7; // 0=Mon..6=Sun
-  date.setUTCDate(date.getUTCDate() - dayNr + 3); // move to Thu
+  const dayNr = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - dayNr + 3);
   const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
   const firstDayNr = (firstThursday.getUTCDay() + 6) % 7;
   firstThursday.setUTCDate(firstThursday.getUTCDate() - firstDayNr + 3);
@@ -63,28 +54,24 @@ function isoWeekKey(d = new Date()) {
 }
 
 function generateDummyScores(weekKey) {
-  // Dummy, men stabil per uke
   const base = [...weekKey].reduce((a, c) => (a + c.charCodeAt(0)) % 1000, 0);
   const clamp = (n) => Math.max(20, Math.min(95, n));
   const peacePassion = clamp((base % 70) + 25);
   const sync = clamp(((base * 3) % 65) + 22);
   const empathy = clamp(((base * 7) % 60) + 25);
-
-  // En enkel 7‑dagers trend (dummy)
   const trend = {
     days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
     peacePassion: Array.from({ length: 7 }, (_, i) => clamp(peacePassion + ((i - 3) * 2))),
     sync:          Array.from({ length: 7 }, (_, i) => clamp(sync + ((i - 2) * 2))),
     empathy:       Array.from({ length: 7 }, (_, i) => clamp(empathy + ((i - 4) * 2))),
   };
-
   return { week: weekKey, peacePassion, sync, empathy, trend };
 }
 
 export async function GET(req) {
   try {
     if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      return new Response(JSON.stringify({ ok: false, error: 'Missing Upstash env' }), { status: 500, headers: noStoreHeaders() });
+      return new Response(JSON.stringify({ ok: false, data: null, error: 'Missing Upstash env' }), { status: 500, headers: noStoreHeaders() });
     }
 
     const pairId = getPairIdFromRequest(req);
@@ -98,8 +85,7 @@ export async function GET(req) {
 
     if (!exists) {
       data = generateDummyScores(weekKey);
-      // Lagres i 8 dager for å dekke hele uke + litt margin
-      await redis('set', scoresKey, JSON.stringify(data), 'EX', String(8 * 24 * 60 * 60));
+      await redis('set', scoresKey, JSON.stringify(data), 'EX', String(8 * 24 * 60 * 60)); // TTL 8 dager
       await redis('hincrby', stateKey, 'scoresVersion', '1');
       created = true;
     } else {
@@ -113,14 +99,8 @@ export async function GET(req) {
       scoresVersion += 1;
     }
 
-    return new Response(JSON.stringify({ ok: true, scoresVersion, data }), {
-      status: 200,
-      headers: noStoreHeaders(),
-    });
+    return new Response(JSON.stringify({ ok: true, scoresVersion, data }), { status: 200, headers: noStoreHeaders() });
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: String(err?.message || err) }), {
-      status: 500,
-      headers: noStoreHeaders(),
-    });
+    return new Response(JSON.stringify({ ok: false, data: null, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }
 }

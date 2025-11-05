@@ -1,3 +1,4 @@
+// app/api/partner-feedback/route.js
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -7,8 +8,10 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
+// v5.0 Foundation merge: always JSON (no empty body) + content-type
 const headersNoStore = {
   'Cache-Control': 'no-store',
+  'Content-Type': 'application/json; charset=utf-8',
 };
 
 const toBool = (v) => {
@@ -18,14 +21,11 @@ const toBool = (v) => {
   return false;
 };
 
-function weakETag(version) {
-  return `W/"${version}"`;
-}
+function weakETag(version) { return `W/"${version}"`; }
 
 async function getState(pairId) {
   const key = `state:${pairId}`;
   const res = await redis.hgetall(key);
-  // Ensure defaults
   const version = Number(res?.version ?? 0);
   return { key, ...res, version };
 }
@@ -33,20 +33,12 @@ async function getState(pairId) {
 async function getFeedback(pairId, ownerDate) {
   const key = `feedback:${pairId}:${ownerDate}`;
   const fv = await redis.hgetall(key);
-  const out = {
-    key,
-    tips: [],
-    vibe: '',
-    readiness: null,
-    reactionAck: false,
-  };
+  const out = { key, tips: [], vibe: '', readiness: null, reactionAck: false };
   if (fv) {
     out.vibe = typeof fv.vibe === 'string' ? fv.vibe : '';
     out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
     out.reactionAck = toBool(fv.reactionAck);
-    if (fv.tips) {
-      try { out.tips = JSON.parse(fv.tips); } catch {}
-    }
+    if (fv.tips) { try { out.tips = JSON.parse(fv.tips); } catch {} }
   }
   return out;
 }
@@ -73,34 +65,28 @@ export async function POST(req) {
     const updateId = String(body.updateId || '').trim();
 
     if (!pairId || !ownerDate || !updateId) {
-      return new Response(JSON.stringify({ error: 'pairId, ownerDate, updateId required' }), {
-        status: 400,
-        headers: { ...headersNoStore },
+      return new Response(JSON.stringify({ ok: false, error: 'pairId, ownerDate, updateId required' }), {
+        status: 400, headers: headersNoStore,
       });
     }
 
-    // 🔒 Blocklist → 403 (symmetrisk unlink)
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
-      return new Response(null, { status: 403, headers: { ...headersNoStore } });
+      return new Response(JSON.stringify({ ok: false, error: 'blocked' }), { status: 403, headers: headersNoStore });
     }
 
-    // Idempotens (ikke dobbel-inkrement av version)
     const idemKey = `idemp:${pairId}:${updateId}`;
     const idem = await redis.set(idemKey, 1, { nx: true, ex: 60 * 60 * 24 });
     if (idem === null) {
       const prevState = await getState(pairId);
-      return new Response(
-        JSON.stringify({ ok: true, version: prevState.version, idempotent: true }),
-        { status: 200, headers: { ...headersNoStore, ETag: weakETag(prevState.version) } }
-      );
+      return new Response(JSON.stringify({ ok: true, version: prevState.version, idempotent: true }), {
+        status: 200, headers: { ...headersNoStore, ETag: weakETag(prevState.version) }
+      });
     }
 
-    // Les eksisterende
     const state = await getState(pairId);
     const feedback = await getFeedback(pairId, ownerDate);
 
-    // Merge-strategi: bare oppdater felter som eksplisitt er sendt
     const patch = {};
     let changed = false;
 
@@ -114,12 +100,10 @@ export async function POST(req) {
       changed = changed || patch.readiness !== feedback.readiness;
     }
     if ('tips' in body && Array.isArray(body.tips)) {
-      // lagre som JSON-streng
       patch.tips = JSON.stringify(body.tips);
       changed = changed || JSON.stringify(feedback.tips || []) !== patch.tips;
     }
 
-    // Reaksjon fra HIM: sett reactionAck=true, men ikke overskriv vibe/tips med tomme verdier
     if ('reactionAck' in body) {
       const ack = toBool(body.reactionAck);
       if (ack !== feedback.reactionAck) {
@@ -128,7 +112,6 @@ export async function POST(req) {
       }
     }
 
-    // Bump av missions/scores versjoner (i state)
     const statePatch = {};
     if ('missionsVersion' in body && body.missionsVersion != null) {
       const mv = Number(body.missionsVersion);
@@ -139,38 +122,27 @@ export async function POST(req) {
       if (!Number.isNaN(sv)) statePatch.scoresVersion = sv;
     }
 
-    // Hvis HER sender nye ting (tips/vibe/readiness), nullstill reactionAck til false (0)
-    const herTouched =
-      ('vibe' in body) || ('readiness' in body) || ('tips' in body);
-    if (herTouched) {
-      patch.reactionAck = '0';
-    }
+    const herTouched = ('vibe' in body) || ('readiness' in body) || ('tips' in body);
+    if (herTouched) patch.reactionAck = '0';
 
-    // Skriv feedback (kun hvis noe endres)
-    if (Object.keys(patch).length > 0) {
-      await redis.hset(feedback.key, patch);
-    }
+    if (Object.keys(patch).length > 0) await redis.hset(feedback.key, patch);
 
-    // Oppdater state.currentDate og ev. missions/scores version
     if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {
       const writePatch = { currentDate: ownerDate, ...statePatch };
       await redis.hset(state.key, writePatch);
     }
 
-    // Øk versjon hvis noe faktisk endret seg (inkl. reactionAck)
     let newVersion = state.version;
     if (changed || herTouched || ('reactionAck' in body) || Object.keys(statePatch).length > 0) {
       newVersion = await redis.hincrby(state.key, 'version', 1);
     }
 
     return new Response(JSON.stringify({ ok: true, version: newVersion }), {
-      status: 200,
-      headers: { ...headersNoStore, ETag: weakETag(newVersion) },
+      status: 200, headers: { ...headersNoStore, ETag: weakETag(newVersion) },
     });
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'server_error', detail: String(err) }), {
-      status: 500,
-      headers: { ...headersNoStore },
+    return new Response(JSON.stringify({ ok: false, error: 'server_error', detail: String(err) }), {
+      status: 500, headers: headersNoStore,
     });
   }
 }
