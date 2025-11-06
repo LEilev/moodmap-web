@@ -1,31 +1,14 @@
-// /app/api/partner-mission/complete/route.js
+// app/api/partner-mission/complete/route.js — Harmony Patch 1
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 /**
  * POST /api/partner-mission/complete
- * Idempotent oppdatering av dagens mission-status for et par.
- *
- * Body (JSON):
- *   {
- *     pairId?: string,           // valgfritt (kan også komme fra header/cookie)
- *     userId?: string,           // for streaks:<userId>
- *     missionId: string,         // f.eks. "m-2025-11-04-0"
- *     updateId?: string          // idempotency key for retry-scenarier
- *   }
- *
- * Redis keys:
- *   missions:<pairId>:<day>      -> JSON.stringify([...])   // dagens oppdragsliste
- *   streaks:<userId> (hash)      -> missionDays: <int>      // teller for oppdragsdager
- *   state:<pairId> (hash)        -> missionsVersion: <int>  // bumpes ved endring
- *   idem:<pairId>:<day>:<missionId>:<updateId> -> '1'  (EX 3d, NX)
- *
- * Effekt:
- *   - Setter mission.status = "done" (om ikke allerede done)
- *   - HINCRBY streaks:<userId> missionDays (+1) *kun første gang*
- *   - HINCRBY state:<pairId> missionsVersion (+1)
- *   - Returnerer { ok:true, xpDelta, streak: { missionDays } }
+ * Idempotent update of today's mission status.
+ * Harmony Patch 1:
+ *  - Bump ecologyVersion to ensure partner-status ETag breaks (garden ecology reacts)
+ *  - (Optional) hook for future ecology:<pairId> updates
  */
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
@@ -54,7 +37,7 @@ function getHeader(req, name) { return req.headers.get(name) || req.headers.get(
 function getFromCookie(req, key) {
   try {
     const cookie = req.headers.get('cookie') || '';
-    const m = new RegExp(`(?:^|;\\s*)${key}\\s*=\\s*([^;]+)`).exec(cookie);
+    const m = new RegExp(`(?:^|;\s*)${key}\s*=\s*([^;]+)`).exec(cookie);
     return m ? decodeURIComponent(m[1]) : null;
   } catch { return null; }
 }
@@ -100,7 +83,7 @@ export async function POST(req) {
     const stateKey = `state:${pairId}`;
     const streakKey = `streaks:${userId}`;
 
-    // Finn og last dagens missions
+    // Load today's missions
     const raw = await redis('get', missionsKey);
     if (!raw) {
       return new Response(JSON.stringify({ ok: false, error: 'missions not found for today' }), { status: 404, headers: noStoreHeaders() });
@@ -116,12 +99,11 @@ export async function POST(req) {
 
     const alreadyDone = missions[idx]?.status === 'done';
 
-    // Idempotency barrier (kun nyttig for retrier av samme updateId)
+    // Idempotency barrier
     if (updateId) {
       const idemKey = `idem:${pairId}:${dayKey}:${missionId}:${updateId}`;
-      const setRes = await redis('set', idemKey, '1', 'EX', String(3 * 24 * 60 * 60), 'NX'); // 3 dager
+      const setRes = await redis('set', idemKey, '1', 'EX', String(3 * 24 * 60 * 60), 'NX'); // 3 days
       if (!setRes) {
-        // Duplicate kall med samme updateId -> returner "ingen endring"
         const curDays = Number(await redis('hget', streakKey, 'missionDays')) || 0;
         return new Response(JSON.stringify({ ok: true, xpDelta: 0, streak: { missionDays: curDays } }), {
           status: 200, headers: noStoreHeaders(),
@@ -129,7 +111,6 @@ export async function POST(req) {
       }
     }
 
-    // Hvis allerede done -> ingen nye sideeffekter
     if (alreadyDone) {
       const curDays = Number(await redis('hget', streakKey, 'missionDays')) || 0;
       return new Response(JSON.stringify({ ok: true, xpDelta: 0, streak: { missionDays: curDays } }), {
@@ -137,20 +118,22 @@ export async function POST(req) {
       });
     }
 
-    // Marker som ferdig
+    // Mark done
     const points = Number(missions[idx]?.points || 0);
     missions[idx] = { ...missions[idx], status: 'done', completedAt: nowISO() };
 
-    // Bevar eksisterende TTL på missions:<...> når vi lagrer på nytt
+    // Preserve existing TTL when saving
     let ttl = Number(await redis('ttl', missionsKey));
-    if (ttl < 0) ttl = 2 * 24 * 60 * 60; // default 2d hvis ingen TTL
+    if (ttl < 0) ttl = 2 * 24 * 60 * 60; // default 2d
     await redis('set', missionsKey, JSON.stringify(missions), 'EX', String(ttl));
 
-    // Øk streak og bump missionsVersion
+    // Streak & versions
     const missionDays = Number(await redis('hincrby', streakKey, 'missionDays', '1')) || 0;
     await redis('hincrby', stateKey, 'missionsVersion', '1');
 
-    // Svar
+    // Harmony Patch 1: bump ecologyVersion (garden mood/sync reacts)
+    await redis('hincrby', stateKey, 'ecologyVersion', '1');
+
     return new Response(JSON.stringify({ ok: true, xpDelta: points, streak: { missionDays } }), {
       status: 200, headers: noStoreHeaders(),
     });

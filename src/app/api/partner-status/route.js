@@ -1,4 +1,6 @@
-// Next 15 Edge API — Sprint D
+// app/api/partner-status/route.js — Harmony Patch 1
+// - Adds ecologyVersion, challengesVersion, syncEnergyScore to payload
+// - ETag now includes these fields to break on change
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -26,21 +28,44 @@ function todayKeyUTC() {
   return `${y}-${m}-${day}`; // yyyy-mm-dd
 }
 
-function isoWeekKey(d = new Date()) {
-  const date = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-  const dayNum = date.getUTCDay() || 7;
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1)/7);
-  const wk = String(weekNo).padStart(2, '0');
-  return `${date.getUTCFullYear()}-W${wk}`;
+function addDaysUTC(d, delta) { const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); x.setUTCDate(x.getUTCDate()+delta); return x; }
+function isoDay(d=new Date()) { return d.toISOString().slice(0,10); }
+function clamp(n, lo=0, hi=100) { return Math.max(lo, Math.min(hi, n)); }
+
+async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
+  // last 7 days inclusive of endDate
+  let kudosDays = 0;
+  let daysWithMissions = 0;
+  let missionsDone = 0;
+  let missionsTotal = 0;
+  for (let i=0;i<7;i++) {
+    const d = addDaysUTC(endDate, -i);
+    const dKey = isoDay(d);
+    try {
+      const mraw = await redis.get(`missions:${pairId}:${dKey}`);
+      if (mraw) {
+        let list = [];
+        try { list = JSON.parse(mraw) || []; } catch {}
+        if (Array.isArray(list) && list.length > 0) {
+          daysWithMissions += 1;
+          missionsTotal += list.length;
+          missionsDone += list.filter(m => m && m.status === 'done').length;
+        }
+      }
+    } catch {}
+    try {
+      const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
+      if (r && (r.type || r.note || r.time)) kudosDays += 1;
+    } catch {}
+  }
+  const missionPct = missionsTotal > 0
+    ? clamp(Math.round((missionsDone / missionsTotal) * 100))
+    : (daysWithMissions > 0 ? 0 : 50);
+  const kudosPct = clamp(Math.round((kudosDays / 7) * 100));
+  return clamp(Math.round(0.5 * missionPct + 0.5 * kudosPct));
 }
 
-function clamp(n, min=0, max=100) { return Math.max(min, Math.min(max, n)); }
-
-function safeParse(jsonStr, fallback = null) {
-  try { return JSON.parse(jsonStr); } catch { return fallback; }
-}
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 async function snapshot(redis, pairId, ownerDate) {
   const state = await redis.hgetall(`state:${pairId}`);
@@ -49,8 +74,10 @@ async function snapshot(redis, pairId, ownerDate) {
   const scoresVersion = Number(state?.scoresVersion || 0);
   const reactionsVersion = Number(state?.reactionsVersion || 0);
   const insightsVersion = Number(state?.insightsVersion || 0);
+  const ecologyVersion = Number(state?.ecologyVersion || 0);
+  const challengesVersion = Number(state?.challengesVersion || 0);
 
-  // Feature flags (global defaults; can later be made pair-specific)
+  // Feature flags
   const ff_coachMode = true;
   const ff_missions = true;
   const ff_scores = true;
@@ -59,8 +86,8 @@ async function snapshot(redis, pairId, ownerDate) {
   const ff_reactions = String(process.env.FF_REACTIONS || '').toLowerCase() === 'true' ? true : false;
   const featureFlags = { ff_coachMode, ff_missions, ff_scores, ff_badges, ff_insights, ff_reactions };
 
-  // Feedback for the given ownerDate (tips/vibe/readiness)
-  const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // legacy used yyyymmdd, fallback to today
+  // Feedback (tips/vibe/readiness)
+  const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // legacy compat
   const fb = await redis.hgetall(fbKey);
   let tips = [];
   let vibe = null;
@@ -69,25 +96,27 @@ async function snapshot(redis, pairId, ownerDate) {
   vibe = fb?.vibe ?? null;
   readiness = fb?.readiness != null ? Number(fb.readiness) : null;
 
-  // Reaction for today (for HIM to display)
+  // Reaction today
   const reactKey = `reactions:${pairId}:${todayKeyUTC()}`;
   const react = await redis.hgetall(reactKey);
   const reactionType = react?.type || null;
+
+  // Harmony: compute syncEnergyScore (cheap 7d scan)
+  const syncEnergyScore = await computeSyncEnergy7d(redis, pairId, new Date());
 
   const payload = {
     ok: true,
     hasData: Boolean(tips && tips.length),
     version, missionsVersion, scoresVersion, reactionsVersion, insightsVersion,
+    ecologyVersion, challengesVersion, syncEnergyScore,
     featureFlags,
     tips, vibe, readiness,
     reactionType,
   };
 
-  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}"`;
+  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}"`;
   return { payload, etag: simpleEtag };
 }
-
-function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 
 export async function GET(req) {
   try {
@@ -108,13 +137,13 @@ export async function GET(req) {
       // Long-poll until changed or timeout
       const started = Date.now();
       while ((Date.now() - started) < wait * 1000) {
-        await sleep(350);
         const snap2 = await snapshot(redis, pairId, ownerDate);
         if (snap2.etag !== etag) {
           payload = snap2.payload;
           etag = snap2.etag;
           break;
         }
+        await new Promise(r => setTimeout(r, 350));
       }
     }
 
