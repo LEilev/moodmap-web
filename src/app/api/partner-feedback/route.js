@@ -1,4 +1,4 @@
-// app/api/partner-feedback/route.js
+// Harmony Patch 2 — Add 24h TTL to daily feedback keys; preserve idempotent POST semantics
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -125,7 +125,11 @@ export async function POST(req) {
     const herTouched = ('vibe' in body) || ('readiness' in body) || ('tips' in body);
     if (herTouched) patch.reactionAck = '0';
 
-    if (Object.keys(patch).length > 0) await redis.hset(feedback.key, patch);
+    if (Object.keys(patch).length > 0) {
+      await redis.hset(feedback.key, patch);
+      // Harmony Patch 2: ensure daily feedback expires after 24h
+      try { await redis.expire(feedback.key, 86400); } catch {}
+    }
 
     if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {
       const writePatch = { currentDate: ownerDate, ...statePatch };

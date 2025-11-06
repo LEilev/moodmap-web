@@ -1,3 +1,4 @@
+// Harmony Patch 2 — Purge also ecology:<pairId> and challenges:<pairId>:* on unlink
 export const runtime = 'edge';
 
 import { redis, expire } from '@/lib/redis.js';
@@ -58,17 +59,30 @@ async function limitByKey(key, limit, windowSec) {
   }
 }
 
-/** Edge-safe helper: delete state:<pairId> and all feedback:<pairId>:* keys via SCAN + pipeline. */
+/** Edge-safe helper: delete state:<pairId>, ecology:<pairId>, feedback:<pairId>:* and challenges:<pairId>:* via SCAN + pipeline. */
 async function purgePairData(pairId) {
   if (!redis) return;
   try {
     const stateKey = `state:${pairId}`;
-    // Gather feedback keys with SCAN to avoid KEYS (Edge-safe)
+    const ecoKey = `ecology:${pairId}`;
+    const toDelete = [stateKey, ecoKey];
+
+    // Gather feedback keys
     let cursor = 0;
-    const match = `feedback:${pairId}:*`;
-    const toDelete = [stateKey];
+    const fbMatch = `feedback:${pairId}:*`;
     do {
-      const res = await redis.scan(cursor, { match, count: 100 });
+      const res = await redis.scan(cursor, { match: fbMatch, count: 100 });
+      const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);
+      const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);
+      for (const k of keys) toDelete.push(k);
+      cursor = nextCursor;
+    } while (cursor !== 0);
+
+    // Gather challenge keys
+    cursor = 0;
+    const chMatch = `challenges:${pairId}:*`;
+    do {
+      const res = await redis.scan(cursor, { match: chMatch, count: 100 });
       const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);
       const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);
       for (const k of keys) toDelete.push(k);
@@ -88,7 +102,7 @@ async function purgePairData(pairId) {
 /**
  * POST /api/partner-unlink
  * Body: { pairId }
- * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback
+ * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback/ecology/challenges
  * Success: { ok: true }
  * Errors: 400 invalid pairId, 429 RL, 503 service unavailable
  */

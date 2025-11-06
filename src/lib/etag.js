@@ -1,3 +1,4 @@
+// Harmony Patch 2 — Add sanitizeEtag() to ensure ASCII-safe HTTP ETag headers
 /**
  * src/lib/etag.js
  *
@@ -32,4 +33,15 @@ export function isETagMatch(etagFromClient, serverETag) {
   if (!etagFromClient || !serverETag) return false;
   const clean = etagFromClient.replace(/^W\//, '').replace(/^"+|"+$/g, '');
   return clean === serverETag;
+}
+
+/**
+ * sanitizeEtag - Remove any non-ASCII characters from an ETag string
+ * to avoid Vercel/Node rejecting response headers (e.g., emoji in vibe).
+ * @param {string} etag
+ * @returns {string}
+ */
+export function sanitizeEtag(etag) {
+  if (!etag || typeof etag !== 'string') return '';
+  return etag.replace(/[^\x20-\x7E]/g, '');
 }

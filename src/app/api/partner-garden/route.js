@@ -1,8 +1,9 @@
-// app/api/partner-garden/route.js — Harmony Patch 2
-// Returns garden ecology snapshot for UI overlays
+// Harmony Patch 2 — Ecology TTL (30h) + sanitized ETag header for conditional clients
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
+
+import { sanitizeEtag } from '@/lib/etag.js';
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
@@ -83,12 +84,15 @@ export async function GET(req) {
       const prevMood = raw?.gardenMood || null;
       const prevWeather = raw?.weatherState || null;
       await redis('hset', ecoKey, 'gardenMood', gardenMood, 'weatherState', weatherState, 'syncEnergy', String(energy), 'glowUntil', glowUntil || '');
+      // Harmony Patch 2: TTL ~30h for ecology
+      try { await redis('expire', ecoKey, '108000'); } catch {}
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
         await redis('hincrby', `state:${pairId}`, 'gardenMoodVersion', '1');
       }
     } catch {}
 
-    return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), { status: 200, headers: noStoreHeaders() });
+    const etag = sanitizeEtag(`W/"${gardenMood}.${weatherState}.${energy}.${glowUntil || ''}"`);
+    return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), { status: 200, headers: noStoreHeaders({ ETag: etag }) });
   } catch (err) {
     return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }

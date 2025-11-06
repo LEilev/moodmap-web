@@ -1,11 +1,9 @@
-// app/api/partner-status/route.js — Harmony Patch 2
-// - Adds gardenMoodVersion, weatherState, forecast72h, activeChallenges[]
-// - ETag now includes gardenMoodVersion + weatherState + a compact challenges signature
-// - Adds feature flags ff_challenges, ff_garden
+// Harmony Patch 2 — ETag ASCII sanitization + optional ecology TTL (30h) and safer 304/long‑poll
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 import { Redis } from '@upstash/redis';
+import { sanitizeEtag } from '@/lib/etag.js';
 
 function getRedis() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -103,6 +101,8 @@ async function resolveGarden(redis, pairId, syncEnergyScore) {
     const prevMood = cur?.gardenMood || null;
     const prevWeather = cur?.weatherState || null;
     await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(syncEnergyScore), glowUntil: glowUntil || '' });
+    // Harmony Patch 2: ensure TTL ~30h
+    try { await redis.expire(ecoKey, 108000); } catch {}
     if (prevMood !== gardenMood || prevWeather !== weatherState) {
       shouldBumpGarden = true;
     }
@@ -237,11 +237,12 @@ export async function GET(req) {
 
     const redis = getRedis();
     let { payload, etag } = await snapshot(redis, pairId, ownerDate);
+    let safeEtag = sanitizeEtag(String(etag || ''));
 
     const ifNoneMatch = req.headers.get('if-none-match');
-    if (ifNoneMatch && ifNoneMatch === etag) {
+    if (ifNoneMatch && ifNoneMatch === safeEtag) {
       if (wait <= 0) {
-        return new Response(null, { status: 304, headers: { ETag: etag, 'Cache-Control': 'no-store' } });
+        return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
       }
       // Long-poll until changed or timeout
       const started = Date.now();
@@ -250,6 +251,7 @@ export async function GET(req) {
         if (snap2.etag !== etag) {
           payload = snap2.payload;
           etag = snap2.etag;
+          safeEtag = sanitizeEtag(String(etag || ''));
           break;
         }
         // small async pause
@@ -257,7 +259,8 @@ export async function GET(req) {
       }
     }
 
-    return json(payload, 200, { ETag: etag });
+    const hdr = safeEtag ? { ETag: safeEtag } : {};
+    return json(payload, 200, hdr);
   } catch (e) {
     return json({ ok:false, error: String(e?.message || e) }, 500);
   }
