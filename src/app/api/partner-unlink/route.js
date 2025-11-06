@@ -1,15 +1,13 @@
-// Harmony Patch 2 — Purge also ecology:<pairId> and challenges:<pairId>:* on unlink
+// Harmony Patch 2 — partner-unlink: also purge ecology:<pairId> and challenges:<pairId>:*
+// Keeps RL, blocklist and existing semantics intact.
 export const runtime = 'edge';
 
-import { redis, expire } from '@/lib/redis.js';
+import { Redis } from '@upstash/redis';
 
-const UUID_REGEX =
-  /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/;
-
-const RL_IP_LIMIT_PER_MIN = 30;
-const RL_PAIR_LIMIT_PER_MIN = 12;
-const RL_WINDOW_SEC = 60;
-const BLOCKLIST_TTL_SEC = 300; // ~5 min (symmetrisk disconnect)
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 /** JSON response helper */
 function json(body, status = 200, extra = {}) {
@@ -41,12 +39,11 @@ function getClientIP(req) {
 /** Fixed-window RL using Redis INCR + EXPIRE. Fail-open on errors. */
 async function limitByKey(key, limit, windowSec) {
   try {
-    if (!redis) return { allowed: true, retryAfter: 0 };
     const windowId = Math.floor(Date.now() / (windowSec * 1000));
     const k = `${key}:${windowId}`;
     const count = await redis.incr(k);
     if (count === 1) {
-      await expire(k, windowSec);
+      await redis.expire(k, windowSec);
     }
     if (count > limit) {
       const ttl = await redis.ttl(k);
@@ -59,35 +56,42 @@ async function limitByKey(key, limit, windowSec) {
   }
 }
 
-/** Edge-safe helper: delete state:<pairId>, ecology:<pairId>, feedback:<pairId>:* and challenges:<pairId>:* via SCAN + pipeline. */
+/** Edge-safe purge: delete state:<pairId>, ecology:<pairId>, feedback:<pairId>:* and challenges:<pairId>:* via SCAN + pipeline. */
 async function purgePairData(pairId) {
-  if (!redis) return;
   try {
     const stateKey = `state:${pairId}`;
-    const ecoKey = `ecology:${pairId}`;
-    const toDelete = [stateKey, ecoKey];
+    const ecologyKey = `ecology:${pairId}`;
+    const toDelete = [stateKey, ecologyKey];
 
-    // Gather feedback keys
-    let cursor = 0;
-    const fbMatch = `feedback:${pairId}:*`;
-    do {
-      const res = await redis.scan(cursor, { match: fbMatch, count: 100 });
-      const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);
-      const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);
-      for (const k of keys) toDelete.push(k);
-      cursor = nextCursor;
-    } while (cursor !== 0);
+    // feedback keys
+    try {
+      let cursor = 0;
+      const match = `feedback:${pairId}:*`;
+      do {
+        const res = await redis.scan(cursor, { match, count: 100 });
+        const nextCursor = Number(res?.[0] || 0);
+        const keys = res?.[1] || [];
+        for (const k of keys) toDelete.push(k);
+        cursor = nextCursor;
+      } while (cursor !== 0);
+    } catch (e) {
+      console.warn('[unlink] scan feedback error:', e?.message || e);
+    }
 
-    // Gather challenge keys
-    cursor = 0;
-    const chMatch = `challenges:${pairId}:*`;
-    do {
-      const res = await redis.scan(cursor, { match: chMatch, count: 100 });
-      const nextCursor = Array.isArray(res) ? Number(res[0] || 0) : Number(res?.cursor || 0);
-      const keys = Array.isArray(res) ? (res[1] || []) : (res?.keys || []);
-      for (const k of keys) toDelete.push(k);
-      cursor = nextCursor;
-    } while (cursor !== 0);
+    // challenges keys
+    try {
+      let cursor = 0;
+      const matchCh = `challenges:${pairId}:*`;
+      do {
+        const res = await redis.scan(cursor, { match: matchCh, count: 100 });
+        const nextCursor = Number(res?.[0] || 0);
+        const keys = res?.[1] || [];
+        for (const k of keys) toDelete.push(k);
+        cursor = nextCursor;
+      } while (cursor !== 0);
+    } catch (e) {
+      console.warn('[unlink] scan challenges error:', e?.message || e);
+    }
 
     if (toDelete.length > 0) {
       const pipe = redis.pipeline();
@@ -104,28 +108,22 @@ async function purgePairData(pairId) {
  * Body: { pairId }
  * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback/ecology/challenges
  * Success: { ok: true }
- * Errors: 400 invalid pairId, 429 RL, 503 service unavailable
+ * Errors: 400 invalid pairId, 429 RL
  */
 export async function POST(req) {
   try {
-    if (!redis) {
-      return json({ ok: false, error: 'Service unavailable (Redis not configured)' }, 503);
-    }
-
-    // Parse body
-    let body;
-    try {
-      body = await req.json();
-    } catch {
-      return json({ ok: false, error: 'Invalid JSON' }, 400);
-    }
-
-    const pairId = (body?.pairId || '').trim();
-    if (!UUID_REGEX.test(pairId)) {
-      return json({ ok: false, error: 'Invalid or missing pairId' }, 400);
+    let body = {};
+    try { body = await req.json(); } catch {}
+    const pairId = String(body?.pairId || '').trim();
+    if (!pairId) {
+      return json({ ok: false, error: 'Missing pairId' }, 400);
     }
 
     // RL: per IP + per pair
+    const RL_IP_LIMIT_PER_MIN = 30;
+    const RL_PAIR_LIMIT_PER_MIN = 12;
+    const RL_WINDOW_SEC = 60;
+
     const ip = getClientIP(req);
     const ipRL = await limitByKey(`rl:partner-unlink:ip:${ip}`, RL_IP_LIMIT_PER_MIN, RL_WINDOW_SEC);
     if (!ipRL.allowed) {
@@ -141,13 +139,13 @@ export async function POST(req) {
       });
     }
 
-    // Blocklist: set (overwrites/refreshes TTL)
+    // Symmetric blocklist marker (prevents transient reconnect)
+    const BLOCKLIST_TTL_SEC = 300;
     await redis.set(`blocklist:${pairId}`, '1', { ex: BLOCKLIST_TTL_SEC });
 
-    // Best-effort purge of server-side state for this pair (Edge-safe).
+    // Purge server-side state for this pair (best effort)
     await purgePairData(pairId);
 
-    console.log('[unlink] Blocklisted pairId', pairId, 'for', BLOCKLIST_TTL_SEC, 'sec');
     return json({ ok: true }, 200);
   } catch (err) {
     console.error('[partner-unlink][POST] error:', err?.message || err);

@@ -1,23 +1,18 @@
-// Harmony Patch 2 — Ecology TTL (30h) + sanitized ETag header for conditional clients
+// Harmony Patch 2 — partner-garden: ecology TTL (30h) + ASCII-safe ETag + 304 support
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-import { sanitizeEtag } from '@/lib/etag.js';
+import { Redis } from '@upstash/redis';
+import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 
-const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
-const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
-function noStoreHeaders(extra = {}) {
+function noStore(extra = {}) {
   return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
-}
-
-async function redis(cmd, ...args) {
-  const url = `${UPSTASH_URL}/${cmd}/${args.map(a => encodeURIComponent(String(a))).join('/')}`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` } });
-  if (!res.ok) throw new Error(`Upstash ${cmd} failed: ${res.status} ${await res.text()}`);
-  const data = await res.json();
-  return data.result;
 }
 
 function dayIso(d = new Date()) { return d.toISOString().slice(0,10); }
@@ -29,7 +24,7 @@ async function computeSyncEnergy7d(pairId, endDate = new Date()) {
   for (let i=0;i<7;i++) {
     const dKey = dayIso(addDays(endDate, -i));
     try {
-      const mraw = await redis('get', `missions:${pairId}:${dKey}`);
+      const mraw = await redis.get(`missions:${pairId}:${dKey}`);
       if (mraw) {
         let list = []; try { list = JSON.parse(mraw) || []; } catch {}
         if (Array.isArray(list) && list.length > 0) {
@@ -40,7 +35,7 @@ async function computeSyncEnergy7d(pairId, endDate = new Date()) {
       }
     } catch {}
     try {
-      const r = await redis('hgetall', `reactions:${pairId}:${dKey}`);
+      const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
       if (r && (r.type || r.note || r.time)) kudosDays += 1;
     } catch {}
   }
@@ -54,17 +49,14 @@ function energyToMood(e) { if (e < 40) return 'stormy'; if (e > 80) return 'vibr
 
 export async function GET(req) {
   try {
-    if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      return new Response(JSON.stringify({ ok:false, error: 'Missing Upstash env' }), { status: 500, headers: noStoreHeaders() });
-    }
     const url = new URL(req.url);
     const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
-    if (!pairId) return new Response(JSON.stringify({ ok:false, error:'Missing pairId' }), { status: 400, headers: noStoreHeaders() });
+    if (!pairId) return new Response(JSON.stringify({ ok:false, error:'Missing pairId' }), { status: 400, headers: noStore() });
 
     const energy = await computeSyncEnergy7d(pairId, new Date());
     let glowUntil = null;
     try {
-      const react = await redis('hgetall', `reactions:${pairId}:${dayIso(new Date())}`);
+      const react = await redis.hgetall(`reactions:${pairId}:${dayIso(new Date())}`);
       if (react && react.time) {
         const t = Date.parse(String(react.time));
         if (!Number.isNaN(t)) {
@@ -77,23 +69,31 @@ export async function GET(req) {
     const gardenMood = energyToMood(energy);
     const weatherState = energyToWeather(energy);
 
-    // Persist ecology and optionally bump gardenMoodVersion if changed
     try {
       const ecoKey = `ecology:${pairId}`;
-      const raw = await redis('hgetall', ecoKey);
+      const raw = await redis.hgetall(ecoKey);
       const prevMood = raw?.gardenMood || null;
       const prevWeather = raw?.weatherState || null;
-      await redis('hset', ecoKey, 'gardenMood', gardenMood, 'weatherState', weatherState, 'syncEnergy', String(energy), 'glowUntil', glowUntil || '');
-      // Harmony Patch 2: TTL ~30h for ecology
-      try { await redis('expire', ecoKey, '108000'); } catch {}
+      await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(energy), glowUntil: glowUntil || '' });
+      // TTL ~30h
+      try { await redis.expire(ecoKey, 108000); } catch {}
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
-        await redis('hincrby', `state:${pairId}`, 'gardenMoodVersion', '1');
+        await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
       }
     } catch {}
 
-    const etag = sanitizeEtag(`W/"${gardenMood}.${weatherState}.${energy}.${glowUntil || ''}"`);
-    return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), { status: 200, headers: noStoreHeaders({ ETag: etag }) });
+    const rawEtag = `W/"g.${gardenMood}.${weatherState}.${energy}.${glowUntil || ''}"`;
+    const etag = sanitizeEtag(rawEtag);
+    const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
+    if (inm && inm === etag) {
+      return new Response(null, { status: 304, headers: noStore({ ETag: etag }) });
+    }
+
+    return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), {
+      status: 200,
+      headers: noStore({ ETag: etag }),
+    });
   } catch (err) {
-    return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
+    return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStore() });
   }
 }

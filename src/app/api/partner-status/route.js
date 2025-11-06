@@ -1,9 +1,9 @@
-// Harmony Patch 2 — ETag ASCII sanitization + optional ecology TTL (30h) and safer 304/long‑poll
+// Harmony Patch 2 — partner-status: ASCII-safe ETag + 304/long-poll; ecology TTL (30h) persistence
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 import { Redis } from '@upstash/redis';
-import { sanitizeEtag } from '@/lib/etag.js';
+import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 
 function getRedis() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -101,7 +101,7 @@ async function resolveGarden(redis, pairId, syncEnergyScore) {
     const prevMood = cur?.gardenMood || null;
     const prevWeather = cur?.weatherState || null;
     await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(syncEnergyScore), glowUntil: glowUntil || '' });
-    // Harmony Patch 2: ensure TTL ~30h
+    // TTL ~30h
     try { await redis.expire(ecoKey, 108000); } catch {}
     if (prevMood !== gardenMood || prevWeather !== weatherState) {
       shouldBumpGarden = true;
@@ -118,13 +118,10 @@ async function listActiveChallenges(redis, pairId, limit=3) {
   try {
     do {
       const res = await redis.scan(cursor, { match: `challenges:${pairId}:*`, count: 50 });
-      cursor = Number(res[0]);
+      cursor = Number(res[0] || 0);
       const batch = res[1] || [];
       for (const k of batch) {
-        // ignore non-item keys if any
-        if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) {
-          keys.push(k);
-        }
+        if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) keys.push(k);
       }
     } while (cursor !== 0 && keys.length < 24);
   } catch {}
@@ -136,8 +133,7 @@ async function listActiveChallenges(redis, pairId, limit=3) {
       if (!raw) continue;
       const obj = JSON.parse(raw);
       if (!obj || !obj.expiresAt) continue;
-      if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired by time (belt+suspenders; TTL should drop key)
-      // derive id from key tail
+      if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired
       const id = k.split(':').slice(-1)[0];
       items.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
     } catch {}
@@ -177,7 +173,7 @@ async function snapshot(redis, pairId, ownerDate) {
   const featureFlags = { ff_coachMode, ff_missions, ff_scores, ff_badges, ff_insights, ff_reactions, ff_challenges, ff_garden };
 
   // Feedback (tips/vibe/readiness)
-  const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // legacy compat
+  const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // tolerate legacy formats
   const fb = await redis.hgetall(fbKey);
   let tips = [];
   let vibe = null;
@@ -223,8 +219,8 @@ async function snapshot(redis, pairId, ownerDate) {
   // Compact signature so that challenge expiry also breaks ETag
   const chCount = activeChallenges.length;
   const nextExp = chCount ? Math.floor(Math.min(...activeChallenges.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
-  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
-  return { payload, etag: simpleEtag };
+  const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
+  return { payload, etag: rawEtag };
 }
 
 export async function GET(req) {
@@ -238,9 +234,9 @@ export async function GET(req) {
     const redis = getRedis();
     let { payload, etag } = await snapshot(redis, pairId, ownerDate);
     let safeEtag = sanitizeEtag(String(etag || ''));
+    const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
 
-    const ifNoneMatch = req.headers.get('if-none-match');
-    if (ifNoneMatch && ifNoneMatch === safeEtag) {
+    if (inm && inm === safeEtag) {
       if (wait <= 0) {
         return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
       }
@@ -248,19 +244,17 @@ export async function GET(req) {
       const started = Date.now();
       while ((Date.now() - started) < wait * 1000) {
         const snap2 = await snapshot(redis, pairId, ownerDate);
-        if (snap2.etag !== etag) {
+        const e2 = sanitizeEtag(String(snap2.etag || ''));
+        if (e2 !== safeEtag) {
           payload = snap2.payload;
-          etag = snap2.etag;
-          safeEtag = sanitizeEtag(String(etag || ''));
+          safeEtag = e2;
           break;
         }
-        // small async pause
         await new Promise(r => setTimeout(r, 350));
       }
     }
 
-    const hdr = safeEtag ? { ETag: safeEtag } : {};
-    return json(payload, 200, hdr);
+    return json(payload, 200, safeEtag ? { ETag: safeEtag } : {});
   } catch (e) {
     return json({ ok:false, error: String(e?.message || e) }, 500);
   }

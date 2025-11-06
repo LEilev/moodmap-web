@@ -1,4 +1,4 @@
-// Harmony Patch 2 — Add 24h TTL to daily feedback keys; preserve idempotent POST semantics
+// Harmony Patch 2 — partner-feedback: add 24h TTL for daily feedback; preserve idempotent semantics
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -8,7 +8,6 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-// v5.0 Foundation merge: always JSON (no empty body) + content-type
 const headersNoStore = {
   'Cache-Control': 'no-store',
   'Content-Type': 'application/json; charset=utf-8',
@@ -21,13 +20,12 @@ const toBool = (v) => {
   return false;
 };
 
-function weakETag(version) { return `W/"${version}"`; }
+const weakETag = (v) => `W/"${v}"`;
 
 async function getState(pairId) {
   const key = `state:${pairId}`;
   const res = await redis.hgetall(key);
-  const version = Number(res?.version ?? 0);
-  return { key, ...res, version };
+  return { key, version: Number(res?.version ?? 0), ...res };
 }
 
 async function getFeedback(pairId, ownerDate) {
@@ -43,20 +41,6 @@ async function getFeedback(pairId, ownerDate) {
   return out;
 }
 
-/**
- * POST body (eksempel):
- * {
- *   pairId: "abc",
- *   ownerDate: "2025-11-02",
- *   updateId: "ulid-123",
- *   vibe: "🙂",
- *   readiness: 6,
- *   tips: ["t1","t2"],
- *   reactionAck: true,           // HIM → HER
- *   missionsVersion: 12,         // (valgfri bump)
- *   scoresVersion: 8             // (valgfri bump)
- * }
- */
 export async function POST(req) {
   try {
     const body = await req.json().catch(() => ({}));
@@ -75,12 +59,13 @@ export async function POST(req) {
       return new Response(JSON.stringify({ ok: false, error: 'blocked' }), { status: 403, headers: headersNoStore });
     }
 
+    // Idempotency – 24h window
     const idemKey = `idemp:${pairId}:${updateId}`;
     const idem = await redis.set(idemKey, 1, { nx: true, ex: 60 * 60 * 24 });
     if (idem === null) {
-      const prevState = await getState(pairId);
-      return new Response(JSON.stringify({ ok: true, version: prevState.version, idempotent: true }), {
-        status: 200, headers: { ...headersNoStore, ETag: weakETag(prevState.version) }
+      const prev = await getState(pairId);
+      return new Response(JSON.stringify({ ok: true, version: prev.version, idempotent: true }), {
+        status: 200, headers: { ...headersNoStore, ETag: weakETag(prev.version) },
       });
     }
 
@@ -127,7 +112,7 @@ export async function POST(req) {
 
     if (Object.keys(patch).length > 0) {
       await redis.hset(feedback.key, patch);
-      // Harmony Patch 2: ensure daily feedback expires after 24h
+      // Ensure daily feedback expires after 24h
       try { await redis.expire(feedback.key, 86400); } catch {}
     }
 
