@@ -1,6 +1,7 @@
-// app/api/partner-status/route.js — Harmony Patch 1
-// - Adds ecologyVersion, challengesVersion, syncEnergyScore to payload
-// - ETag now includes these fields to break on change
+// app/api/partner-status/route.js — Harmony Patch 2
+// - Adds gardenMoodVersion, weatherState, forecast72h, activeChallenges[]
+// - ETag now includes gardenMoodVersion + weatherState + a compact challenges signature
+// - Adds feature flags ff_challenges, ff_garden
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +17,7 @@ function getRedis() {
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store', ...extraHeaders },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extraHeaders },
   });
 }
 
@@ -33,7 +34,6 @@ function isoDay(d=new Date()) { return d.toISOString().slice(0,10); }
 function clamp(n, lo=0, hi=100) { return Math.max(lo, Math.min(hi, n)); }
 
 async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
-  // last 7 days inclusive of endDate
   let kudosDays = 0;
   let daysWithMissions = 0;
   let missionsDone = 0;
@@ -65,7 +65,94 @@ async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
   return clamp(Math.round(0.5 * missionPct + 0.5 * kudosPct));
 }
 
-function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
+function energyToWeather(e) {
+  if (e < 40) return 'stormy';
+  if (e < 55) return 'rainy';
+  if (e < 80) return 'cloudy';
+  return 'sunny';
+}
+function energyToMood(e) {
+  if (e < 40) return 'stormy';
+  if (e > 80) return 'vibrant';
+  return 'calm';
+}
+
+async function resolveGarden(redis, pairId, syncEnergyScore) {
+  // Derive glow from today's last reaction (2h window)
+  let glowUntil = null;
+  try {
+    const react = await redis.hgetall(`reactions:${pairId}:${todayKeyUTC()}`);
+    if (react && react.time) {
+      const t = Date.parse(String(react.time));
+      if (!Number.isNaN(t)) {
+        const until = new Date(t + 2 * 60 * 60 * 1000);
+        if (until > new Date()) glowUntil = until.toISOString();
+      }
+    }
+  } catch {}
+
+  // Base mapping
+  let gardenMood = energyToMood(syncEnergyScore);
+  let weatherState = energyToWeather(syncEnergyScore);
+
+  // Persist ecology:{pairId} and bump gardenMoodVersion if changed
+  let shouldBumpGarden = false;
+  try {
+    const ecoKey = `ecology:${pairId}`;
+    const cur = await redis.hgetall(ecoKey);
+    const prevMood = cur?.gardenMood || null;
+    const prevWeather = cur?.weatherState || null;
+    await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(syncEnergyScore), glowUntil: glowUntil || '' });
+    if (prevMood !== gardenMood || prevWeather !== weatherState) {
+      shouldBumpGarden = true;
+    }
+  } catch {}
+
+  return { gardenMood, weatherState, glowUntil, shouldBumpGarden };
+}
+
+async function listActiveChallenges(redis, pairId, limit=3) {
+  // scan for keys challenges:{pairId}:*
+  let cursor = 0;
+  const keys = [];
+  try {
+    do {
+      const res = await redis.scan(cursor, { match: `challenges:${pairId}:*`, count: 50 });
+      cursor = Number(res[0]);
+      const batch = res[1] || [];
+      for (const k of batch) {
+        // ignore non-item keys if any
+        if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) {
+          keys.push(k);
+        }
+      }
+    } while (cursor !== 0 && keys.length < 24);
+  } catch {}
+
+  const items = [];
+  for (const k of keys) {
+    try {
+      const raw = await redis.get(k);
+      if (!raw) continue;
+      const obj = JSON.parse(raw);
+      if (!obj || !obj.expiresAt) continue;
+      if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired by time (belt+suspenders; TTL should drop key)
+      // derive id from key tail
+      const id = k.split(':').slice(-1)[0];
+      items.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
+    } catch {}
+  }
+  items.sort((a,b) => (Date.parse(a.expiresAt||0) - Date.parse(b.expiresAt||0)));
+  return items.slice(0, limit);
+}
+
+function forecastFromEnergy(e0) {
+  const ease = (a,b,alpha) => a + (b - a) * alpha;
+  const e1 = clamp(Math.round(ease(e0, 50, 0.10))); // regress slightly to mean
+  const e2 = clamp(Math.round(ease(e1, 50, 0.10)));
+  const e3 = clamp(Math.round(ease(e2, 50, 0.10)));
+  return [energyToWeather(e1), energyToWeather(e2), energyToWeather(e3)];
+}
 
 async function snapshot(redis, pairId, ownerDate) {
   const state = await redis.hgetall(`state:${pairId}`);
@@ -76,6 +163,7 @@ async function snapshot(redis, pairId, ownerDate) {
   const insightsVersion = Number(state?.insightsVersion || 0);
   const ecologyVersion = Number(state?.ecologyVersion || 0);
   const challengesVersion = Number(state?.challengesVersion || 0);
+  const gardenMoodVersion = Number(state?.gardenMoodVersion || 0);
 
   // Feature flags
   const ff_coachMode = true;
@@ -84,7 +172,9 @@ async function snapshot(redis, pairId, ownerDate) {
   const ff_badges = String(state?.ff_badges || '').toLowerCase() === 'true' || false;
   const ff_insights = String(process.env.FF_INSIGHTS || '').toLowerCase() === 'true' ? true : false;
   const ff_reactions = String(process.env.FF_REACTIONS || '').toLowerCase() === 'true' ? true : false;
-  const featureFlags = { ff_coachMode, ff_missions, ff_scores, ff_badges, ff_insights, ff_reactions };
+  const ff_challenges = String(process.env.FF_CHALLENGES || '').toLowerCase() === 'true' ? true : false;
+  const ff_garden = String(process.env.FF_GARDEN || process.env.FF_ECOLOGY || '').toLowerCase() === 'true' ? true : false;
+  const featureFlags = { ff_coachMode, ff_missions, ff_scores, ff_badges, ff_insights, ff_reactions, ff_challenges, ff_garden };
 
   // Feedback (tips/vibe/readiness)
   const fbKey = `feedback:${pairId}:${ownerDate || todayKeyUTC().replaceAll('-','')}`; // legacy compat
@@ -104,17 +194,36 @@ async function snapshot(redis, pairId, ownerDate) {
   // Harmony: compute syncEnergyScore (cheap 7d scan)
   const syncEnergyScore = await computeSyncEnergy7d(redis, pairId, new Date());
 
+  // Garden resolve (mood/weather/glow) + optionally bump gardenMoodVersion
+  const { gardenMood, weatherState, glowUntil, shouldBumpGarden } = await resolveGarden(redis, pairId, syncEnergyScore);
+  if (shouldBumpGarden) {
+    await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
+  }
+  const curGardenMoodVersion = shouldBumpGarden ? (gardenMoodVersion + 1) : gardenMoodVersion;
+
+  // Active challenges
+  const activeChallenges = featureFlags.ff_challenges ? await listActiveChallenges(redis, pairId, 3) : [];
+
+  // Lightweight 72h forecast (3 slots)
+  const forecast72h = forecastFromEnergy(syncEnergyScore);
+
   const payload = {
     ok: true,
     hasData: Boolean(tips && tips.length),
     version, missionsVersion, scoresVersion, reactionsVersion, insightsVersion,
-    ecologyVersion, challengesVersion, syncEnergyScore,
+    ecologyVersion, challengesVersion, gardenMoodVersion: curGardenMoodVersion, syncEnergyScore,
     featureFlags,
     tips, vibe, readiness,
     reactionType,
+    weatherState,
+    forecast72h,
+    activeChallenges,
   };
 
-  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}"`;
+  // Compact signature so that challenge expiry also breaks ETag
+  const chCount = activeChallenges.length;
+  const nextExp = chCount ? Math.floor(Math.min(...activeChallenges.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
+  const simpleEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
   return { payload, etag: simpleEtag };
 }
 
@@ -143,6 +252,7 @@ export async function GET(req) {
           etag = snap2.etag;
           break;
         }
+        // small async pause
         await new Promise(r => setTimeout(r, 350));
       }
     }
