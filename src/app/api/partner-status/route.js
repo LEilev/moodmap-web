@@ -15,6 +15,14 @@ function getRedis() {
   return new Redis({ url, token });
 }
 
+
+function readFlag(name, fallback = false) {
+  const v = (process.env[name] ?? process.env[`EXPO_PUBLIC_${name}`] ?? '').toString().toLowerCase();
+  if (v === 'true') return true;
+  if (v === 'false') return false;
+  return fallback;
+}
+
 function json(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -155,14 +163,18 @@ async function snapshot(redis, pairId, ownerDateParam) {
   const isValidConnection = !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
 
   const featureFlags = {
-    ff_coachMode: true,
-    ff_missions: true,
-    ff_scores: true,
-    ff_badges: String(state?.ff_badges || '').toLowerCase() === 'true' || false,
-    ff_insights: String(process.env.FF_INSIGHTS || '').toLowerCase() === 'true' ? true : false,
-    ff_reactions: String(process.env.FF_REACTIONS || '').toLowerCase() === 'true' ? true : false,
-    ff_challenges: String(process.env.FF_CHALLENGES || '').toLowerCase() === 'true' ? true : false,
-    ff_garden: String(process.env.FF_GARDEN || process.env.FF_ECOLOGY || '').toLowerCase() === 'true' ? true : false,
+    // Required Harmony toggles (always included)
+    ff_coach:      readFlag('FF_COACH', true),
+    ff_garden:     readFlag('FF_GARDEN', true),
+    ff_ecology:    readFlag('FF_ECOLOGY', true),
+    ff_challenges: readFlag('FF_CHALLENGES', true),
+    ff_reactions:  readFlag('FF_REACTIONS', true),
+    ff_insights:   readFlag('FF_INSIGHTS', true),
+    // Back-compat keys (kept to avoid breaking older clients)
+    ff_coachMode:  readFlag('FF_COACH', true),
+    ff_missions:   true,
+    ff_scores:     true,
+    ff_badges:     (String(state?.ff_badges || '').toLowerCase() === 'true') || readFlag('FF_BADGES', false),
   };
 
   // Determine day key: prefer state.currentDate (Harmony), else normalized ownerDate, else UTC today
@@ -271,7 +283,7 @@ async function snapshot(redis, pairId, ownerDateParam) {
   const chCount = active.length;
   const nextExp = chCount ? Math.floor(Math.min(...active.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
   const vibeSlot = asciiWithEmojiHash(vibe || '');
-  const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${vibeSlot}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
+  const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${vibeSlot}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}${featureFlags.ff_coach?'1':'0'}${featureFlags.ff_ecology?'1':'0'}"`;
   return { payload, etag: rawEtag };
 }
 
