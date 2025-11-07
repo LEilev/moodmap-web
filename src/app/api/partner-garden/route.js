@@ -83,6 +83,7 @@ export async function GET(req) {
       try { await redis.expire(ecoKey, 108000); devLog('ecologyTTL', { ttl: 108000 }); } catch {} // 30h
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
         await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
+		await redis.hincrby(`state:${pairId}`, 'ecologyVersion', 1);
       }
     } catch {} 
 
