@@ -1,4 +1,9 @@
-// Harmony Patch 2 — partner-feedback: add 24h TTL for daily feedback; preserve idempotent semantics
+// Harmony Drop-in Final — Sync Fix Patch (2025-11-07)
+// moodmap-web/src/app/api/partner-feedback/route.js
+// Changes:
+//  • Normalize ownerDate to canonical YYYY-MM-DD for storage
+//  • Extend feedback TTL to 30h (108000s)
+//  • Keep idempotency (24h idem key) and version bump
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -22,16 +27,26 @@ const toBool = (v) => {
 
 const weakETag = (v) => `W/"${v}"`;
 
+function normalizeOwnerDate(input) {
+  if (!input) return null;
+  const s = String(input).trim();
+  if (/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  const dt = new Date(s); if (!Number.isNaN(dt)) return dt.toISOString().slice(0,10);
+  return null;
+}
+
 async function getState(pairId) {
   const key = `state:${pairId}`;
   const res = await redis.hgetall(key);
   return { key, version: Number(res?.version ?? 0), ...res };
 }
 
-async function getFeedback(pairId, ownerDate) {
-  const key = `feedback:${pairId}:${ownerDate}`;
-  const fv = await redis.hgetall(key);
-  const out = { key, tips: [], vibe: '', readiness: null, reactionAck: false };
+async function getFeedback(pairId, dayIso) {
+  const dashed = `feedback:${pairId}:${dayIso}`;
+  const legacy = `feedback:${pairId}:${dayIso.replaceAll('-','')}`;
+  const fv = (await redis.hgetall(dashed)) || (await redis.hgetall(legacy));
+  const out = { key: dashed, tips: [], vibe: '', readiness: null, reactionAck: false };
   if (fv) {
     out.vibe = typeof fv.vibe === 'string' ? fv.vibe : '';
     out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
@@ -45,10 +60,10 @@ export async function POST(req) {
   try {
     const body = await req.json().catch(() => ({}));
     const pairId = String(body.pairId || '').trim();
-    const ownerDate = String(body.ownerDate || '').trim();
+    const ownerDateRaw = String(body.ownerDate || '').trim();
     const updateId = String(body.updateId || '').trim();
 
-    if (!pairId || !ownerDate || !updateId) {
+    if (!pairId || !ownerDateRaw || !updateId) {
       return new Response(JSON.stringify({ ok: false, error: 'pairId, ownerDate, updateId required' }), {
         status: 400, headers: headersNoStore,
       });
@@ -57,6 +72,12 @@ export async function POST(req) {
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
       return new Response(JSON.stringify({ ok: false, error: 'blocked' }), { status: 403, headers: headersNoStore });
+    }
+
+    // Normalize ownerDate → canonical YYYY-MM-DD
+    const ownerDate = normalizeOwnerDate(ownerDateRaw);
+    if (!ownerDate) {
+      return new Response(JSON.stringify({ ok: false, error: 'invalid ownerDate' }), { status: 400, headers: headersNoStore });
     }
 
     // Idempotency – 24h window
@@ -91,10 +112,7 @@ export async function POST(req) {
 
     if ('reactionAck' in body) {
       const ack = toBool(body.reactionAck);
-      if (ack !== feedback.reactionAck) {
-        patch.reactionAck = ack ? '1' : '0';
-        changed = true;
-      }
+      if (ack !== feedback.reactionAck) { patch.reactionAck = ack ? '1' : '0'; changed = true; }
     }
 
     const statePatch = {};
@@ -112,8 +130,8 @@ export async function POST(req) {
 
     if (Object.keys(patch).length > 0) {
       await redis.hset(feedback.key, patch);
-      // Ensure daily feedback expires after 24h
-      try { await redis.expire(feedback.key, 86400); } catch {}
+      // Feedback TTL → 30h
+      try { await redis.expire(feedback.key, 108000); } catch {} 
     }
 
     if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {

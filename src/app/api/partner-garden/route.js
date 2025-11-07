@@ -1,4 +1,10 @@
-// Harmony Patch 2 — partner-garden: ecology TTL (30h) + ASCII-safe ETag + 304 support
+// Harmony Drop-in Final — Sync Fix Patch (2025-11-07)
+// moodmap-web/src/app/api/partner-garden/route.js
+// Changes:
+//  • Glow period set to 30 minutes (was 2h)
+//  • Symmetric unlink: 403 when blocklisted
+//  • Keep ecology TTL (30h) + ASCII-safe ETag + 304 support
+
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -26,18 +32,16 @@ async function computeSyncEnergy7d(pairId, endDate = new Date()) {
     try {
       const mraw = await redis.get(`missions:${pairId}:${dKey}`);
       if (mraw) {
-        let list = []; try { list = JSON.parse(mraw) || []; } catch {}
+        let list = []; try { list = JSON.parse(mraw) || []; } catch {} 
         if (Array.isArray(list) && list.length > 0) {
-          daysWithMissions += 1;
-          missionsTotal += list.length;
-          missionsDone += list.filter(m => m && m.status === 'done').length;
+          daysWithMissions += 1; missionsTotal += list.length; missionsDone += list.filter(m => m && m.status === 'done').length;
         }
       }
-    } catch {}
+    } catch {} 
     try {
       const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
       if (r && (r.type || r.note || r.time)) kudosDays += 1;
-    } catch {}
+    } catch {} 
   }
   const missionPct = missionsTotal > 0 ? clamp(Math.round((missionsDone / missionsTotal) * 100)) : (daysWithMissions > 0 ? 0 : 50);
   const kudosPct = clamp(Math.round((kudosDays / 7) * 100));
@@ -53,6 +57,10 @@ export async function GET(req) {
     const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
     if (!pairId) return new Response(JSON.stringify({ ok:false, error:'Missing pairId' }), { status: 400, headers: noStore() });
 
+    // Symmetric unlink: 403 when blocklisted
+    const blocked = await redis.get(`blocklist:${pairId}`);
+    if (blocked) return new Response(JSON.stringify({ ok:false, error:'blocked' }), { status: 403, headers: noStore() });
+
     const energy = await computeSyncEnergy7d(pairId, new Date());
     let glowUntil = null;
     try {
@@ -60,11 +68,11 @@ export async function GET(req) {
       if (react && react.time) {
         const t = Date.parse(String(react.time));
         if (!Number.isNaN(t)) {
-          const until = new Date(t + 2 * 60 * 60 * 1000);
+          const until = new Date(t + 30 * 60 * 1000); // 30 minutes per Harmony
           if (until > new Date()) glowUntil = until.toISOString();
         }
       }
-    } catch {}
+    } catch {} 
 
     const gardenMood = energyToMood(energy);
     const weatherState = energyToWeather(energy);
@@ -75,12 +83,11 @@ export async function GET(req) {
       const prevMood = raw?.gardenMood || null;
       const prevWeather = raw?.weatherState || null;
       await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(energy), glowUntil: glowUntil || '' });
-      // TTL ~30h
-      try { await redis.expire(ecoKey, 108000); } catch {}
+      try { await redis.expire(ecoKey, 108000); } catch {} // 30h
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
         await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
       }
-    } catch {}
+    } catch {} 
 
     const rawEtag = `W/"g.${gardenMood}.${weatherState}.${energy}.${glowUntil || ''}"`;
     const etag = sanitizeEtag(rawEtag);
@@ -90,8 +97,7 @@ export async function GET(req) {
     }
 
     return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), {
-      status: 200,
-      headers: noStore({ ETag: etag }),
+      status: 200, headers: noStore({ ETag: etag }),
     });
   } catch (err) {
     return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStore() });
