@@ -1,16 +1,12 @@
-// Harmony Drop-in Final — Sync Fix Patch (2025-11-07)
-// moodmap-web/src/app/api/partner-status/route.js
-// Changes:
-//  • Return 304 Not Modified on long-poll timeout when ETag unchanged
-//  • Symmetric unlink: 403 if pair is blocklisted
-//  • OwnerDate normalization: prefer state.currentDate; fall back to normalized request or UTC-today
-//  • Keep ASCII-safe ETag; ecology TTL (30h); challenge expiry baked into ETag
-
+// Harmony Final — Fix + Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 import { Redis } from '@upstash/redis';
 import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-status]', ...args); } catch {} } }
 
 function getRedis() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -30,7 +26,7 @@ function todayKeyUTC() {
   const d = new Date();
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(d.getUTCDate(),).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
   return `${y}-${m}-${day}`; // yyyy-mm-dd
 }
 function addDaysUTC(d, delta) { const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); x.setUTCDate(x.getUTCDate()+delta); return x; }
@@ -47,7 +43,7 @@ function normalizeOwnerDate(input) {
   return null;
 }
 
-async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
+async function computeSyncEnergy7d(redis, pairId, endDate = new Date(), todayReaction = null) {
   let kudosDays = 0;
   let daysWithMissions = 0;
   let missionsDone = 0;
@@ -65,8 +61,12 @@ async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
       }
     } catch {} 
     try {
-      const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
-      if (r && (r.type || r.note || r.time)) kudosDays += 1;
+      if (i === 0 && todayReaction) {
+        if (todayReaction.type || todayReaction.note || todayReaction.time) kudosDays += 1;
+      } else {
+        const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
+        if (r && (r.type || r.note || r.time)) kudosDays += 1;
+      }
     } catch {} 
   }
   const missionPct = missionsTotal > 0 ? clamp(Math.round((missionsDone / missionsTotal) * 100)) : (daysWithMissions > 0 ? 0 : 50);
@@ -77,11 +77,11 @@ async function computeSyncEnergy7d(redis, pairId, endDate = new Date()) {
 function energyToWeather(e) { if (e < 40) return 'stormy'; if (e < 55) return 'rainy'; if (e < 80) return 'cloudy'; return 'sunny'; }
 function energyToMood(e) { if (e < 40) return 'stormy'; if (e > 80) return 'vibrant'; return 'calm'; }
 
-async function resolveGarden(redis, pairId, syncEnergyScore) {
+async function resolveGarden(redis, pairId, syncEnergyScore, todayReaction = null) {
   // Glow derived from today's last reaction (30 min window per Harmony)
   let glowUntil = null;
   try {
-    const react = await redis.hgetall(`reactions:${pairId}:${todayKeyUTC()}`);
+    const react = todayReaction || (await redis.hgetall(`reactions:${pairId}:${todayKeyUTC()}`));
     if (react && react.time) {
       const t = Date.parse(String(react.time));
       if (!Number.isNaN(t)) {
@@ -104,6 +104,7 @@ async function resolveGarden(redis, pairId, syncEnergyScore) {
     const prevWeather = cur?.weatherState || null;
     await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(syncEnergyScore), glowUntil: glowUntil || '' });
     try { await redis.expire(ecoKey, 108000); } catch {} // 30h
+    if (DEV) devLog('ecology:expire set', { ttl: 108000 });
     if (prevMood !== gardenMood || prevWeather !== weatherState) shouldBumpGarden = true;
   } catch {} 
 
@@ -131,6 +132,8 @@ async function snapshot(redis, pairId, ownerDateParam) {
   const challengesVersion = Number(state?.challengesVersion || 0);
   const gardenMoodVersion = Number(state?.gardenMoodVersion || 0);
 
+  const isValidConnection = !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
+
   const featureFlags = {
     ff_coachMode: true,
     ff_missions: true,
@@ -154,16 +157,16 @@ async function snapshot(redis, pairId, ownerDateParam) {
   vibe = fb?.vibe ?? null;
   readiness = fb?.readiness != null ? Number(fb.readiness) : null;
 
-  // Reaction today
+  // Reaction today (reuse further down)
   const reactKey = `reactions:${pairId}:${todayKeyUTC()}`;
   const react = await redis.hgetall(reactKey);
   const reactionType = react?.type || null;
 
-  // Sync energy
-  const syncEnergyScore = await computeSyncEnergy7d(redis, pairId, new Date());
+  // Sync energy (reuse today's reaction to avoid double read)
+  const syncEnergyScore = await computeSyncEnergy7d(redis, pairId, new Date(), react);
 
-  // Garden resolve
-  const { gardenMood, weatherState, glowUntil, shouldBumpGarden } = await resolveGarden(redis, pairId, syncEnergyScore);
+  // Garden resolve (reuse today's reaction)
+  const { gardenMood, weatherState, glowUntil, shouldBumpGarden } = await resolveGarden(redis, pairId, syncEnergyScore, react);
   if (shouldBumpGarden) await redis.hincrby(stateKey, 'gardenMoodVersion', 1);
   const curGardenMoodVersion = shouldBumpGarden ? (gardenMoodVersion + 1) : gardenMoodVersion;
 
@@ -212,9 +215,10 @@ async function snapshot(redis, pairId, ownerDateParam) {
     forecast72h,
     activeChallenges,
     day: dayIso,
+    isValidConnection,
   };
 
-  // ETag signature (challenge expiry baked in)
+  // ETag signature (challenge expiry baked in) — unchanged semantics
   const chCount = activeChallenges.length;
   const nextExp = chCount ? Math.floor(Math.min(...activeChallenges.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
   const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
@@ -233,14 +237,16 @@ export async function GET(req) {
 
     // Symmetric unlink: immediate 403 when blocklisted
     const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) return json({ ok:false, error: 'blocked' }, 403);
+    if (blocked) { devLog('403 blocklist hit', { pairId }); return json({ ok:false, error: 'blocked' }, 403); }
 
     let { payload, etag } = await snapshot(redis, pairId, ownerDate);
     let safeEtag = sanitizeEtag(String(etag || ''));
     const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
+    devLog('ownerDateUsed', payload?.day);
 
     if (inm && inm === safeEtag) {
       if (wait <= 0) {
+        devLog('304 immediate');
         return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
       }
       // Long-poll until changed or timeout → 304 if unchanged
@@ -255,6 +261,7 @@ export async function GET(req) {
         await new Promise(r => setTimeout(r, 350));
       }
       if (!changed) {
+        devLog('304 after long-poll', { waitedMs: Date.now() - started });
         return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
       }
     }

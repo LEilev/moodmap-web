@@ -1,9 +1,4 @@
-// Harmony Drop-in Final — Sync Fix Patch (2025-11-07)
-// moodmap-web/src/app/api/partner-feedback/route.js
-// Changes:
-//  • Normalize ownerDate to canonical YYYY-MM-DD for storage
-//  • Extend feedback TTL to 30h (108000s)
-//  • Keep idempotency (24h idem key) and version bump
+// Harmony Final — Fix + Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -12,6 +7,9 @@ const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-feedback]', ...args); } catch {} } }
 
 const headersNoStore = {
   'Cache-Control': 'no-store',
@@ -34,6 +32,14 @@ function normalizeOwnerDate(input) {
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
   const dt = new Date(s); if (!Number.isNaN(dt)) return dt.toISOString().slice(0,10);
   return null;
+}
+
+function todayKeyUTC() {
+  const d = new Date();
+  const y = d.getUTCFullYear();
+  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(d.getUTCDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`; // yyyy-mm-dd
 }
 
 async function getState(pairId) {
@@ -63,34 +69,40 @@ export async function POST(req) {
     const ownerDateRaw = String(body.ownerDate || '').trim();
     const updateId = String(body.updateId || '').trim();
 
-    if (!pairId || !ownerDateRaw || !updateId) {
-      return new Response(JSON.stringify({ ok: false, error: 'pairId, ownerDate, updateId required' }), {
+    if (!pairId || !updateId) {
+      return new Response(JSON.stringify({ ok: false, error: 'pairId and updateId required' }), {
         status: 400, headers: headersNoStore,
       });
     }
 
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
+      devLog('403 blocklist hit', { pairId });
       return new Response(JSON.stringify({ ok: false, error: 'blocked' }), { status: 403, headers: headersNoStore });
     }
 
-    // Normalize ownerDate → canonical YYYY-MM-DD
-    const ownerDate = normalizeOwnerDate(ownerDateRaw);
+    // Load state for potential fallback
+    const state = await getState(pairId);
+
+    // Normalize ownerDate → canonical YYYY-MM-DD; fallback to state.currentDate, else UTC today
+    let ownerDate = normalizeOwnerDate(ownerDateRaw);
     if (!ownerDate) {
-      return new Response(JSON.stringify({ ok: false, error: 'invalid ownerDate' }), { status: 400, headers: headersNoStore });
+      const fromState = state?.currentDate ? normalizeOwnerDate(state.currentDate) : null;
+      ownerDate = fromState || todayKeyUTC();
     }
+    devLog('ownerDateUsed', ownerDate);
 
     // Idempotency – 24h window
     const idemKey = `idemp:${pairId}:${updateId}`;
     const idem = await redis.set(idemKey, 1, { nx: true, ex: 60 * 60 * 24 });
     if (idem === null) {
-      const prev = await getState(pairId);
+      devLog('idempotent-hit', { updateId });
+      const prev = state;
       return new Response(JSON.stringify({ ok: true, version: prev.version, idempotent: true }), {
         status: 200, headers: { ...headersNoStore, ETag: weakETag(prev.version) },
       });
     }
 
-    const state = await getState(pairId);
     const feedback = await getFeedback(pairId, ownerDate);
 
     const patch = {};
@@ -131,7 +143,7 @@ export async function POST(req) {
     if (Object.keys(patch).length > 0) {
       await redis.hset(feedback.key, patch);
       // Feedback TTL → 30h
-      try { await redis.expire(feedback.key, 108000); } catch {} 
+      try { await redis.expire(feedback.key, 108000); devLog('feedbackTTL', { ttl: 108000 }); } catch {} 
     }
 
     if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {

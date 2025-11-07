@@ -1,5 +1,4 @@
-// Harmony Patch 2 — partner-unlink: also purge ecology:<pairId> and challenges:<pairId>:*
-// Keeps RL, blocklist and existing semantics intact.
+// Harmony Final — Fix + Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -20,6 +19,9 @@ function json(body, status = 200, extra = {}) {
     },
   });
 }
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-unlink]', ...args); } catch {} } }
 
 function getClientIP(req) {
   const h = req.headers;
@@ -66,7 +68,7 @@ async function purgePairData(pairId) {
     // feedback keys
     try {
       let cursor = 0;
-      const match = `feedback:${pairId}:*`;
+      const match = `feedback:${pairId}:*`
       do {
         const res = await redis.scan(cursor, { match, count: 100 });
         const nextCursor = Number(res?.[0] || 0);
@@ -107,6 +109,7 @@ async function purgePairData(pairId) {
  * POST /api/partner-unlink
  * Body: { pairId }
  * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback/ecology/challenges
+ *          NEW: write state:{pairId}.isValidConnection = false (for late reconnect signal)
  * Success: { ok: true }
  * Errors: 400 invalid pairId, 429 RL
  */
@@ -142,9 +145,16 @@ export async function POST(req) {
     // Symmetric blocklist marker (prevents transient reconnect)
     const BLOCKLIST_TTL_SEC = 300;
     await redis.set(`blocklist:${pairId}`, '1', { ex: BLOCKLIST_TTL_SEC });
+    devLog('blocklist:set', { ttl: BLOCKLIST_TTL_SEC });
 
     // Purge server-side state for this pair (best effort)
     await purgePairData(pairId);
+
+    // NEW: write isValidConnection=false after purge (so it persists beyond blocklist TTL)
+    try {
+      await redis.hset(`state:${pairId}`, { isValidConnection: 'false' });
+      devLog('state.isValidConnection=false written');
+    } catch {}
 
     return json({ ok: true }, 200);
   } catch (err) {

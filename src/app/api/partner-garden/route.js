@@ -1,10 +1,4 @@
-// Harmony Drop-in Final — Sync Fix Patch (2025-11-07)
-// moodmap-web/src/app/api/partner-garden/route.js
-// Changes:
-//  • Glow period set to 30 minutes (was 2h)
-//  • Symmetric unlink: 403 when blocklisted
-//  • Keep ecology TTL (30h) + ASCII-safe ETag + 304 support
-
+// Harmony Final — Fix + Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -16,6 +10,9 @@ const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-garden]', ...args); } catch {} } }
 
 function noStore(extra = {}) {
   return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
@@ -59,7 +56,7 @@ export async function GET(req) {
 
     // Symmetric unlink: 403 when blocklisted
     const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) return new Response(JSON.stringify({ ok:false, error:'blocked' }), { status: 403, headers: noStore() });
+    if (blocked) { devLog('403 blocklist hit', { pairId }); return new Response(JSON.stringify({ ok:false, error:'blocked' }), { status: 403, headers: noStore() }); }
 
     const energy = await computeSyncEnergy7d(pairId, new Date());
     let glowUntil = null;
@@ -83,7 +80,7 @@ export async function GET(req) {
       const prevMood = raw?.gardenMood || null;
       const prevWeather = raw?.weatherState || null;
       await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(energy), glowUntil: glowUntil || '' });
-      try { await redis.expire(ecoKey, 108000); } catch {} // 30h
+      try { await redis.expire(ecoKey, 108000); devLog('ecologyTTL', { ttl: 108000 }); } catch {} // 30h
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
         await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
       }
@@ -93,6 +90,7 @@ export async function GET(req) {
     const etag = sanitizeEtag(rawEtag);
     const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
     if (inm && inm === etag) {
+      devLog('304');
       return new Response(null, { status: 304, headers: noStore({ ETag: etag }) });
     }
 

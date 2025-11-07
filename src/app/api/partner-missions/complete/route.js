@@ -1,4 +1,4 @@
-// app/api/partner-mission/complete/route.js — Harmony Patch 1
+// Harmony Final — Fix + Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -6,9 +6,9 @@ export const revalidate = 0;
 /**
  * POST /api/partner-mission/complete
  * Idempotent update of today's mission status.
- * Harmony Patch 1:
- *  - Bump ecologyVersion to ensure partner-status ETag breaks (garden ecology reacts)
- *  - (Optional) hook for future ecology:<pairId> updates
+ * Harmony Final additions:
+ *  - Also bump overall `version` (symmetry with other sub-systems)
+ *  - Keep ecologyVersion bump (garden ecology reacts)
  */
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
@@ -21,6 +21,9 @@ function noStoreHeaders(extra = {}) {
     ...extra,
   };
 }
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][mission-complete]', ...args); } catch {} } }
 
 async function redis(cmd, ...args) {
   const url = `${UPSTASH_URL}/${cmd}/${args.map(a => encodeURIComponent(String(a))).join('/')}`;
@@ -37,7 +40,7 @@ function getHeader(req, name) { return req.headers.get(name) || req.headers.get(
 function getFromCookie(req, key) {
   try {
     const cookie = req.headers.get('cookie') || '';
-    const m = new RegExp(`(?:^|;\s*)${key}\s*=\s*([^;]+)`).exec(cookie);
+    const m = new RegExp(`(?:^|;\\s*)${key}\\s*=\\s*([^;]+)`).exec(cookie);
     return m ? decodeURIComponent(m[1]) : null;
   } catch { return null; }
 }
@@ -131,8 +134,12 @@ export async function POST(req) {
     const missionDays = Number(await redis('hincrby', streakKey, 'missionDays', '1')) || 0;
     await redis('hincrby', stateKey, 'missionsVersion', '1');
 
-    // Harmony Patch 1: bump ecologyVersion (garden mood/sync reacts)
+    // Harmony: bump ecologyVersion (garden mood/sync reacts)
     await redis('hincrby', stateKey, 'ecologyVersion', '1');
+
+    // Harmony Final: also bump overall version
+    await redis('hincrby', stateKey, 'version', '1');
+    devLog('versions-bumped', { missionsVersion: true, ecologyVersion: true, version: true });
 
     return new Response(JSON.stringify({ ok: true, xpDelta: points, streak: { missionDays } }), {
       status: 200, headers: noStoreHeaders(),
