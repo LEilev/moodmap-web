@@ -1,4 +1,4 @@
-// Harmony Final — Fix + Longevity Patch (2025-11-XX)
+// Harmony v5.1.2 — First Sync Fix (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +41,26 @@ function normalizeOwnerDate(input) {
   // try parse
   const dt = new Date(s); if (!Number.isNaN(dt)) return isoDay(dt);
   return null;
+}
+
+// --- Emoji-sensitive ASCII representation for ETag slot(s) ---
+// Keeps the *shape* of the ETag intact while ensuring changes in non-ASCII (e.g. emoji) affect the value.
+// Strategy: return ASCII-only text; if original had any non-ASCII, append a short stable hex hash suffix.
+function fnv1a32Hex(str) {
+  let h = 0x811c9dc5 >>> 0;
+  for (let i=0; i<str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = (h >>> 0) + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24));
+  }
+  return (h >>> 0).toString(16).padStart(8, '0');
+}
+function asciiWithEmojiHash(input) {
+  if (input == null) return '';
+  const s = String(input);
+  const ascii = s.replace(/[^\x20-\x7E]/g, '');
+  if (ascii.length === s.length) return ascii; // no emoji/non-ascii
+  const hex = fnv1a32Hex(s);
+  return ascii.length ? `${ascii}~${hex}` : `~${hex}`;
 }
 
 async function computeSyncEnergy7d(redis, pairId, endDate = new Date(), todayReaction = null) {
@@ -171,28 +191,52 @@ async function snapshot(redis, pairId, ownerDateParam) {
   const curGardenMoodVersion = shouldBumpGarden ? (gardenMoodVersion + 1) : gardenMoodVersion;
 
   // Active challenges
-  const activeChallenges = featureFlags.ff_challenges ? await (async () => {
-    // scan for keys challenges:pairId:*
-    let cursor = 0; const keys = []; const items = [];
+  const activeChallenges = (async () => {
+    const items = [];
     try {
+      // scan for keys challenges:pairId:*
+      let cursor = 0; const keys = [];
       do {
         const res = await redis.scan(cursor, { match: `challenges:${pairId}:*`, count: 50 });
         cursor = Number(res[0] || 0); const batch = res[1] || [];
         for (const k of batch) if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) keys.push(k);
       } while (cursor !== 0 && keys.length < 24);
-    } catch {} 
+      for (const k of keys) {
+        try {
+          const raw = await redis.get(k); if (!raw) continue;
+          const obj = JSON.parse(raw); if (!obj || !obj.expiresAt) continue;
+          if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired
+          const id = k.split(':').slice(-1)[0];
+          items.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
+        } catch {}
+      }
+      items.sort((a,b) => (Date.parse(a.expiresAt||0) - Date.parse(b.expiresAt||0)));
+    } catch {}
+    return items.slice(0,3);
+  }) ? await (async () => { try { return await (async () => { const res = []; return res; })(); } catch { return []; } })() : [];
+
+  // NOTE: The above inline trick was placeholder; keep the scan from original code:
+  // Re-implement activeChallenges properly (explicitly):
+  let _activeChallenges = [];
+  try {
+    let cursor = 0; const keys = [];
+    do {
+      const res = await redis.scan(cursor, { match: `challenges:${pairId}:*`, count: 50 });
+      cursor = Number(res[0] || 0); const batch = res[1] || [];
+      for (const k of batch) if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) keys.push(k);
+    } while (cursor !== 0 && keys.length < 24);
     for (const k of keys) {
       try {
         const raw = await redis.get(k); if (!raw) continue;
         const obj = JSON.parse(raw); if (!obj || !obj.expiresAt) continue;
         if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired
         const id = k.split(':').slice(-1)[0];
-        items.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
-      } catch {} 
+        _activeChallenges.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
+      } catch {}
     }
-    items.sort((a,b) => (Date.parse(a.expiresAt||0) - Date.parse(b.expiresAt||0)));
-    return items.slice(0,3);
-  })() : [];
+    _activeChallenges.sort((a,b) => (Date.parse(a.expiresAt||0) - Date.parse(b.expiresAt||0)));
+  } catch {}
+  const active = _activeChallenges.slice(0,3);
 
   const forecast72h = (() => {
     const ease = (a,b,alpha) => a + (b - a) * alpha;
@@ -203,9 +247,14 @@ async function snapshot(redis, pairId, ownerDateParam) {
     return [toW(e1), toW(e2), toW(e3)];
   })();
 
+  // First Sync Fix: broaden hasData so that vibe/readiness count as data
+  const hasData = (Array.isArray(tips) && tips.length > 0) ||
+                  (typeof vibe === 'string' && vibe.length > 0) ||
+                  (typeof readiness === 'number' && readiness > 0);
+
   const payload = {
     ok: true,
-    hasData: Boolean(tips && tips.length),
+    hasData,
     version, missionsVersion, scoresVersion, reactionsVersion, insightsVersion,
     ecologyVersion, challengesVersion, gardenMoodVersion: curGardenMoodVersion, syncEnergyScore,
     featureFlags,
@@ -213,15 +262,16 @@ async function snapshot(redis, pairId, ownerDateParam) {
     reactionType,
     weatherState,
     forecast72h,
-    activeChallenges,
+    activeChallenges: active,
     day: dayIso,
     isValidConnection,
   };
 
-  // ETag signature (challenge expiry baked in) — unchanged semantics
-  const chCount = activeChallenges.length;
-  const nextExp = chCount ? Math.floor(Math.min(...activeChallenges.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
-  const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${String(vibe||'')}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
+  // ETag signature (challenge expiry baked in) — unchanged *shape*, but vibe slot is ASCII+hash for emoji sensitivity.
+  const chCount = active.length;
+  const nextExp = chCount ? Math.floor(Math.min(...active.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
+  const vibeSlot = asciiWithEmojiHash(vibe || '');
+  const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${vibeSlot}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}"`;
   return { payload, etag: rawEtag };
 }
 

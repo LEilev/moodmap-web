@@ -1,4 +1,4 @@
-// Harmony Final — Fix + Longevity Patch (2025-11-XX)
+// Harmony v5.1.2 — First Sync Fix (2025-11-XX)
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -151,10 +151,14 @@ export async function POST(req) {
       await redis.hset(state.key, writePatch);
     }
 
+    // First Sync Fix: prevent double version bump on identical owner POSTs
+    // Only bump when herTouched && changed; still bump for explicit reactionAck or statePatch updates.
     let newVersion = state.version;
-    if (changed || herTouched || ('reactionAck' in body) || Object.keys(statePatch).length > 0) {
-      newVersion = await redis.hincrby(state.key, 'version', 1);
-    }
+    let bump = false;
+    if (herTouched && changed) bump = true;
+    if (!bump && ('reactionAck' in body)) bump = true;
+    if (!bump && Object.keys(statePatch).length > 0) bump = true;
+    if (bump) newVersion = await redis.hincrby(state.key, 'version', 1);
 
     return new Response(JSON.stringify({ ok: true, version: newVersion }), {
       status: 200, headers: { ...headersNoStore, ETag: weakETag(newVersion) },

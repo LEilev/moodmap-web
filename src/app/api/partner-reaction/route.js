@@ -1,13 +1,13 @@
-// app/api/partner-reaction/route.js — Harmony Patch 1
-// - Adds optional 'note' (<=48 chars) persisted in reactions:<pairId>:<yyyy-mm-dd>
-// - Preserves idempotency via updateId
-// - TTL ~48h for reactions key
+// Harmony v5.1.1 — Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const DEV = process.env.NODE_ENV !== 'production';
+function devLog(...args){ if(DEV){ try{ console.log('[HarmonyDev][partner-reaction]', ...args); }catch{} } }
 
 function noStoreHeaders(extra = {}) {
   return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
@@ -60,6 +60,15 @@ export async function POST(req) {
     const updateId = body?.updateId || null;
     if (!pairId) return new Response(JSON.stringify({ ok:false, error:'pairId required' }), { status: 400, headers: noStoreHeaders() });
     if (!reaction) return new Response(JSON.stringify({ ok:false, error:'reaction required' }), { status: 400, headers: noStoreHeaders() });
+
+    // 1) Blocklist guard — symmetric unlink (403) just like status/garden
+    try {
+      const blocked = await redis('get', `blocklist:${pairId}`);
+      if (blocked) {
+        devLog('403 blocklist hit', { pairId });
+        return new Response(JSON.stringify({ ok:false, error:'blocked' }), { status: 403, headers: noStoreHeaders() });
+      }
+    } catch {}
 
     const dayKey = isoDayKey();
     const stateKey = `state:${pairId}`;
