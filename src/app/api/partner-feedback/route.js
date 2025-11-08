@@ -1,5 +1,5 @@
-// Harmony Sync-Fix – 2025-11-10
-// Sprint E: Hydration guard + 304 handling + Stable Partner Sync
+// Harmony Partner Sync Recovery Patch – 2025-11-11
+// Auto-unlink on stale pair + modal stability improvements
 
 export const runtime = 'edge';
 
@@ -46,10 +46,10 @@ export async function POST(req) {
       return new Response(JSON.stringify({ ok: false, error: 'pairId and updateId required' }), { status: 400, headers: headersNoStore });
     }
 
-    // Missing/invalid pair → not 403 (only blocklist is 403)
+    // Missing/invalid pair → 403 with "missing pair" to trigger auto-unlink on clients
     const exists = await stateExists(pairId);
     if (!exists) {
-      return new Response(JSON.stringify({ ok: false, error: 'Missing pair' }), { status: 200, headers: headersNoStore });
+      return new Response(JSON.stringify({ ok: false, error: 'missing pair' }), { status: 403, headers: headersNoStore });
     }
 
     const blocked = await redis.get(`blocklist:${pairId}`);

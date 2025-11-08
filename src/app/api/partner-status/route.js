@@ -1,5 +1,5 @@
-// Harmony Sync-Fix – 2025-11-10
-// Sprint E: Hydration guard + 304 handling + Stable Partner Sync
+// Harmony Partner Sync Recovery Patch – 2025-11-11
+// Auto-unlink on stale pair + modal stability improvements
 
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
@@ -7,8 +7,12 @@ export const dynamic = 'force-dynamic';
 import { Redis } from '@upstash/redis';
 import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 
-const DEV = process.env.NODE_ENV !== 'production';
-function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-status]', ...args); } catch {} } }
+function json(data, status = 200, extraHeaders = {}) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extraHeaders },
+  });
+}
 
 function getRedis() {
   const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -24,13 +28,6 @@ function readFlag(name, fallback = false) {
   return fallback;
 }
 
-function json(data, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extraHeaders },
-  });
-}
-
 function todayKeyUTC() {
   const d = new Date();
   const y = d.getUTCFullYear();
@@ -39,7 +36,6 @@ function todayKeyUTC() {
   return `${y}-${m}-${day}`; // yyyy-mm-dd
 }
 function isoDay(d=new Date()) { return d.toISOString().slice(0,10); }
-function clamp(n, lo=0, hi=100) { return Math.max(lo, Math.min(hi, n)); }
 
 function normalizeOwnerDate(input) {
   if (!input) return null;
@@ -50,8 +46,8 @@ function normalizeOwnerDate(input) {
   return null;
 }
 
+function clamp(n, lo=0, hi=100) { return Math.max(lo, Math.min(hi, n)); }
 function energyToWeather(e) { if (e < 40) return 'stormy'; if (e < 55) return 'rainy'; if (e < 80) return 'cloudy'; return 'sunny'; }
-function energyToMood(e) { if (e < 40) return 'stormy'; if (e > 80) return 'vibrant'; return 'calm'; }
 
 async function readFeedback(redis, pairId, dayIso) {
   const dashed = `feedback:${pairId}:${dayIso}`;
@@ -90,16 +86,35 @@ export async function GET(req) {
     const url = new URL(req.url);
     const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
     const ownerDate = url.searchParams.get('ownerDate') || null;
-    if (!pairId) return json({ ok:false, error: 'Missing pairId' }, 400);
+    if (!pairId) return json({ ok:false, error: 'Missing pairId', isValidConnection:false }, 400);
 
     const redis = getRedis();
 
+    // Blocklisted pair → 403
     const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) return json({ ok:false, error: 'blocked' }, 403);
+    if (blocked) return json({ ok:false, error: 'blocked', isValidConnection:false }, 403);
 
     const stateKey = `state:${pairId}`;
-    const state = await redis.hgetall(stateKey);
-    const isValidConnection = !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
+    const state = await redis.hgetall(stateKey) || {};
+    const stateExists = Object.keys(state).length > 0;
+    const isValidConnection = stateExists && !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
+
+    // Missing or invalid state → 403 with explicit flag to trigger client unlink
+    if (!stateExists || !isValidConnection) {
+      const featureFlags = {
+        ff_coach: readFlag('FF_COACH', true),
+        ff_garden: readFlag('FF_GARDEN', true),
+        ff_ecology: readFlag('FF_ECOLOGY', true),
+        ff_challenges: readFlag('FF_CHALLENGES', true),
+        ff_reactions: readFlag('FF_REACTIONS', true),
+        ff_insights: readFlag('FF_INSIGHTS', true),
+        ff_coachMode: readFlag('FF_COACH', true),
+        ff_missions: true,
+        ff_scores: true,
+        ff_badges: readFlag('FF_BADGES', false),
+      };
+      return json({ ok:false, isValidConnection:false, featureFlags, hasData:false, day: normalizeOwnerDate(ownerDate) || todayKeyUTC() }, 403);
+    }
 
     const featureFlags = {
       ff_coach:      readFlag('FF_COACH', true),
@@ -135,7 +150,7 @@ export async function GET(req) {
       ok: true,
       hasData,
       featureFlags,
-      isValidConnection,
+      isValidConnection: true,
       tips, vibe, readiness,
       weatherState,
       day: dayIso,
@@ -145,6 +160,6 @@ export async function GET(req) {
     const etag = sanitizeEtag(`W/"${String(state?.version || 0)}.${String(syncEnergyScore)}.${hasData?'1':'0'}.${weatherState}"`);
     return json(payload, 200, etag ? { ETag: etag } : {});
   } catch (e) {
-    return json({ ok:false, error: String(e?.message || e) }, 500);
+    return json({ ok:false, error: String(e?.message || e), isValidConnection:false }, 500);
   }
 }
