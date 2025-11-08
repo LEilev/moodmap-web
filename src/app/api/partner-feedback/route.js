@@ -1,4 +1,7 @@
-// Harmony v5.1.2 — First Sync Fix (2025-11-XX)
+// Harmony Sync-Fix – 2025-11-10
+// Sprint E: Hydration guard + 304 handling + PartnerModeGate crash-fix
+
+// Harmony v5.1.2 — First Sync Fix + Sprint E: graceful invalid/missing pair, no 304
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -42,6 +45,15 @@ function todayKeyUTC() {
   return `${y}-${m}-${day}`; // yyyy-mm-dd
 }
 
+async function stateExists(pairId) {
+  try {
+    const n = await redis.exists(`state:${pairId}`);
+    return Number(n) > 0;
+  } catch {
+    return false;
+  }
+}
+
 async function getState(pairId) {
   const key = `state:${pairId}`;
   const res = await redis.hgetall(key);
@@ -72,6 +84,14 @@ export async function POST(req) {
     if (!pairId || !updateId) {
       return new Response(JSON.stringify({ ok: false, error: 'pairId and updateId required' }), {
         status: 400, headers: headersNoStore,
+      });
+    }
+
+    // Sprint E: missing/invalid pair → graceful JSON (not raw 403)
+    const exists = await stateExists(pairId);
+    if (!exists) {
+      return new Response(JSON.stringify({ ok: false, error: 'Missing pair' }), {
+        status: 200, headers: headersNoStore,
       });
     }
 
@@ -142,8 +162,7 @@ export async function POST(req) {
 
     if (Object.keys(patch).length > 0) {
       await redis.hset(feedback.key, patch);
-      // Feedback TTL → 30h
-      try { await redis.expire(feedback.key, 108000); devLog('feedbackTTL', { ttl: 108000 }); } catch {} 
+      try { await redis.expire(feedback.key, 108000); } catch {} // 30h
     }
 
     if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {
@@ -152,7 +171,6 @@ export async function POST(req) {
     }
 
     // First Sync Fix: prevent double version bump on identical owner POSTs
-    // Only bump when herTouched && changed; still bump for explicit reactionAck or statePatch updates.
     let newVersion = state.version;
     let bump = false;
     if (herTouched && changed) bump = true;

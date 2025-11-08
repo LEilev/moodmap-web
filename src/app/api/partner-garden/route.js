@@ -1,4 +1,7 @@
-// Harmony Final — Fix + Longevity Patch (2025-11-XX)
+// Harmony Sync-Fix – 2025-11-10
+// Sprint E: Hydration guard + 304 handling + PartnerModeGate crash-fix
+
+// Harmony Final — Fix + Longevity Patch + Sprint E: Remove 304, always 200 JSON
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -42,7 +45,7 @@ async function computeSyncEnergy7d(pairId, endDate = new Date()) {
   }
   const missionPct = missionsTotal > 0 ? clamp(Math.round((missionsDone / missionsTotal) * 100)) : (daysWithMissions > 0 ? 0 : 50);
   const kudosPct = clamp(Math.round((kudosDays / 7) * 100));
-  return clamp(Math.round(0.5 * missionPct + 0.5 * kudosPct));
+  return { energy: clamp(Math.round(0.5 * missionPct + 0.5 * kudosPct)), hasSignal: (kudosDays + missionsTotal) > 0 };
 }
 
 function energyToWeather(e) { if (e < 40) return 'stormy'; if (e < 55) return 'rainy'; if (e < 80) return 'cloudy'; return 'sunny'; }
@@ -58,7 +61,7 @@ export async function GET(req) {
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) { devLog('403 blocklist hit', { pairId }); return new Response(JSON.stringify({ ok:false, error:'blocked' }), { status: 403, headers: noStore() }); }
 
-    const energy = await computeSyncEnergy7d(pairId, new Date());
+    const { energy, hasSignal } = await computeSyncEnergy7d(pairId, new Date());
     let glowUntil = null;
     try {
       const react = await redis.hgetall(`reactions:${pairId}:${dayIso(new Date())}`);
@@ -83,19 +86,15 @@ export async function GET(req) {
       try { await redis.expire(ecoKey, 108000); devLog('ecologyTTL', { ttl: 108000 }); } catch {} // 30h
       if (prevMood !== gardenMood || prevWeather !== weatherState) {
         await redis.hincrby(`state:${pairId}`, 'gardenMoodVersion', 1);
-		await redis.hincrby(`state:${pairId}`, 'ecologyVersion', 1);
+        await redis.hincrby(`state:${pairId}`, 'ecologyVersion', 1);
       }
     } catch {} 
 
     const rawEtag = `W/"g.${gardenMood}.${weatherState}.${energy}.${glowUntil || ''}"`;
     const etag = sanitizeEtag(rawEtag);
-    const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
-    if (inm && inm === etag) {
-      devLog('304');
-      return new Response(null, { status: 304, headers: noStore({ ETag: etag }) });
-    }
 
-    return new Response(JSON.stringify({ ok:true, gardenMood, syncEnergy: energy, weatherState, glowUntil }), {
+    // Sprint E: ALWAYS return 200 JSON (no 304)
+    return new Response(JSON.stringify({ ok:true, hasData: hasSignal, gardenMood, syncEnergy: energy, weatherState, glowUntil }), {
       status: 200, headers: noStore({ ETag: etag }),
     });
   } catch (err) {

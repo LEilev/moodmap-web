@@ -1,4 +1,7 @@
-// Harmony v5.1.2 — First Sync Fix (2025-11-XX)
+// Harmony Sync-Fix – 2025-11-10
+// Sprint E: Hydration guard + 304 handling + PartnerModeGate crash-fix
+
+// Harmony v5.1.2 — First Sync Fix + Sprint E: Remove 304, always 200 JSON
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +17,6 @@ function getRedis() {
   if (!url || !token) throw new Error('Missing Upstash Redis env');
   return new Redis({ url, token });
 }
-
 
 function readFlag(name, fallback = false) {
   const v = (process.env[name] ?? process.env[`EXPO_PUBLIC_${name}`] ?? '').toString().toLowerCase();
@@ -46,14 +48,11 @@ function normalizeOwnerDate(input) {
   const s = String(input).trim();
   if (/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
   if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  // try parse
   const dt = new Date(s); if (!Number.isNaN(dt)) return isoDay(dt);
   return null;
 }
 
 // --- Emoji-sensitive ASCII representation for ETag slot(s) ---
-// Keeps the *shape* of the ETag intact while ensuring changes in non-ASCII (e.g. emoji) affect the value.
-// Strategy: return ASCII-only text; if original had any non-ASCII, append a short stable hex hash suffix.
 function fnv1a32Hex(str) {
   let h = 0x811c9dc5 >>> 0;
   for (let i=0; i<str.length; i++) {
@@ -106,24 +105,21 @@ function energyToWeather(e) { if (e < 40) return 'stormy'; if (e < 55) return 'r
 function energyToMood(e) { if (e < 40) return 'stormy'; if (e > 80) return 'vibrant'; return 'calm'; }
 
 async function resolveGarden(redis, pairId, syncEnergyScore, todayReaction = null) {
-  // Glow derived from today's last reaction (30 min window per Harmony)
   let glowUntil = null;
   try {
     const react = todayReaction || (await redis.hgetall(`reactions:${pairId}:${todayKeyUTC()}`));
     if (react && react.time) {
       const t = Date.parse(String(react.time));
       if (!Number.isNaN(t)) {
-        const until = new Date(t + 30 * 60 * 1000); // 30 minutes
+        const until = new Date(t + 30 * 60 * 1000);
         if (until > new Date()) glowUntil = until.toISOString();
       }
     }
   } catch {} 
 
-  // Base mapping
   let gardenMood = energyToMood(syncEnergyScore);
   let weatherState = energyToWeather(syncEnergyScore);
 
-  // Persist ecology: TTL ~30h; bump gardenMoodVersion if changed
   let shouldBumpGarden = false;
   try {
     const ecoKey = `ecology:${pairId}`;
@@ -131,8 +127,7 @@ async function resolveGarden(redis, pairId, syncEnergyScore, todayReaction = nul
     const prevMood = cur?.gardenMood || null;
     const prevWeather = cur?.weatherState || null;
     await redis.hset(ecoKey, { gardenMood, weatherState, syncEnergy: String(syncEnergyScore), glowUntil: glowUntil || '' });
-    try { await redis.expire(ecoKey, 108000); } catch {} // 30h
-    if (DEV) devLog('ecology:expire set', { ttl: 108000 });
+    try { await redis.expire(ecoKey, 108000); } catch {}
     if (prevMood !== gardenMood || prevWeather !== weatherState) shouldBumpGarden = true;
   } catch {} 
 
@@ -140,7 +135,6 @@ async function resolveGarden(redis, pairId, syncEnergyScore, todayReaction = nul
 }
 
 async function readFeedback(redis, pairId, dayIso) {
-  // Try canonical YYYY-MM-DD first, then legacy YYYYMMDD for backward-compat
   const dashed = `feedback:${pairId}:${dayIso}`;
   const legacy = `feedback:${pairId}:${dayIso.replaceAll('-','')}`;
   let fb = await redis.hgetall(dashed);
@@ -163,72 +157,39 @@ async function snapshot(redis, pairId, ownerDateParam) {
   const isValidConnection = !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
 
   const featureFlags = {
-    // Required Harmony toggles (always included)
     ff_coach:      readFlag('FF_COACH', true),
     ff_garden:     readFlag('FF_GARDEN', true),
     ff_ecology:    readFlag('FF_ECOLOGY', true),
     ff_challenges: readFlag('FF_CHALLENGES', true),
     ff_reactions:  readFlag('FF_REACTIONS', true),
     ff_insights:   readFlag('FF_INSIGHTS', true),
-    // Back-compat keys (kept to avoid breaking older clients)
     ff_coachMode:  readFlag('FF_COACH', true),
     ff_missions:   true,
     ff_scores:     true,
     ff_badges:     (String(state?.ff_badges || '').toLowerCase() === 'true') || readFlag('FF_BADGES', false),
   };
 
-  // Determine day key: prefer state.currentDate (Harmony), else normalized ownerDate, else UTC today
   const stateDate = state?.currentDate ? normalizeOwnerDate(state.currentDate) : null;
   const reqDate = normalizeOwnerDate(ownerDateParam);
   const dayIso = stateDate || reqDate || todayKeyUTC();
 
-  // Feedback for day
   const fb = await readFeedback(redis, pairId, dayIso);
   let tips = []; let vibe = null; let readiness = null;
   try { tips = Array.isArray(fb?.tips) ? fb.tips : (fb?.tips ? JSON.parse(fb.tips) : []); } catch { tips = []; }
   vibe = fb?.vibe ?? null;
   readiness = fb?.readiness != null ? Number(fb.readiness) : null;
 
-  // Reaction today (reuse further down)
   const reactKey = `reactions:${pairId}:${todayKeyUTC()}`;
   const react = await redis.hgetall(reactKey);
   const reactionType = react?.type || null;
 
-  // Sync energy (reuse today's reaction to avoid double read)
   const syncEnergyScore = await computeSyncEnergy7d(redis, pairId, new Date(), react);
 
-  // Garden resolve (reuse today's reaction)
   const { gardenMood, weatherState, glowUntil, shouldBumpGarden } = await resolveGarden(redis, pairId, syncEnergyScore, react);
   if (shouldBumpGarden) await redis.hincrby(stateKey, 'gardenMoodVersion', 1);
   const curGardenMoodVersion = shouldBumpGarden ? (gardenMoodVersion + 1) : gardenMoodVersion;
 
   // Active challenges
-  const activeChallenges = (async () => {
-    const items = [];
-    try {
-      // scan for keys challenges:pairId:*
-      let cursor = 0; const keys = [];
-      do {
-        const res = await redis.scan(cursor, { match: `challenges:${pairId}:*`, count: 50 });
-        cursor = Number(res[0] || 0); const batch = res[1] || [];
-        for (const k of batch) if (typeof k === 'string' && k.startsWith(`challenges:${pairId}:`)) keys.push(k);
-      } while (cursor !== 0 && keys.length < 24);
-      for (const k of keys) {
-        try {
-          const raw = await redis.get(k); if (!raw) continue;
-          const obj = JSON.parse(raw); if (!obj || !obj.expiresAt) continue;
-          if (Date.parse(obj.expiresAt) <= Date.now()) continue; // expired
-          const id = k.split(':').slice(-1)[0];
-          items.push({ id, text: obj.text || '', status: obj.status || 'pending', createdAt: obj.createdAt || null, expiresAt: obj.expiresAt || null });
-        } catch {}
-      }
-      items.sort((a,b) => (Date.parse(a.expiresAt||0) - Date.parse(b.expiresAt||0)));
-    } catch {}
-    return items.slice(0,3);
-  }) ? await (async () => { try { return await (async () => { const res = []; return res; })(); } catch { return []; } })() : [];
-
-  // NOTE: The above inline trick was placeholder; keep the scan from original code:
-  // Re-implement activeChallenges properly (explicitly):
   let _activeChallenges = [];
   try {
     let cursor = 0; const keys = [];
@@ -259,7 +220,6 @@ async function snapshot(redis, pairId, ownerDateParam) {
     return [toW(e1), toW(e2), toW(e3)];
   })();
 
-  // First Sync Fix: broaden hasData so that vibe/readiness count as data
   const hasData = (Array.isArray(tips) && tips.length > 0) ||
                   (typeof vibe === 'string' && vibe.length > 0) ||
                   (typeof readiness === 'number' && readiness > 0);
@@ -279,11 +239,11 @@ async function snapshot(redis, pairId, ownerDateParam) {
     isValidConnection,
   };
 
-  // ETag signature (challenge expiry baked in) — unchanged *shape*, but vibe slot is ASCII+hash for emoji sensitivity.
   const chCount = active.length;
   const nextExp = chCount ? Math.floor(Math.min(...active.map(c => Date.parse(c.expiresAt||0))) / 60000) : 0;
   const vibeSlot = asciiWithEmojiHash(vibe || '');
   const rawEtag = `W/"${version}.${missionsVersion}.${scoresVersion}.${reactionsVersion}.${insightsVersion}.${ecologyVersion}.${challengesVersion}.${curGardenMoodVersion}.${syncEnergyScore}.${(tips?.length||0)}.${vibeSlot}.${String(readiness||'')}.${weatherState}.${chCount}.${nextExp}.${featureFlags.ff_insights?'1':'0'}${featureFlags.ff_reactions?'1':'0'}${featureFlags.ff_badges?'1':'0'}${featureFlags.ff_challenges?'1':'0'}${featureFlags.ff_garden?'1':'0'}${featureFlags.ff_coach?'1':'0'}${featureFlags.ff_ecology?'1':'0'}"`;
+
   return { payload, etag: rawEtag };
 }
 
@@ -292,7 +252,6 @@ export async function GET(req) {
     const url = new URL(req.url);
     const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
     const ownerDate = url.searchParams.get('ownerDate') || null;
-    const wait = Math.min(25, Math.max(0, Number(url.searchParams.get('wait') || 0)));
     if (!pairId) return json({ ok:false, error: 'Missing pairId' }, 400);
 
     const redis = getRedis();
@@ -301,33 +260,9 @@ export async function GET(req) {
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) { devLog('403 blocklist hit', { pairId }); return json({ ok:false, error: 'blocked' }, 403); }
 
-    let { payload, etag } = await snapshot(redis, pairId, ownerDate);
-    let safeEtag = sanitizeEtag(String(etag || ''));
-    const inm = sanitizeEtag(req.headers.get('if-none-match') || '');
-    devLog('ownerDateUsed', payload?.day);
-
-    if (inm && inm === safeEtag) {
-      if (wait <= 0) {
-        devLog('304 immediate');
-        return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
-      }
-      // Long-poll until changed or timeout → 304 if unchanged
-      const started = Date.now();
-      let changed = false;
-      while ((Date.now() - started) < wait * 1000) {
-        const snap2 = await snapshot(redis, pairId, ownerDate);
-        const e2 = sanitizeEtag(String(snap2.etag || ''));
-        if (e2 !== safeEtag) {
-          payload = snap2.payload; safeEtag = e2; changed = true; break;
-        }
-        await new Promise(r => setTimeout(r, 350));
-      }
-      if (!changed) {
-        devLog('304 after long-poll', { waitedMs: Date.now() - started });
-        return new Response(null, { status: 304, headers: { ETag: safeEtag, 'Cache-Control': 'no-store' } });
-      }
-    }
-
+    const { payload, etag } = await snapshot(redis, pairId, ownerDate);
+    const safeEtag = sanitizeEtag(String(etag || ''));
+    // Sprint E: ALWAYS return 200 JSON (no 304), still attach ETag for client-side ref
     return json(payload, 200, safeEtag ? { ETag: safeEtag } : {});
   } catch (e) {
     return json({ ok:false, error: String(e?.message || e) }, 500);
