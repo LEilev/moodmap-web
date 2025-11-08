@@ -40,6 +40,14 @@ export async function POST(req) {
 
     if (!pairId) return new Response(JSON.stringify({ ok:false, error:'pairId required' }), { status: 400, headers: noStoreHeaders() });
     if (!text) return new Response(JSON.stringify({ ok:false, error:'text required' }), { status: 400, headers: noStoreHeaders() });
+    // Check active challenges count (limit 3 active)
+    try {
+      const keys = await redis('keys', `challenges:${pairId}:*`);
+      const activeKeys = Array.isArray(keys) ? keys : [];
+      if (activeKeys.length >= 3) {
+        return new Response(JSON.stringify({ ok:false, error:'too many active challenges' }), { status: 429, headers: noStoreHeaders() });
+      }
+    } catch {}
 
     // idempotency
     if (updateId) {
@@ -54,17 +62,34 @@ export async function POST(req) {
     }
 
     const createdAt = nowISO();
-    const expiresAt = new Date(Date.now() + 24*60*60*1000).toISOString();
-    const item = { text, status: 'pending', createdAt, expiresAt };
+    const ttlSec = Number(body?.expiresIn) > 0 ? Number(body.expiresIn) : (24*60*60);
+    const expiresAt = new Date(Date.now() + ttlSec*1000).toISOString();
+    const item = { text, sender: 'HER', status: 'pending', createdAt, expiresAt };
     const key = `challenges:${pairId}:${challengeId}`;
-    await redis('set', key, JSON.stringify(item), 'EX', String(24*60*60));
+    await redis('set', key, JSON.stringify(item), 'EX', String(ttlSec));
 
     // bump versions
     const stateKey = `state:${pairId}`;
     await redis('hincrby', stateKey, 'challengesVersion', '1');
     await redis('hincrby', stateKey, 'ecologyVersion', '1');
 
-    return new Response(JSON.stringify({ ok:true, challenge: { id: challengeId, ...item } }), { status: 200, headers: noStoreHeaders() });
+    // Count active challenges after adding
+    let activeCount = 0;
+    try {
+      const keys = await redis('keys', `challenges:${pairId}:*`);
+      const activeKeys = Array.isArray(keys) ? keys : [];
+      activeCount = activeKeys.length;
+      for (const k of activeKeys) {
+        try {
+          const raw = await redis('get', k);
+          if (raw) {
+            const obj = JSON.parse(raw);
+            if (obj && obj.status === 'approved') activeCount -= 1;
+          }
+        } catch {}
+      }
+    } catch {}
+    return new Response(JSON.stringify({ ok:true, challengeId: challengeId, activeCount }), { status: 200, headers: noStoreHeaders() });
   } catch (err) {
     return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }

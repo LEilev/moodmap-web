@@ -1,165 +1,119 @@
-// Harmony Partner Sync Recovery Patch – 2025-11-11
-// Auto-unlink on stale pair + modal stability improvements
-
+// app/api/partner-status/route.js — Harmony Implementation & Improvement Pack
+import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-import { Redis } from '@upstash/redis';
-import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-function json(data, status = 200, extraHeaders = {}) {
-  return new Response(JSON.stringify(data), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', ...extraHeaders },
-  });
+function noStore(extra={}) {
+  return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
 }
-
-function getRedis() {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) throw new Error('Missing Upstash Redis env');
-  return new Redis({ url, token });
+async function redis(cmd, ...args) {
+  const url = `${UPSTASH_URL}/${cmd}/${args.map(a => encodeURIComponent(String(a))).join('/')}`;
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` } });
+  if (!res.ok) throw new Error(`Upstash ${cmd} failed: ${res.status} ${await res.text()}`);
+  const data = await res.json();
+  return data.result;
 }
-
-function readFlag(name, fallback = false) {
-  const v = (process.env[name] ?? process.env[`EXPO_PUBLIC_${name}`] ?? '').toString().toLowerCase();
-  if (v === 'true') return true;
-  if (v === 'false') return false;
-  return fallback;
-}
-
-function todayKeyUTC() {
-  const d = new Date();
-  const y = d.getUTCFullYear();
-  const m = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(d.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`; // yyyy-mm-dd
-}
-function isoDay(d=new Date()) { return d.toISOString().slice(0,10); }
-
-function normalizeOwnerDate(input) {
-  if (!input) return null;
-  const s = String(input).trim();
-  if (/^\d{8}$/.test(s)) return `${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`;
-  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
-  const dt = new Date(s); if (!Number.isNaN(dt)) return isoDay(dt);
-  return null;
-}
-
-function clamp(n, lo=0, hi=100) { return Math.max(lo, Math.min(hi, n)); }
-function energyToWeather(e) { if (e < 40) return 'stormy'; if (e < 55) return 'rainy'; if (e < 80) return 'cloudy'; return 'sunny'; }
-
-async function readFeedback(redis, pairId, dayIso) {
-  const dashed = `feedback:${pairId}:${dayIso}`;
-  const legacy = `feedback:${pairId}:${dayIso.replaceAll('-','')}`;
-  let fb = await redis.hgetall(dashed);
-  if (!fb || Object.keys(fb).length === 0) fb = await redis.hgetall(legacy);
-  return fb || null;
-}
-
-async function computeSyncEnergy7d(redis, pairId) {
-  let kudosDays = 0, daysWithMissions = 0, missionsDone = 0, missionsTotal = 0;
-  for (let i=0;i<7;i++) {
-    const d = new Date(); d.setUTCDate(d.getUTCDate()-i);
-    const dKey = d.toISOString().slice(0,10);
+export async function GET(req) {
+  try {
+    if (!UPSTASH_URL || !UPSTASH_TOKEN) {
+      return new Response(JSON.stringify({ ok:false, error:'Missing Upstash env' }), { status: 500, headers: noStore() });
+    }
+    const url = new URL(req.url);
+    const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
+    if (!pairId) return new Response(JSON.stringify({ ok:false, error:'Missing pairId' }), { status: 400, headers: noStore() });
+    // Blocklist check
+    const blocked = await redis('get', `blocklist:${pairId}`);
+    if (blocked) {
+      return new Response(JSON.stringify({ ok:false, isValidConnection:false, error:'blocked' }), { status: 403, headers: noStore() });
+    }
+    const stateKey = `state:${pairId}`;
+    const state = await redis('hgetall', stateKey) || {};
+    const missionsVersion = Number(state.missionsVersion) || 0;
+    const scoresVersion = Number(state.scoresVersion) || 0;
+    const ecologyVersion = Number(state.ecologyVersion) || 0;
+    const challengesVersion = Number(state.challengesVersion) || 0;
+    // Determine weatherState and forecast from ecology if available
+    let weatherState = state.weatherState || null;
+    let forecast72h = [];
+    if (!weatherState) {
+      // Fallback: derive weatherState from syncEnergy if present
+      const energyVal = Number(state.syncEnergy) || 50;
+      if (energyVal < 40) weatherState = 'stormy'; else if (energyVal < 55) weatherState = 'rainy'; else if (energyVal < 80) weatherState = 'cloudy'; else weatherState = 'sunny';
+    }
+    // forecast - if any cached or precomputed exists (for simplicity, re-use partner-insights logic if needed)
+    // We won't compute heavy forecast here to keep payload small - optional.
+    if (state.forecast72h) {
+      try { forecast72h = JSON.parse(state.forecast72h); } catch {}
+    }
+    // Feature flags (if any stored or default to enabling core features)
+    let featureFlags = {};
     try {
-      const mraw = await redis.get(`missions:${pairId}:${dKey}`);
-      if (mraw) {
-        let list = []; try { list = JSON.parse(mraw) || []; } catch {}
-        if (Array.isArray(list) && list.length > 0) {
-          daysWithMissions += 1; missionsTotal += list.length; missionsDone += list.filter(m => m && m.status === 'done').length;
+      featureFlags = state.featureFlags ? JSON.parse(state.featureFlags) : {};
+    } catch {
+      featureFlags = {};
+    }
+    // Ensure known flags present (default true for rollout features)
+    if (featureFlags.ff_garden === undefined) featureFlags.ff_garden = true;
+    if (featureFlags.ff_challenges === undefined) featureFlags.ff_challenges = true;
+    if (featureFlags.ff_insights === undefined) featureFlags.ff_insights = true;
+    if (featureFlags.ff_badges === undefined) featureFlags.ff_badges = true;
+    if (featureFlags.ff_missions === undefined) featureFlags.ff_missions = true;
+    // Active challenges listing
+    let activeChallenges = [];
+    try {
+      const keys = await redis('keys', `challenges:${pairId}:*`);
+      const challengeKeys = Array.isArray(keys) ? keys : [];
+      for (const k of challengeKeys) {
+        const raw = await redis('get', k);
+        if (!raw) continue;
+        let obj = null;
+        try { obj = JSON.parse(raw); } catch {}
+        if (obj && obj.status !== 'approved') {
+          activeChallenges.push({ id: k.split(':').slice(-1)[0], text: obj.text, status: obj.status, expiresAt: obj.expiresAt });
+        }
+      }
+      // Sort challenges by expiresAt ascending for consistency
+      activeChallenges.sort((a,b) => {
+        return (a.expiresAt || '').localeCompare(b.expiresAt || '');
+      });
+    } catch {}
+    // Determine connection hasData flag (if any partner data present)
+    // For now, treat presence of any missions or reactions in last week as signal
+    let hasSignal = false;
+    try {
+      for (let i=0;i<7;i++) {
+        const d = new Date(); d.setUTCDate(d.getUTCDate()-i);
+        const dKey = d.toISOString().slice(0,10);
+        const r = await redis('hgetall', `reactions:${pairId}:${dKey}`);
+        const m = await redis('get', `missions:${pairId}:${dKey}`);
+        if ((r && (r.type || r.note || r.time)) || m) {
+          hasSignal = true;
+          break;
         }
       }
     } catch {}
-    try {
-      const r = await redis.hgetall(`reactions:${pairId}:${dKey}`);
-      if (r && (r.type || r.note || r.time)) kudosDays += 1;
-    } catch {}
-  }
-  const missionPct = missionsTotal > 0 ? clamp(Math.round((missionsDone / missionsTotal) * 100)) : (daysWithMissions > 0 ? 0 : 50);
-  const kudosPct = clamp(Math.round((kudosDays / 7) * 100));
-  return clamp(Math.round(0.5 * missionPct + 0.5 * kudosPct));
-}
-
-export async function GET(req) {
-  try {
-    const url = new URL(req.url);
-    const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
-    const ownerDate = url.searchParams.get('ownerDate') || null;
-    if (!pairId) return json({ ok:false, error: 'Missing pairId', isValidConnection:false }, 400);
-
-    const redis = getRedis();
-
-    // Blocklisted pair → 403
-    const blocked = await redis.get(`blocklist:${pairId}`);
-    if (blocked) return json({ ok:false, error: 'blocked', isValidConnection:false }, 403);
-
-    const stateKey = `state:${pairId}`;
-    const state = await redis.hgetall(stateKey) || {};
-    const stateExists = Object.keys(state).length > 0;
-    const isValidConnection = stateExists && !(['false','0'].includes(String(state?.isValidConnection || '').toLowerCase()));
-
-    // Missing or invalid state → 403 with explicit flag to trigger client unlink
-    if (!stateExists || !isValidConnection) {
-      const featureFlags = {
-        ff_coach: readFlag('FF_COACH', true),
-        ff_garden: readFlag('FF_GARDEN', true),
-        ff_ecology: readFlag('FF_ECOLOGY', true),
-        ff_challenges: readFlag('FF_CHALLENGES', true),
-        ff_reactions: readFlag('FF_REACTIONS', true),
-        ff_insights: readFlag('FF_INSIGHTS', true),
-        ff_coachMode: readFlag('FF_COACH', true),
-        ff_missions: true,
-        ff_scores: true,
-        ff_badges: readFlag('FF_BADGES', false),
-      };
-      return json({ ok:false, isValidConnection:false, featureFlags, hasData:false, day: normalizeOwnerDate(ownerDate) || todayKeyUTC() }, 403);
-    }
-
-    const featureFlags = {
-      ff_coach:      readFlag('FF_COACH', true),
-      ff_garden:     readFlag('FF_GARDEN', true),
-      ff_ecology:    readFlag('FF_ECOLOGY', true),
-      ff_challenges: readFlag('FF_CHALLENGES', true),
-      ff_reactions:  readFlag('FF_REACTIONS', true),
-      ff_insights:   readFlag('FF_INSIGHTS', true),
-      ff_coachMode:  readFlag('FF_COACH', true),
-      ff_missions:   true,
-      ff_scores:     true,
-      ff_badges:     (String(state?.ff_badges || '').toLowerCase() === 'true') || readFlag('FF_BADGES', false),
-    };
-
-    const stateDate = state?.currentDate ? normalizeOwnerDate(state.currentDate) : null;
-    const reqDate = normalizeOwnerDate(ownerDate);
-    const dayIso = stateDate || reqDate || todayKeyUTC();
-
-    const fb = await readFeedback(redis, pairId, dayIso);
-    let tips = []; let vibe = null; let readiness = null;
-    try { tips = Array.isArray(fb?.tips) ? fb.tips : (fb?.tips ? JSON.parse(fb.tips) : []); } catch { tips = []; }
-    vibe = fb?.vibe ?? null;
-    readiness = fb?.readiness != null ? Number(fb.readiness) : null;
-
-    const syncEnergyScore = await computeSyncEnergy7d(redis, pairId);
-    const weatherState = energyToWeather(syncEnergyScore);
-
-    const hasData = (Array.isArray(tips) && tips.length > 0) ||
-                    (typeof vibe === 'string' && vibe.length > 0) ||
-                    (typeof readiness === 'number' && readiness > 0);
-
     const payload = {
       ok: true,
-      hasData,
       featureFlags,
-      isValidConnection: true,
-      tips, vibe, readiness,
+      missionsVersion,
+      scoresVersion,
+      ecologyVersion,
+      challengesVersion,
       weatherState,
-      day: dayIso,
+      forecast72h,
+      activeChallenges,
+      isValidConnection: true,
+      hasData: hasSignal
     };
-
-    // ALWAYS 200 JSON (no 304)
-    const etag = sanitizeEtag(`W/"${String(state?.version || 0)}.${String(syncEnergyScore)}.${hasData?'1':'0'}.${weatherState}"`);
-    return json(payload, 200, etag ? { ETag: etag } : {});
-  } catch (e) {
-    return json({ ok:false, error: String(e?.message || e), isValidConnection:false }, 500);
+    // Compute ETag from version numbers and weatherState (and optionally syncEnergy if available)
+    const rawEtag = `W/"v.${missionsVersion}.${scoresVersion}.${ecologyVersion}.${challengesVersion}.${weatherState || ''}"`;
+    const etag = sanitizeEtag(rawEtag);
+    return new Response(JSON.stringify(payload), { status: 200, headers: noStore({ ETag: etag }) });
+  } catch (err) {
+    return new Response(JSON.stringify({ ok:false, error:String(err.message||err) }), { status: 500, headers: noStore() });
   }
 }
