@@ -1,7 +1,6 @@
 // Harmony Sync-Fix – 2025-11-10
-// Sprint E: Hydration guard + 304 handling + PartnerModeGate crash-fix
+// Sprint E: Hydration guard + 304 handling + Stable Partner Sync
 
-// Harmony v5.1.2 — First Sync Fix + Sprint E: graceful invalid/missing pair, no 304
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -11,22 +10,10 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-const DEV = process.env.NODE_ENV !== 'production';
-function devLog(...args) { if (DEV) { try { console.log('[HarmonyDev][partner-feedback]', ...args); } catch {} } }
-
 const headersNoStore = {
   'Cache-Control': 'no-store',
   'Content-Type': 'application/json; charset=utf-8',
 };
-
-const toBool = (v) => {
-  if (typeof v === 'boolean') return v;
-  if (typeof v === 'string') return v === 'true' || v === '1';
-  if (typeof v === 'number') return v !== 0;
-  return false;
-};
-
-const weakETag = (v) => `W/"${v}"`;
 
 function normalizeOwnerDate(input) {
   if (!input) return null;
@@ -36,42 +23,16 @@ function normalizeOwnerDate(input) {
   const dt = new Date(s); if (!Number.isNaN(dt)) return dt.toISOString().slice(0,10);
   return null;
 }
-
 function todayKeyUTC() {
   const d = new Date();
   const y = d.getUTCFullYear();
   const m = String(d.getUTCMonth() + 1).padStart(2, '0');
   const day = String(d.getUTCDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`; // yyyy-mm-dd
+  return `${y}-${m}-${day}`;
 }
 
 async function stateExists(pairId) {
-  try {
-    const n = await redis.exists(`state:${pairId}`);
-    return Number(n) > 0;
-  } catch {
-    return false;
-  }
-}
-
-async function getState(pairId) {
-  const key = `state:${pairId}`;
-  const res = await redis.hgetall(key);
-  return { key, version: Number(res?.version ?? 0), ...res };
-}
-
-async function getFeedback(pairId, dayIso) {
-  const dashed = `feedback:${pairId}:${dayIso}`;
-  const legacy = `feedback:${pairId}:${dayIso.replaceAll('-','')}`;
-  const fv = (await redis.hgetall(dashed)) || (await redis.hgetall(legacy));
-  const out = { key: dashed, tips: [], vibe: '', readiness: null, reactionAck: false };
-  if (fv) {
-    out.vibe = typeof fv.vibe === 'string' ? fv.vibe : '';
-    out.readiness = fv.readiness != null ? Number(fv.readiness) : null;
-    out.reactionAck = toBool(fv.reactionAck);
-    if (fv.tips) { try { out.tips = JSON.parse(fv.tips); } catch {} }
-  }
-  return out;
+  try { return Number(await redis.exists(`state:${pairId}`)) > 0; } catch { return false; }
 }
 
 export async function POST(req) {
@@ -82,108 +43,66 @@ export async function POST(req) {
     const updateId = String(body.updateId || '').trim();
 
     if (!pairId || !updateId) {
-      return new Response(JSON.stringify({ ok: false, error: 'pairId and updateId required' }), {
-        status: 400, headers: headersNoStore,
-      });
+      return new Response(JSON.stringify({ ok: false, error: 'pairId and updateId required' }), { status: 400, headers: headersNoStore });
     }
 
-    // Sprint E: missing/invalid pair → graceful JSON (not raw 403)
+    // Missing/invalid pair → not 403 (only blocklist is 403)
     const exists = await stateExists(pairId);
     if (!exists) {
-      return new Response(JSON.stringify({ ok: false, error: 'Missing pair' }), {
-        status: 200, headers: headersNoStore,
-      });
+      return new Response(JSON.stringify({ ok: false, error: 'Missing pair' }), { status: 200, headers: headersNoStore });
     }
 
     const blocked = await redis.get(`blocklist:${pairId}`);
     if (blocked) {
-      devLog('403 blocklist hit', { pairId });
       return new Response(JSON.stringify({ ok: false, error: 'blocked' }), { status: 403, headers: headersNoStore });
     }
 
-    // Load state for potential fallback
-    const state = await getState(pairId);
+    const stateKey = `state:${pairId}`;
+    const state = await redis.hgetall(stateKey);
 
-    // Normalize ownerDate → canonical YYYY-MM-DD; fallback to state.currentDate, else UTC today
+    // Normalize ownerDate with fallback
     let ownerDate = normalizeOwnerDate(ownerDateRaw);
     if (!ownerDate) {
       const fromState = state?.currentDate ? normalizeOwnerDate(state.currentDate) : null;
       ownerDate = fromState || todayKeyUTC();
     }
-    devLog('ownerDateUsed', ownerDate);
 
-    // Idempotency – 24h window
+    // Idempotency (24h)
     const idemKey = `idemp:${pairId}:${updateId}`;
     const idem = await redis.set(idemKey, 1, { nx: true, ex: 60 * 60 * 24 });
     if (idem === null) {
-      devLog('idempotent-hit', { updateId });
-      const prev = state;
-      return new Response(JSON.stringify({ ok: true, version: prev.version, idempotent: true }), {
-        status: 200, headers: { ...headersNoStore, ETag: weakETag(prev.version) },
-      });
+      const prevVersion = Number(state?.version || 0);
+      return new Response(JSON.stringify({ ok: true, version: prevVersion, idempotent: true }), { status: 200, headers: headersNoStore });
     }
 
-    const feedback = await getFeedback(pairId, ownerDate);
-
+    // Upsert feedback
+    const fbKey = `feedback:${pairId}:${ownerDate}`;
     const patch = {};
-    let changed = false;
-
-    if ('vibe' in body && typeof body.vibe === 'string') {
-      patch.vibe = body.vibe;
-      changed = changed || patch.vibe !== feedback.vibe;
-    }
+    if ('vibe' in body && typeof body.vibe === 'string') patch.vibe = body.vibe;
     if ('readiness' in body && (typeof body.readiness === 'number' || typeof body.readiness === 'string')) {
-      const val = Number(body.readiness);
-      patch.readiness = Number.isNaN(val) ? null : val;
-      changed = changed || patch.readiness !== feedback.readiness;
+      const n = Number(body.readiness);
+      patch.readiness = Number.isNaN(n) ? null : n;
     }
-    if ('tips' in body && Array.isArray(body.tips)) {
-      patch.tips = JSON.stringify(body.tips);
-      changed = changed || JSON.stringify(feedback.tips || []) !== patch.tips;
-    }
-
-    if ('reactionAck' in body) {
-      const ack = toBool(body.reactionAck);
-      if (ack !== feedback.reactionAck) { patch.reactionAck = ack ? '1' : '0'; changed = true; }
-    }
-
-    const statePatch = {};
-    if ('missionsVersion' in body && body.missionsVersion != null) {
-      const mv = Number(body.missionsVersion);
-      if (!Number.isNaN(mv)) statePatch.missionsVersion = mv;
-    }
-    if ('scoresVersion' in body && body.scoresVersion != null) {
-      const sv = Number(body.scoresVersion);
-      if (!Number.isNaN(sv)) statePatch.scoresVersion = sv;
-    }
-
-    const herTouched = ('vibe' in body) || ('readiness' in body) || ('tips' in body);
-    if (herTouched) patch.reactionAck = '0';
+    if ('tips' in body && Array.isArray(body.tips)) { patch.tips = JSON.stringify(body.tips); }
+    if ('reactionAck' in body) patch.reactionAck = body.reactionAck ? '1' : '0';
 
     if (Object.keys(patch).length > 0) {
-      await redis.hset(feedback.key, patch);
-      try { await redis.expire(feedback.key, 108000); } catch {} // 30h
+      await redis.hset(fbKey, patch);
+      try { await redis.expire(fbKey, 108000); } catch {}
     }
 
-    if (Object.keys(statePatch).length > 0 || herTouched || ('reactionAck' in body)) {
-      const writePatch = { currentDate: ownerDate, ...statePatch };
-      await redis.hset(state.key, writePatch);
-    }
-
-    // First Sync Fix: prevent double version bump on identical owner POSTs
-    let newVersion = state.version;
+    // State bump rules
     let bump = false;
-    if (herTouched && changed) bump = true;
-    if (!bump && ('reactionAck' in body)) bump = true;
-    if (!bump && Object.keys(statePatch).length > 0) bump = true;
-    if (bump) newVersion = await redis.hincrby(state.key, 'version', 1);
+    if ('vibe' in body || 'readiness' in body || 'tips' in body) bump = true;
+    if ('reactionAck' in body) bump = true;
+    if ('missionsVersion' in body || 'scoresVersion' in body) bump = true;
 
-    return new Response(JSON.stringify({ ok: true, version: newVersion }), {
-      status: 200, headers: { ...headersNoStore, ETag: weakETag(newVersion) },
-    });
+    let newVersion = Number(state?.version || 0);
+    if (bump) newVersion = await redis.hincrby(stateKey, 'version', 1);
+    await redis.hset(stateKey, { currentDate: ownerDate });
+
+    return new Response(JSON.stringify({ ok: true, version: newVersion }), { status: 200, headers: headersNoStore });
   } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: 'server_error', detail: String(err) }), {
-      status: 500, headers: headersNoStore,
-    });
+    return new Response(JSON.stringify({ ok: false, error: 'server_error', detail: String(err) }), { status: 500, headers: headersNoStore });
   }
 }
