@@ -1,4 +1,5 @@
 // Harmony Final — Fix + Longevity Patch (2025-11-XX)
+// app/api/partner-unlink/route.js
 export const runtime = 'edge';
 
 import { Redis } from '@upstash/redis';
@@ -105,11 +106,22 @@ async function purgePairData(pairId) {
   }
 }
 
+// Longevity helper: ensure state key keeps a generous TTL (renew on write events)
+// We expose a small 'touch' here so other routes can import later if needed.
+export async function touchStateTTL(pairId, ttlSec = 7 * 24 * 60 * 60) {
+  try {
+    await redis.expire(`state:${pairId}`, ttlSec);
+  } catch (e) {
+    console.warn('[unlink] touchStateTTL failed:', e?.message || e);
+  }
+}
+
 /**
  * POST /api/partner-unlink
  * Body: { pairId }
  * Effects: SET blocklist:<pairId> "1" EX 300 (symmetrisk unlink) + purge state/feedback/ecology/challenges
  *          NEW: write state:{pairId}.isValidConnection = false (for late reconnect signal)
+ *          NEW: ensure state:{pairId} TTL >= 7 days (longevity)
  * Success: { ok: true }
  * Errors: 400 invalid pairId, 429 RL
  */
@@ -153,7 +165,9 @@ export async function POST(req) {
     // NEW: write isValidConnection=false after purge (so it persists beyond blocklist TTL)
     try {
       await redis.hset(`state:${pairId}`, { isValidConnection: 'false' });
-      devLog('state.isValidConnection=false written');
+      // NEW: longevity — make sure state key is not evicted too soon
+      await touchStateTTL(pairId);
+      devLog('state.isValidConnection=false written + TTL touched');
     } catch {}
 
     return json({ ok: true }, 200);
