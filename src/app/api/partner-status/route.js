@@ -1,11 +1,10 @@
 // app/api/partner-status/route.js
-// Harmony² Feedback Visibility Sync Update — 2025-11-09
+// Harmony² Feedback Visibility Sync (LocalDate Edition) — 2025-11-09
 //
-// Change: sets `hasData:true` when daily feedback exists in Redis at
-//   feedback:<pairId>:<YYYY-MM-DD>
-// using the same field semantics as /api/partner-feedback (vibe/readiness/tips/reactionAck).
+// Fix: uses local (owner) date instead of UTC to locate feedback:<pairId>:<YYYY-MM-DD>
+// so hasData:true reflects local timezone reality (e.g. Europe/Oslo).
 //
-// Preserves: Edge runtime, version counters, featureFlags, ETag, TTL refresh, and existing signals.
+// Preserves: Edge runtime, version counters, featureFlags, ETag, TTL refresh, and all existing signals.
 //
 
 import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
@@ -38,6 +37,7 @@ async function redis(cmd, ...args) {
   return data.result;
 }
 
+// ---- Date helpers ----
 function normalizeOwnerDate(input) {
   if (!input) return null;
   const s = String(input).trim();
@@ -48,12 +48,13 @@ function normalizeOwnerDate(input) {
   if (!Number.isNaN(dt)) return dt.toISOString().slice(0, 10);
   return null;
 }
-function todayKeyUTC() {
-  const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(
-    2,
-    '0'
-  )}-${String(d.getUTCDate()).padStart(2, '0')}`;
+
+// Local date helper (UTC + offset)
+function todayKeyLocal() {
+  const now = new Date();
+  const offsetMin = now.getTimezoneOffset(); // e.g. -60 for CET
+  const local = new Date(now.getTime() - offsetMin * 60000);
+  return local.toISOString().slice(0, 10);
 }
 
 export async function GET(req) {
@@ -128,7 +129,7 @@ export async function GET(req) {
     ])
       if (featureFlags[key] === undefined) featureFlags[key] = true;
 
-    // Signal check
+    // Signal check (baseline)
     let hasSignal = false;
     try {
       for (let i = 0; i < 7; i++) {
@@ -144,8 +145,9 @@ export async function GET(req) {
       }
     } catch {}
 
-    // Feedback visibility
-    const ownerDate = normalizeOwnerDate(state.currentDate) || todayKeyUTC();
+    // Feedback visibility (local-date aware)
+    const ownerDate =
+      normalizeOwnerDate(state.currentDate) || todayKeyLocal();
     const fbKey = `feedback:${pairId}:${ownerDate}`;
     let hasFeedback = false;
     try {
