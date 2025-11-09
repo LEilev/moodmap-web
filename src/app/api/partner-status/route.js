@@ -1,11 +1,11 @@
 // app/api/partner-status/route.js
-// Harmony² Feedback Visibility Sync (Dual-Date Edition) — 2025-11-09
+// Harmony² Feedback Visibility Final Fix — 2025-11-09
 //
-// Fix: automatically checks both local and UTC feedback dates so hasData:true
-// works in all timezones (e.g. Europe/Oslo, US, Asia).
+// Fix: Instead of guessing local vs UTC dates, this version finds the latest feedback:<pairId>:* key directly via Redis.
+// This ensures hasData:true whenever feedback exists, regardless of timezone differences or state.currentDate sync issues.
+// Also returns latestFeedbackDate in the JSON response (for debugging and front-end sync).
 //
 // Preserves: Edge runtime, version counters, featureFlags, ETag, TTL refresh, and all existing signals.
-//
 
 import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 export const runtime = 'edge';
@@ -24,14 +24,11 @@ function noStore(extra = {}) {
   };
 }
 async function redis(cmd, ...args) {
-  const url = `${UPSTASH_URL}/${cmd}/${args
-    .map(a => encodeURIComponent(String(a)))
-    .join('/')}`;
+  const url = `${UPSTASH_URL}/${cmd}/${args.map(a => encodeURIComponent(String(a))).join('/')}`;
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
   });
-  if (!res.ok)
-    throw new Error(`Upstash ${cmd} failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) throw new Error(`Upstash ${cmd} failed: ${res.status} ${await res.text()}`);
   const data = await res.json();
   return data.result;
 }
@@ -49,10 +46,7 @@ function normalizeOwnerDate(input) {
 }
 function todayKeyUTC() {
   const d = new Date();
-  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(
-    2,
-    '0'
-  )}-${String(d.getUTCDate()).padStart(2, '0')}`;
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
 }
 function todayKeyLocal() {
   const now = new Date();
@@ -66,10 +60,7 @@ async function checkFeedback(pairId, dateKey) {
   const fbKey = `feedback:${pairId}:${dateKey}`;
   const fb = await redis('hgetall', fbKey);
   if (!fb) return false;
-  const vibe =
-    typeof fb.vibe === 'string' && fb.vibe.trim().length > 0
-      ? fb.vibe.trim()
-      : null;
+  const vibe = typeof fb.vibe === 'string' && fb.vibe.trim().length > 0 ? fb.vibe.trim() : null;
   const n = Number(fb.readiness);
   const readiness = Number.isNaN(n) ? null : n;
   let tips = [];
@@ -79,89 +70,69 @@ async function checkFeedback(pairId, dateKey) {
       if (Array.isArray(parsed)) tips = parsed;
     } catch {}
   }
-  const reactionAck =
-    typeof fb.reactionAck === 'string' && fb.reactionAck === '1';
+  const reactionAck = typeof fb.reactionAck === 'string' && fb.reactionAck === '1';
   return Boolean(
     (vibe && vibe.length > 0) ||
-      typeof readiness === 'number' ||
-      (Array.isArray(tips) && tips.length > 0) ||
-      reactionAck
+    typeof readiness === 'number' ||
+    (Array.isArray(tips) && tips.length > 0) ||
+    reactionAck
   );
 }
 
 export async function GET(req) {
   try {
     if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing Upstash env' }),
-        { status: 500, headers: noStore() }
-      );
+      return new Response(JSON.stringify({ ok: false, error: 'Missing Upstash env' }), { status: 500, headers: noStore() });
     }
 
     const url = new URL(req.url);
-    const pairId =
-      url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
-    if (!pairId)
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Missing pairId' }),
-        { status: 400, headers: noStore() }
-      );
+    const pairId = url.searchParams.get('pairId') || req.headers.get('x-mm-pair') || '';
+    if (!pairId) {
+      return new Response(JSON.stringify({ ok: false, error: 'Missing pairId' }), { status: 400, headers: noStore() });
+    }
 
     // Blocklist
     const blocked = await redis('get', `blocklist:${pairId}`);
-    if (blocked)
-      return new Response(
-        JSON.stringify({
-          ok: false,
-          isValidConnection: false,
-          error: 'blocked'
-        }),
-        { status: 403, headers: noStore() }
-      );
+    if (blocked) {
+      return new Response(JSON.stringify({ ok: false, isValidConnection: false, error: 'blocked' }), { status: 403, headers: noStore() });
+    }
 
     const stateKey = `state:${pairId}`;
     const state = (await redis('hgetall', stateKey)) || {};
     try {
+      // refresh TTL
       await redis('expire', stateKey, STATE_TTL_SEC);
       await redis('expire', `ecology:${pairId}`, STATE_TTL_SEC);
     } catch {}
 
-    const missionsVersion = Number(state.missionsVersion) || 0;
-    const scoresVersion = Number(state.scoresVersion) || 0;
-    const ecologyVersion = Number(state.ecologyVersion) || 0;
-    const challengesVersion = Number(state.challengesVersion) || 0;
-    const reactionsVersion = Number(state.reactionsVersion) || 0;
-    const reactionType = state.reactionType || state.lastReactionType || null;
+    const missionsVersion    = Number(state.missionsVersion)   || 0;
+    const scoresVersion      = Number(state.scoresVersion)     || 0;
+    const ecologyVersion     = Number(state.ecologyVersion)    || 0;
+    const challengesVersion  = Number(state.challengesVersion) || 0;
+    const reactionsVersion   = Number(state.reactionsVersion)  || 0;
+    const reactionType       = state.reactionType || state.lastReactionType || null;
 
-    // Weather
+    // Weather state
     let weatherState = state.weatherState || null;
     let forecast72h = [];
     if (!weatherState) {
       const e = Number(state.syncEnergy) || 50;
-      weatherState =
-        e < 40 ? 'stormy' : e < 55 ? 'rainy' : e < 80 ? 'cloudy' : 'sunny';
+      weatherState = e < 40 ? 'stormy' : e < 55 ? 'rainy' : e < 80 ? 'cloudy' : 'sunny';
     }
     if (state.forecast72h) {
-      try {
-        forecast72h = JSON.parse(state.forecast72h);
-      } catch {}
+      try { forecast72h = JSON.parse(state.forecast72h); } catch {}
     }
 
-    // Feature flags
+    // Feature flags (ensure defaults true if undefined)
     let featureFlags = {};
     try {
       featureFlags = state.featureFlags ? JSON.parse(state.featureFlags) : {};
     } catch {}
-    for (const key of [
-      'ff_garden',
-      'ff_challenges',
-      'ff_insights',
-      'ff_badges',
-      'ff_missions'
-    ])
+    for (const key of ['ff_garden','ff_challenges','ff_insights','ff_badges','ff_missions']) {
       if (featureFlags[key] === undefined) featureFlags[key] = true;
+    }
 
-    // Signal check
+    // Signal check (last 7 days for any reactions or missions)
     let hasSignal = false;
     try {
       for (let i = 0; i < 7; i++) {
@@ -177,15 +148,24 @@ export async function GET(req) {
       }
     } catch {}
 
-    // Feedback visibility (Dual-Date)
-    const localDate =
-      normalizeOwnerDate(state.currentDate) || todayKeyLocal();
-    const utcDate = todayKeyUTC();
+    // Feedback visibility (Timezone-Independent Final Fix)
     let hasFeedback = false;
+    let latestFeedbackDate = null;
     try {
-      hasFeedback =
-        (await checkFeedback(pairId, localDate)) ||
-        (await checkFeedback(pairId, utcDate));
+      const fbKeys = await redis('keys', `feedback:${pairId}:*`);
+      if (Array.isArray(fbKeys) && fbKeys.length > 0) {
+        // find lexicographically latest key (keys are in YYYY-MM-DD format)
+        let latestKey = '';
+        for (const k of fbKeys) {
+          if (typeof k === 'string' && k.localeCompare(latestKey) > 0) {
+            latestKey = k;
+          }
+        }
+        if (latestKey) {
+          latestFeedbackDate = latestKey.split(':').pop();
+          hasFeedback = await checkFeedback(pairId, latestFeedbackDate);
+        }
+      }
     } catch {}
 
     const payload = {
@@ -207,37 +187,29 @@ export async function GET(req) {
             const raw = await redis('get', k);
             if (!raw) continue;
             let obj = null;
-            try {
-              obj = JSON.parse(raw);
-            } catch {}
-            if (obj && obj.status !== 'approved')
+            try { obj = JSON.parse(raw); } catch {}
+            if (obj && obj.status !== 'approved') {
               active.push({
                 id: k.split(':').slice(-1)[0],
                 text: obj.text,
                 status: obj.status,
                 expiresAt: obj.expiresAt
               });
+            }
           }
-          active.sort((a, b) =>
-            (a.expiresAt || '').localeCompare(b.expiresAt || '')
-          );
+          active.sort((a, b) => (a.expiresAt || '').localeCompare(b.expiresAt || ''));
         } catch {}
         return active;
       })(),
       isValidConnection: true,
-      hasData: Boolean(hasFeedback || hasSignal)
+      hasData: Boolean(hasFeedback || hasSignal),
+      latestFeedbackDate
     };
 
     const rawEtag = `W/"v.${missionsVersion}.${scoresVersion}.${ecologyVersion}.${challengesVersion}.${weatherState || ''}"`;
     const etag = sanitizeEtag(rawEtag);
-    return new Response(JSON.stringify(payload), {
-      status: 200,
-      headers: noStore({ ETag: etag })
-    });
+    return new Response(JSON.stringify(payload), { status: 200, headers: noStore({ ETag: etag }) });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ ok: false, error: String(err.message || err) }),
-      { status: 500, headers: noStore() }
-    );
+    return new Response(JSON.stringify({ ok: false, error: String(err.message || err) }), { status: 500, headers: noStore() });
   }
 }
