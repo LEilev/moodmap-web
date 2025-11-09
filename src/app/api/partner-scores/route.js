@@ -1,23 +1,18 @@
-// app/api/partner-scores/route.js — Harmony Patch 1
-// - Adds Sync Energy (last 7d) and energyDelta (vs prior 7d)
-// - Keeps existing dummy weekly scores bootstrap
-// - Edge runtime, Upstash REST
+// Harmony — Scores route with Sync Energy
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 /**
  * GET /api/partner-scores
- * Response: { ok:true, scoresVersion, data: { ...peacePassion/sync/empathy/trend, syncEnergyScore, energyDelta } }
- *
- * Sync Energy = 50% kudos + 50% missions (last 7 days)
- * - kudos metric: days-with-kudos / 7 * 100
- * - missions metric: completed-missions / total-missions * 100 (across last 7 days); fallback to 50 if unknown
- * energyDelta compares the last 7 days window with the previous 7 days.
+ * Response: { ok:true, scoresVersion, data: { ...trend, syncEnergyScore, energyDelta } }
+ * - On first-week bootstrap, also bump global state.version
  */
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const WEEK_TTL_SEC = 7 * 24 * 60 * 60;
 
 function noStoreHeaders(extra = {}) {
   return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
@@ -138,19 +133,19 @@ export async function GET(req) {
       data = generateDummyScores(weekKey);
       await redis('set', scoresKey, JSON.stringify(data), 'EX', String(8 * 24 * 60 * 60)); // TTL 8 days
       await redis('hincrby', stateKey, 'scoresVersion', '1');
+      await redis('hincrby', stateKey, 'version', '1'); // bump global on creation
       created = true;
+      // refresh state TTLs on write
+      await redis('expire', stateKey, String(WEEK_TTL_SEC));
+      await redis('expire', `ecology:${pairId}`, String(WEEK_TTL_SEC));
     } else {
       const raw = await redis('get', scoresKey);
       try { data = JSON.parse(raw || '{}'); } catch { data = {}; }
     }
 
-    let scoresVersion = Number(await redis('hget', stateKey, 'scoresVersion')) || 0;
-    if (!exists && !created) {
-      await redis('hincrby', stateKey, 'scoresVersion', '1');
-      scoresVersion += 1;
-    }
+    const scoresVersion = Number(await redis('hget', stateKey, 'scoresVersion')) || 0;
 
-    // --- Harmony Patch 1: compute Sync Energy (current & previous 7d) ---
+    // Compute Sync Energy for current & previous 7d
     const now = new Date();
     const { energy: energyNow } = await computeSyncEnergy7d(pairId, now);
 

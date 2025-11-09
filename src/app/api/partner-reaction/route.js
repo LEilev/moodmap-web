@@ -1,10 +1,11 @@
-// Harmony v5.1.1 — Longevity Patch (2025-11-XX)
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const WEEK_TTL_SEC = 7 * 24 * 60 * 60;
 
 const DEV = process.env.NODE_ENV !== 'production';
 function devLog(...args){ if(DEV){ try{ console.log('[HarmonyDev][partner-reaction]', ...args); }catch{} } }
@@ -61,7 +62,7 @@ export async function POST(req) {
     if (!pairId) return new Response(JSON.stringify({ ok:false, error:'pairId required' }), { status: 400, headers: noStoreHeaders() });
     if (!reaction) return new Response(JSON.stringify({ ok:false, error:'reaction required' }), { status: 400, headers: noStoreHeaders() });
 
-    // 1) Blocklist guard — symmetric unlink (403) just like status/garden
+    // Blocklist guard
     try {
       const blocked = await redis('get', `blocklist:${pairId}`);
       if (blocked) {
@@ -74,21 +75,22 @@ export async function POST(req) {
     const stateKey = `state:${pairId}`;
     const reactKey = `reactions:${pairId}:${dayKey}`;
 
-    // Idempotency for the specific update
+    // Idempotency
     if (updateId) {
       const idemKey = `idem:${pairId}:${dayKey}:kudos:${updateId}`;
       const setRes = await redis('set', idemKey, '1', 'EX', String(3 * 24 * 60 * 60), 'NX');
       if (!setRes) {
-        return new Response(JSON.stringify({ ok: true, idempotent: true }), { status: 200, headers: noStoreHeaders() });
+        const curVer = Number(await redis('hget', stateKey, 'reactionsVersion')) || 0;
+        return new Response(JSON.stringify({ ok: true, idempotent: true, version: curVer }), { status: 200, headers: noStoreHeaders() });
       }
     }
 
     // Store reaction (hash fields: type, time, note)
     await redis('hset', reactKey, 'type', reaction, 'time', nowISO(), 'note', note);
-    // TTL ~48h
-    await redis('expire', reactKey, String(2 * 24 * 60 * 60));
+    // TTL => 7 days (longevity)
+    await redis('expire', reactKey, String(WEEK_TTL_SEC));
 
-    // Small P&P boost (+2), if weekly scores object exists
+    // Small P&P boost (+2) if weekly scores object exists
     try {
       // compute iso week like partner-scores
       const now = new Date();
@@ -117,12 +119,16 @@ export async function POST(req) {
       }
     } catch {}
 
-    // Bump versions
-    await redis('hincrby', stateKey, 'reactionsVersion', '1');
+    // Bump versions: reactions + global + ecology
+    const newReactionsVersion = await redis('hincrby', stateKey, 'reactionsVersion', '1');
     await redis('hincrby', stateKey, 'version', '1');
     await redis('hincrby', stateKey, 'ecologyVersion', '1'); // glow/cooldown effects in ecology
 
-    return new Response(JSON.stringify({ ok: true }), { status: 200, headers: noStoreHeaders() });
+    // Refresh TTLs
+    await redis('expire', stateKey, String(WEEK_TTL_SEC));
+    await redis('expire', `ecology:${pairId}`, String(WEEK_TTL_SEC));
+
+    return new Response(JSON.stringify({ ok: true, version: Number(newReactionsVersion) }), { status: 200, headers: noStoreHeaders() });
   } catch (err) {
     return new Response(JSON.stringify({ ok: false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }

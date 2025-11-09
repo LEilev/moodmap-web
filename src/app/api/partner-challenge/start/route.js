@@ -1,10 +1,11 @@
-// app/api/challenge/start/route.js — Harmony Patch 2
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const WEEK_TTL_SEC = 7 * 24 * 60 * 60;
 
 function noStoreHeaders(extra = {}) {
   return { 'Cache-Control': 'no-store', 'Content-Type': 'application/json; charset=utf-8', ...extra };
@@ -40,7 +41,8 @@ export async function POST(req) {
 
     if (!pairId) return new Response(JSON.stringify({ ok:false, error:'pairId required' }), { status: 400, headers: noStoreHeaders() });
     if (!text) return new Response(JSON.stringify({ ok:false, error:'text required' }), { status: 400, headers: noStoreHeaders() });
-    // Check active challenges count (limit 3 active)
+
+    // Limit active challenges to 3 (pending or completed-but-not-approved)
     try {
       const keys = await redis('keys', `challenges:${pairId}:*`);
       const activeKeys = Array.isArray(keys) ? keys : [];
@@ -49,7 +51,7 @@ export async function POST(req) {
       }
     } catch {}
 
-    // idempotency
+    // Idempotency
     if (updateId) {
       const idemKey = `idem:${pairId}:challenge:start:${updateId}`;
       const setRes = await redis('set', idemKey, '1', 'EX', String(3*24*60*60), 'NX');
@@ -68,10 +70,15 @@ export async function POST(req) {
     const key = `challenges:${pairId}:${challengeId}`;
     await redis('set', key, JSON.stringify(item), 'EX', String(ttlSec));
 
-    // bump versions
+    // bump versions (domain + ecology + global)
     const stateKey = `state:${pairId}`;
-    await redis('hincrby', stateKey, 'challengesVersion', '1');
+    const newChallengesVersion = await redis('hincrby', stateKey, 'challengesVersion', '1');
     await redis('hincrby', stateKey, 'ecologyVersion', '1');
+    await redis('hincrby', stateKey, 'version', '1');
+
+    // refresh state/ecology TTLs
+    await redis('expire', stateKey, String(WEEK_TTL_SEC));
+    await redis('expire', `ecology:${pairId}`, String(WEEK_TTL_SEC));
 
     // Count active challenges after adding
     let activeCount = 0;
@@ -89,7 +96,7 @@ export async function POST(req) {
         } catch {}
       }
     } catch {}
-    return new Response(JSON.stringify({ ok:true, challengeId: challengeId, activeCount }), { status: 200, headers: noStoreHeaders() });
+    return new Response(JSON.stringify({ ok:true, challengeId: challengeId, activeCount, version: Number(newChallengesVersion) }), { status: 200, headers: noStoreHeaders() });
   } catch (err) {
     return new Response(JSON.stringify({ ok:false, error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }

@@ -1,19 +1,18 @@
-// app/api/partner-missions/route.js
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 /**
- * GET /api/partner-missions
- * - Returnerer dagens missions for et gitt pairId.
- * - Hvis missions mangler i Redis, genereres dummy (1–3) deterministisk pr dag og lagres.
- * - Ved nyopprettelse HINCRBY state:<pairId> missionsVersion (+1).
- * - Respons: { ok:true, missions, missionsVersion }
- * - v5.0 Foundation merge: På alle feil returneres { ok:false, missions:[], error }
+ * GET /api/partner-mission
+ * - Return today's missions for a pairId.
+ * - If missing in Redis, generate deterministic dummy missions and store.
+ * - On creation, HINCRBY state:<pairId> missionsVersion (+1) and version (+1).
+ * - Response: { ok:true, missions, missionsVersion }
  */
-
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
+const WEEK_TTL_SEC = 7 * 24 * 60 * 60;
 
 function noStoreHeaders(extra = {}) {
   return {
@@ -93,7 +92,6 @@ function generateDummyMissions({ pairId, dayKey }) {
 export async function GET(req) {
   try {
     if (!UPSTASH_URL || !UPSTASH_TOKEN) {
-      // v5.0 Foundation merge
       return new Response(JSON.stringify({ ok: false, missions: [], error: 'Missing Upstash env' }), { status: 500, headers: noStoreHeaders() });
     }
 
@@ -108,23 +106,21 @@ export async function GET(req) {
 
     if (!exists) {
       missions = generateDummyMissions({ pairId, dayKey });
-      await redis('set', missionsKey, JSON.stringify(missions), 'EX', String(2 * 24 * 60 * 60)); // TTL 2 dager
+      await redis('set', missionsKey, JSON.stringify(missions), 'EX', String(WEEK_TTL_SEC)); // TTL 7 days
       await redis('hincrby', stateKey, 'missionsVersion', '1');
-      created = true; // intentional typo fix below
+      await redis('hincrby', stateKey, 'version', '1'); // global version on write
+      created = true;
+      // refresh state TTLs on write
+      await redis('expire', stateKey, String(WEEK_TTL_SEC));
+      await redis('expire', `ecology:${pairId}`, String(WEEK_TTL_SEC));
     } else {
       const raw = await redis('get', missionsKey);
       try { missions = JSON.parse(raw || '[]'); } catch { missions = []; }
     }
 
-    let missionsVersion = Number(await redis('hget', stateKey, 'missionsVersion')) || 0;
-    if (!exists && !created) {
-      await redis('hincrby', stateKey, 'missionsVersion', '1');
-      missionsVersion += 1;
-    }
-
+    const missionsVersion = Number(await redis('hget', stateKey, 'missionsVersion')) || 0;
     return new Response(JSON.stringify({ ok: true, missions, missionsVersion }), { status: 200, headers: noStoreHeaders() });
   } catch (err) {
-    // v5.0 Foundation merge
     return new Response(JSON.stringify({ ok: false, missions: [], error: String(err?.message || err) }), { status: 500, headers: noStoreHeaders() });
   }
 }
