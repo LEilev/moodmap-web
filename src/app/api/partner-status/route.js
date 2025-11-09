@@ -1,8 +1,8 @@
 // app/api/partner-status/route.js
-// Harmony² Feedback Visibility Sync (LocalDate Edition) — 2025-11-09
+// Harmony² Feedback Visibility Sync (Dual-Date Edition) — 2025-11-09
 //
-// Fix: uses local (owner) date instead of UTC to locate feedback:<pairId>:<YYYY-MM-DD>
-// so hasData:true reflects local timezone reality (e.g. Europe/Oslo).
+// Fix: automatically checks both local and UTC feedback dates so hasData:true
+// works in all timezones (e.g. Europe/Oslo, US, Asia).
 //
 // Preserves: Edge runtime, version counters, featureFlags, ETag, TTL refresh, and all existing signals.
 //
@@ -14,7 +14,7 @@ export const revalidate = 0;
 
 const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
 const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-const STATE_TTL_SEC = 7 * 24 * 60 * 60; // 7 days
+const STATE_TTL_SEC = 7 * 24 * 60 * 60;
 
 function noStore(extra = {}) {
   return {
@@ -23,7 +23,6 @@ function noStore(extra = {}) {
     ...extra
   };
 }
-
 async function redis(cmd, ...args) {
   const url = `${UPSTASH_URL}/${cmd}/${args
     .map(a => encodeURIComponent(String(a)))
@@ -48,13 +47,46 @@ function normalizeOwnerDate(input) {
   if (!Number.isNaN(dt)) return dt.toISOString().slice(0, 10);
   return null;
 }
-
-// Local date helper (UTC + offset)
+function todayKeyUTC() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(
+    2,
+    '0'
+  )}-${String(d.getUTCDate()).padStart(2, '0')}`;
+}
 function todayKeyLocal() {
   const now = new Date();
-  const offsetMin = now.getTimezoneOffset(); // e.g. -60 for CET
+  const offsetMin = now.getTimezoneOffset();
   const local = new Date(now.getTime() - offsetMin * 60000);
   return local.toISOString().slice(0, 10);
+}
+
+// ---- Feedback checker ----
+async function checkFeedback(pairId, dateKey) {
+  const fbKey = `feedback:${pairId}:${dateKey}`;
+  const fb = await redis('hgetall', fbKey);
+  if (!fb) return false;
+  const vibe =
+    typeof fb.vibe === 'string' && fb.vibe.trim().length > 0
+      ? fb.vibe.trim()
+      : null;
+  const n = Number(fb.readiness);
+  const readiness = Number.isNaN(n) ? null : n;
+  let tips = [];
+  if (typeof fb.tips === 'string' && fb.tips.length > 0) {
+    try {
+      const parsed = JSON.parse(fb.tips);
+      if (Array.isArray(parsed)) tips = parsed;
+    } catch {}
+  }
+  const reactionAck =
+    typeof fb.reactionAck === 'string' && fb.reactionAck === '1';
+  return Boolean(
+    (vibe && vibe.length > 0) ||
+      typeof readiness === 'number' ||
+      (Array.isArray(tips) && tips.length > 0) ||
+      reactionAck
+  );
 }
 
 export async function GET(req) {
@@ -129,7 +161,7 @@ export async function GET(req) {
     ])
       if (featureFlags[key] === undefined) featureFlags[key] = true;
 
-    // Signal check (baseline)
+    // Signal check
     let hasSignal = false;
     try {
       for (let i = 0; i < 7; i++) {
@@ -145,36 +177,15 @@ export async function GET(req) {
       }
     } catch {}
 
-    // Feedback visibility (local-date aware)
-    const ownerDate =
+    // Feedback visibility (Dual-Date)
+    const localDate =
       normalizeOwnerDate(state.currentDate) || todayKeyLocal();
-    const fbKey = `feedback:${pairId}:${ownerDate}`;
+    const utcDate = todayKeyUTC();
     let hasFeedback = false;
     try {
-      const fb = await redis('hgetall', fbKey);
-      if (fb) {
-        const vibe =
-          typeof fb.vibe === 'string' && fb.vibe.trim().length > 0
-            ? fb.vibe.trim()
-            : null;
-        const n = Number(fb.readiness);
-        const readiness = Number.isNaN(n) ? null : n;
-        let tips = [];
-        if (typeof fb.tips === 'string' && fb.tips.length > 0) {
-          try {
-            const parsed = JSON.parse(fb.tips);
-            if (Array.isArray(parsed)) tips = parsed;
-          } catch {}
-        }
-        const reactionAck =
-          typeof fb.reactionAck === 'string' && fb.reactionAck === '1';
-        hasFeedback = Boolean(
-          (vibe && vibe.length > 0) ||
-            typeof readiness === 'number' ||
-            (Array.isArray(tips) && tips.length > 0) ||
-            reactionAck
-        );
-      }
+      hasFeedback =
+        (await checkFeedback(pairId, localDate)) ||
+        (await checkFeedback(pairId, utcDate));
     } catch {}
 
     const payload = {
