@@ -1,11 +1,12 @@
 // app/api/partner-status/route.js
-// Harmony² Feedback Visibility Final Fix — 2025-11-09
+// Harmony² Feedback Visibility Mini-Patch — 2025-11-09
 //
-// Fix: Instead of guessing local vs UTC dates, this version finds the latest feedback:<pairId>:* key directly via Redis.
-// This ensures hasData:true whenever feedback exists, regardless of timezone differences or state.currentDate sync issues.
-// Also returns latestFeedbackDate in the JSON response (for debugging and front-end sync).
+// Scope: Readiness detection & flexible truthy parsing in checkFeedback()
+// - Accept both string and numeric readiness (e.g. "7" or 7)
+// - Consider hasFeedback=true when any of: vibe(non-empty), readiness(numeric or string numeric), tips(non-empty array), reactionAck:true
+// - Robustly parse Upstash HGETALL result whether it's an array [field,value,...] or an object
 //
-// Preserves: Edge runtime, version counters, featureFlags, ETag, TTL refresh, and all existing signals.
+// Preserves: Edge runtime, Redis key lookup, latestFeedbackDate derivation, featureFlags, ETag, TTL refresh, and all other logic.
 
 import { sanitizeEtag } from '../_utils/sanitizeEtag.js';
 export const runtime = 'edge';
@@ -55,28 +56,88 @@ function todayKeyLocal() {
   return local.toISOString().slice(0, 10);
 }
 
-// ---- Feedback checker ----
-async function checkFeedback(pairId, dateKey) {
-  const fbKey = `feedback:${pairId}:${dateKey}`;
-  const fb = await redis('hgetall', fbKey);
-  if (!fb) return false;
-  const vibe = typeof fb.vibe === 'string' && fb.vibe.trim().length > 0 ? fb.vibe.trim() : null;
-  const n = Number(fb.readiness);
-  const readiness = Number.isNaN(n) ? null : n;
-  let tips = [];
-  if (typeof fb.tips === 'string' && fb.tips.length > 0) {
+// ---- Helpers for HGETALL result normalization & truthiness ----
+function objectFromHGetAll(raw) {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    const obj = {};
+    for (let i = 0; i < raw.length; i += 2) {
+      const k = raw[i];
+      const v = raw[i + 1];
+      if (typeof k === 'string') obj[k] = v;
+    }
+    return obj;
+  }
+  if (typeof raw === 'object') return raw;
+  if (typeof raw === 'string') {
     try {
-      const parsed = JSON.parse(fb.tips);
-      if (Array.isArray(parsed)) tips = parsed;
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') return parsed;
     } catch {}
   }
-  const reactionAck = typeof fb.reactionAck === 'string' && fb.reactionAck === '1';
-  return Boolean(
-    (vibe && vibe.length > 0) ||
-    typeof readiness === 'number' ||
-    (Array.isArray(tips) && tips.length > 0) ||
-    reactionAck
-  );
+  return null;
+}
+function toBooleanFlexible(v) {
+  if (typeof v === 'boolean') return v;
+  if (typeof v === 'number') return v !== 0;
+  if (typeof v === 'string') {
+    const s = v.trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes' || s === 'y' || s === 'on';
+  }
+  return false;
+}
+function parseTips(value) {
+  if (value == null) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    const s = value.trim();
+    if (!s) return [];
+    if (s.startsWith('[') || s.startsWith('{')) {
+      try {
+        const parsed = JSON.parse(s);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    // Fallback: comma-separated list
+    return s.split(',').map(t => t.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+// ---- Feedback checker (patched) ----
+async function checkFeedback(pairId, dateKey) {
+  const fbKey = `feedback:${pairId}:${dateKey}`;
+  const raw = await redis('hgetall', fbKey);
+  if (!raw) return false;
+
+  const fb = objectFromHGetAll(raw);
+  if (!fb) return false;
+
+  // vibe: non-empty string (accept non-string by coercion to string)
+  const vibeStr = fb.vibe != null ? String(fb.vibe).trim() : '';
+  const hasVibe = vibeStr.length > 0;
+
+  // readiness: accept number or numeric string (e.g. 7 or "7")
+  let hasReadiness = false;
+  if (fb.readiness != null) {
+    if (typeof fb.readiness === 'number') {
+      hasReadiness = !Number.isNaN(fb.readiness);
+    } else {
+      const n = Number(String(fb.readiness).trim());
+      hasReadiness = !Number.isNaN(n);
+    }
+  }
+
+  // tips: non-empty array (accept JSON string or comma-separated)
+  const tips = parseTips(fb.tips);
+  const hasTips = Array.isArray(tips) && tips.length > 0;
+
+  // reactionAck: true (accept true/"true"/1/"1"/yes/y/on)
+  const hasReactionAck = toBooleanFlexible(fb.reactionAck);
+
+  return hasVibe || hasReadiness || hasTips || hasReactionAck;
 }
 
 export async function GET(req) {
@@ -148,7 +209,7 @@ export async function GET(req) {
       }
     } catch {}
 
-    // Feedback visibility (Timezone-Independent Final Fix)
+    // Feedback visibility (Timezone-Independent Final Fix stays unchanged)
     let hasFeedback = false;
     let latestFeedbackDate = null;
     try {
