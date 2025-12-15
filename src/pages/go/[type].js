@@ -1,5 +1,9 @@
-// src/pages/go/[type].js
-// Dynamic child route so /go/yearly and /go/monthly hit the same redirect page
+// pages/go/[type].js
+// Dynamic route for /go/monthly and /go/yearly
+// Re-export the SSR redirect from pages/go.js
 
-import GoRedirect from '../go';
-export default GoRedirect;
+export { getServerSideProps } from "../go";
+
+export default function GoPlanPage() {
+  return null;
+}
