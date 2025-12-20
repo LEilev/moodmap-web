@@ -1,23 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0b1120;
-  --foreground: #ffffff;
-}
-
-/* Tailwind v4 theme tokens (ok å beholde selv om du ikke bruker bg-background direkte) */
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b1120;
-    --foreground: #ffffff;
-  }
+  --mm-bg: #0b1120;
+  --mm-fg: #ffffff;
 }
 
 html,
@@ -27,21 +12,22 @@ body {
 
 body {
   margin: 0;
-  position: relative;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--mm-bg);
+  color: var(--mm-fg);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Inter, Arial;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  position: relative;
 }
 
-/* Sørger for at anchors ikke havner bak sticky header */
+/* Sørg for at anchor-links ikke havner under sticky header */
 :target {
   scroll-margin-top: 96px;
 }
 
-/* Subtil “grain” for å unngå banding + gi premium tekstur */
+/* Subtil grain for å unngå banding + mer premium materialfølelse */
 body::before {
   content: "";
   position: fixed;
@@ -58,58 +44,160 @@ body > * {
   z-index: 1;
 }
 
-@layer utilities {
-  /* Premium link */
+/* ---------- Premium utility classes (REN CSS, ingen @apply) ---------- */
+
+.mm-link {
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.25);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 180ms ease, color 180ms ease;
+}
+.mm-link:hover {
+  text-decoration-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Frosted glass card */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.glass-card-hover {
+  transition: transform 260ms ease, background-color 260ms ease,
+    border-color 260ms ease, box-shadow 260ms ease;
+}
+.glass-card-hover:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
+}
+
+.glass-gloss {
+  pointer-events: none;
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 999px;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0) 70%
+  );
+  filter: blur(18px);
+  opacity: 0.75;
+}
+
+/* Icon tile */
+.glass-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(52, 211, 153, 0.35),
+    rgba(59, 130, 246, 0.35)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 18px rgba(16, 185, 129, 0.08);
+}
+
+/* Primary button (brukes som "btn-primary") */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 22px;
+  border-radius: 999px;
+
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 650;
+  font-size: 14px;
+  letter-spacing: 0.1px;
+
+  background: linear-gradient(90deg, #34d399, #2563eb);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.28);
+  transition: transform 240ms ease, box-shadow 240ms ease,
+    filter 240ms ease, background 240ms ease;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(59, 130, 246, 0.42);
+  filter: saturate(1.04);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid rgba(147, 197, 253, 0.85);
+  outline-offset: 2px;
+}
+
+/* Store button */
+.store-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 22px;
+  border-radius: 999px;
+
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 650;
+  font-size: 14px;
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(16px);
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+  transition: transform 240ms ease, box-shadow 240ms ease,
+    background-color 240ms ease, border-color 240ms ease;
+}
+.store-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+}
+.store-btn:focus-visible {
+  outline: 2px solid rgba(147, 197, 253, 0.85);
+  outline-offset: 2px;
+}
+
+.store-btn__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .glass-card-hover,
+  .btn-primary,
+  .store-btn,
   .mm-link {
-    @apply underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/60;
-  }
-
-  /* “Frosted glass” cards */
-  .glass-card {
-    @apply relative overflow-hidden rounded-2xl bg-white/10 ring-1 ring-white/10 backdrop-blur-xl shadow-lg shadow-black/20;
-  }
-
-  .glass-card-hover {
-    @apply transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/12 hover:ring-white/15 hover:shadow-xl hover:shadow-black/30;
-  }
-
-  /* Gloss highlight (subtil) */
-  .glass-gloss {
-    @apply pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-2xl opacity-70;
-  }
-
-  /* Icon “cockpit button” */
-  .glass-icon {
-    @apply mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10;
-  }
-
-  /* Primary button */
-  .btn-primary {
-    @apply group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
-    text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-    shadow-[0_10px_30px_rgba(59,130,246,0.30)] transition-all
-    hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
-    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80;
-  }
-
-  /* Store buttons (premium + tydelig) */
-  .store-btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold
-    text-white/95 bg-white/10 ring-1 ring-white/15 backdrop-blur-xl
-    shadow-md shadow-black/20 transition-all
-    hover:-translate-y-0.5 hover:bg-white/14 hover:shadow-lg hover:shadow-black/25
-    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80;
-  }
-
-  .store-btn__icon {
-    @apply inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-1 ring-white/15;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .glass-card-hover,
-    .btn-primary,
-    .store-btn {
-      @apply transition-none;
-    }
+    transition: none !important;
   }
 }
