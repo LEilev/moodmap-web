@@ -12,11 +12,12 @@ import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
 import Script from "next/script";
+import MobileMenu from "../components/MobileMenu";
 
 export const metadata = {
   title: "MoodMap",
   description:
-    "Understand the cycle. Survive the chaos. MoodMap helps you navigate the hormonal cycle with clarity.",
+    "Understand her cycle. Strengthen your bond. MoodMap provides daily, cycle-aware guidance with clarity and empathy.",
 };
 
 export default function RootLayout({ children }) {
@@ -126,9 +127,12 @@ export default function RootLayout({ children }) {
       </head>
 
       <body className="flex flex-col min-h-full bg-primary-blue text-white">
-        <header className="bg-primary-blue">
+        <header className="sticky top-0 z-50 bg-primary-blue/75 backdrop-blur-xl border-b border-white/10">
           <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
-            <Link href="/" className="flex items-center text-2xl font-bold">
+            <Link
+              href="/"
+              className="flex items-center text-2xl font-bold tracking-tight text-white/95 hover:text-white transition"
+            >
               MoodMap
               <Image
                 src="/icon.png"
@@ -140,26 +144,28 @@ export default function RootLayout({ children }) {
               />
             </Link>
 
-          {/* Desktop nav */}
-<nav className="hidden sm:flex gap-6">
-  <Link href="#about" className="hover:underline">About</Link>
-  <Link href="#download" className="hover:underline">Download</Link>
-  <Link href="/support" className="hover:underline">Support</Link>
-  <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
-  {/* New Partner link */}
-  <Link href="/partner" className="hover:underline">Partner</Link>
-</nav>
-          </div>
+            <div className="flex items-center gap-3">
+              {/* Desktop nav */}
+              <nav className="hidden sm:flex gap-6 text-sm font-medium text-white/80">
+                <Link href="/#about" className="hover:text-white transition">
+                  About
+                </Link>
+                <Link href="/#download" className="hover:text-white transition">
+                  Download
+                </Link>
+                <Link href="/support" className="hover:text-white transition">
+                  Support
+                </Link>
+                <Link href="/pro" className="hover:text-white transition">
+                  Pro
+                </Link>
+                {/* Partner intentionally removed from primary nav (premium positioning) */}
+              </nav>
 
-          {/* Mobile nav */}
-<nav className="sm:hidden px-6 pb-3 flex flex-col gap-2">
-  <Link href="#about" className="hover:underline">About</Link>
-  <Link href="#download" className="hover:underline">Download</Link>
-  <Link href="/support" className="hover:underline">Support</Link>
-  <Link href="/pro" className="hover:underline font-semibold">Pro</Link>
-  {/* New Partner link for mobile */}
-  <Link href="/partner" className="hover:underline">Partner</Link>
-</nav>
+              {/* Mobile hamburger */}
+              <MobileMenu />
+            </div>
+          </div>
         </header>
 
         <main className="flex-grow">{children}</main>

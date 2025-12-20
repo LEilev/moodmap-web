@@ -1,3 +1,4 @@
+// tailwind.config.js
 module.exports = {
   content: [
     "./src/app/**/*.{js,ts,jsx,tsx}",
@@ -7,7 +8,8 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'primary-blue': '#1E3A8A',
+        // Premium “cockpit” base (deep blue-black)
+        "primary-blue": "#0B1120",
       },
     },
   },

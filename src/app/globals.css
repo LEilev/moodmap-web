@@ -1,8 +1,9 @@
+/* src/app/globals.css */
 @import "tailwindcss";
 
 @layer base {
   :root {
-    --background: #1E3A8A;
+    --background: #0b1120; /* cockpit base */
     --foreground: #ffffff;
     --font-geist-sans: "Geist", sans-serif;
     --font-geist-mono: "Geist Mono", monospace;
@@ -16,6 +17,26 @@
     padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100%;
+    position: relative;
+  }
+
+  /* Subtle grain to reduce gradient banding (very low opacity) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+  }
+
+  /* Keep app content above grain layer */
+  body > * {
+    position: relative;
+    z-index: 1;
   }
 
   code,
@@ -25,12 +46,42 @@
 }
 
 @layer utilities {
+  /* Unified store CTA button style (Premium glass) */
   .store-btn {
-    @apply relative inline-flex items-center justify-center px-6 py-3 rounded font-medium transition-colors;
+    position: relative;
+    display: inline-flex;
+    height: 2.75rem; /* h-11 */
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.25rem; /* px-5 */
+    border-radius: 9999px; /* rounded-full */
+    font-size: 0.875rem; /* text-sm */
+    font-weight: 600;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
   }
 
+  .store-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+  }
+
+  .store-btn:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.75);
+    outline-offset: 2px;
+  }
+
+  /* Keep disabled style for Apple button if you ever use it */
   .store-btn--apple.disabled {
-    @apply bg-black text-white opacity-50 cursor-not-allowed;
+    background: rgba(0, 0, 0, 0.65);
+    opacity: 0.55;
+    cursor: not-allowed;
   }
 
   .store-btn--apple.disabled::after {
@@ -41,21 +92,6 @@
     background: #ef4444;
     transform: rotate(-8deg) translateY(-50%);
   }
-
-  .store-btn--google {
-    @apply bg-green-500 text-white hover:bg-green-600;
-  }
-
-  .nav-link-mobile {
-    @apply block py-3 text-lg text-white;
-  }
 }
 
-@media (max-width: 768px) {
-  nav a {
-    display: block;
-    padding: 0.75rem 0;
-    font-size: 1.1rem;
-    color: #ffffff;
-  }
-}
+/* Removed: global mobile rule that styled ALL nav a-tags (created “indie” mobile nav feel) */
