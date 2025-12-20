@@ -2,6 +2,8 @@
 # ------------------------------------------------------------
 # Goal: Max visibility in search + AI indexing, while keeping
 # internal/admin/payment endpoints out of crawl scope.
+#
+# Official AI context is available at: /llms.txt
 # ------------------------------------------------------------
 
 User-agent: *
@@ -18,7 +20,6 @@ Disallow: /buy
 
 # --- AI / LLM crawlers --------------------------------------
 # MoodMap welcomes AI crawlers to index public pages.
-# Official context is available in /llms.txt
 
 User-agent: GPTBot
 Allow: /
@@ -81,7 +82,7 @@ Disallow: /drafts/
 Disallow: /dev/
 Disallow: /buy
 
-# NEW: Anthropic newer agents
+# Anthropic newer agents
 User-agent: Claude-User
 Allow: /
 Disallow: /api/
@@ -112,7 +113,7 @@ Disallow: /drafts/
 Disallow: /dev/
 Disallow: /buy
 
-# NEW: Google Gemini research crawler (proactive allow)
+# Google Gemini research crawler (proactive allow)
 User-agent: Gemini-Deep-Research
 Allow: /
 Disallow: /api/
