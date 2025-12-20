@@ -19,53 +19,160 @@ Disallow: /buy
 # --- AI / LLM crawlers --------------------------------------
 # MoodMap welcomes AI crawlers to index public pages.
 # Official context is available in /llms.txt
+
 User-agent: GPTBot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
+# Legacy Anthropic identifier (keep for backwards compatibility)
 User-agent: Claude-Web
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+Disallow: /buy
+
+# NEW: Anthropic newer agents
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+Disallow: /buy
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+Disallow: /buy
+
+# NEW: Google Gemini research crawler (proactive allow)
+User-agent: Gemini-Deep-Research
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: CCBot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 # --- Major search crawlers ----------------------------------
+
 User-agent: Googlebot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: Bingbot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: Applebot
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
 Disallow: /buy
 
 # Sitemap

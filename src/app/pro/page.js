@@ -1,3 +1,4 @@
+// src/app/pro/page.js
 import Link from "next/link";
 import { Crown, ShieldCheck, HeartHandshake, BellRing, LineChart } from "lucide-react";
 
@@ -142,6 +143,12 @@ export default function ProPage({ searchParams }) {
 
           <p className="mt-3 text-xs sm:text-sm text-white/60">
             Works with your existing free app. Cancel anytime. Your data stays private.
+          </p>
+
+          {/* NEW: explicit guidance + privacy clarification at decision point */}
+          <p className="mt-2 text-xs sm:text-sm text-white/55">
+            Relationship guidance — not medical advice. Not for contraception or fertility planning.
+            No cycle details leave your device.
           </p>
 
           {/* NEW: explicit full-access promise (research) */}

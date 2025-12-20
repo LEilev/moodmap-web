@@ -234,7 +234,7 @@ export default function CyclePhasesForPartnersPage() {
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
               <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
+                <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
               </span>
               <div className="text-left">
                 <h2 className="text-xl sm:text-2xl font-semibold">
@@ -257,13 +257,40 @@ export default function CyclePhasesForPartnersPage() {
                   <Link href="/#download" className="btn-primary">
                     Download MoodMap
                   </Link>
-                  <Link href="/learn/support-partner-during-pms" className="mm-link text-sm text-white/80">
+                  <Link
+                    href="/learn/support-partner-during-pms"
+                    className="mm-link text-sm text-white/80"
+                  >
                     Read: Support your partner during PMS →
                   </Link>
                 </div>
               </div>
             </div>
           </article>
+
+          {/* NEW: End-of-guide CTA */}
+          <section className="mt-2 text-center">
+            <div className="glass-card p-6 sm:p-7">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
+                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
+                Next step: Put this into practice
+              </div>
+
+              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
+                MoodMap gives day-by-day cues synced to her cycle — so you can act with timing,
+                steadiness, and respect (without tracking her).
+              </p>
+
+              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/#download" className="btn-primary">
+                  Download MoodMap
+                </Link>
+                <Link href="/learn" className="mm-link text-sm text-white/70">
+                  Explore more Guides →
+                </Link>
+              </div>
+            </div>
+          </section>
 
           {/* Bottom nav */}
           <div className="pt-2 text-center">

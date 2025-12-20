@@ -21,6 +21,7 @@ const FEATURES = [
   {
     Icon: BellRing,
     title: "Timing Alerts",
+    badge: "Premium+",
     copy:
       "Timely heads-ups for critical moments (PMS, ovulation, fertile window). Bring warmth, or give space — before it’s needed.",
   },
@@ -164,17 +165,31 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-            {FEATURES.map(({ Icon, title, copy }) => (
+            {FEATURES.map(({ Icon, title, badge, copy }) => (
               <article key={title} className="glass-card glass-card-hover p-6 text-left group">
                 <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
                   <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
                 </span>
-                <h3 className="text-base sm:text-lg font-semibold text-white">{title}</h3>
+
+                <h3 className="text-base sm:text-lg font-semibold text-white flex flex-wrap items-center gap-2">
+                  <span>{title}</span>
+                  {badge ? (
+                    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">
+                      {badge}
+                    </span>
+                  ) : null}
+                </h3>
+
                 <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
+
+          {/* NEW: Premium expectation-setting (quiet + clear) */}
+          <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
+            Timing alerts via notifications are included with Premium+.
+          </p>
 
           {/* Quiet Q&A (conversion clarity) */}
           <div className="mt-10 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">

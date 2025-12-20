@@ -305,6 +305,30 @@ export default function FertileWindowExplainedPage() {
             </div>
           </article>
 
+          {/* NEW: End-of-guide CTA */}
+          <section className="mt-2 text-center">
+            <div className="glass-card p-6 sm:p-7">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
+                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
+                Next step: Put this into practice
+              </div>
+
+              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
+                MoodMap gives day-by-day cues synced to her cycle — so you can act with timing,
+                steadiness, and respect (without tracking her).
+              </p>
+
+              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/#download" className="btn-primary">
+                  Download MoodMap
+                </Link>
+                <Link href="/learn" className="mm-link text-sm text-white/70">
+                  Explore more Guides →
+                </Link>
+              </div>
+            </div>
+          </section>
+
           {/* Bottom nav */}
           <div className="pt-2 text-center">
             <Link href="/" className="mm-link text-sm text-white/70">

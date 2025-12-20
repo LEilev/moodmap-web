@@ -14,7 +14,7 @@ export const metadata = {
     template: "%s · MoodMap",
   },
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with timing alerts for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days (menstruation 2–8 days).",
+    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — plus Premium+ timing alerts (notifications) for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days (menstruation 2–8 days).",
   robots: {
     index: true,
     follow: true,
@@ -24,7 +24,7 @@ export const metadata = {
     url: SITE_URL,
     title: "MoodMap",
     description:
-      "Daily, phase-aware guidance for better timing and deeper connection — including PMS, ovulation, and fertile-window heads-ups. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
+      "Daily, phase-aware guidance for better timing and deeper connection — plus Premium+ timing alerts (notifications) for PMS, ovulation, and fertile-window moments. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
     siteName: "MoodMap",
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata = {
     card: "summary",
     title: "MoodMap",
     description:
-      "Daily, phase-aware guidance for partners — PMS, ovulation, and fertile-window timing cues. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
+      "Daily, phase-aware guidance for partners — plus Premium+ timing alerts (notifications) for PMS, ovulation, and fertile-window timing cues. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
     images: ["/icon.png"],
   },
   icons: {
@@ -79,6 +79,7 @@ export default function RootLayout({ children }) {
     name: "MoodMap",
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
+    publisher: { "@id": `${SITE_URL}#organization` },
     offers: {
       "@type": "Offer",
       price: "0",
