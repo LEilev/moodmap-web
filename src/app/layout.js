@@ -1,13 +1,3 @@
-// FILE: src/app/layout.js
-/*
-PromoteKit helper (Option 2) with guard + priority + regex fallback.
-- Prioritizes window.promotekit_referral (unique ID)
-- Falls back to human slug from ?via/ref (ignores "default")
-- Also parses via/ref from full href (handles bad '?type=...?...via=...' links)
-- Never overwrites an existing client_reference_id
-- Applies after a short delay with a few retries (never overwriting existing values)
-*/
-
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -56,7 +46,6 @@ export default function RootLayout({ children }) {
     return /^[A-Za-z0-9_-]{1,32}$/.test(s || '');
   }
 
-  // Prefer PromoteKit's unique ID; fallback to human slug (?via/ref), then from full href; ignore "default"
   function pickReferral() {
     try {
       if (window.promotekit_referral) return String(window.promotekit_referral);
@@ -79,7 +68,6 @@ export default function RootLayout({ children }) {
         var href = link.getAttribute("href");
         if (!href) return;
         var url = new URL(href);
-        // Do not overwrite an existing client_reference_id
         if (!url.searchParams.has("client_reference_id")) {
           url.searchParams.set("client_reference_id", ref);
           link.setAttribute("href", url.toString());
@@ -90,7 +78,6 @@ export default function RootLayout({ children }) {
 
   function setClientRefOnEmbeds(ref) {
     if (!ref) return;
-    // Stripe elements: only set if attribute not already present
     document.querySelectorAll("[pricing-table-id]").forEach(function (el) {
       if (!el.getAttribute("client-reference-id")) {
         el.setAttribute("client-reference-id", ref);
@@ -110,7 +97,6 @@ export default function RootLayout({ children }) {
     setClientRefOnEmbeds(ref);
   }
 
-  // Allow promotekit.js and embeds time to mount; retry a few times (never overwriting existing values)
   document.addEventListener("DOMContentLoaded", function () {
     setTimeout(applyRef, 1500);
   });
@@ -128,10 +114,13 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-full bg-primary-blue text-white">
         <div className="flex min-h-full flex-col">
-          {/* Premium header */}
-          <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/70 backdrop-blur-xl">
+          {/* Premium header (litt mer solid for å unngå glow “bleed”) */}
+          <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link href="/" className="flex items-center text-xl font-semibold tracking-tight">
+              <Link
+                href="/"
+                className="flex items-center text-xl font-semibold tracking-tight"
+              >
                 MoodMap
                 <Image
                   src="/icon.png"
@@ -155,7 +144,7 @@ export default function RootLayout({ children }) {
                   Support
                 </Link>
                 <Link href="/pro" className="hover:text-white transition-colors">
-                  Pro
+                  Premium+
                 </Link>
               </nav>
 

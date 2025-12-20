@@ -8,7 +8,7 @@ const LINKS = [
   { href: "/#about", label: "About" },
   { href: "/#download", label: "Download" },
   { href: "/support", label: "Support" },
-  { href: "/pro", label: "Pro" },
+  { href: "/pro", label: "Premium+" },
   // /partner skal være “semi-offentlig” → ikke i meny
 ];
 

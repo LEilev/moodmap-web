@@ -1,4 +1,3 @@
-// src/app/support/page.js
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
@@ -28,21 +27,11 @@ export default function SupportPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-white/75 leading-relaxed">
-            We read every message and respond personally. Email is the fastest — Discord and
-            Instagram work too.
+            We read every message and respond personally. Email is the fastest — Discord works too.
           </p>
 
-          <p className="mt-2 text-sm text-white/65">
-            Prefer DM? Reach us on{" "}
-            <a
-              className="mm-link"
-              href="https://www.instagram.com/larseilevskiaker/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Instagram
-            </a>
-            .
+          <p className="mt-2 text-sm text-white/60">
+            You’ll get a human reply — no ticket ping‑pong.
           </p>
         </header>
 

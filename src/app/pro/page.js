@@ -1,17 +1,6 @@
-// src/app/pro/page.js
 import Link from "next/link";
-import {
-  Crown,
-  ShieldCheck,
-  HeartHandshake,
-  BellRing,
-  LineChart,
-} from "lucide-react";
+import { Crown, ShieldCheck, HeartHandshake, BellRing, LineChart } from "lucide-react";
 
-/**
- * ⛔️ Ikke endre signatur/logikk – behold betalingsflyten urørt.
- * Forwarder via/ref/utm osv. til /buy som før.
- */
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({
     type: planType === "yearly" ? "yearly" : "monthly",
@@ -60,9 +49,9 @@ const FEATURES = [
 ];
 
 export const metadata = {
-  title: "Pro – MoodMap",
+  title: "Premium+ – MoodMap",
   description:
-    "Premium daily guidance for better timing and deeper connection. Two simple plans, cancel anytime.",
+    "Premium+ daily guidance for better timing and deeper connection. Two simple plans, cancel anytime.",
 };
 
 export default function ProPage({ searchParams }) {
@@ -83,12 +72,12 @@ export default function ProPage({ searchParams }) {
         <div className="mx-auto max-w-4xl text-center">
           <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/15 px-3 py-1 text-sm font-medium text-white/80">
             <Crown className="h-4 w-4" aria-hidden />
-            <span>MoodMap Pro</span>
+            <span>MoodMap Premium+</span>
           </div>
 
           <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
             <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-              Premium daily guidance for better timing and deeper connection.
+              Premium+ daily guidance for better timing and deeper connection.
             </span>
           </h1>
 
@@ -112,7 +101,7 @@ export default function ProPage({ searchParams }) {
             >
               <span className="inline-flex items-center gap-2">
                 <Crown className="h-5 w-5" aria-hidden />
-                Go Pro – Yearly
+                Unlock Premium+ – Yearly
               </span>
               <span className="ml-2 inline-flex items-center rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-xs font-semibold">
                 Best value
@@ -139,7 +128,7 @@ export default function ProPage({ searchParams }) {
                          transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
-              Go Pro – Monthly
+              Unlock Premium+ – Monthly topics
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -176,7 +165,7 @@ export default function ProPage({ searchParams }) {
             const Icon = f.icon;
             return (
               <article key={f.title} className="glass-card glass-card-hover p-6 text-left group">
-                <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
+                <span className="glass-icon">
                   <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
                 </span>
                 <h3 className="text-base sm:text-lg font-semibold">{f.title}</h3>
@@ -191,7 +180,7 @@ export default function ProPage({ searchParams }) {
       {/* Secondary CTA */}
       <section className="px-6 pb-14">
         <div className="mx-auto max-w-4xl glass-card p-6 sm:p-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold">Ready to go Pro?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">Ready for Premium+?</h2>
           <p className="mt-2 text-white/70">
             Two simple plans — same full access. Choose the one that fits you best:
           </p>
@@ -206,7 +195,7 @@ export default function ProPage({ searchParams }) {
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
             >
               <Crown className="mr-2 h-4 w-4" aria-hidden />
-              Yearly – Best value
+              Premium+ – Yearly (Best value)
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -222,10 +211,10 @@ export default function ProPage({ searchParams }) {
               prefetch={false}
               className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
                          text-white bg-gradient-to-r from-blue-500 to-blue-600 ring-1 ring-blue-300/45
-                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
+                         shadow_[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
-              Monthly
+              Premium+ – Monthly
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
