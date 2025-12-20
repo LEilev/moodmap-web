@@ -122,11 +122,7 @@ export default function HomePage() {
               in friendly daily doses. Quiet engineering beneath; warmth and small joys above.
             </p>
 
-            <p className="mt-4 text-sm text-white/55 italic">
-              Coming soon: Partner Mode — a shared space where couples grow together, one small
-              action at a time.
-            </p>
-          </div>
+           </div>
 
           {/* Feature cards */}
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
