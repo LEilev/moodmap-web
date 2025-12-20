@@ -39,8 +39,40 @@ const FEATURES = [
 ];
 
 export default function HomePage() {
+  // FAQ schema for the two Q&A blocks on this page (AI/SEO)
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What if her cycle or period length isn’t “average”?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text:
+            "MoodMap Premium+ adapts to cycle lengths from 21–35 days, and lets you adjust menstruation length from 2–8 days, so daily guidance stays accurate even when her rhythm is shorter or longer.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is this private — or does it track everything?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text:
+            "It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no awkward tracking — just timing and guidance.",
+        },
+      },
+    ],
+  };
+
   return (
     <main className="relative isolate bg-primary-blue text-white">
+      {/* JSON-LD (FAQ) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Subtle premium glows */}
       <div
         aria-hidden="true"
@@ -119,7 +151,7 @@ export default function HomePage() {
       </section>
 
       {/* About + Features */}
-      <section id="about" className="px-6 pb-10 sm:pb-12">
+      <section id="about" className="px-6 pb-12 sm:pb-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
@@ -167,7 +199,17 @@ export default function HomePage() {
               awkward tracking — just timing and guidance.
             </p>
 
-            {/* Closing chord: subtle divider + trust line */}
+            {/* CTA to Guides (premium, subtle) */}
+            <div className="mt-7 flex flex-col items-center gap-2 text-sm text-white/60">
+              <Link href="/learn" className="mm-link">
+                Explore the Guides →
+              </Link>
+              <p className="text-xs sm:text-sm text-white/55 text-center">
+                Short partner guides: PMS support, cycle phases, and fertile-window context.
+              </p>
+            </div>
+
+            {/* Closing chord */}
             <div className="mt-8 flex flex-col items-center gap-3">
               <div aria-hidden="true" className="h-px w-20 bg-white/10" />
               <p className="text-xs sm:text-sm text-white/60 text-center">
@@ -182,29 +224,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm px-6 py-10">
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="text-sm text-white/60">
-            Informed by hormone research. Built with quiet engineering and everyday empathy.
-          </p>
-
-          <p className="mt-2 text-sm text-white/70">
-            Contact us:{" "}
-            <a className="mm-link" href="mailto:support@moodmap-app.com">
-              support@moodmap-app.com
-            </a>
-          </p>
-
-          <div className="mt-3 text-sm text-white/60">
-            <Link className="mm-link" href="/privacy-policy">
-              Privacy Policy
-            </Link>
-          </div>
-
-          <p className="mt-4 text-xs text-white/45">© 2025 MoodMap. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* No footer here — global footer lives in layout.js */}
     </main>
   );
 }

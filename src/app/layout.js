@@ -1,3 +1,4 @@
+// src/app/layout.js
 import "./globals.css";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,12 +9,12 @@ const SITE_URL = "https://moodmap-app.com";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "MoodMap",
+  title: {
+    default: "MoodMap",
+    template: "%s · MoodMap",
+  },
   description:
     "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with timing alerts for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days (menstruation 2–8 days).",
-  alternates: {
-    canonical: "/",
-  },
   robots: {
     index: true,
     follow: true,
@@ -59,17 +60,7 @@ export default function RootLayout({ children }) {
     url: SITE_URL,
     logo: `${SITE_URL}/icon.png`,
     email: "support@moodmap-app.com",
-    availableLanguage: [
-      "en",
-      "no",
-      "de",
-      "fr",
-      "it",
-      "es",
-      "pt-BR",
-      "ja",
-      "zh-Hans",
-    ],
+    availableLanguage: ["en", "no", "de", "fr", "it", "es", "pt-BR", "ja", "zh-Hans"],
   };
 
   const websiteJsonLd = {
@@ -256,6 +247,42 @@ export default function RootLayout({ children }) {
           </header>
 
           <main className="flex-1">{children}</main>
+
+          {/* Global premium footer (one footer, everywhere) */}
+          <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
+            <div className="mx-auto max-w-7xl px-6 py-10 text-center">
+              <p className="text-sm text-white/60">
+                Private by design. Informed by physiology and hormone research.
+              </p>
+
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white/70">
+                <Link className="mm-link" href="/learn">
+                  Guides
+                </Link>
+                <span className="opacity-30">•</span>
+                <Link className="mm-link" href="/support">
+                  Support
+                </Link>
+                <span className="opacity-30">•</span>
+                <Link className="mm-link" href="/pro">
+                  Premium+
+                </Link>
+                <span className="opacity-30">•</span>
+                <Link className="mm-link" href="/privacy-policy">
+                  Privacy Policy
+                </Link>
+              </div>
+
+              <p className="mt-4 text-sm text-white/70">
+                Contact:{" "}
+                <a className="mm-link" href="mailto:support@moodmap-app.com">
+                  support@moodmap-app.com
+                </a>
+              </p>
+
+              <p className="mt-5 text-xs text-white/45">© 2025 MoodMap. All rights reserved.</p>
+            </div>
+          </footer>
         </div>
       </body>
     </html>
