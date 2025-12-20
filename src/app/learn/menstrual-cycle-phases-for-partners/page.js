@@ -19,43 +19,34 @@ export const metadata = {
 };
 
 export default function CyclePhasesForPartnersPage() {
+  // One source of truth: used for BOTH JSON-LD and visible FAQs
+  const FAQ = [
+    {
+      q: "What are the phases of the menstrual cycle?",
+      a: "A common model includes Menstruation, Follicular, Ovulation, and Luteal (often including PMS near the end). Phases can influence energy and sensitivity—use it as context, not a stereotype.",
+    },
+    {
+      q: "Why isn’t every cycle exactly 28 days?",
+      a: "Cycle length varies naturally from person to person and sometimes month to month. That’s why calibration and flexible expectations matter more than a fixed calendar.",
+    },
+    {
+      q: "Does ovulation affect mood or behavior?",
+      a: "For some people, ovulation can coincide with higher energy or confidence, while others notice little change. Patterns vary—timing awareness is about context, not assumptions.",
+    },
+    {
+      q: "Is this medical advice?",
+      a: "No. This page (and MoodMap) provides relationship guidance informed by general physiology. It is not medical advice and should not be used for contraception or fertility planning.",
+    },
+  ];
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "What are the phases of the menstrual cycle?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "A common model includes Menstruation, Follicular, Ovulation, and Luteal (often including PMS near the end). These phases can influence energy, sensitivity, and mood—timing context that can help partners communicate better.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Why isn’t every cycle exactly 28 days?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Cycle length varies naturally from person to person and month to month. Many people don’t follow a perfect 28-day pattern, which is why calibration and flexible expectations matter more than a fixed calendar.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does ovulation affect mood or behavior?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "For some people, ovulation can coincide with higher energy or confidence, while others notice little change. Patterns vary—timing awareness is about context, not assumptions.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is this medical advice?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "No. This page (and MoodMap) provides relationship guidance informed by general physiology. It is not medical advice and should not be used for contraception, fertility planning, diagnosis, or treatment.",
-        },
-      },
-    ],
+    mainEntity: FAQ.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 
   return (
@@ -114,10 +105,9 @@ export default function CyclePhasesForPartnersPage() {
                   The short version (the 4-phase model)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  A common, partner-friendly way to think about the menstrual cycle is four phases:
-                  Menstruation → Follicular → Ovulation → Luteal (often including PMS near the end).
-                  These phases are linked to shifting hormone levels, which can influence mood,
-                  energy, sensitivity, and desire for connection.
+                  A common, partner-friendly model is four phases: Menstruation → Follicular →
+                  Ovulation → Luteal (often including PMS near the end). Hormone levels shift across
+                  the cycle, which can influence energy, sensitivity, and desire for connection.
                 </p>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
@@ -126,7 +116,7 @@ export default function CyclePhasesForPartnersPage() {
                     discomfort for some, more inward days.
                   </li>
                   <li>
-                    <strong className="text-white">Follicular:</strong> energy tends to rise; planning
+                    <strong className="text-white">Follicular:</strong> energy often rises; planning
                     and initiative can feel easier.
                   </li>
                   <li>
@@ -140,8 +130,8 @@ export default function CyclePhasesForPartnersPage() {
                 </ul>
 
                 <p className="mt-4 text-white/70">
-                  The point isn’t to stereotype. The point is to stop being surprised by predictable
-                  timing windows.
+                  The point isn’t to stereotype. It’s to stop being surprised by predictable timing
+                  windows.
                 </p>
               </div>
             </div>
@@ -154,28 +144,25 @@ export default function CyclePhasesForPartnersPage() {
                 <CalendarDays className="h-6 w-6 text-white" aria-hidden />
               </span>
               <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Why not every cycle is 28 days
-                </h2>
+                <h2 className="text-xl sm:text-2xl font-semibold">Why not every cycle is 28 days</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  The “28-day cycle” is a teaching average—not a rule. Real cycles vary naturally
-                  from person to person and sometimes month to month. Stress, sleep, travel, illness,
-                  and other factors can shift timing too.
+                  The “28-day cycle” is a teaching average—not a rule. Real cycles vary naturally.
+                  Stress, sleep, travel, and illness can also shift timing.
                 </p>
                 <p className="mt-3 text-white/75 leading-relaxed">
-                  That’s why a rigid calendar approach often fails partners: if the timing is off,
-                  your expectations and your “big talk” day can land at the worst possible moment.
+                  That’s why rigid calendar expectations often fail partners: if timing is off, your
+                  “big talk” day can land at the worst possible moment.
                 </p>
 
                 <p className="mt-4 text-white/70">
-                  In MoodMap, Premium+ supports calibrating cycle length (21–35 days) and menstruation
-                  length (2–8 days), so the guidance aligns better with her rhythm.
+                  MoodMap Premium+ supports calibrating cycle length (21–35 days) and menstruation
+                  length (2–8 days), so guidance aligns better with her rhythm.
                 </p>
               </div>
             </div>
           </article>
 
-          {/* Card: what changes, practically */}
+          {/* Card: what changes practically */}
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
               <span className="glass-icon">
@@ -183,11 +170,11 @@ export default function CyclePhasesForPartnersPage() {
               </span>
               <div className="text-left">
                 <h2 className="text-xl sm:text-2xl font-semibold">
-                  What “phase-aware” really means in a relationship
+                  What “phase-aware” means in a relationship
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  Phase-aware support is not about guessing her emotions. It’s about adjusting your
-                  timing and approach:
+                  Phase-aware support isn’t about guessing her emotions. It’s about adjusting timing
+                  and approach:
                 </p>
 
                 <div className="mt-5 grid gap-5">
@@ -206,8 +193,8 @@ export default function CyclePhasesForPartnersPage() {
                       2) Matching “energy level”
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
-                      Some days call for action and plans. Other days call for softness, fewer demands,
-                      and calm logistics.
+                      Some days call for action and plans. Other days call for softness, fewer
+                      demands, and calmer logistics.
                     </p>
                   </div>
 
@@ -242,9 +229,8 @@ export default function CyclePhasesForPartnersPage() {
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   MoodMap turns phase timing into a daily briefing: what phase it is, what may be
-                  harder or easier today, and practical do/don’t-style cues. It can also highlight
-                  timing moments like PMS, ovulation, and the fertile window so you can prepare
-                  before high-impact days.
+                  harder or easier today, and practical do/don’t cues. It can highlight timing
+                  moments like PMS, ovulation, and fertile-window context so you’re not guessing.
                 </p>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
@@ -257,10 +243,7 @@ export default function CyclePhasesForPartnersPage() {
                   <Link href="/#download" className="btn-primary">
                     Download MoodMap
                   </Link>
-                  <Link
-                    href="/learn/support-partner-during-pms"
-                    className="mm-link text-sm text-white/80"
-                  >
+                  <Link href="/learn/support-partner-during-pms" className="mm-link text-sm text-white/80">
                     Read: Support your partner during PMS →
                   </Link>
                 </div>
@@ -268,7 +251,7 @@ export default function CyclePhasesForPartnersPage() {
             </div>
           </article>
 
-          {/* NEW: End-of-guide CTA */}
+          {/* End-of-guide CTA */}
           <section className="mt-2 text-center">
             <div className="glass-card p-6 sm:p-7">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
@@ -288,6 +271,33 @@ export default function CyclePhasesForPartnersPage() {
                 <Link href="/learn" className="mm-link text-sm text-white/70">
                   Explore more Guides →
                 </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* NEW: Visible FAQs (matches JSON-LD) */}
+          <section className="mt-2">
+            <div className="glass-card p-6 sm:p-7">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
+              <p className="mt-2 text-sm text-white/60">
+                Short answers to common questions. Relationship guidance — not medical advice.
+              </p>
+
+              <div className="mt-5 space-y-3">
+                {FAQ.map(({ q, a }) => (
+                  <details
+                    key={q}
+                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
+                  >
+                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
+                      <span className="pr-3">{q}</span>
+                      <span className="text-white/50 group-open:rotate-180 transition-transform">
+                        ▾
+                      </span>
+                    </summary>
+                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
+                  </details>
+                ))}
               </div>
             </div>
           </section>

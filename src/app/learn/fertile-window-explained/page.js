@@ -19,51 +19,38 @@ export const metadata = {
 };
 
 export default function FertileWindowExplainedPage() {
+  // One source of truth: used for BOTH JSON-LD and visible FAQs
+  const FAQ = [
+    {
+      q: "What is the fertile window?",
+      a: "The fertile window is the set of days in a cycle when pregnancy is most likely if unprotected sex occurs. It generally includes days leading up to ovulation plus ovulation day, but timing varies from person to person and month to month.",
+    },
+    {
+      q: "What’s the difference between ovulation day and the fertile window?",
+      a: "Ovulation day is the day an egg is released. The fertile window includes ovulation day plus the days before it when sperm can still survive. Exact timing isn’t the same for everyone.",
+    },
+    {
+      q: "Does ovulation affect mood, energy, or desire?",
+      a: "Some people notice higher energy or confidence around ovulation, while others notice little change. It’s context—not a guarantee—and it shouldn’t be used to stereotype or pressure anyone.",
+    },
+    {
+      q: "Is MoodMap a fertility or contraception app?",
+      a: "No. MoodMap provides relationship timing guidance informed by general cycle physiology. It is not medical advice and should not be used for contraception or fertility planning.",
+    },
+    {
+      q: "Why should partners care about the fertile window if we’re not trying for a baby?",
+      a: "Even if pregnancy isn’t your focus, timing awareness can be useful context: some people feel more energetic or open to connection at certain points in the cycle, and it can help with planning, communication, and avoiding misunderstandings.",
+    },
+  ];
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "What is the fertile window?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "The fertile window is the set of days in a cycle when pregnancy is most likely if unprotected sex occurs. It generally includes the days leading up to ovulation plus ovulation day, but timing varies from person to person and month to month.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What’s the difference between ovulation day and the fertile window?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Ovulation day is the day an egg is released. The fertile window includes ovulation day plus the days before it when sperm can still survive. The exact timing isn’t the same for everyone.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does ovulation affect mood, energy, or desire?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Some people notice higher energy, confidence, or social desire around ovulation, while others notice little change. It’s context—not a guarantee—and it shouldn’t be used to stereotype or pressure anyone.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is MoodMap a fertility or contraception app?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "No. MoodMap provides relationship timing guidance informed by general cycle physiology. It is not medical advice and should not be used for contraception or fertility planning.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Why should partners care about the fertile window if we’re not trying for a baby?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Even if pregnancy isn’t your focus, timing awareness can be useful context: some people feel more energetic or open to connection at certain points in the cycle, and it can help with planning, communication, and avoiding misunderstandings.",
-        },
-      },
-    ],
+    mainEntity: FAQ.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 
   return (
@@ -97,9 +84,9 @@ export default function FertileWindowExplainedPage() {
           </h1>
 
           <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            “Fertile window” sounds clinical, but as a partner you don’t need medical jargon—you
-            need context. This page explains what it means, how it relates to ovulation, and how
-            timing awareness can help your relationship (without being weird about it).
+            “Fertile window” sounds clinical, but as a partner you don’t need jargon—you need
+            context. This page explains what it means, how it relates to ovulation, and how timing
+            awareness can help your relationship (without being weird about it).
           </p>
 
           <p className="mt-3 text-sm text-white/60">
@@ -123,14 +110,14 @@ export default function FertileWindowExplainedPage() {
                   What the “fertile window” means (plain English)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  The fertile window is the set of days in a menstrual cycle when pregnancy is most
-                  likely <em>if</em> unprotected sex occurs. In many educational models, it includes
-                  the days leading up to ovulation plus ovulation day—because sperm can sometimes
-                  survive for several days, while the egg is typically available for a shorter time.
+                  The fertile window is the set of days in a cycle when pregnancy is most likely{" "}
+                  <em>if</em> unprotected sex occurs. Many educational models include the days leading
+                  up to ovulation plus ovulation day—because sperm can sometimes survive for several
+                  days, while the egg is typically available for a shorter time.
                 </p>
 
                 <p className="mt-4 text-white/70">
-                  Key point: the exact timing varies. Bodies aren’t clocks, and cycles aren’t always
+                  Key point: exact timing varies. Bodies aren’t clocks, and cycles aren’t always
                   identical month to month.
                 </p>
               </div>
@@ -154,14 +141,14 @@ export default function FertileWindowExplainedPage() {
                 </p>
 
                 <p className="mt-3 text-white/75 leading-relaxed">
-                  For relationship timing, you can treat this as “a context window” rather than a
-                  prediction engine. The goal is not control—it’s awareness.
+                  For relationship timing, treat this as context—not a prediction engine. The goal is
+                  not control—it’s awareness.
                 </p>
               </div>
             </div>
           </article>
 
-          {/* Card 3: why it matters for relationships */}
+          {/* Card 3: why it matters */}
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
               <span className="glass-icon">
@@ -173,9 +160,9 @@ export default function FertileWindowExplainedPage() {
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   Even if pregnancy isn’t your focus, cycle timing can still matter because it can
-                  correlate (for some people) with changes in energy, social appetite, confidence,
-                  or desire for closeness. Not always—and not the same for everyone—but it can be
-                  useful context.
+                  correlate (for some people) with changes in energy, social appetite, confidence, or
+                  desire for closeness. Not always—and not the same for everyone—but it can be useful
+                  context.
                 </p>
 
                 <div className="mt-5 grid gap-5">
@@ -184,8 +171,8 @@ export default function FertileWindowExplainedPage() {
                       1) Planning connection with better timing
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
-                      Some couples find that playful, outgoing plans land better on higher-energy
-                      days. Timing awareness helps you choose moments that feel easier—not forced.
+                      Some couples find playful plans land better on higher-energy days. Timing
+                      awareness helps you choose moments that feel easier—not forced.
                     </p>
                   </div>
 
@@ -194,9 +181,8 @@ export default function FertileWindowExplainedPage() {
                       2) Reducing misunderstandings
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
-                      If you understand that certain windows may come with higher sensitivity or
-                      lower bandwidth later in the cycle, you can avoid “big talks” on the wrong day
-                      and prevent friction.
+                      Timing context can help you avoid “big talks” on the wrong day and prevent
+                      friction before it starts.
                     </p>
                   </div>
 
@@ -206,7 +192,7 @@ export default function FertileWindowExplainedPage() {
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
                       Context can turn “what is happening?” into “ah, timing.” That shift alone can
-                      improve tone and patience on both sides.
+                      improve tone and patience.
                     </p>
                   </div>
                 </div>
@@ -256,7 +242,7 @@ export default function FertileWindowExplainedPage() {
             </div>
           </article>
 
-          {/* Card 5: MoodMap plug, non-salesy */}
+          {/* Card 5: MoodMap plug */}
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
               <span className="glass-icon">
@@ -267,9 +253,9 @@ export default function FertileWindowExplainedPage() {
                   How MoodMap uses timing cues (relationship-first)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap highlights timing moments like PMS, ovulation, and fertile-window context
-                  so you can prepare and respond with better timing. It’s built to keep things
-                  respectful: guidance is general, and no symptom diary is required.
+                  MoodMap highlights timing moments like PMS, ovulation, and fertile-window context so
+                  you can prepare and respond with better timing. It’s built to keep things respectful:
+                  guidance is general, and no symptom diary is required.
                 </p>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
@@ -305,7 +291,7 @@ export default function FertileWindowExplainedPage() {
             </div>
           </article>
 
-          {/* NEW: End-of-guide CTA */}
+          {/* End-of-guide CTA */}
           <section className="mt-2 text-center">
             <div className="glass-card p-6 sm:p-7">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
@@ -325,6 +311,33 @@ export default function FertileWindowExplainedPage() {
                 <Link href="/learn" className="mm-link text-sm text-white/70">
                   Explore more Guides →
                 </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* NEW: Visible FAQs (matches JSON-LD) */}
+          <section className="mt-2">
+            <div className="glass-card p-6 sm:p-7">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
+              <p className="mt-2 text-sm text-white/60">
+                Short answers to common questions. Relationship guidance — not medical advice.
+              </p>
+
+              <div className="mt-5 space-y-3">
+                {FAQ.map(({ q, a }) => (
+                  <details
+                    key={q}
+                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
+                  >
+                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
+                      <span className="pr-3">{q}</span>
+                      <span className="text-white/50 group-open:rotate-180 transition-transform">
+                        ▾
+                      </span>
+                    </summary>
+                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
+                  </details>
+                ))}
               </div>
             </div>
           </section>

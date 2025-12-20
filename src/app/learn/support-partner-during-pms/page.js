@@ -19,43 +19,34 @@ export const metadata = {
 };
 
 export default function SupportPartnerDuringPMSPage() {
+  // One source of truth: used for BOTH JSON-LD and visible FAQs
+  const FAQ = [
+    {
+      q: "How can I support my partner during PMS?",
+      a: "Start with empathy and timing. Offer practical support, reduce friction (less pressure, fewer big debates), and ask what kind of support she wants today (comfort, space, or help).",
+    },
+    {
+      q: "What should I avoid saying or doing during PMS?",
+      a: "Avoid minimizing, teasing, escalating, or forcing heavy conversations. Don’t treat her emotions like a problem to ‘solve’ in the moment—lead with listening and calm.",
+    },
+    {
+      q: "Is MoodMap medical advice or fertility planning?",
+      a: "No. MoodMap is relationship guidance informed by cycle physiology—meant for better timing and understanding. It is not medical advice and should not be used for contraception or fertility planning.",
+    },
+    {
+      q: "What if her cycle isn’t 28 days?",
+      a: "That’s common. MoodMap Premium+ supports cycle calibration (21–35 days) and menstruation length (2–8 days) so phase timing and daily cues stay aligned with her rhythm.",
+    },
+  ];
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "How can I support my partner during PMS?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Start with empathy and timing. Offer practical support, reduce friction (less pressure, fewer big debates), and ask what kind of support she wants today (comfort, space, or help).",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What should I avoid saying or doing during PMS?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Avoid minimizing, teasing, escalating, or forcing heavy conversations. Don’t treat her emotions like a problem to ‘solve’ in the moment—lead with listening and calm.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is MoodMap medical advice or fertility planning?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "No. MoodMap is relationship guidance informed by cycle physiology—meant for better timing and understanding. It is not medical advice and should not be used for contraception or fertility planning.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "What if her cycle isn’t 28 days?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "That’s common. MoodMap Premium+ supports cycle calibration (21–35 days) and menstruation length (2–8 days) so phase timing and daily cues stay aligned with her rhythm.",
-        },
-      },
-    ],
+    mainEntity: FAQ.map(({ q, a }) => ({
+      "@type": "Question",
+      name: q,
+      acceptedAnswer: { "@type": "Answer", text: a },
+    })),
   };
 
   return (
@@ -95,8 +86,7 @@ export default function SupportPartnerDuringPMSPage() {
           </p>
 
           <p className="mt-3 text-sm text-white/60">
-            Everyone is different. Use this as a respectful baseline — and keep communication
-            open.
+            Everyone is different. Use this as a respectful baseline — and keep communication open.
           </p>
         </div>
       </section>
@@ -111,27 +101,17 @@ export default function SupportPartnerDuringPMSPage() {
                 <TriangleAlert className="h-6 w-6 text-white" aria-hidden />
               </span>
               <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What PMS can feel like
-                </h2>
+                <h2 className="text-xl sm:text-2xl font-semibold">What PMS can feel like</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   PMS isn’t “one mood.” It can show up as a mix of physical and emotional load.
                   Common patterns include:
                 </p>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    Lower energy (social battery drains faster; small tasks feel heavier).
-                  </li>
-                  <li>
-                    Higher sensitivity (tone, timing, and pressure land harder than usual).
-                  </li>
-                  <li>
-                    Shorter fuse (less tolerance for chaos, noise, and unresolved conflict).
-                  </li>
-                  <li>
-                    Physical discomfort (bloating, headache, cramps, sleep disruption).
-                  </li>
+                  <li>Lower energy (social battery drains faster; small tasks feel heavier).</li>
+                  <li>Higher sensitivity (tone, timing, and pressure land harder than usual).</li>
+                  <li>Shorter fuse (less tolerance for chaos, noise, and unresolved conflict).</li>
+                  <li>Physical discomfort (bloating, headache, cramps, sleep disruption).</li>
                 </ul>
 
                 <p className="mt-4 text-white/70">
@@ -148,9 +128,7 @@ export default function SupportPartnerDuringPMSPage() {
                 <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
               </span>
               <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What usually helps
-                </h2>
+                <h2 className="text-xl sm:text-2xl font-semibold">What usually helps</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   These are simple moves that tend to help across most relationships — without
                   being performative.
@@ -184,14 +162,13 @@ export default function SupportPartnerDuringPMSPage() {
                       3) Ask the one question that matters
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
-                      Instead of guessing, ask:
+                      Instead of guessing, ask:{" "}
                       <span className="font-semibold text-white">
-                        {" "}
                         “Do you want comfort, space, or help today?”
                       </span>
                     </p>
                     <p className="mt-2 text-white/70">
-                      That single question prevents 80% of “I tried, and it got worse.”
+                      That single question prevents a lot of “I tried, and it got worse.”
                     </p>
                   </div>
                 </div>
@@ -215,34 +192,24 @@ export default function SupportPartnerDuringPMSPage() {
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
                   <li>
-                    <span className="font-semibold text-white">
-                      Minimizing
-                    </span>{" "}
-                    (“You’re overreacting,” “It’s just hormones.”)
+                    <span className="font-semibold text-white">Minimizing</span> (“You’re overreacting,”
+                    “It’s just hormones.”)
                   </li>
                   <li>
-                    <span className="font-semibold text-white">
-                      Forcing heavy conversations
-                    </span>{" "}
+                    <span className="font-semibold text-white">Forcing heavy conversations</span>{" "}
                     (relationship audits, money fights, old receipts).
                   </li>
                   <li>
-                    <span className="font-semibold text-white">
-                      Fixing-mode too fast
-                    </span>{" "}
-                    (solutions before you’ve listened).
+                    <span className="font-semibold text-white">Fixing-mode too fast</span> (solutions
+                    before you’ve listened).
                   </li>
                   <li>
-                    <span className="font-semibold text-white">
-                      Pressure
-                    </span>{" "}
-                    (social plans, intimacy, decisions) when she’s signaling low bandwidth.
+                    <span className="font-semibold text-white">Pressure</span> (social plans, intimacy,
+                    decisions) when she’s signaling low bandwidth.
                   </li>
                   <li>
-                    <span className="font-semibold text-white">
-                      Sarcasm & escalation
-                    </span>{" "}
-                    (it lands harder and sticks longer).
+                    <span className="font-semibold text-white">Sarcasm & escalation</span> (it lands
+                    harder and sticks longer).
                   </li>
                 </ul>
 
@@ -281,7 +248,7 @@ export default function SupportPartnerDuringPMSPage() {
             </div>
           </article>
 
-          {/* Card 5 (soft plug, not salesy) */}
+          {/* Card 5 */}
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
               <span className="glass-icon">
@@ -319,7 +286,7 @@ export default function SupportPartnerDuringPMSPage() {
             </div>
           </article>
 
-          {/* NEW: End-of-guide CTA (clean + direct) */}
+          {/* End-of-guide CTA */}
           <section className="mt-2 text-center">
             <div className="glass-card p-6 sm:p-7">
               <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
@@ -339,6 +306,33 @@ export default function SupportPartnerDuringPMSPage() {
                 <Link href="/learn" className="mm-link text-sm text-white/70">
                   Explore more Guides →
                 </Link>
+              </div>
+            </div>
+          </section>
+
+          {/* NEW: Visible FAQs (matches JSON-LD) */}
+          <section className="mt-2">
+            <div className="glass-card p-6 sm:p-7">
+              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
+              <p className="mt-2 text-sm text-white/60">
+                Short answers to common questions. Relationship guidance — not medical advice.
+              </p>
+
+              <div className="mt-5 space-y-3">
+                {FAQ.map(({ q, a }) => (
+                  <details
+                    key={q}
+                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
+                  >
+                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
+                      <span className="pr-3">{q}</span>
+                      <span className="text-white/50 group-open:rotate-180 transition-transform">
+                        ▾
+                      </span>
+                    </summary>
+                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
+                  </details>
+                ))}
               </div>
             </div>
           </section>
