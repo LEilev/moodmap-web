@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   MoodMap sitemap
-  Purpose: Premium, human-readable, and standards-compliant sitemap for maximum SEO & AI visibility.
-  Standard: https://www.sitemaps.org/protocol.html
+  Purpose: clean sitemap for SEO + AI visibility.
   Notes:
-    • Keep URLs absolute.
-    • Update <lastmod> automatically at build/deploy if possible (see notes below).
-    • Safe to extend with more <url> entries or split into index sitemaps if the site grows.
+  - Update <lastmod> on deploy if you automate it.
 -->
 
 <urlset
@@ -15,77 +12,40 @@
   xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
                       http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-  <!-- ===========================================================
-       Core pages
-       Tip: If you automate lastmod, stamp an ISO-8601 date here
-            at build/deploy time (e.g., 2025-09-02).
-       =========================================================== -->
-
-  <!-- Home page -->
   <url>
     <loc>https://moodmap-app.com/</loc>
-    <lastmod>2025-09-02</lastmod>
+    <lastmod>2025-12-20</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Pro page (premium features & purchase overview) -->
   <url>
     <loc>https://moodmap-app.com/pro</loc>
-    <lastmod>2025-09-02</lastmod>
+    <lastmod>2025-12-20</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Support (FAQ / help) -->
   <url>
     <loc>https://moodmap-app.com/support</loc>
-    <lastmod>2025-09-02</lastmod>
+    <lastmod>2025-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- Privacy policy -->
   <url>
-    <loc>https://moodmap-app.com/privacy-policy.html</loc>
-    <lastmod>2025-09-02</lastmod>
+    <loc>https://moodmap-app.com/privacy-policy</loc>
+    <lastmod>2025-12-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
-  <!-- ===========================================================
-       Implementation notes
-       - Automate lastmod: during CI, generate today's date in UTC
-         (YYYY-MM-DD) and inject into this file, or output a fresh
-         sitemap on each deploy.
-       - If the project grows large (>50k URLs or >50MB), switch to
-         a sitemap index (sitemap_index.xml) that lists multiple
-         sitemaps (e.g., /sitemap-static.xml, /sitemap-blog.xml).
-       =========================================================== -->
-
-  <!-- ===========================================================
-       Future additions (examples/placeholders)
-       Just copy + adapt one of the blocks below when new pages ship.
-       =========================================================== -->
-
-  <!-- Example future page -->
-  <!--
+  <!-- Helpful for AI agents discovering official context -->
   <url>
-    <loc>https://moodmap-app.com/blog/my-post</loc>
-    <lastmod>2025-09-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  -->
-
-  <!-- Example: docs/guide -->
-  <!--
-  <url>
-    <loc>https://moodmap-app.com/docs/getting-started</loc>
-    <lastmod>2025-09-02</lastmod>
+    <loc>https://moodmap-app.com/llms.txt</loc>
+    <lastmod>2025-12-20</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.2</priority>
   </url>
-  -->
 
 </urlset>

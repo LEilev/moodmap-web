@@ -4,18 +4,120 @@ import Image from "next/image";
 import Script from "next/script";
 import MobileMenu from "../components/MobileMenu";
 
+const SITE_URL = "https://moodmap-app.com";
+
 export const metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "MoodMap",
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with timing alerts for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days.",
+    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with timing alerts for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days (menstruation 2–8 days).",
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    title: "MoodMap",
+    description:
+      "Daily, phase-aware guidance for better timing and deeper connection — including PMS, ovulation, and fertile-window heads-ups. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
+    siteName: "MoodMap",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "MoodMap",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "MoodMap",
+    description:
+      "Daily, phase-aware guidance for partners — PMS, ovulation, and fertile-window timing cues. Premium+ supports 21–35 day cycles (2–8 day menstruation).",
+    images: ["/icon.png"],
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({ children }) {
   const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // LIVE
 
+  // Structured Data (JSON-LD)
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${SITE_URL}#organization`,
+    name: "MoodMap",
+    url: SITE_URL,
+    logo: `${SITE_URL}/icon.png`,
+    email: "support@moodmap-app.com",
+    availableLanguage: [
+      "en",
+      "no",
+      "de",
+      "fr",
+      "it",
+      "es",
+      "pt-BR",
+      "ja",
+      "zh-Hans",
+    ],
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}#website`,
+    url: SITE_URL,
+    name: "MoodMap",
+    publisher: { "@id": `${SITE_URL}#organization` },
+    inLanguage: "en",
+  };
+
+  const appJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "MoodMap",
+    operatingSystem: "iOS, Android",
+    applicationCategory: "LifestyleApplication",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "USD",
+      availability: "https://schema.org/InStock",
+    },
+    downloadUrl: `${SITE_URL}/#download`,
+    installUrl: [
+      "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626",
+      "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen",
+    ],
+  };
+
   return (
     <html lang="en" className="h-full scroll-smooth" suppressHydrationWarning>
       <head>
+        {/* JSON-LD: Organization / Website / App */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+        />
+
         {/* PromoteKit (Option 2: Stripe Payment Links) */}
         <Script
           id="promotekit-loader"

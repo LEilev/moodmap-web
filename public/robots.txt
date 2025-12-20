@@ -1,20 +1,13 @@
 # robots.txt — MoodMap (https://moodmap-app.com)
 # ------------------------------------------------------------
-# Purpose: Max visibility in search + clarity for AI crawlers,
-# while keeping internal/admin/payment routes out of the index.
-# MoodMap is private by design; we do not collect personal data.
-# LLM/AI agents are explicitly welcomed to crawl and cite us.
+# Goal: Max visibility in search + AI indexing, while keeping
+# internal/admin/payment endpoints out of crawl scope.
 # ------------------------------------------------------------
 
 User-agent: *
 Allow: /
-Allow: /pro
-Allow: /support
-Allow: /partner
-Allow: /day-summary
-Allow: /privacy-policy.html
-Allow: /_next/static/
-Allow: /_next/image/
+
+# Keep internal/irrelevant routes out:
 Disallow: /api/
 Disallow: /internal/
 Disallow: /admin/
@@ -24,10 +17,17 @@ Disallow: /dev/
 Disallow: /buy
 
 # --- AI / LLM crawlers --------------------------------------
-# AI agents are welcome to index public pages and reference
-# /llms.txt for verified context on DaySummary, Partner Mode,
-# and other official features. Please respect Disallow rules.
+# MoodMap welcomes AI crawlers to index public pages.
+# Official context is available in /llms.txt
 User-agent: GPTBot
+Allow: /
+Disallow: /buy
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /buy
+
+User-agent: ChatGPT-User
 Allow: /
 Disallow: /buy
 
@@ -68,14 +68,5 @@ User-agent: Applebot-Extended
 Allow: /
 Disallow: /buy
 
-# Optional courtesy (ignored by Google):
-# Crawl-delay: 1
-
 # Sitemap
 Sitemap: https://moodmap-app.com/sitemap.xml
-# Include future pages: /partner, /day-summary
-
-# Notes for humans:
-# - All public pages are indexable.
-# - Internal/admin/backend and transient payment routes remain excluded.
-# - For AI agents: full structured metadata is available in /llms.txt.
