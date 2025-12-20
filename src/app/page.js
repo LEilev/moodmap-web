@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* About + Features */}
-      <section id="about" className="px-6 pb-14 sm:pb-18">
+      <section id="about" className="px-6 pb-10 sm:pb-12">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
@@ -144,9 +144,9 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* --- QUIET Q&A (conversion clarity) --- */}
-          <div className="mt-12 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">
-            <p className="mb-4 font-medium text-white/85">
+          {/* Quiet Q&A (conversion clarity) */}
+          <div className="mt-10 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">
+            <p className="mb-4 font-medium text-white/80">
               A couple of things people often ask:
             </p>
 
@@ -166,9 +166,17 @@ export default function HomePage() {
               It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no
               awkward tracking — just timing and guidance.
             </p>
+
+            {/* Closing chord: subtle divider + trust line */}
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <div aria-hidden="true" className="h-px w-20 bg-white/10" />
+              <p className="text-xs sm:text-sm text-white/60 text-center">
+                Informed by human physiology and hormone research — distilled into clear, daily guidance.
+              </p>
+            </div>
           </div>
 
-          <p className="mt-12 text-center text-sm text-white/55">
+          <p className="mt-8 text-center text-sm text-white/55">
             When her rhythm is respected, everyday life gets a little gentler for you both.
           </p>
         </div>
@@ -178,7 +186,7 @@ export default function HomePage() {
       <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm px-6 py-10">
         <div className="mx-auto max-w-7xl text-center">
           <p className="text-sm text-white/60">
-            Built with quiet engineering and everyday empathy.
+            Informed by hormone research. Built with quiet engineering and everyday empathy.
           </p>
 
           <p className="mt-2 text-sm text-white/70">
