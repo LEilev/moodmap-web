@@ -1,108 +1,121 @@
-// src/components/MobileMenu.js
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { X } from "lucide-react";
 
-const NAV_LINKS = [
-  { href: "/#about", label: "About" },
-  { href: "/#download", label: "Download" },
-  { href: "/support", label: "Support" },
-  { href: "/pro", label: "Pro" },
-  // Partner intentionally not in primary nav (premium positioning)
-];
+function MenuLink({ href, children, onClick }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="block rounded-2xl px-4 py-3 text-base font-semibold text-white/90
+                 transition-colors hover:bg-white/10 hover:text-white
+                 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/80"
+    >
+      {children}
+    </Link>
+  );
+}
 
-export default function MobileMenu() {
-  const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+export default function MobileMenu({ open, onClose }) {
+  const panelRef = useRef(null);
 
-  // Close on route change
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
-
-  // Lock body scroll while open
   useEffect(() => {
     if (!open) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [open]);
 
-  // Close on ESC
-  useEffect(() => {
-    if (!open) return;
     const onKeyDown = (e) => {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") onClose?.();
     };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]);
+
+    document.addEventListener("keydown", onKeyDown);
+
+    // Lock scroll behind the modal
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    // Focus first interactive element for better UX
+    const t = setTimeout(() => {
+      const firstLink = panelRef.current?.querySelector("a");
+      firstLink?.focus?.();
+    }, 0);
+
+    return () => {
+      clearTimeout(t);
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
 
   return (
-    <>
+    <div
+      className="fixed inset-0 z-50 sm:hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Navigation menu"
+    >
+      {/* Backdrop (darker + blur, so text behind doesn't bleed through) */}
       <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="sm:hidden inline-flex items-center justify-center rounded-full p-2
-                   ring-1 ring-white/15 bg-white/5 hover:bg-white/10 transition"
-        aria-label="Open menu"
-      >
-        <Menu className="h-5 w-5 text-white/90" />
-      </button>
+        aria-label="Close menu"
+        onClick={onClose}
+        className="absolute inset-0 bg-black/70 backdrop-blur-md"
+      />
 
-      {open && (
-        <div className="sm:hidden fixed inset-0 z-[9999]">
-          {/* Backdrop */}
-          <button
-            type="button"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+      {/* Panel */}
+      <div className="relative mx-auto mt-3 w-[92%] max-w-sm">
+        <div
+          ref={panelRef}
+          className="relative overflow-hidden rounded-3xl
+                     bg-[#0B1120]/92 ring-1 ring-white/15
+                     shadow-2xl shadow-black/50 backdrop-blur-xl"
+        >
+          {/* Subtle inner glow (premium) */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full
+                       bg-gradient-to-br from-emerald-400/20 to-blue-500/20 blur-3xl"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full
+                       bg-gradient-to-tr from-blue-500/18 to-emerald-400/18 blur-3xl"
           />
 
-          {/* Panel */}
-          <div
-            className="relative mx-auto mt-4 w-[calc(100%-2rem)] max-w-sm overflow-hidden rounded-2xl
-                       bg-white/10 ring-1 ring-white/15 backdrop-blur-xl
-                       shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
-          >
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <div className="text-sm font-semibold text-white/90">Menu</div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center rounded-full p-2
-                           ring-1 ring-white/15 bg-white/5 hover:bg-white/10 transition"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5 text-white/90" />
-              </button>
-            </div>
+          {/* Header row */}
+          <div className="relative flex items-center justify-between border-b border-white/10 px-5 py-4">
+            <div className="text-sm font-semibold text-white/80">Menu</div>
 
-            <nav className="px-4 py-3">
-              <ul className="space-y-1">
-                {NAV_LINKS.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="block rounded-xl px-3 py-3 text-base font-semibold text-white/90
-                                 hover:bg-white/10 transition"
-                    >
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <button
+              aria-label="Close"
+              onClick={onClose}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full
+                         bg-white/10 ring-1 ring-white/15
+                         transition hover:bg-white/15
+                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400/80"
+            >
+              <X className="h-5 w-5 text-white/90" aria-hidden />
+            </button>
           </div>
+
+          {/* Links */}
+          <nav className="relative p-3">
+            <MenuLink href="/#about" onClick={onClose}>
+              About
+            </MenuLink>
+            <MenuLink href="/#download" onClick={onClose}>
+              Download
+            </MenuLink>
+            <MenuLink href="/support" onClick={onClose}>
+              Support
+            </MenuLink>
+            <MenuLink href="/pro" onClick={onClose}>
+              Pro
+            </MenuLink>
+          </nav>
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
