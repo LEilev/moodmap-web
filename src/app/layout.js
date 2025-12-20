@@ -7,7 +7,7 @@ import MobileMenu from "../components/MobileMenu";
 export const metadata = {
   title: "MoodMap",
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap is daily, cycle-aware guidance for timing support, space, and intimacy — without guesswork.",
+    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with timing alerts for PMS, ovulation, and the fertile window. Premium+ adapts to cycle lengths 21–35 days.",
 };
 
 export default function RootLayout({ children }) {

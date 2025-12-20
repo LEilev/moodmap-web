@@ -156,7 +156,7 @@ export default function BuyClient() {
   return (
     <>
       <Head>
-        <title>Buy Pro · MoodMap</title>
+        <title>Buy Premium+ · MoodMap</title>
         <meta name="robots" content="noindex" />
         <link rel="preconnect" href="https://buy.stripe.com" />
       </Head>

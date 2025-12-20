@@ -15,22 +15,22 @@ const FEATURES = [
   {
     Icon: Map,
     title: "Cycle Overview",
-    copy: "See the cycle mapped out clearly — an instant read on her current phase and mood.",
+    copy: "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day model.",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
-    copy: "Timely heads-ups for critical moments (PMS, ovulation, etc.). Bring warmth, or give space.",
+    copy: "Timely heads-ups for critical moments (PMS, ovulation, fertile window). Bring warmth, or give space — before it’s needed.",
   },
   {
     Icon: Sparkles,
     title: "Tips & Intimacy",
-    copy: "Daily blunt advice and playful suggestions — from sweet gestures to intimacy ideas.",
+    copy: "Daily blunt advice and playful suggestions — from sweet gestures to intimacy ideas, matched to the day.",
   },
   {
     Icon: HeartHandshake,
-    title: "Self‑Care",
-    copy: "Quick daily check-ins and rituals so you stay grounded — for her, and for you.",
+    title: "Self-Care",
+    copy: "Quick daily check-ins and rituals so you stay grounded — calmer, steadier, and better for both of you.",
   },
 ];
 
@@ -59,8 +59,12 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-5 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-          Daily, cycle-aware guidance that helps you time support, space, and intimacy with clarity —
-          without guesswork.
+          Daily, cycle-aware guidance that helps you anticipate her needs and time your support and
+          intimacy — with clarity, not guesswork.
+        </p>
+
+        <p className="mt-3 mx-auto max-w-2xl text-sm text-white/60">
+          Think of it as relationship intel — phase-aware, respectful, and built for real life.
         </p>
 
         {/* Download */}
@@ -121,8 +125,7 @@ export default function HomePage() {
               offer warmth and when to give space. Think of it as emotional intelligence, delivered
               in friendly daily doses. Quiet engineering beneath; warmth and small joys above.
             </p>
-
-           </div>
+          </div>
 
           {/* Feature cards */}
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">

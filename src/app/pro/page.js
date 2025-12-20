@@ -34,7 +34,7 @@ const FEATURES = [
   {
     icon: BellRing,
     title: "Smart Timing Alerts",
-    desc: "Heads‑up for PMS, ovulation, and tricky windows so you stay in sync.",
+    desc: "Heads‑up for PMS, ovulation, and fertile windows so you stay in sync.",
   },
   {
     icon: LineChart,
@@ -128,7 +128,7 @@ export default function ProPage({ searchParams }) {
                          transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
-              Unlock Premium+ – Monthly topics
+              Unlock Premium+ – Monthly
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -211,7 +211,7 @@ export default function ProPage({ searchParams }) {
               prefetch={false}
               className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
                          text-white bg-gradient-to-r from-blue-500 to-blue-600 ring-1 ring-blue-300/45
-                         shadow_[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
+                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
               Premium+ – Monthly
