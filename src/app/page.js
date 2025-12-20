@@ -15,22 +15,26 @@ const FEATURES = [
   {
     Icon: Map,
     title: "Cycle Overview",
-    copy: "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day model.",
+    copy:
+      "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day model.",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
-    copy: "Timely heads-ups for critical moments (PMS, ovulation, fertile window). Bring warmth, or give space — before it’s needed.",
+    copy:
+      "Timely heads-ups for critical moments (PMS, ovulation, fertile window). Bring warmth, or give space — before it’s needed.",
   },
   {
     Icon: Sparkles,
     title: "Tips & Intimacy",
-    copy: "Daily blunt advice and playful suggestions — from sweet gestures to intimacy ideas, matched to the day.",
+    copy:
+      "Daily blunt advice and playful suggestions — from sweet gestures to intimacy ideas, matched to the day.",
   },
   {
     Icon: HeartHandshake,
     title: "Self-Care",
-    copy: "Quick daily check-ins and rituals so you stay grounded — calmer, steadier, and better for both of you.",
+    copy:
+      "Quick daily check-ins and rituals so you stay grounded — calmer, steadier, and better for both of you.",
   },
 ];
 
@@ -114,7 +118,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About */}
+      {/* About + Features */}
       <section id="about" className="px-6 pb-14 sm:pb-18">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
@@ -127,23 +131,44 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Feature cards */}
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
             {FEATURES.map(({ Icon, title, copy }) => (
               <article key={title} className="glass-card glass-card-hover p-6 text-left group">
                 <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
                   <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
                 </span>
-
                 <h3 className="text-base sm:text-lg font-semibold text-white">{title}</h3>
                 <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
-
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
 
-          <p className="mt-10 text-center text-sm text-white/55">
+          {/* --- QUIET Q&A (conversion clarity) --- */}
+          <div className="mt-12 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">
+            <p className="mb-4 font-medium text-white/85">
+              A couple of things people often ask:
+            </p>
+
+            <p className="font-semibold text-white/85">
+              What if her cycle or period length isn’t “average”?
+            </p>
+            <p className="mb-6">
+              MoodMap Premium+ adapts to cycle lengths from <strong>21–35 days</strong>, and lets you
+              adjust menstruation length from <strong>2–8 days</strong>, so daily guidance stays
+              accurate even when her rhythm is shorter or longer.
+            </p>
+
+            <p className="font-semibold text-white/85">
+              Is this private — or does it track everything?
+            </p>
+            <p>
+              It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no
+              awkward tracking — just timing and guidance.
+            </p>
+          </div>
+
+          <p className="mt-12 text-center text-sm text-white/55">
             When her rhythm is respected, everyday life gets a little gentler for you both.
           </p>
         </div>
@@ -152,7 +177,9 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm px-6 py-10">
         <div className="mx-auto max-w-7xl text-center">
-          <p className="text-sm text-white/60">Built with quiet engineering and everyday empathy.</p>
+          <p className="text-sm text-white/60">
+            Built with quiet engineering and everyday empathy.
+          </p>
 
           <p className="mt-2 text-sm text-white/70">
             Contact us:{" "}
