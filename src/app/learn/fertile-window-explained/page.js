@@ -268,12 +268,11 @@ export default function FertileWindowExplainedPage() {
                   <li>Private by design.</li>
                 </ul>
 
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  <Link href="/#download" className="btn-primary">
-                    Download MoodMap
-                  </Link>
-                  <Link href="/pro" className="mm-link text-sm text-white/80">
-                    See what Premium+ unlocks
+                {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
+                <div className="mt-6 text-sm text-white/70">
+                  Want calibration and deeper timing cues?{" "}
+                  <Link href="/pro" className="mm-link text-white/80">
+                    See what Premium+ unlocks →
                   </Link>
                 </div>
 

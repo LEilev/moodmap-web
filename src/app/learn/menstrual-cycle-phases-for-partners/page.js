@@ -239,11 +239,15 @@ export default function CyclePhasesForPartnersPage() {
                   <li>Premium+ calibration keeps timing aligned to her rhythm.</li>
                 </ul>
 
+                {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  <Link href="/#download" className="btn-primary">
-                    Download MoodMap
+                  <Link href="/pro" className="mm-link text-sm text-white/80">
+                    See what Premium+ unlocks →
                   </Link>
-                  <Link href="/learn/support-partner-during-pms" className="mm-link text-sm text-white/80">
+                  <Link
+                    href="/learn/support-partner-during-pms"
+                    className="mm-link text-sm text-white/80"
+                  >
                     Read: Support your partner during PMS →
                   </Link>
                 </div>
