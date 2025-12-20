@@ -115,7 +115,7 @@ export default function SupportPage() {
         {/* Back button */}
         <div className="mt-12 text-center">
           <Link href="/" className="btn-primary">
-            ← Back to the app
+            ← Back to Home
           </Link>
         </div>
       </div>

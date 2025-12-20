@@ -34,11 +34,11 @@ const FEATURES = [
   {
     icon: BellRing,
     title: "Smart Timing Alerts",
-    desc: "Heads‑up for PMS, ovulation, and fertile windows so you stay in sync.",
+    desc: "Heads-up for PMS, ovulation, and fertile windows so you stay in sync.",
   },
   {
     icon: LineChart,
-    title: "Hormone‑Aware Guidance",
+    title: "Hormone-Aware Guidance",
     desc: "Clear, respectful explanations tailored to her current phase — no fluff.",
   },
   {
@@ -51,7 +51,7 @@ const FEATURES = [
 export const metadata = {
   title: "Premium+ – MoodMap",
   description:
-    "Premium+ daily guidance for better timing and deeper connection. Two simple plans, cancel anytime.",
+    "Premium+ daily guidance for better timing and deeper connection. Full access — nothing blurred. Cancel anytime.",
 };
 
 export default function ProPage({ searchParams }) {
@@ -82,7 +82,7 @@ export default function ProPage({ searchParams }) {
           </h1>
 
           <p className="mt-5 text-pretty text-base sm:text-lg text-white/75">
-            Unlock phase‑aware tips and cues that make each day smoother and your relationship more
+            Unlock phase-aware tips and cues that make each day smoother and your relationship more
             secure — day by day.
           </p>
 
@@ -142,6 +142,11 @@ export default function ProPage({ searchParams }) {
 
           <p className="mt-3 text-xs sm:text-sm text-white/60">
             Works with your existing free app. Cancel anytime. Your data stays private.
+          </p>
+
+          {/* NEW: explicit full-access promise (research) */}
+          <p className="mt-2 text-xs sm:text-sm text-white/70">
+            Full access. Nothing blurred or held back.
           </p>
         </div>
       </section>
@@ -226,7 +231,12 @@ export default function ProPage({ searchParams }) {
             </Link>
           </div>
 
-          <p className="mt-5 inline-flex items-center gap-2 text-sm text-white/70 justify-center">
+          {/* NEW: punchy “nothing blurred” line */}
+          <p className="mt-4 text-sm text-white/70">
+            Nothing blurred. Ever.
+          </p>
+
+          <p className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 justify-center">
             <ShieldCheck className="h-4 w-4" aria-hidden />
             Private by design. Backed by real science, distilled for everyday life.
           </p>
@@ -234,7 +244,7 @@ export default function ProPage({ searchParams }) {
 
         <div className="mt-10 text-center">
           <Link href="/" className="btn-primary">
-            ← Back to the app
+            ← Back to Home
           </Link>
         </div>
       </section>
