@@ -5,7 +5,7 @@ PromoteKit helper (Option 2) with guard + priority + regex fallback.
 - Falls back to human slug from ?via/ref (ignores "default")
 - Also parses via/ref from full href (handles bad '?type=...?...via=...' links)
 - Never overwrites an existing client_reference_id
-- Applies after a short delay with a few retries
+- Applies after a short delay with a few retries (never overwriting existing values)
 */
 
 import "./globals.css";
@@ -17,7 +17,7 @@ import MobileMenu from "../components/MobileMenu";
 export const metadata = {
   title: "MoodMap",
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap provides daily, cycle-aware guidance with clarity and empathy.",
+    "Understand her cycle. Strengthen your bond. MoodMap is daily, cycle-aware guidance for timing support, space, and intimacy — without guesswork.",
 };
 
 export default function RootLayout({ children }) {
@@ -126,49 +126,46 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
 
-      <body className="flex flex-col min-h-full bg-primary-blue text-white">
-        <header className="sticky top-0 z-50 bg-primary-blue/75 backdrop-blur-xl border-b border-white/10">
-          <div className="max-w-6xl mx-auto flex items-center justify-between py-4 px-6">
-            <Link
-              href="/"
-              className="flex items-center text-2xl font-bold tracking-tight text-white/95 hover:text-white transition"
-            >
-              MoodMap
-              <Image
-                src="/icon.png"
-                alt="MoodMap logo"
-                width={28}
-                height={28}
-                className="ml-2"
-                priority
-              />
-            </Link>
+      <body className="min-h-full bg-primary-blue text-white">
+        <div className="flex min-h-full flex-col">
+          {/* Premium header */}
+          <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/70 backdrop-blur-xl">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+              <Link href="/" className="flex items-center text-xl font-semibold tracking-tight">
+                MoodMap
+                <Image
+                  src="/icon.png"
+                  alt="MoodMap logo"
+                  width={28}
+                  height={28}
+                  className="ml-2"
+                  priority
+                />
+              </Link>
 
-            <div className="flex items-center gap-3">
               {/* Desktop nav */}
-              <nav className="hidden sm:flex gap-6 text-sm font-medium text-white/80">
-                <Link href="/#about" className="hover:text-white transition">
+              <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-white/70">
+                <Link href="/#about" className="hover:text-white transition-colors">
                   About
                 </Link>
-                <Link href="/#download" className="hover:text-white transition">
+                <Link href="/#download" className="hover:text-white transition-colors">
                   Download
                 </Link>
-                <Link href="/support" className="hover:text-white transition">
+                <Link href="/support" className="hover:text-white transition-colors">
                   Support
                 </Link>
-                <Link href="/pro" className="hover:text-white transition">
+                <Link href="/pro" className="hover:text-white transition-colors">
                   Pro
                 </Link>
-                {/* Partner intentionally removed from primary nav (premium positioning) */}
               </nav>
 
               {/* Mobile hamburger */}
               <MobileMenu />
             </div>
-          </div>
-        </header>
+          </header>
 
-        <main className="flex-grow">{children}</main>
+          <main className="flex-1">{children}</main>
+        </div>
       </body>
     </html>
   );

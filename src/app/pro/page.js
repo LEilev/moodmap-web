@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   Crown,
   ShieldCheck,
-  Sparkles,
   HeartHandshake,
   BellRing,
   LineChart,
@@ -41,12 +40,12 @@ const FEATURES = [
   {
     icon: HeartHandshake,
     title: "Daily Connection Cues",
-    desc: "Know when to lean in, give space, or add warmth — without guesswork.",
+    desc: "Know when to reach out and when to give space — without the guesswork.",
   },
   {
     icon: BellRing,
     title: "Smart Timing Alerts",
-    desc: "Heads‑up for PMS, ovulation, and key windows — so you’re not caught off guard.",
+    desc: "Heads‑up for PMS, ovulation, and tricky windows so you stay in sync.",
   },
   {
     icon: LineChart,
@@ -60,38 +59,42 @@ const FEATURES = [
   },
 ];
 
+export const metadata = {
+  title: "Pro – MoodMap",
+  description:
+    "Premium daily guidance for better timing and deeper connection. Two simple plans, cancel anytime.",
+};
+
 export default function ProPage({ searchParams }) {
   return (
-    <div className="relative isolate bg-primary-blue text-white">
-      {/* Glows */}
+    <main className="relative isolate bg-primary-blue text-white">
+      {/* Premium glows */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full
-                   bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
+        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-500/20 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full
-                   bg-gradient-to-tr from-blue-500/18 to-emerald-400/18 blur-[180px] sm:blur-[220px] md:opacity-30 -z-10"
+        className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/20 to-emerald-400/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
       />
 
       {/* Hero */}
-      <section className="px-6 pt-16 pb-12 sm:pt-20 sm:pb-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-sm font-medium">
+      <section className="px-6 pt-14 pb-10 sm:pt-18 sm:pb-12">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/15 px-3 py-1 text-sm font-medium text-white/80">
             <Crown className="h-4 w-4" aria-hidden />
             <span>MoodMap Pro</span>
           </div>
 
-          <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-emerald-200 via-emerald-300 to-blue-300 bg-clip-text text-transparent">
+          <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
+            <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
               Premium daily guidance for better timing and deeper connection.
             </span>
           </h1>
 
-          <p className="mt-5 text-pretty text-base sm:text-lg text-white/80">
-            Unlock phase‑aware cues and tips that make each day smoother — with
-            more clarity, less friction, and stronger trust.
+          <p className="mt-5 text-pretty text-base sm:text-lg text-white/75">
+            Unlock phase‑aware tips and cues that make each day smoother and your relationship more
+            secure — day by day.
           </p>
 
           {/* CTAs */}
@@ -103,8 +106,8 @@ export default function ProPage({ searchParams }) {
               aria-label="Choose Yearly plan"
               className="group relative inline-flex items-center justify-center rounded-full px-7 py-4 text-base font-semibold
                          text-white bg-gradient-to-r from-emerald-400 to-emerald-500
-                         shadow-[0_10px_30px_rgba(16,185,129,0.30)] ring-1 ring-emerald-300/35
-                         transition will-change-transform hover:translate-y-[-1px] hover:shadow-[0_14px_40px_rgba(16,185,129,0.40)]
+                         shadow-[0_10px_30px_rgba(16,185,129,0.30)] ring-1 ring-emerald-300/40
+                         transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(16,185,129,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
             >
               <span className="inline-flex items-center gap-2">
@@ -132,13 +135,11 @@ export default function ProPage({ searchParams }) {
               aria-label="Choose Monthly plan"
               className="group relative inline-flex items-center justify-center rounded-full px-7 py-4 text-base font-semibold
                          text-white bg-gradient-to-r from-blue-500 to-blue-600
-                         shadow-[0_10px_30px_rgba(59,130,246,0.28)] ring-1 ring-blue-300/35
-                         transition will-change-transform hover:translate-y-[-1px] hover:shadow-[0_14px_40px_rgba(59,130,246,0.40)]
+                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] ring-1 ring-blue-300/45
+                         transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
-              <Sparkles className="mr-2 h-5 w-5" aria-hidden />
               Go Pro – Monthly
-
               <span
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
@@ -150,69 +151,61 @@ export default function ProPage({ searchParams }) {
             </Link>
           </div>
 
-          <p className="mt-3 text-xs text-white/65">
-            Works with your existing app. Cancel anytime. Your data stays
-            private.
+          <p className="mt-3 text-xs sm:text-sm text-white/60">
+            Works with your existing free app. Cancel anytime. Your data stays private.
           </p>
         </div>
       </section>
 
-      {/* Value Strip */}
-      <section className="px-6 pb-8">
-        <div className="mx-auto max-w-5xl rounded-2xl border border-white/12 bg-white/10 backdrop-blur-sm px-6 py-5 sm:py-6">
-          <p className="text-center text-sm sm:text-base text-white/85">
-            “Understand what’s happening in her body, and you’ll understand what
-            your relationship needs today.”
-          </p>
+      {/* Quote strip */}
+      <section className="px-6 pb-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="glass-card p-5 sm:p-6 text-center">
+            <p className="text-sm sm:text-base text-white/80">
+              “Understand what’s happening in her body, and you’ll understand what your relationship
+              needs today.”
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Features */}
-      <section className="px-6 pb-20 sm:pb-24">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:gap-7 md:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="group relative overflow-hidden rounded-2xl bg-white/12 p-5 sm:p-6 text-left ring-1 ring-white/10 backdrop-blur-xl
-                         transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-black/30"
-            >
-              <span className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20 shadow-inner shadow-emerald-500/10 transition-all duration-300 group-hover:scale-105 group-hover:from-emerald-300/55 group-hover:to-blue-400/55">
-                <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
-              </span>
-
-              <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-white/75">
-                {desc}
-              </p>
-
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-white/10 to-transparent blur-2xl transition-opacity duration-300 group-hover:opacity-80"
-              />
-            </div>
-          ))}
+      <section className="px-6 pb-12 sm:pb-16">
+        <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+          {FEATURES.map((f) => {
+            const Icon = f.icon;
+            return (
+              <article key={f.title} className="glass-card glass-card-hover p-6 text-left group">
+                <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
+                  <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
+                </span>
+                <h3 className="text-base sm:text-lg font-semibold">{f.title}</h3>
+                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{f.desc}</p>
+                <div aria-hidden="true" className="glass-gloss" />
+              </article>
+            );
+          })}
         </div>
       </section>
 
       {/* Secondary CTA */}
-      <section className="px-6 pb-24">
-        <div className="mx-auto max-w-3xl rounded-2xl border border-white/12 bg-white/10 p-6 sm:p-8 text-center backdrop-blur-xl">
+      <section className="px-6 pb-14">
+        <div className="mx-auto max-w-4xl glass-card p-6 sm:p-8 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold">Ready to go Pro?</h2>
-          <p className="mt-2 text-white/80">
-            Two simple options. Same unlock. Pick what fits you best.
+          <p className="mt-2 text-white/70">
+            Two simple plans — same full access. Choose the one that fits you best:
           </p>
 
-          <div className="mt-6 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
+          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
             <Link
               href={buildPlanHref("yearly", searchParams)}
               prefetch={false}
-              aria-label="Choose Yearly plan (Best value)"
-              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-semibold
-                         text-white bg-gradient-to-r from-emerald-400 to-emerald-500 ring-1 ring-emerald-300/35
-                         shadow-[0_8px_24px_rgba(16,185,129,0.30)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_32px_rgba(16,185,129,0.40)]
+              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
+                         text-white bg-gradient-to-r from-emerald-400 to-emerald-500 ring-1 ring-emerald-300/40
+                         shadow-[0_10px_30px_rgba(16,185,129,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(16,185,129,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
             >
-              <Crown className="mr-2 h-5 w-5" aria-hidden />
+              <Crown className="mr-2 h-4 w-4" aria-hidden />
               Yearly – Best value
               <span
                 aria-hidden="true"
@@ -227,10 +220,9 @@ export default function ProPage({ searchParams }) {
             <Link
               href={buildPlanHref("monthly", searchParams)}
               prefetch={false}
-              aria-label="Choose Monthly plan"
-              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-base font-semibold
-                         text-white bg-gradient-to-r from-blue-500 to-blue-600 ring-1 ring-blue-300/35
-                         shadow-[0_8px_24px_rgba(59,130,246,0.28)] transition hover:translate-y-[-1px] hover:shadow-[0_12px_32px_rgba(59,130,246,0.40)]
+              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
+                         text-white bg-gradient-to-r from-blue-500 to-blue-600 ring-1 ring-blue-300/45
+                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
             >
               Monthly
@@ -245,26 +237,18 @@ export default function ProPage({ searchParams }) {
             </Link>
           </div>
 
-          <div className="mt-4 inline-flex items-center justify-center gap-2 text-xs text-white/70">
+          <p className="mt-5 inline-flex items-center gap-2 text-sm text-white/70 justify-center">
             <ShieldCheck className="h-4 w-4" aria-hidden />
-            <span>Private by design. Backed by real science, distilled for everyday life.</span>
-          </div>
+            Private by design. Backed by real science, distilled for everyday life.
+          </p>
+        </div>
+
+        <div className="mt-10 text-center">
+          <Link href="/" className="btn-primary">
+            ← Back to the app
+          </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="px-6 pb-16 text-center">
-        <Link
-          href="/"
-          className="inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
-                     text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                     shadow-[0_8px_24px_rgba(59,130,246,0.30)] transition-all
-                     hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(59,130,246,0.45)]
-                     focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
-        >
-          ← Back to the app
-        </Link>
-      </footer>
-    </div>
+    </main>
   );
 }
