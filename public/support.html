@@ -3,8 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Support – MoodMap</title>
-    <meta name="description" content="How to reach the MoodMap team." />
+
+    <title>MoodMap Support</title>
+    <meta
+      name="description"
+      content="Contact MoodMap Support for help with the MoodMap iOS app."
+    />
+
+    <!-- Canonical (non-www) -->
+    <link rel="canonical" href="https://moodmap-app.com/support.html" />
+
+    <!-- Helps some clients auto-detect phone numbers correctly -->
+    <meta name="format-detection" content="telephone=yes" />
+
     <style>
       :root{
         --bg:#0B1120;
@@ -30,11 +41,21 @@
         color:var(--fg);
       }
       .wrap{max-width:980px;margin:0 auto;padding:56px 20px}
+
       h1{margin:0 0 10px;font-size:42px;letter-spacing:-.02em}
       p{margin:0;color:var(--muted);line-height:1.55}
       .sub{margin-top:8px;color:var(--muted2);font-size:14px}
-      .grid{margin-top:28px;display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}
+
+      .at-a-glance{
+        margin-top:14px;
+        color:var(--muted2);
+        font-size:14px;
+        line-height:1.6;
+      }
+
+      .grid{margin-top:22px;display:grid;gap:16px;grid-template-columns:repeat(2,minmax(0,1fr))}
       @media (max-width:760px){.grid{grid-template-columns:1fr}}
+
       .card{
         position:relative;
         padding:18px 18px 16px;
@@ -48,37 +69,64 @@
       .card:hover{background:var(--card2);border-color:var(--border2);box-shadow:var(--shadow)}
       .label{font-weight:700;margin:0 0 6px}
       .value{margin:0;color:var(--muted);font-size:15px}
-      a{color:var(--fg);text-decoration:underline;text-decoration-color:rgba(255,255,255,.28);text-underline-offset:4px}
+
+      a{
+        color:var(--fg);
+        text-decoration:underline;
+        text-decoration-color:rgba(255,255,255,.28);
+        text-underline-offset:4px
+      }
       a:hover{text-decoration-color:rgba(255,255,255,.62)}
+
       .pill{
         display:inline-flex;align-items:center;gap:10px;
-        margin-top:22px;padding:10px 14px;border-radius:999px;
+        margin-top:18px;padding:10px 14px;border-radius:999px;
         border:1px solid rgba(255,255,255,.14);
         background:rgba(255,255,255,.08);
         color:rgba(255,255,255,.78);
         font-size:13px;
       }
       .dot{width:8px;height:8px;border-radius:999px;background:linear-gradient(90deg,#34d399,#2563eb)}
+
       .footer{margin-top:26px;font-size:13px;color:var(--muted2)}
+
+      /* Keep address semantically correct without changing visuals */
+      address{font-style:normal;margin:0}
     </style>
   </head>
+
   <body>
     <main class="wrap">
-      <h1>We’re here to help.</h1>
-      <p>We read every message and respond personally. Email is the fastest — Discord works too.</p>
-      <p class="sub">You’ll get a human reply — no ticket ping-pong.</p>
+      <h1>MoodMap Support</h1>
 
-      <div class="pill"><span class="dot"></span> Support for MoodMap (iOS &amp; Android)</div>
+      <p>For help with MoodMap on iOS, contact us using the options below.</p>
+      <p class="sub">
+        We read every message and respond personally. Email is the fastest — you can also reach us on Discord.
+      </p>
+
+      <div class="pill"><span class="dot"></span> Support for MoodMap (iOS)</div>
+
+      <p class="at-a-glance">
+        Email:
+        <a href="mailto:support@moodmap-app.com">support@moodmap-app.com</a>
+        &nbsp;·&nbsp;
+        Phone:
+        <a href="tel:+4792997273">+47 929 97 273</a>
+      </p>
 
       <section class="grid" aria-label="Support contact options">
         <div class="card">
           <p class="label">Email</p>
-          <p class="value"><a href="mailto:support@moodmap-app.com">support@moodmap-app.com</a></p>
+          <p class="value">
+            <a href="mailto:support@moodmap-app.com">support@moodmap-app.com</a>
+          </p>
         </div>
 
         <div class="card">
           <p class="label">Phone</p>
-          <p class="value"><a href="tel:+4792997273">+47 929 97 273</a></p>
+          <p class="value">
+            <a href="tel:+4792997273">+47 929 97 273</a>
+          </p>
         </div>
 
         <div class="card">
@@ -92,14 +140,25 @@
         </div>
 
         <div class="card">
-          <p class="label">Mailing address</p>
-          <p class="value">
-            MoodMap<br/>Fageråsveien&nbsp;4<br/>1415&nbsp;Oppegård<br/>Norway
-          </p>
+          <p class="label">Legal address</p>
+          <address class="value">
+            MoodMap<br />
+            Fageråsveien&nbsp;4<br />
+            1415&nbsp;Oppegård<br />
+            Norway
+          </address>
         </div>
       </section>
 
-      <p class="footer">If you contact us, please include your device model and app version if possible.</p>
+      <noscript>
+        <p class="footer">
+          Support contact: support@moodmap-app.com · +47 929 97 273 · MoodMap, Fageråsveien 4, 1415 Oppegård, Norway
+        </p>
+      </noscript>
+
+      <p class="footer">
+        If you contact us, please include your device model and app version if possible.
+      </p>
     </main>
   </body>
 </html>

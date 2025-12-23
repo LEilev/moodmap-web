@@ -2,8 +2,11 @@ import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "Support – MoodMap",
-  description: "How to reach the MoodMap team.",
+  title: "MoodMap Support",
+  description: "Contact MoodMap Support for help with the MoodMap iOS app.",
+  alternates: {
+    canonical: "https://moodmap-app.com/support.html",
+  },
 };
 
 export default function SupportPage() {
@@ -23,20 +26,32 @@ export default function SupportPage() {
         {/* Header */}
         <header className="text-center max-w-2xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
-            We’re here to help.
+            MoodMap Support
           </h1>
 
           <p className="text-base sm:text-lg text-white/75 leading-relaxed">
-            We read every message and respond personally. Email is the fastest — Discord works too.
+            For help with MoodMap on iOS, contact us using the options below.
           </p>
 
           <p className="mt-2 text-sm text-white/60">
-            You’ll get a human reply — no ticket ping‑pong.
+            We read every message and respond personally. Email is the fastest — Discord works too.
+          </p>
+
+          {/* At-a-glance (helps reviewers/users immediately) */}
+          <p className="mt-4 text-sm text-white/70">
+            Email:{" "}
+            <a className="mm-link" href="mailto:support@moodmap-app.com">
+              support@moodmap-app.com
+            </a>{" "}
+            · Phone:{" "}
+            <a className="mm-link" href="tel:+4792997273">
+              +47 929 97 273
+            </a>
           </p>
         </header>
 
         {/* Cards */}
-        <section className="mt-10 grid gap-6 md:grid-cols-2">
+        <section className="mt-10 grid gap-6 md:grid-cols-2" aria-label="Support contact options">
           {/* Email */}
           <article className="glass-card glass-card-hover p-6 group">
             <span className="glass-icon">
@@ -96,12 +111,12 @@ export default function SupportPage() {
             <div aria-hidden="true" className="glass-gloss" />
           </article>
 
-          {/* Address */}
+          {/* Legal Address */}
           <article className="glass-card glass-card-hover p-6 group md:col-span-1">
             <span className="glass-icon">
               <MapPin className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </span>
-            <h2 className="text-xl font-semibold">Mailing address</h2>
+            <h2 className="text-xl font-semibold">Legal address</h2>
             <address className="not-italic leading-relaxed mt-1 text-white/70">
               MoodMap<br />
               Fageråsveien&nbsp;4<br />
