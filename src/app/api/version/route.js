@@ -2,34 +2,31 @@
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+
+// ✅ Tell Next/Vercel to cache this route for 2 hours (CDN / s-maxage).
+// This is the supported, deterministic way to get caching on Route Handlers.
+export const revalidate = 7200;
 
 const SCHEMA_VERSION = 1;
 
-// Dine IDs:
 const IOS_APP_STORE_ID = "6746102626";
 const ANDROID_PACKAGE = "com.eilev.moodmapnextgen";
 
-// Store URLs (native + fallback web)
 const IOS_STORE_URL = `itms-apps://apps.apple.com/app/id${IOS_APP_STORE_ID}`;
 const IOS_WEB_URL = `https://apps.apple.com/app/id${IOS_APP_STORE_ID}`;
 
 const ANDROID_STORE_URL = `market://details?id=${ANDROID_PACKAGE}`;
 const ANDROID_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 
-// P0 manual fallback (kan overrides via env)
+// P0 manual fallback (overstyr via env i Vercel)
 const FALLBACK_IOS_LATEST = process.env.MOODMAP_IOS_LATEST_VERSION || "5.0.0";
 const FALLBACK_ANDROID_LATEST = process.env.MOODMAP_ANDROID_LATEST_VERSION || "5.0.0";
 
-// iOS auto via Apple lookup (på som default)
+// iOS auto-fetch (Apple lookup) – default ON
 const AUTOFETCH_IOS =
   (process.env.MOODMAP_AUTOFETCH_IOS ?? "true").toLowerCase() === "true";
 
 const FETCH_TIMEOUT_MS = Number(process.env.MOODMAP_VERSION_FETCH_TIMEOUT_MS || "2500");
-
-// CDN caching (Vercel/CDN gjør dette “industristandard” uten Redis)
-const S_MAXAGE = Number(process.env.MOODMAP_VERSION_CDN_S_MAXAGE_SECONDS || "7200"); // 2h
-const SWR = Number(process.env.MOODMAP_VERSION_CDN_SWR_SECONDS || "86400"); // 24h
 
 async function fetchWithTimeout(url, timeoutMs) {
   const controller = new AbortController();
@@ -38,6 +35,7 @@ async function fetchWithTimeout(url, timeoutMs) {
     return await fetch(url, {
       headers: { Accept: "application/json" },
       signal: controller.signal,
+      // Important: do not force cache/no-store here; route-level revalidate controls caching.
     });
   } finally {
     clearTimeout(t);
@@ -45,7 +43,6 @@ async function fetchWithTimeout(url, timeoutMs) {
 }
 
 async function fetchAppleIOSLatest() {
-  // Apple iTunes Search API lookup by ID
   const url = `https://itunes.apple.com/lookup?id=${encodeURIComponent(IOS_APP_STORE_ID)}`;
   try {
     const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
@@ -86,10 +83,5 @@ export async function GET() {
     if (ios?.webUrl) payload.ios.webUrl = ios.webUrl;
   }
 
-  const res = NextResponse.json(payload);
-  res.headers.set(
-    "Cache-Control",
-    `public, max-age=0, s-maxage=${S_MAXAGE}, stale-while-revalidate=${SWR}`
-  );
-  return res;
+  return NextResponse.json(payload);
 }
