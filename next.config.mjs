@@ -32,6 +32,13 @@ const nextConfig = {
       },
     ];
   },
+
+  async rewrites() {
+    return [
+      // Support both endpoints: /api/version and /api/version.json
+      { source: "/api/version.json", destination: "/api/version" },
+    ];
+  },
 };
 
 export default nextConfig;
