@@ -8,8 +8,8 @@ import { useRouter } from "next/router";
 
 // LIVE Payment Links (allow_promotion_codes=true) — DO NOT CHANGE
 const PLAN_LINKS = {
-  monthly: "https://buy.stripe.com/aFabJ27zZgea0lgfzP3ks03",
-  yearly:  "https://buy.stripe.com/6oU5kE2fFgea2to2N33ks04",
+  monthly: "https://buy.stripe.com/9B69AU4nN3rogkebjz3ks05",
+  yearly:  "https://buy.stripe.com/6oUcN66vVaTQgke87n3ks06",
 };
 
 function isInAppBrowser() {
