@@ -33,7 +33,16 @@ const nextConfig = {
       },
 
       // ---------------------------------------------------------------------
-      // Convenience
+      // Apple App Site Association (some crawlers hit root path)
+      // ---------------------------------------------------------------------
+      {
+        source: "/apple-app-site-association",
+        destination: "/.well-known/apple-app-site-association",
+        permanent: true,
+      },
+
+      // ---------------------------------------------------------------------
+      // Convenience aliases
       // ---------------------------------------------------------------------
       {
         source: "/llms",
@@ -62,8 +71,10 @@ const nextConfig = {
 
   async headers() {
     return [
-      // ✅ Version endpoint caching (CDN)
-      // This prevents hammering Apple lookup and keeps response fast.
+      // ---------------------------------------------------------------------
+      // Version endpoint caching (CDN)
+      // Prevent hammering any upstream lookup; keep response fast.
+      // ---------------------------------------------------------------------
       {
         source: "/api/version",
         headers: [
@@ -85,9 +96,15 @@ const nextConfig = {
         ],
       },
 
-      // Apple association content-type rule (belt + suspenders)
+      // ---------------------------------------------------------------------
+      // Apple association JSON content-type (belt + suspenders)
+      // ---------------------------------------------------------------------
       {
         source: "/.well-known/apple-app-site-association",
+        headers: [{ key: "Content-Type", value: "application/json" }],
+      },
+      {
+        source: "/apple-app-site-association",
         headers: [{ key: "Content-Type", value: "application/json" }],
       },
     ];

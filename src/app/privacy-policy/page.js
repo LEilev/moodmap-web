@@ -18,6 +18,9 @@ export const metadata = {
   title: "Privacy Policy | MoodMap™",
   description:
     "How we collect, use, and safeguard your information when you use the MoodMap app.",
+  alternates: {
+    canonical: "https://moodmap-app.com/privacy-policy",
+  },
 };
 
 const toc = [
@@ -36,9 +39,11 @@ const toc = [
 // UI helpers (matcher Pro/Support)
 function IconRing({ children }) {
   return (
-    <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl
+    <span
+      className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl
                      bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20
-                     shadow-inner shadow-emerald-500/10">
+                     shadow-inner shadow-emerald-500/10"
+    >
       {children}
     </span>
   );
@@ -86,13 +91,20 @@ export default function PrivacyPolicyPage() {
           {/* Mobile: collapsible */}
           <details className="sm:hidden rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl">
             <summary className="list-none cursor-pointer select-none px-4 py-3 font-semibold">
-              <span className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm
+              <span
+                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm
                                text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                               shadow-[0_8px_24px_rgba(59,130,246,0.35)]">
+                               shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+              >
                 Jump to section
               </span>
             </summary>
-            <nav className="px-4 pb-3 pt-2" role="navigation" aria-label="Table of contents" data-pp-toc>
+            <nav
+              className="px-4 pb-3 pt-2"
+              role="navigation"
+              aria-label="Table of contents"
+              data-pp-toc
+            >
               <ul className="space-y-1.5">
                 {toc.map((item) => (
                   <li key={item.id}>
@@ -118,7 +130,9 @@ export default function PrivacyPolicyPage() {
             aria-label="Table of contents"
             data-pp-toc
           >
-            <div className="mb-2 text-sm font-semibold text-white/90">Table of contents</div>
+            <div className="mb-2 text-sm font-semibold text-white/90">
+              Table of contents
+            </div>
             <ul className="grid grid-cols-2 gap-y-1.5">
               {toc.map((item) => (
                 <li key={item.id}>
@@ -147,7 +161,10 @@ export default function PrivacyPolicyPage() {
               <strong>Last updated:</strong> April 24, 2025
             </p>
             <p className="text-sm leading-relaxed">
-              MoodMap is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use the MoodMap app. By using the app, you agree to the terms of this Privacy Policy.
+              MoodMap is committed to protecting your privacy. This Privacy Policy
+              explains how we collect, use, and safeguard your information when you
+              use the MoodMap app. By using the app, you agree to the terms of this
+              Privacy Policy.
             </p>
           </GlassCard>
 
@@ -156,23 +173,38 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <Database className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">1. Information We Collect</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">
+              1. Information We Collect
+            </h2>
             <p className="mt-2 text-sm leading-relaxed">
-              We collect the following types of data to provide and improve our services:
+              We collect the following types of data to provide and improve our
+              services:
             </p>
             <ul className="mt-2 list-disc list-inside text-sm text-blue-100 space-y-1.5">
               <li>
-                <strong>Financial Information (Purchase History)</strong>: We collect purchase history through RevenueCat to process in-app purchases and subscriptions. This data is used for app functionality (e.g., validating purchases) and analytics (e.g., understanding usage patterns).
+                <strong>Financial Information (Purchase History)</strong>: We
+                collect purchase history through RevenueCat to process in-app
+                purchases and subscriptions. This data is used for app
+                functionality (e.g., validating purchases) and analytics (e.g.,
+                understanding usage patterns).
               </li>
               <li>
-                <strong>App Information and Performance (Crash Logs)</strong>: We collect crash logs through Expo to monitor app performance, diagnose issues, and improve stability. This data is optional and used solely for analytics.
+                <strong>App Information and Performance (Crash Logs)</strong>: We
+                collect crash logs through Expo to monitor app performance,
+                diagnose issues, and improve stability. This data is optional and
+                used solely for analytics.
               </li>
               <li>
-                <strong>Device or Other IDs</strong>: We collect device identifiers to validate purchases and track usage for analytics purposes. This data is required for app functionality and analytics.
+                <strong>Device or Other IDs</strong>: We collect device
+                identifiers to validate purchases and track usage for analytics
+                purposes. This data is required for app functionality and
+                analytics.
               </li>
             </ul>
             <p className="mt-3 text-sm leading-relaxed">
-              <strong>Note:</strong> We do not collect personally identifiable information (such as names or email addresses) unless you choose to provide it (e.g., for notifications or support requests).
+              <strong>Note:</strong> We do not collect personally identifiable
+              information (such as names or email addresses) unless you choose to
+              provide it (e.g., for notifications or support requests).
             </p>
           </GlassCard>
 
@@ -181,13 +213,21 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <BarChart3 className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">2. How We Use Your Data</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">
+              2. How We Use Your Data
+            </h2>
             <p className="mt-2 text-sm leading-relaxed">
               We use the collected data for the following purposes:
             </p>
             <ul className="mt-2 list-disc list-inside text-sm text-blue-100 space-y-1.5">
-              <li><strong>App Functionality</strong>: To process in-app purchases, validate transactions, and ensure the app functions as intended.</li>
-              <li><strong>Analytics</strong>: To monitor app performance, understand usage patterns, and improve the user experience.</li>
+              <li>
+                <strong>App Functionality</strong>: To process in-app purchases,
+                validate transactions, and ensure the app functions as intended.
+              </li>
+              <li>
+                <strong>Analytics</strong>: To monitor app performance, understand
+                usage patterns, and improve the user experience.
+              </li>
             </ul>
           </GlassCard>
 
@@ -196,33 +236,41 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <Share2 className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">3. Third-Party Services</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">
+              3. Third-Party Services
+            </h2>
             <p className="mt-2 text-sm leading-relaxed">
-              MoodMap uses the following third-party services, which may collect data as described in their own privacy policies:
+              MoodMap uses the following third-party services, which may collect
+              data as described in their own privacy policies:
             </p>
             <ul className="mt-2 list-disc list-inside text-sm text-blue-100 space-y-1.5">
               <li>
-                <strong>RevenueCat</strong>: Used to manage in-app purchases and subscriptions. RevenueCat collects purchase history and device identifiers.
-                For more information, see{" "}
+                <strong>RevenueCat</strong>: Used to manage in-app purchases and
+                subscriptions. RevenueCat collects purchase history and device
+                identifiers. For more information, see{" "}
                 <a
                   href="https://www.revenuecat.com/privacy"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline decoration-white/40 hover:decoration-white/70"
                 >
-                  RevenueCat's Privacy Policy
-                </a>.
+                  RevenueCat&apos;s Privacy Policy
+                </a>
+                .
               </li>
               <li>
-                <strong>Expo</strong>: Used for app development and monitoring. Expo collects crash logs and device identifiers for analytics purposes. For more information, see{" "}
+                <strong>Expo</strong>: Used for app development and monitoring.
+                Expo collects crash logs and device identifiers for analytics
+                purposes. For more information, see{" "}
                 <a
                   href="https://expo.dev/privacy-explained"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline decoration-white/40 hover:decoration-white/70"
                 >
-                  Expo's Privacy Policy
-                </a>.
+                  Expo&apos;s Privacy Policy
+                </a>
+                .
               </li>
             </ul>
           </GlassCard>
@@ -234,7 +282,10 @@ export default function PrivacyPolicyPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">4. Data Security</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              All data collected is encrypted in transit using HTTPS to ensure secure transmission. We take reasonable measures to protect your data, but no method of transmission over the internet is completely secure.
+              All data collected is encrypted in transit using HTTPS to ensure
+              secure transmission. We take reasonable measures to protect your
+              data, but no method of transmission over the internet is completely
+              secure.
             </p>
           </GlassCard>
 
@@ -245,13 +296,18 @@ export default function PrivacyPolicyPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">5. Data Deletion</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              You have the right to request the deletion of your personal data. To submit a data deletion request, please contact us at{" "}
+              You have the right to request the deletion of your personal data. To
+              submit a data deletion request, please contact us at{" "}
               <a
                 href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
                 support@moodmap-app.com
-              </a>. We will process your request in accordance with applicable privacy laws, such as GDPR, and delete your data from our systems and those of our service providers (e.g., RevenueCat and Expo) within a reasonable timeframe.
+              </a>
+              . We will process your request in accordance with applicable privacy
+              laws, such as GDPR, and delete your data from our systems and those
+              of our service providers (e.g., RevenueCat and Expo) within a
+              reasonable timeframe.
             </p>
           </GlassCard>
 
@@ -262,7 +318,9 @@ export default function PrivacyPolicyPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">6. No Health Data</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              MoodMap does not collect, store, or process any personal health or menstrual data. The app is designed to provide general cycle-based tips and is not intended for medical or diagnostic purposes.
+              MoodMap does not collect, store, or process any personal health or
+              menstrual data. The app is designed to provide general cycle-based
+              tips and is not intended for medical or diagnostic purposes.
             </p>
           </GlassCard>
 
@@ -271,9 +329,14 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <Bell className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">7. Email Notifications (Optional)</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">
+              7. Email Notifications (Optional)
+            </h2>
             <p className="mt-2 text-sm leading-relaxed">
-              If you sign up for notifications, your email address will be securely stored and used only to inform you about app updates or releases. You can unsubscribe at any time by following the instructions in the notification emails.
+              If you sign up for notifications, your email address will be securely
+              stored and used only to inform you about app updates or releases. You
+              can unsubscribe at any time by following the instructions in the
+              notification emails.
             </p>
           </GlassCard>
 
@@ -284,12 +347,21 @@ export default function PrivacyPolicyPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">8. Your Rights</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              Depending on your location, you may have the following rights regarding your data:
+              Depending on your location, you may have the following rights
+              regarding your data:
             </p>
             <ul className="mt-2 list-disc list-inside text-sm text-blue-100 space-y-1.5">
-              <li><strong>Access</strong>: Request a copy of the data we hold about you.</li>
-              <li><strong>Deletion</strong>: Request the deletion of your data.</li>
-              <li><strong>Objection</strong>: Object to certain types of data processing.</li>
+              <li>
+                <strong>Access</strong>: Request a copy of the data we hold about
+                you.
+              </li>
+              <li>
+                <strong>Deletion</strong>: Request the deletion of your data.
+              </li>
+              <li>
+                <strong>Objection</strong>: Object to certain types of data
+                processing.
+              </li>
             </ul>
             <p className="mt-3 text-sm leading-relaxed">
               To exercise these rights, please contact us at{" "}
@@ -298,7 +370,8 @@ export default function PrivacyPolicyPage() {
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
                 support@moodmap-app.com
-              </a>.
+              </a>
+              .
             </p>
           </GlassCard>
 
@@ -307,9 +380,14 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <RefreshCcw className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">9. Changes to This Policy</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">
+              9. Changes to This Policy
+            </h2>
             <p className="mt-2 text-sm leading-relaxed">
-              We may update this Privacy Policy from time to time. Any changes will be reflected on this page, and the "Last updated" date will be revised accordingly. We encourage you to review this policy periodically.
+              We may update this Privacy Policy from time to time. Any changes will
+              be reflected on this page, and the &quot;Last updated&quot; date will
+              be revised accordingly. We encourage you to review this policy
+              periodically.
             </p>
           </GlassCard>
 
@@ -320,20 +398,23 @@ export default function PrivacyPolicyPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">10. Contact Us</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              If you have any questions or concerns about this Privacy Policy or our data practices, please contact us at{" "}
+              If you have any questions or concerns about this Privacy Policy or our
+              data practices, please contact us at{" "}
               <a
                 href="mailto:support@moodmap-app.com"
                 className="underline decoration-white/40 hover:decoration-white/70"
               >
                 support@moodmap-app.com
-              </a>.
+              </a>
+              .
             </p>
           </GlassCard>
 
           {/* Avsluttende setning (ordrett) */}
           <GlassCard id="closing">
             <p className="text-sm leading-relaxed">
-              By using the MoodMap app, you agree to the terms of this Privacy Policy.
+              By using the MoodMap app, you agree to the terms of this Privacy
+              Policy.
             </p>
           </GlassCard>
 
