@@ -1,15 +1,19 @@
 // pages/buy.js
-// v3.6.0 • Client-side redirect to Stripe (Monthly & Yearly)
-// + GA4: fires begin_checkout right before redirect (no flow changes)
+// v3.6.1 • Client-side redirect to Stripe (Monthly & Yearly)
+// - Always shows: "Redirecting to Stripe…"
+// - Shows affiliate note only when ref/via/PromoteKit is actually used for attribution
+// - GA4 begin_checkout fired right before redirect (no PII)
+// - Preserves pk_* params + adds lightweight type= param for Stripe logs
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
-// LIVE Payment Links (allow_promotion_codes=true) — DO NOT CHANGE
+// LIVE Payment Links (allow_promotion_codes=true)
+// Update these only when you create new Stripe Payment Links.
 const PLAN_LINKS = {
   monthly: "https://buy.stripe.com/9B69AU4nN3rogkebjz3ks05",
-  yearly:  "https://buy.stripe.com/6oUcN66vVaTQgke87n3ks06",
+  yearly: "https://buy.stripe.com/6oUcN66vVaTQgke87n3ks06",
 };
 
 function isInAppBrowser() {
@@ -17,6 +21,7 @@ function isInAppBrowser() {
   const ua = navigator.userAgent || navigator.vendor || "";
   return /Instagram|FBAN|FBAV|TikTok|Twitter|Snapchat|Pinterest|Line\/|KAKAOTALK/i.test(ua);
 }
+
 const first = (val) => (Array.isArray(val) ? (val[0] ?? "") : (val ?? ""));
 const validSlug = (s) => typeof s === "string" && /^[\w-]{1,32}$/.test(s);
 
@@ -25,7 +30,9 @@ function gaBeginCheckout(params) {
   try {
     const fn =
       (typeof window !== "undefined" && window.mmGaEvent) ||
-      (typeof window !== "undefined" && typeof window.gtag === "function" && ((n, p) => window.gtag("event", n, p)));
+      (typeof window !== "undefined" &&
+        typeof window.gtag === "function" &&
+        ((n, p) => window.gtag("event", n, p)));
     if (fn) fn("begin_checkout", params || {});
     if (process.env.NODE_ENV !== "production") console.log("[GA4] begin_checkout", params);
   } catch {}
@@ -37,6 +44,8 @@ export default function BuyClient() {
 
   const [baseHref, setBaseHref] = useState("");
   const [finalHref, setFinalHref] = useState("");
+  const [affiliateNote, setAffiliateNote] = useState(""); // shown only when attribution is actually used
+
   const visibleLinkRef = useRef(null);
   const hiddenLinkRef = useRef(null);
 
@@ -49,7 +58,9 @@ export default function BuyClient() {
     const slug = validSlug(rawSlug) ? rawSlug : "";
     const entry = first(q.entry) || "paywall";
     const pkParams = {};
-    Object.entries(q).forEach(([k, v]) => { if (k.startsWith("pk_")) pkParams[k] = String(first(v)); });
+    Object.entries(q).forEach(([k, v]) => {
+      if (k.startsWith("pk_")) pkParams[k] = String(first(v));
+    });
     return { type, slug, entry, pkParams };
   }, [router.isReady, router.query]);
 
@@ -57,6 +68,7 @@ export default function BuyClient() {
   useEffect(() => {
     const base = PLAN_LINKS[ctx.type];
     if (!base) return;
+
     const url = new URL(base);
 
     // Lightweight telemetry param for Stripe logs (optional)
@@ -70,11 +82,17 @@ export default function BuyClient() {
 
     // Keep visible fallback valid early
     setFinalHref(baseUrl);
-  }, [ctx.type, ctx.pkParams]);
+
+    // Only show affiliate note early if ref/via slug is present.
+    // (PromoteKit referral may still be detected later just-in-time.)
+    setAffiliateNote(ctx.slug ? "Applying referral…" : "");
+  }, [ctx.type, ctx.pkParams, ctx.slug]);
 
   // Decide final client_reference_id right before redirect; update links; then click.
   useEffect(() => {
     if (!baseHref) return;
+
+    // Keep the original timings (ensures PromoteKit has time to load in many cases)
     const delay = inApp ? 1500 : 1200;
 
     const timer = setTimeout(async () => {
@@ -96,12 +114,12 @@ export default function BuyClient() {
             clientRef = pkRef;
             source = "promotekit_referral";
           } else {
-            // 4) Fallback: human slug from ?via/ref
+            // 3) Fallback: human slug from ?via/ref
             if (ctx.slug) {
               clientRef = ctx.slug;
               source = "fallback:slug";
             } else {
-              // 5) Final fallback
+              // 4) Final fallback
               clientRef = "default";
               source = "fallback:default";
             }
@@ -114,13 +132,20 @@ export default function BuyClient() {
             const qs = new URLSearchParams({ uid: clientRef, slug: ctx.slug });
             fetch(`/api/pk-stash?${qs}`, { method: "GET", keepalive: true }).catch(() => {});
           } catch {}
-
         }
 
         // Mutate URL only if it doesn't already have client_reference_id
         if (!url.searchParams.get("client_reference_id")) {
           url.searchParams.set("client_reference_id", clientRef);
         }
+
+        // Show affiliate note ONLY when attribution is actually used (slug or PromoteKit or preexisting)
+        const attributionUsed =
+          (source === "promotekit_referral" || source === "fallback:slug" || source === "preexisting") &&
+          clientRef &&
+          clientRef !== "default";
+
+        setAffiliateNote(attributionUsed ? "Applying referral…" : "");
 
         const href = url.toString();
         setFinalHref(href);
@@ -131,7 +156,7 @@ export default function BuyClient() {
         if (aHidden) aHidden.setAttribute("href", href);
         if (aVisible) aVisible.setAttribute("href", href);
 
-        // ---- GA4: logg begin_checkout rett FØR vi klikker (ingen PII) ----
+        // ---- GA4: fire begin_checkout right BEFORE we click (no PII) ----
         gaBeginCheckout({
           plan: ctx.type,
           ref_code: ctx.slug || "(none)",
@@ -162,27 +187,21 @@ export default function BuyClient() {
       </Head>
 
       <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-        <p className="text-base">Recording your click… redirecting to Stripe</p>
+        <p className="text-base">Redirecting to Stripe…</p>
+
+        {affiliateNote ? (
+          <p className="mt-1 text-sm opacity-75">{affiliateNote}</p>
+        ) : null}
 
         {baseHref ? (
           <>
             {/* Hidden auto-redirect anchor */}
-            <a
-              id="stripeLink"
-              ref={hiddenLinkRef}
-              href={finalHref || baseHref}
-              style={{ display: "none" }}
-            >
+            <a id="stripeLink" ref={hiddenLinkRef} href={finalHref || baseHref} style={{ display: "none" }}>
               Continue
             </a>
 
             {/* Visible fallback (in case the in-app browser blocks auto-nav) */}
-            <a
-              id="stripeVisibleLink"
-              ref={visibleLinkRef}
-              className="underline mt-4 text-lg"
-              href={finalHref || baseHref}
-            >
+            <a id="stripeVisibleLink" ref={visibleLinkRef} className="underline mt-4 text-lg" href={finalHref || baseHref}>
               Continue to Stripe
             </a>
 
