@@ -2,7 +2,25 @@
 const nextConfig = {
   async redirects() {
     return [
-      // Canonicalize privacy policy URL (safe even if .html no longer exists)
+      // ---------------------------------------------------------------------
+      // SUPPORT (Apple-approved static support.html)
+      // Canonicalize all support variants to /support.html
+      // ---------------------------------------------------------------------
+      {
+        source: "/support",
+        destination: "/support.html",
+        permanent: true,
+      },
+      {
+        source: "/support/",
+        destination: "/support.html",
+        permanent: true,
+      },
+
+      // ---------------------------------------------------------------------
+      // PRIVACY POLICY (legacy .html + trailing slash cleanup)
+      // Keep these even if you don't use them internally anymore.
+      // ---------------------------------------------------------------------
       {
         source: "/privacy-policy.html",
         destination: "/privacy-policy",
@@ -14,7 +32,9 @@ const nextConfig = {
         permanent: true,
       },
 
+      // ---------------------------------------------------------------------
       // Convenience
+      // ---------------------------------------------------------------------
       {
         source: "/llms",
         destination: "/llms.txt",
@@ -49,7 +69,8 @@ const nextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400",
+            value:
+              "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400",
           },
         ],
       },
@@ -58,17 +79,16 @@ const nextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400",
+            value:
+              "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400",
           },
         ],
       },
 
-      // Keep your existing apple association content-type rule here too (belt + suspenders)
+      // Apple association content-type rule (belt + suspenders)
       {
         source: "/.well-known/apple-app-site-association",
-        headers: [
-          { key: "Content-Type", value: "application/json" },
-        ],
+        headers: [{ key: "Content-Type", value: "application/json" }],
       },
     ];
   },
