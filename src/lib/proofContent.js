@@ -1,8 +1,6 @@
 // src/lib/proofContent.js
-//
-// Landing page: one curated "daily briefing" example.
-// Content is copied from app locale/source. For web presentation we strip ONLY
-// the leading emoji from the tip line.
+// Landing-page sample guidance (single example, premium + minimal).
+// Source of truth: locales/en (MoodMap). We strip leading emoji in the headline for web presentation.
 
 export const stripLeadingEmoji = (text = "") => {
   // Remove any leading non-letter/non-number characters (emoji, punctuation, whitespace),
@@ -10,34 +8,30 @@ export const stripLeadingEmoji = (text = "") => {
   return String(text).replace(/^[^\p{L}\p{N}]+/gu, "").trimStart();
 };
 
-export const COMMAND_DECK_NAV = {
-  ops: "PLAN",
-  intel: "RULES",
-  contact: "BOND",
-  core: "SELF",
+export const stripTrailingEmoji = (text = "") => {
+  // Remove trailing emoji/symbols (often used as emphasis) while keeping punctuation/words.
+  return String(text).replace(/\s*[^\p{L}\p{N}\p{P}\p{Z}]+$/gu, "").trimEnd();
 };
 
-export const COMMAND_DECK_FULL = {
-  ops: "Action Plan",
-  intel: "Key Insights",
-  contact: "Connection & Intimacy",
-  core: "Self-Regulation",
+// Curated single example for the homepage.
+// Source: leftcards.menstruation.1.0 (OPS / PLAN).
+export const SAMPLE_GUIDANCE = {
+  id: "leftcards.menstruation.1.0",
+  phase: "Menstruation",
+  day: 1,
+  text: stripLeadingEmoji("🔥 Warm the heat pad like it holds her whole mood. Then hand it over."),
+  why: [
+    "Warm the heat pad before she asks — her uterus is contracting, and warmth signals safety.",
+    "Place it under her lower back like you're restoring order in a storm.",
+    "This action regulates cortisol and soothes muscle tension without a word.",
+    "Avoid dramatics. No jokes. No hero complex. Just warmth, placed right.",
+    "Let it be a gesture of stability — not performance.",
+  ].map(stripTrailingEmoji),
 };
 
-// Curated landing example (copied from app source: rightcards.pms.28.2)
-export const SAMPLE_BRIEFING = {
-  id: "rightcards.pms.28.2",
-  phase: "PMS",
-  day: 28,
-  deckKey: "contact",
-  deckNav: COMMAND_DECK_NAV.contact,
-  deckFull: COMMAND_DECK_FULL.contact,
-  text: stripLeadingEmoji("☕ Bring her tea like a sacred offering. Exit quietly."),
-  suggestions: [
-    "Offer tea like it’s ritual, not rescue.",
-    "Her nervous system responds to gesture more than talk.",
-    "This signals: ‘I serve comfort without needing attention.’",
-    "Deliver warm. Exit quiet.",
-    "Avoid explanation. Let care remain unnamed.",
-  ],
+// Back-compat: keep PROOF_EXAMPLE export around.
+export const PROOF_EXAMPLE = {
+  id: SAMPLE_GUIDANCE.id,
+  text: SAMPLE_GUIDANCE.text,
+  why: SAMPLE_GUIDANCE.why,
 };

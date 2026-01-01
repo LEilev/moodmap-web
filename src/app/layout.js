@@ -14,7 +14,7 @@ export const metadata = {
     template: "%s · MoodMap",
   },
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with optional timing alerts (notifications) for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).",
+    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with optional notification timing cues for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).",
   robots: {
     index: true,
     follow: true,
@@ -24,7 +24,7 @@ export const metadata = {
     url: SITE_URL,
     title: "MoodMap",
     description:
-      "Daily, phase-aware guidance for better timing and deeper connection — with optional timing alerts (notifications) for PMS, ovulation, and fertile-window moments. Supports 21–35 day cycles (2–8 day menstruation).",
+      "Daily, phase-aware guidance for better timing and deeper connection — with optional notification timing cues for PMS, ovulation, and fertile-window moments. Supports 21–35 day cycles (2–8 day menstruation).",
     siteName: "MoodMap",
     images: [
       {
@@ -39,7 +39,7 @@ export const metadata = {
     card: "summary",
     title: "MoodMap",
     description:
-      "Daily, phase-aware guidance for partners — with optional timing alerts (notifications) for PMS, ovulation, and fertile-window timing cues. Supports 21–35 day cycles (2–8 day menstruation).",
+      "Daily, phase-aware guidance for partners — with optional notification timing cues for PMS, ovulation, and fertile-window timing. Supports 21–35 day cycles (2–8 day menstruation).",
     images: ["/icon.png"],
   },
   icons: {
@@ -211,10 +211,7 @@ export default function RootLayout({ children }) {
           {/* Premium header (litt mer solid for å unngå glow “bleed”) */}
           <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link
-                href="/"
-                className="flex items-center text-xl font-semibold tracking-tight"
-              >
+              <Link href="/" className="flex items-center text-xl font-semibold tracking-tight">
                 MoodMap
                 <Image
                   src="/icon.png"

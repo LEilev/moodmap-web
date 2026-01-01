@@ -1,20 +1,21 @@
 // src/app/page.js
 import { Map, BellRing, Sparkles, HeartHandshake } from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
-import { SAMPLE_BRIEFING } from "../lib/proofContent";
+
+import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 
 const FEATURES = [
   {
     Icon: Map,
     title: "Cycle Overview",
     copy:
-      "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day template.",
+      "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day model.",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
     copy:
-      "Timely heads-ups for critical moments (PMS, ovulation, fertile window) so you can lead with warmth — or give space — before it’s needed.",
+      "Optional notifications for key windows (PMS, ovulation, fertile window) so you can time support and avoid preventable friction.",
   },
   {
     Icon: Sparkles,
@@ -26,7 +27,7 @@ const FEATURES = [
     Icon: HeartHandshake,
     title: "Self-Regulation",
     copy:
-      "Short daily check-ins so you stay grounded — calmer tone, steadier pacing, better timing.",
+      "Short daily checks to keep you steady — calmer tone, steadier pacing, better timing.",
   },
 ];
 
@@ -90,85 +91,74 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sample Guidance */}
-      <section className="px-6 pb-12 sm:pb-16 text-center">
+      {/* Single sample (premium) */}
+      <section className="px-6 pb-12 sm:pb-14">
         <div className="mx-auto max-w-5xl">
-          <div className="flex flex-col items-center">
-            <span className="inline-flex items-center rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[11px] font-semibold tracking-[0.28em] text-white/65 uppercase">
+          <div className="text-center">
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.26em] text-white/45">
               Sample guidance
-            </span>
-
-            <h2 className="mt-5 text-2xl sm:text-3xl font-semibold">
+            </p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
               A daily briefing — in context
             </h2>
-
-            <p className="mt-4 max-w-2xl text-sm sm:text-[15px] text-white/70 leading-relaxed">
+            <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
               One real example of how MoodMap writes: a clear prompt, then the reasoning — tuned to
               her phase and the day.
             </p>
           </div>
 
-          <div className="mt-9 mx-auto max-w-[980px]">
-            <div className="relative overflow-hidden rounded-2xl border border-white/12 bg-white/[0.06] backdrop-blur-xl shadow-2xl">
-              {/* Glass gloss + top hairline */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-400/10 via-transparent to-blue-500/10"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"
-              />
-              <div className="relative p-7 sm:p-9 text-left">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[11px] font-semibold tracking-[0.2em] text-white/75 uppercase">
-                      {SAMPLE_BRIEFING.deckNav}
-                    </span>
-                    <span className="text-xs text-white/55">{SAMPLE_BRIEFING.deckFull}</span>
-                  </div>
-
-                  <div className="text-xs text-white/55 tracking-wide">
-                    {SAMPLE_BRIEFING.phase} • Day {SAMPLE_BRIEFING.day}
-                  </div>
+          <div className="mt-8 mx-auto max-w-[980px]">
+            <article className="glass-card p-6 sm:p-7 text-left relative">
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/70 tracking-wide uppercase">
+                    PLAN
+                  </span>
+                  <span className="text-[11px] sm:text-xs text-white/55">
+                    Action Plan
+                  </span>
                 </div>
 
-                <h3 className="mt-5 text-xl sm:text-2xl font-semibold text-white/90 leading-snug">
-                  {SAMPLE_BRIEFING.text}
-                </h3>
-
-                <div className="mt-5 h-px w-full bg-white/10" />
-
-                <div className="mt-5">
-                  <p className="text-[11px] font-semibold tracking-[0.22em] text-white/55 uppercase">
-                    Notes
-                  </p>
-
-                  <ul className="mt-3 space-y-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                    {SAMPLE_BRIEFING.suggestions.map((line, idx) => (
-                      <li key={idx} className="flex gap-3">
-                        <span
-                          aria-hidden="true"
-                          className="mt-[0.55rem] h-1.5 w-1.5 flex-none rounded-full bg-white/35"
-                        />
-                        <span>{line}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                <span className="text-[11px] sm:text-xs font-medium text-white/55">
+                  {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
+                </span>
               </div>
-            </div>
 
-            <p className="mt-4 text-xs sm:text-sm text-white/55">
-              MoodMap delivers a full daily briefing tuned to her rhythm — with timing alerts when
-              notifications matter.
+              <p className="text-lg sm:text-xl md:text-[22px] font-semibold text-white leading-snug">
+                {SAMPLE_GUIDANCE.text}
+              </p>
+
+              <div className="mt-5 border-t border-white/10 pt-4">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-white/45">
+                  Notes
+                </p>
+
+                <ul className="mt-3 space-y-2.5 text-sm sm:text-[15px] text-white/70 leading-relaxed">
+                  {SAMPLE_GUIDANCE.why.map((bullet, i) => (
+                    <li key={`${SAMPLE_GUIDANCE.id}-${i}`} className="flex gap-3">
+                      <span
+                        aria-hidden="true"
+                        className="mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full bg-white/35"
+                      />
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div aria-hidden="true" className="glass-gloss" />
+            </article>
+
+            <p className="mt-5 text-center text-xs sm:text-sm text-white/55">
+              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional timing
+              alerts when notifications matter.
             </p>
           </div>
         </div>
       </section>
 
       {/* About + Features */}
-      <section id="about" className="scroll-mt-24 px-6 pb-12 sm:pb-16">
+      <section id="about" className="px-6 pb-12 sm:pb-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
@@ -195,28 +185,29 @@ export default function HomePage() {
                   ) : null}
                 </h3>
 
-                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
+                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
+                  {copy}
+                </p>
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
 
           <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
-            Timing alerts are delivered via optional notifications.
+            Enable notifications if you want timing cues — or keep it silent and use the brief.
           </p>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="px-6 pt-6 pb-14 sm:pt-8 sm:pb-16 text-center">
+      {/* Bottom CTA */}
+      <section className="px-6 pt-4 pb-16 sm:pb-20 text-center">
         <div className="mx-auto max-w-3xl">
-          <div aria-hidden="true" className="mx-auto mb-7 h-px w-24 bg-white/10" />
           <h2 className="text-2xl sm:text-3xl font-semibold">Ready to strengthen your bond?</h2>
-          <p className="mt-3 text-sm sm:text-[15px] text-white/70">
+          <p className="mt-3 text-white/75 leading-relaxed">
             Download MoodMap and start with today’s phase-aware briefing.
           </p>
 
-          <div className="mt-7 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4">
             <a
               href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
               className="store-btn"
@@ -238,7 +229,7 @@ export default function HomePage() {
             </a>
           </div>
 
-          <p className="mt-6 text-xs sm:text-sm text-white/55">
+          <p className="mt-6 text-center text-sm text-white/55">
             When her rhythm is respected, everyday life gets a little gentler for you both.
           </p>
         </div>
