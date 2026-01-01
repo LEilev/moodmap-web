@@ -1,7 +1,8 @@
 // src/app/page.js
 import { Map, BellRing, Sparkles, HeartHandshake } from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
-import CommandDeckPreview from "../components/CommandDeckPreview";
+
+import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 
 const FEATURES = [
   {
@@ -25,7 +26,7 @@ const FEATURES = [
   },
   {
     Icon: HeartHandshake,
-    title: "Self-Regulation",
+    title: "Self-Care",
     copy:
       "Quick daily check-ins and rituals so you stay grounded — calmer, steadier, and better for both of you.",
   },
@@ -45,7 +46,7 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 text-center">
+      <section className="px-6 pt-14 pb-10 sm:pt-20 sm:pb-12 text-center">
         <h1 className="mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Understand her cycle.
@@ -91,8 +92,58 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Proof / Command Deck */}
-      <CommandDeckPreview />
+      {/* Single sample (premium) */}
+      <section className="px-6 pb-12 sm:pb-14">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.26em] text-white/45">
+              Sample guidance
+            </p>
+            <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
+              A daily briefing, in context
+            </h2>
+            <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
+              One real example of the guidance you’ll get — tuned to her phase, the day, and what tends to work.
+            </p>
+          </div>
+
+          <div className="mt-8 mx-auto max-w-3xl">
+            <article className="glass-card p-6 sm:p-7 text-left relative">
+              <div className="mb-5 flex items-center justify-between gap-3">
+                <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/70 tracking-wide uppercase">
+                  Example
+                </span>
+                <span className="text-[11px] sm:text-xs font-medium text-white/55">
+                  {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
+                </span>
+              </div>
+
+              <p className="text-lg sm:text-xl md:text-[22px] font-semibold text-white leading-snug">
+                {SAMPLE_GUIDANCE.text}
+              </p>
+
+              <ul className="mt-5 space-y-2.5 text-sm sm:text-[15px] text-white/70 leading-relaxed">
+                {SAMPLE_GUIDANCE.why.map((bullet, i) => (
+                  <li key={`${SAMPLE_GUIDANCE.id}-${i}`} className="flex gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full bg-white/35"
+                    />
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div aria-hidden="true" className="glass-gloss" />
+            </article>
+
+            <p className="mt-5 text-center text-xs sm:text-sm text-white/55">
+              The app gives you a full daily briefing, timed to her phase — plus Premium+ alerts when
+              timing matters.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* About + Features */}
       <section id="about" className="px-6 pb-12 sm:pb-14">
@@ -129,6 +180,7 @@ export default function HomePage() {
             ))}
           </div>
 
+          {/* Premium expectation-setting (quiet + clear) */}
           <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
             Timing alerts via notifications are included with Premium+.
           </p>
@@ -166,6 +218,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* No footer here — global footer lives in layout.js */}
     </main>
   );
 }
