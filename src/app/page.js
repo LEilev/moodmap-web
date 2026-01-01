@@ -13,9 +13,8 @@ const FEATURES = [
   {
     Icon: BellRing,
     title: "Timing Alerts",
-    badge: "Premium+",
     copy:
-      "Notifications for critical moments (PMS, ovulation, fertile window) so you can lead with warmth — or give space — before it’s needed.",
+      "Timely heads-ups for critical moments (PMS, ovulation, fertile window) so you can lead with warmth — or give space — before it’s needed.",
   },
   {
     Icon: Sparkles,
@@ -161,8 +160,8 @@ export default function HomePage() {
             </div>
 
             <p className="mt-4 text-xs sm:text-sm text-white/55">
-              MoodMap delivers a full daily briefing tuned to her rhythm — plus Premium+ timing
-              alerts when notifications matter.
+              MoodMap delivers a full daily briefing tuned to her rhythm — with timing alerts when
+              notifications matter.
             </p>
           </div>
         </div>
@@ -203,7 +202,7 @@ export default function HomePage() {
           </div>
 
           <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
-            Timing alerts via notifications are included with Premium+.
+            Timing alerts are delivered via optional notifications.
           </p>
         </div>
       </section>
