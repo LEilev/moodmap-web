@@ -1,6 +1,8 @@
 // src/lib/proofContent.js
-// Landing-page sample guidance (single example, premium + minimal).
-// Source of truth: locales/en (MoodMap). We strip leading emoji in the headline for web presentation.
+//
+// Landing page: one curated "daily briefing" example.
+// Content is copied from app locale/source. For web presentation we strip ONLY
+// the leading emoji from the tip line.
 
 export const stripLeadingEmoji = (text = "") => {
   // Remove any leading non-letter/non-number characters (emoji, punctuation, whitespace),
@@ -8,31 +10,34 @@ export const stripLeadingEmoji = (text = "") => {
   return String(text).replace(/^[^\p{L}\p{N}]+/gu, "").trimStart();
 };
 
-export const stripTrailingEmoji = (text = "") => {
-  // Remove trailing emoji/symbols (often used as emphasis) while keeping punctuation/words.
-  // Example: "... 🔥" -> "..."
-  return String(text).replace(/\s*[^\p{L}\p{N}\p{P}\p{Z}]+$/gu, "").trimEnd();
+export const COMMAND_DECK_NAV = {
+  ops: "PLAN",
+  intel: "RULES",
+  contact: "BOND",
+  core: "SELF",
 };
 
-// Curated single example for the homepage.
-// Rationale: short, modern, influencer-safe, and it demonstrates hormone-aware intelligence.
-export const SAMPLE_GUIDANCE = {
-  id: "midcards.peakenergy.16.1",
-  phase: "Peak Energy",
-  day: 16,
-  text: stripLeadingEmoji("🗣 Compliment the momentum, not just the makeup."),
-  why: [
-    "Notice and name her drive—not her appearance.",
-    "Estrogen elevates her sense of achievement; she wants it witnessed.",
-    "This signals respect for her output, not just her looks.",
-    "Say: ‘You’re killing it today.’ Then let that land.",
-    "Avoid surface-level praise. Mean it or skip it.",
-  ].map(stripTrailingEmoji),
+export const COMMAND_DECK_FULL = {
+  ops: "Action Plan",
+  intel: "Key Insights",
+  contact: "Connection & Intimacy",
+  core: "Self-Regulation",
 };
 
-// Back-compat: keep PROOF_EXAMPLE export around.
-export const PROOF_EXAMPLE = {
-  id: SAMPLE_GUIDANCE.id,
-  text: SAMPLE_GUIDANCE.text,
-  why: SAMPLE_GUIDANCE.why,
+// Curated landing example (copied from app source: rightcards.pms.28.2)
+export const SAMPLE_BRIEFING = {
+  id: "rightcards.pms.28.2",
+  phase: "PMS",
+  day: 28,
+  deckKey: "contact",
+  deckNav: COMMAND_DECK_NAV.contact,
+  deckFull: COMMAND_DECK_FULL.contact,
+  text: stripLeadingEmoji("☕ Bring her tea like a sacred offering. Exit quietly."),
+  suggestions: [
+    "Offer tea like it’s ritual, not rescue.",
+    "Her nervous system responds to gesture more than talk.",
+    "This signals: ‘I serve comfort without needing attention.’",
+    "Deliver warm. Exit quiet.",
+    "Avoid explanation. Let care remain unnamed.",
+  ],
 };
