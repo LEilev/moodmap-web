@@ -9,13 +9,13 @@ const FEATURES = [
     Icon: Map,
     title: "Cycle Overview",
     copy:
-      "See the cycle mapped out clearly — calibrated to her cycle length (21–35 days), not a generic 28-day model.",
+      "See the cycle mapped clearly — calibrated to her cycle length (21–35 days), not a generic 28-day template.",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
     copy:
-      "Optional notifications for key windows (PMS, ovulation, fertile window) so you can time support and avoid preventable friction.",
+      "Optional notifications for key windows (PMS, ovulation, fertile window) — so you can time support before it’s needed.",
   },
   {
     Icon: Sparkles,
@@ -91,49 +91,68 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Single sample (premium) */}
-      <section className="px-6 pb-12 sm:pb-14">
+      {/* Single sample (polished) */}
+      <section className="px-6 pb-14 sm:pb-16">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.26em] text-white/45">
+            <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] text-white/40">
               Sample guidance
             </p>
-            <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
+            <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold">
               A daily briefing — in context
             </h2>
-            <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
+            <p className="mt-4 mx-auto max-w-3xl text-white/70 leading-relaxed">
               One real example of how MoodMap writes: a clear prompt, then the reasoning — tuned to
               her phase and the day.
             </p>
           </div>
 
-          <div className="mt-8 mx-auto max-w-[980px]">
-            <article className="glass-card p-6 sm:p-7 text-left relative">
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/70 tracking-wide uppercase">
-                    PLAN
-                  </span>
-                  <span className="text-[11px] sm:text-xs text-white/55">
-                    Action Plan
+          <div className="mt-10 mx-auto max-w-[980px]">
+            <article className="glass-card overflow-hidden relative">
+              {/* Rim light + subtle gradient (depth) */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-white/0 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"
+              />
+
+              {/* Top block */}
+              <div className="relative p-6 sm:p-8">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/75 tracking-[0.18em] uppercase">
+                      PLAN
+                    </span>
+                    <span className="text-[11px] sm:text-xs text-white/55">
+                      Action Plan
+                    </span>
+                  </div>
+
+                  <span className="text-[11px] sm:text-xs font-medium text-white/55">
+                    {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
                   </span>
                 </div>
 
-                <span className="text-[11px] sm:text-xs font-medium text-white/55">
-                  {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
-                </span>
+                <h3 className="mt-5 text-xl sm:text-2xl md:text-[26px] font-semibold tracking-tight text-white leading-snug">
+                  {SAMPLE_GUIDANCE.text}
+                </h3>
+
+                <div className="mt-6 h-px w-full bg-white/10" />
               </div>
 
-              <p className="text-lg sm:text-xl md:text-[22px] font-semibold text-white leading-snug">
-                {SAMPLE_GUIDANCE.text}
-              </p>
+              {/* Notes block (separate surface) */}
+              <div className="relative bg-black/10 px-6 sm:px-8 py-6">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
+                    Why this works
+                  </p>
+                  <p className="text-[11px] text-white/35">5 notes</p>
+                </div>
 
-              <div className="mt-5 border-t border-white/10 pt-4">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-white/45">
-                  Notes
-                </p>
-
-                <ul className="mt-3 space-y-2.5 text-sm sm:text-[15px] text-white/70 leading-relaxed">
+                <ul className="mt-4 space-y-3 text-sm sm:text-[15px] text-white/70 leading-relaxed">
                   {SAMPLE_GUIDANCE.why.map((bullet, i) => (
                     <li key={`${SAMPLE_GUIDANCE.id}-${i}`} className="flex gap-3">
                       <span
@@ -149,9 +168,9 @@ export default function HomePage() {
               <div aria-hidden="true" className="glass-gloss" />
             </article>
 
-            <p className="mt-5 text-center text-xs sm:text-sm text-white/55">
-              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional timing
-              alerts when notifications matter.
+            <p className="mt-6 text-center text-xs sm:text-sm text-white/55">
+              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional notifications
+              for key timing moments.
             </p>
           </div>
         </div>
@@ -171,7 +190,10 @@ export default function HomePage() {
 
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
             {FEATURES.map(({ Icon, title, badge, copy }) => (
-              <article key={title} className="glass-card glass-card-hover p-6 text-left group">
+              <article
+                key={title}
+                className="glass-card glass-card-hover p-6 text-left group relative"
+              >
                 <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
                   <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
                 </span>
@@ -188,20 +210,23 @@ export default function HomePage() {
                 <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
                   {copy}
                 </p>
+
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
 
-          <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
-            Enable notifications if you want timing cues — or keep it silent and use the brief.
+          <p className="mt-5 text-center text-xs sm:text-sm text-white/55">
+            Notifications are optional — the daily briefing works even if you keep it silent.
           </p>
         </div>
       </section>
 
       {/* Bottom CTA */}
-      <section className="px-6 pt-4 pb-16 sm:pb-20 text-center">
+      <section className="px-6 pt-2 pb-16 sm:pb-20 text-center">
         <div className="mx-auto max-w-3xl">
+          <div aria-hidden="true" className="mx-auto mb-8 h-px w-20 bg-white/10" />
+
           <h2 className="text-2xl sm:text-3xl font-semibold">Ready to strengthen your bond?</h2>
           <p className="mt-3 text-white/75 leading-relaxed">
             Download MoodMap and start with today’s phase-aware briefing.

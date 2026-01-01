@@ -208,7 +208,6 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-full bg-primary-blue text-white">
         <div className="flex min-h-full flex-col">
-          {/* Premium header (litt mer solid for å unngå glow “bleed”) */}
           <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
               <Link href="/" className="flex items-center text-xl font-semibold tracking-tight">
@@ -223,7 +222,6 @@ export default function RootLayout({ children }) {
                 />
               </Link>
 
-              {/* Desktop nav */}
               <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-white/70">
                 <Link href="/#about" className="hover:text-white transition-colors">
                   About
@@ -239,14 +237,12 @@ export default function RootLayout({ children }) {
                 </Link>
               </nav>
 
-              {/* Mobile hamburger */}
               <MobileMenu />
             </div>
           </header>
 
           <main className="flex-1">{children}</main>
 
-          {/* Global premium footer (one footer, everywhere) */}
           <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-6 py-10 text-center">
               <p className="text-sm text-white/60">
