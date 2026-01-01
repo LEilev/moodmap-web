@@ -1,12 +1,15 @@
 // src/app/page.js
-import { Map, BellRing, Sparkles, HeartHandshake, Shield } from "lucide-react";
+import Link from "next/link";
+import {
+  Map,
+  BellRing,
+  Sparkles,
+  HeartHandshake,
+  Shield,
+  Smartphone,
+  RefreshCcw,
+} from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
-import { PROOF_EXAMPLE } from "../lib/proofContent";
-
-const APP_STORE_URL =
-  "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
-const GOOGLE_PLAY_URL =
-  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const FEATURES = [
   {
@@ -24,9 +27,9 @@ const FEATURES = [
   },
   {
     Icon: Sparkles,
-    title: "Daily Tips",
+    title: "Tips & Intimacy",
     copy:
-      "Short, specific guidance — from supportive gestures to intimacy ideas — matched to the day.",
+      "Daily blunt advice and playful suggestions — from sweet gestures to intimacy ideas, matched to the day.",
   },
   {
     Icon: HeartHandshake,
@@ -36,20 +39,41 @@ const FEATURES = [
   },
 ];
 
-function SectionDivider() {
-  return (
-    <div className="mx-auto max-w-5xl px-6">
-      <div className="h-px bg-white/10" />
-    </div>
-  );
-}
-
 export default function HomePage() {
-  // Proof flag: default ON. Set NEXT_PUBLIC_SHOW_PROOF="false" to disable.
-  const showProof = process.env.NEXT_PUBLIC_SHOW_PROOF !== "false";
+  // FAQ schema for the two Q&A blocks on this page (AI/SEO)
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What if her cycle or period length isn’t “average”?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text:
+            "MoodMap Premium+ adapts to cycle lengths from 21–35 days, and lets you adjust menstruation length from 2–8 days, so daily guidance stays accurate even when her rhythm is shorter or longer.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is this private — or does it track everything?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text:
+            "It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no awkward tracking — just timing and guidance.",
+        },
+      },
+    ],
+  };
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
+      {/* JSON-LD (FAQ) */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
+
       {/* Subtle premium glows */}
       <div
         aria-hidden="true"
@@ -60,8 +84,8 @@ export default function HomePage() {
         className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/20 to-emerald-400/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
       />
 
-      {/* 1) Hero / CTA */}
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12 text-center">
+      {/* Hero */}
+      <section className="px-6 pt-14 pb-12 sm:pt-20 sm:pb-14 text-center">
         <h1 className="mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Understand her cycle.
@@ -76,24 +100,29 @@ export default function HomePage() {
           intimacy — with clarity, not guesswork.
         </p>
 
-        {/* Mobile-first: keep secondary line off small screens to keep CTA above the fold */}
-        <p className="mt-3 mx-auto max-w-2xl text-sm text-white/60 hidden sm:block">
+        <p className="mt-3 mx-auto max-w-2xl text-sm text-white/60">
           Think of it as relationship intel — phase-aware, respectful, and built for real life.
         </p>
 
         {/* Download */}
         <div
           id="download"
-          className="scroll-mt-28 mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4"
+          className="mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4"
         >
-          <a href={APP_STORE_URL} className="store-btn">
+          <a
+            href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
+            className="store-btn"
+          >
             <span className="store-btn__icon" aria-hidden>
               <FaApple />
             </span>
             Download on the App Store
           </a>
 
-          <a href={GOOGLE_PLAY_URL} className="store-btn">
+          <a
+            href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
+            className="store-btn"
+          >
             <span className="store-btn__icon" aria-hidden>
               <FaGooglePlay />
             </span>
@@ -101,75 +130,37 @@ export default function HomePage() {
           </a>
         </div>
 
-        {/* Trust disclaimer (front-and-center) */}
-        <p className="mt-4 mx-auto max-w-2xl text-xs sm:text-sm text-white/60 leading-relaxed">
-          Relationship guidance — not medical advice. Not for contraception or fertility planning.
-        </p>
-        <p className="mt-2 mx-auto max-w-2xl text-xs sm:text-sm text-white/50 leading-relaxed">
-          A support tool, not surveillance. No awkward tracking — just timing and guidance.
-        </p>
+        {/* Trust strip */}
+        <div className="mt-7 flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-white/10 px-4 py-2 text-[13px] text-white/70 ring-1 ring-white/12 backdrop-blur">
+            <span className="inline-flex items-center gap-1.5">
+              <Shield className="h-4 w-4 opacity-90" />
+              Private by design
+            </span>
+            <span className="opacity-30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <RefreshCcw className="h-4 w-4 opacity-90" />
+              Cancel anytime
+            </span>
+            <span className="opacity-30">•</span>
+            <span className="inline-flex items-center gap-1.5">
+              <Smartphone className="h-4 w-4 opacity-90" />
+              Available on iOS &amp; Android
+            </span>
+          </div>
+        </div>
       </section>
 
-      <SectionDivider />
-
-      {/* 2) Proof of Output (simplified, single focal point) */}
-      {showProof && (
-        <>
-          <section id="proof" className="scroll-mt-28 px-6 py-12 sm:py-14">
-            <div className="mx-auto max-w-5xl">
-              <div className="text-center">
-                <h2 className="text-2xl sm:text-3xl font-semibold">
-                  See what MoodMap actually says
-                </h2>
-                <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
-                  One concrete suggestion. Clear reasoning. Respectful execution — shown exactly in
-                  the app’s format (emoji removed on web).
-                </p>
-              </div>
-
-              <div className="mt-8 mx-auto max-w-3xl glass-card p-6 text-left group">
-                <div className="text-xs font-semibold tracking-wide text-white/55">
-                  Proof of output
-                </div>
-
-                <div className="mt-2 text-lg sm:text-xl font-semibold text-white">
-                  {PROOF_EXAMPLE.text}
-                </div>
-
-                <div className="mt-5 text-xs font-semibold tracking-wide text-white/55">WHY</div>
-
-                <ul className="mt-2 space-y-2 text-sm sm:text-[15px] text-white/75 leading-relaxed">
-                  {PROOF_EXAMPLE.why.map((line) => (
-                    <li key={line} className="flex gap-2">
-                      <span aria-hidden className="opacity-70">
-                        •
-                      </span>
-                      <span>{line}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mt-5 text-xs text-white/50">
-                  Example shown for illustration. Suggestions vary by day.
-                </p>
-
-                <div aria-hidden="true" className="glass-gloss" />
-              </div>
-            </div>
-          </section>
-
-          <SectionDivider />
-        </>
-      )}
-
-      {/* 3) Benefits */}
-      <section id="about" className="scroll-mt-28 px-6 py-12 sm:py-14">
+      {/* About + Features */}
+      <section id="about" className="px-6 pb-12 sm:pb-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold">Benefits</h2>
+            <h2 className="text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
             <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
-              MoodMap turns cycle context into clear daily cues — when to offer warmth, when to give
-              space, and how to show up without guesswork.
+              Built for men who want to thrive — not tiptoe — through their partner’s cycle. MoodMap
+              blends science with empathy to deliver honest, day-by-day cues so you’ll know when to
+              offer warmth and when to give space. Think of it as emotional intelligence, delivered
+              in friendly daily doses. Quiet engineering beneath; warmth and small joys above.
             </p>
           </div>
 
@@ -189,103 +180,66 @@ export default function HomePage() {
                   ) : null}
                 </h3>
 
-                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                  {copy}
-                </p>
+                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
 
+          {/* NEW: Premium expectation-setting (quiet + clear) */}
           <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
             Timing alerts via notifications are included with Premium+.
           </p>
-        </div>
-      </section>
 
-      <SectionDivider />
-
-      {/* 4) Trust */}
-      <section id="trust" className="scroll-mt-28 px-6 py-12 sm:py-14">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold">Trust</h2>
-            <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
-              Clear scope. Clear privacy. Built to help you be a steadier partner — not to track
-              someone.
+          {/* Quiet Q&A (conversion clarity) */}
+          <div className="mt-10 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">
+            <p className="mb-4 font-medium text-white/80">
+              A couple of things people often ask:
             </p>
+
+            <p className="font-semibold text-white/85">
+              What if her cycle or period length isn’t “average”?
+            </p>
+            <p className="mb-6">
+              MoodMap Premium+ adapts to cycle lengths from <strong>21–35 days</strong>, and lets you
+              adjust menstruation length from <strong>2–8 days</strong>, so daily guidance stays
+              accurate even when her rhythm is shorter or longer.
+            </p>
+
+            <p className="font-semibold text-white/85">
+              Is this private — or does it track everything?
+            </p>
+            <p>
+              It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no
+              awkward tracking — just timing and guidance.
+            </p>
+
+            {/* CTA to Guides (premium, subtle) */}
+            <div className="mt-7 flex flex-col items-center gap-2 text-sm text-white/60">
+              <Link href="/learn" className="mm-link">
+                Explore the Guides →
+              </Link>
+              <p className="text-xs sm:text-sm text-white/55 text-center">
+                Short partner guides: PMS support, cycle phases, and fertile-window context.
+              </p>
+            </div>
+
+            {/* Closing chord */}
+            <div className="mt-8 flex flex-col items-center gap-3">
+              <div aria-hidden="true" className="h-px w-20 bg-white/10" />
+              <p className="text-xs sm:text-sm text-white/60 text-center">
+                Informed by human physiology and hormone research — distilled into clear, daily guidance.
+              </p>
+            </div>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-7">
-            <article className="glass-card glass-card-hover p-6 text-left group">
-              <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
-                <Shield className="h-6 w-6 text-white drop-shadow" aria-hidden />
-              </span>
-              <h3 className="mt-3 text-base sm:text-lg font-semibold text-white">
-                Private by design
-              </h3>
-              <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                A support tool, not surveillance. No awkward tracking — just timing and guidance.
-              </p>
-              <div aria-hidden="true" className="glass-gloss" />
-            </article>
-
-            <article className="glass-card glass-card-hover p-6 text-left group">
-              <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
-                <HeartHandshake className="h-6 w-6 text-white drop-shadow" aria-hidden />
-              </span>
-              <h3 className="mt-3 text-base sm:text-lg font-semibold text-white">
-                Relationship guidance
-              </h3>
-              <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                Not medical advice. Not for contraception or fertility planning.
-              </p>
-              <div aria-hidden="true" className="glass-gloss" />
-            </article>
-
-            <article className="glass-card glass-card-hover p-6 text-left group">
-              <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
-                <BellRing className="h-6 w-6 text-white drop-shadow" aria-hidden />
-              </span>
-              <h3 className="mt-3 text-base sm:text-lg font-semibold text-white">
-                Premium+ alerts
-              </h3>
-              <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                Heads-ups for PMS, ovulation, and fertile-window timing cues via notifications.
-              </p>
-              <div aria-hidden="true" className="glass-gloss" />
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <SectionDivider />
-
-      {/* 5) Final CTA */}
-      <section className="px-6 py-14 sm:py-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-2xl sm:text-3xl font-semibold">Download MoodMap</h2>
-          <p className="mt-4 mx-auto max-w-2xl text-white/75 leading-relaxed">
-            Start with daily guidance today. Upgrade to Premium+ if you want timing alerts.
+          <p className="mt-8 text-center text-sm text-white/55">
+            When her rhythm is respected, everyday life gets a little gentler for you both.
           </p>
-
-          <div className="mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4">
-            <a href={APP_STORE_URL} className="store-btn">
-              <span className="store-btn__icon" aria-hidden>
-                <FaApple />
-              </span>
-              Download on the App Store
-            </a>
-
-            <a href={GOOGLE_PLAY_URL} className="store-btn">
-              <span className="store-btn__icon" aria-hidden>
-                <FaGooglePlay />
-              </span>
-              Get it on Google Play
-            </a>
-          </div>
         </div>
       </section>
+
+      {/* No footer here — global footer lives in layout.js */}
     </main>
   );
 }
