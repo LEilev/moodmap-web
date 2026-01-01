@@ -1,15 +1,7 @@
 // src/app/page.js
-import Link from "next/link";
-import {
-  Map,
-  BellRing,
-  Sparkles,
-  HeartHandshake,
-  Shield,
-  Smartphone,
-  RefreshCcw,
-} from "lucide-react";
+import { Map, BellRing, Sparkles, HeartHandshake } from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
+import { PROOF_EXAMPLES } from "../lib/proofContent";
 
 const FEATURES = [
   {
@@ -40,40 +32,8 @@ const FEATURES = [
 ];
 
 export default function HomePage() {
-  // FAQ schema for the two Q&A blocks on this page (AI/SEO)
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "What if her cycle or period length isn’t “average”?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "MoodMap Premium+ adapts to cycle lengths from 21–35 days, and lets you adjust menstruation length from 2–8 days, so daily guidance stays accurate even when her rhythm is shorter or longer.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Is this private — or does it track everything?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text:
-            "It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no awkward tracking — just timing and guidance.",
-        },
-      },
-    ],
-  };
-
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD (FAQ) */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-
       {/* Subtle premium glows */}
       <div
         aria-hidden="true"
@@ -129,24 +89,55 @@ export default function HomePage() {
             Get it on Google Play
           </a>
         </div>
+      </section>
 
-        {/* Trust strip */}
-        <div className="mt-7 flex justify-center">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-white/10 px-4 py-2 text-[13px] text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <span className="inline-flex items-center gap-1.5">
-              <Shield className="h-4 w-4 opacity-90" />
-              Private by design
-            </span>
-            <span className="opacity-30">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <RefreshCcw className="h-4 w-4 opacity-90" />
-              Cancel anytime
-            </span>
-            <span className="opacity-30">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <Smartphone className="h-4 w-4 opacity-90" />
-              Available on iOS &amp; Android
-            </span>
+      {/* Proof of Output */}
+      <section className="px-6 pb-12 sm:pb-14">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl font-semibold">What MoodMap actually says</h2>
+            <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
+              A few real examples of the daily guidance — phase-aware, direct, and designed to be
+              acted on.
+            </p>
+            <p className="mt-2 text-xs sm:text-sm text-white/55">
+              Swipe/scroll to browse the examples.
+            </p>
+          </div>
+
+          <div className="mt-8 -mx-6 px-6">
+            <div
+              className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-px-6"
+              aria-label="MoodMap guidance examples"
+            >
+              {PROOF_EXAMPLES.map((tip) => (
+                <article
+                  key={tip.id}
+                  className="glass-card p-6 text-left shrink-0 w-[86%] sm:w-[28rem] md:w-[32rem] snap-center relative"
+                >
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/70">
+                      {String(tip.category || "").toUpperCase()}
+                    </span>
+                    <span className="text-[11px] font-medium text-white/60">
+                      {tip.phase} • Day {tip.day}
+                    </span>
+                  </div>
+
+                  <p className="text-lg sm:text-xl font-semibold text-white leading-snug">
+                    {tip.text}
+                  </p>
+
+                  <ul className="mt-4 space-y-2 text-sm sm:text-[15px] text-white/70 leading-relaxed list-disc pl-5">
+                    {tip.why.map((bullet, i) => (
+                      <li key={`${tip.id}-${i}`}>{bullet}</li>
+                    ))}
+                  </ul>
+
+                  <div aria-hidden="true" className="glass-gloss" />
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -186,56 +177,42 @@ export default function HomePage() {
             ))}
           </div>
 
-          {/* NEW: Premium expectation-setting (quiet + clear) */}
+          {/* Premium expectation-setting (quiet + clear) */}
           <p className="mt-4 text-center text-xs sm:text-sm text-white/55">
             Timing alerts via notifications are included with Premium+.
           </p>
+        </div>
+      </section>
 
-          {/* Quiet Q&A (conversion clarity) */}
-          <div className="mt-10 max-w-3xl mx-auto text-sm sm:text-[15px] text-white/70 leading-relaxed">
-            <p className="mb-4 font-medium text-white/80">
-              A couple of things people often ask:
-            </p>
-
-            <p className="font-semibold text-white/85">
-              What if her cycle or period length isn’t “average”?
-            </p>
-            <p className="mb-6">
-              MoodMap Premium+ adapts to cycle lengths from <strong>21–35 days</strong>, and lets you
-              adjust menstruation length from <strong>2–8 days</strong>, so daily guidance stays
-              accurate even when her rhythm is shorter or longer.
-            </p>
-
-            <p className="font-semibold text-white/85">
-              Is this private — or does it track everything?
-            </p>
-            <p>
-              It’s private. MoodMap is a support tool, not surveillance. No symptom logging, no
-              awkward tracking — just timing and guidance.
-            </p>
-
-            {/* CTA to Guides (premium, subtle) */}
-            <div className="mt-7 flex flex-col items-center gap-2 text-sm text-white/60">
-              <Link href="/learn" className="mm-link">
-                Explore the Guides →
-              </Link>
-              <p className="text-xs sm:text-sm text-white/55 text-center">
-                Short partner guides: PMS support, cycle phases, and fertile-window context.
-              </p>
-            </div>
-
-            {/* Closing chord */}
-            <div className="mt-8 flex flex-col items-center gap-3">
-              <div aria-hidden="true" className="h-px w-20 bg-white/10" />
-              <p className="text-xs sm:text-sm text-white/60 text-center">
-                Informed by human physiology and hormone research — distilled into clear, daily guidance.
-              </p>
-            </div>
-          </div>
-
-          <p className="mt-8 text-center text-sm text-white/55">
+      {/* Bottom CTA */}
+      <section className="px-6 pt-4 pb-16 sm:pb-20 text-center">
+        <div className="mx-auto max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl font-semibold">Ready to strengthen your bond?</h2>
+          <p className="mt-3 text-white/75 leading-relaxed">
             When her rhythm is respected, everyday life gets a little gentler for you both.
           </p>
+
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4">
+            <a
+              href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
+              className="store-btn"
+            >
+              <span className="store-btn__icon" aria-hidden>
+                <FaApple />
+              </span>
+              Download on the App Store
+            </a>
+
+            <a
+              href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
+              className="store-btn"
+            >
+              <span className="store-btn__icon" aria-hidden>
+                <FaGooglePlay />
+              </span>
+              Get it on Google Play
+            </a>
+          </div>
         </div>
       </section>
 
