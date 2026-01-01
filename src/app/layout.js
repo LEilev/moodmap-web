@@ -14,7 +14,7 @@ export const metadata = {
     template: "%s · MoodMap",
   },
   description:
-    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — with optional notification timing cues for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).",
+    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — plus optional notification timing cues for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).",
   robots: {
     index: true,
     follow: true,
@@ -24,7 +24,7 @@ export const metadata = {
     url: SITE_URL,
     title: "MoodMap",
     description:
-      "Daily, phase-aware guidance for better timing and deeper connection — with optional notification timing cues for PMS, ovulation, and fertile-window moments. Supports 21–35 day cycles (2–8 day menstruation).",
+      "Daily, phase-aware guidance for better timing and deeper connection — plus optional notification timing cues for PMS, ovulation, and the fertile window. Supports 21–35 day cycles (2–8 day menstruation).",
     siteName: "MoodMap",
     images: [
       {
@@ -208,9 +208,13 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-full bg-primary-blue text-white">
         <div className="flex min-h-full flex-col">
+          {/* Premium header (litt mer solid for å unngå glow “bleed”) */}
           <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link href="/" className="flex items-center text-xl font-semibold tracking-tight">
+              <Link
+                href="/"
+                className="flex items-center text-xl font-semibold tracking-tight"
+              >
                 MoodMap
                 <Image
                   src="/icon.png"
@@ -222,6 +226,7 @@ export default function RootLayout({ children }) {
                 />
               </Link>
 
+              {/* Desktop nav */}
               <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-white/70">
                 <Link href="/#about" className="hover:text-white transition-colors">
                   About
@@ -237,12 +242,14 @@ export default function RootLayout({ children }) {
                 </Link>
               </nav>
 
+              {/* Mobile hamburger */}
               <MobileMenu />
             </div>
           </header>
 
           <main className="flex-1">{children}</main>
 
+          {/* Global premium footer (one footer, everywhere) */}
           <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-6 py-10 text-center">
               <p className="text-sm text-white/60">

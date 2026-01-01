@@ -4,12 +4,33 @@ import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 
+// Matches app deck tint for OPS/PLAN (from cockpitMaterialTokens.js)
+const PLAN_TINT = "#22C55E";
+
+function AnchorDivider({ variant = "neutral" }) {
+  const isPlan = variant === "plan";
+
+  return (
+    <div aria-hidden="true" className="mx-auto my-10 flex items-center justify-center">
+      <div className="relative h-px w-16 bg-white/15">
+        <span
+          className={[
+            "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full",
+            isPlan ? "bg-green-500/80 ring-1 ring-green-500/25" : "bg-white/35 ring-1 ring-white/15",
+          ].join(" ")}
+        />
+      </div>
+    </div>
+  );
+}
+
 const FEATURES = [
   {
     Icon: Map,
     title: "Cycle Overview",
     copy:
       "See the cycle mapped clearly — calibrated to her cycle length (21–35 days), not a generic 28-day template.",
+    isPrimary: true,
   },
   {
     Icon: BellRing,
@@ -73,7 +94,7 @@ export default function HomePage() {
             href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
             className="store-btn"
           >
-            <span className="store-btn__icon" aria-hidden>
+            <span className="store-btn__icon" aria-hidden="true">
               <FaApple />
             </span>
             Download on the App Store
@@ -83,7 +104,7 @@ export default function HomePage() {
             href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
             className="store-btn"
           >
-            <span className="store-btn__icon" aria-hidden>
+            <span className="store-btn__icon" aria-hidden="true">
               <FaGooglePlay />
             </span>
             Get it on Google Play
@@ -91,44 +112,66 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Single sample (polished) */}
+      {/* Single sample (P1 polish: anchors + deck tint cues) */}
       <section className="px-6 pb-14 sm:pb-16">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
-            <p className="text-[11px] sm:text-xs uppercase tracking-[0.32em] text-white/40">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-green-500/90"
+                style={{ boxShadow: `0 0 0 6px ${PLAN_TINT}1A` }}
+              />
               Sample guidance
-            </p>
-            <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-semibold">
+            </span>
+
+            <h2 className="mt-4 text-2xl sm:text-3xl md:text-4xl font-semibold">
               A daily briefing — in context
             </h2>
+
             <p className="mt-4 mx-auto max-w-3xl text-white/70 leading-relaxed">
               One real example of how MoodMap writes: a clear prompt, then the reasoning — tuned to
               her phase and the day.
             </p>
           </div>
 
-          <div className="mt-10 mx-auto max-w-[980px]">
-            <article className="glass-card overflow-hidden relative">
-              {/* Rim light + subtle gradient (depth) */}
+          {/* Section anchor (hairline + dot) */}
+          <AnchorDivider variant="plan" />
+
+          <div className="mx-auto max-w-[980px]">
+            <article className="glass-card overflow-hidden relative ring-1 ring-white/20">
+              {/* Rim light + subtle gradients (depth) */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-white/0 to-transparent"
               />
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"
+                className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full blur-3xl"
+                style={{ backgroundColor: `${PLAN_TINT}14` }}
               />
 
               {/* Top block */}
               <div className="relative p-6 sm:p-8">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-white/75 tracking-[0.18em] uppercase">
+                    <span
+                      className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-[0.18em] uppercase"
+                      style={{
+                        borderColor: `${PLAN_TINT}66`,
+                        backgroundColor: `${PLAN_TINT}10`,
+                        color: "rgba(240,253,244,0.92)",
+                      }}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="h-1.5 w-1.5 rounded-full"
+                        style={{ backgroundColor: PLAN_TINT }}
+                      />
                       PLAN
                     </span>
-                    <span className="text-[11px] sm:text-xs text-white/55">
-                      Action Plan
-                    </span>
+
+                    <span className="text-[11px] sm:text-xs text-white/55">Action Plan</span>
                   </div>
 
                   <span className="text-[11px] sm:text-xs font-medium text-white/55">
@@ -143,25 +186,59 @@ export default function HomePage() {
                 <div className="mt-6 h-px w-full bg-white/10" />
               </div>
 
-              {/* Notes block (separate surface) */}
-              <div className="relative bg-black/10 px-6 sm:px-8 py-6">
+              {/* WHY block (separate surface) */}
+              <div className="relative px-6 sm:px-8 py-6 bg-black/15">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-[11px] uppercase tracking-[0.28em] text-white/45">
-                    Why this works
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-white/50 font-semibold">
+                    Why it works
                   </p>
                   <p className="text-[11px] text-white/35">5 notes</p>
                 </div>
 
-                <ul className="mt-4 space-y-3 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                  {SAMPLE_GUIDANCE.why.map((bullet, i) => (
-                    <li key={`${SAMPLE_GUIDANCE.id}-${i}`} className="flex gap-3">
-                      <span
-                        aria-hidden="true"
-                        className="mt-[0.62em] h-1.5 w-1.5 shrink-0 rounded-full bg-white/35"
-                      />
-                      <span>{bullet}</span>
-                    </li>
-                  ))}
+                <ul className="mt-4">
+                  {SAMPLE_GUIDANCE.why.map((bullet, i) => {
+                    const isPrimary = i === 0;
+
+                    return (
+                      <li
+                        key={`${SAMPLE_GUIDANCE.id}-${i}`}
+                        className={[
+                          "flex gap-3",
+                          isPrimary ? "mb-4" : "mb-[11px]",
+                        ].join(" ")}
+                      >
+                        {/* App-like bullet: outer ring + inner dot (tinted) */}
+                        <span className="mt-[0.22em] flex h-5 w-5 items-center justify-center">
+                          <span
+                            className="flex h-[18px] w-[18px] items-center justify-center rounded-full border"
+                            style={{
+                              borderColor: `${PLAN_TINT}66`,
+                              backgroundColor: `${PLAN_TINT}10`,
+                            }}
+                          >
+                            <span
+                              className="h-[7px] w-[7px] rounded-full"
+                              style={{
+                                backgroundColor: PLAN_TINT,
+                                opacity: isPrimary ? 1 : 0.85,
+                              }}
+                            />
+                          </span>
+                        </span>
+
+                        <span
+                          className={[
+                            "leading-relaxed",
+                            isPrimary
+                              ? "text-sm sm:text-[15px] text-white/85 font-medium"
+                              : "text-sm sm:text-[15px] text-white/72",
+                          ].join(" ")}
+                        >
+                          {bullet}
+                        </span>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
 
@@ -176,11 +253,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* About + Features */}
+      {/* Section anchor between Sample and Benefits */}
+      <AnchorDivider />
+
+      {/* About + Features (P1: anchors + less “template” grid) */}
       <section id="about" className="px-6 pb-12 sm:pb-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
+              Benefits
+            </span>
+
+            <h2 className="mt-4 text-2xl sm:text-3xl font-semibold">Why MoodMap</h2>
             <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
               Built for men who want to lead with timing — not tiptoe with guesswork. MoodMap turns
               her cycle into clear, daily guidance so you know when to offer warmth, when to give
@@ -188,35 +272,39 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-            {FEATURES.map(({ Icon, title, badge, copy }) => (
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-7">
+            {FEATURES.map(({ Icon, title, copy, isPrimary }) => (
               <article
                 key={title}
-                className="glass-card glass-card-hover p-6 text-left group relative"
+                className={[
+                  "glass-card glass-card-hover p-6 text-left group relative overflow-hidden ring-1",
+                  isPrimary ? "ring-green-500/25" : "ring-white/15",
+                ].join(" ")}
               >
+                {isPrimary ? (
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full blur-3xl"
+                    style={{ backgroundColor: `${PLAN_TINT}14` }}
+                  />
+                ) : null}
+
                 <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
-                  <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
+                  <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
                 </span>
 
                 <h3 className="text-base sm:text-lg font-semibold text-white flex flex-wrap items-center gap-2">
                   <span>{title}</span>
-                  {badge ? (
-                    <span className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-white/70">
-                      {badge}
-                    </span>
-                  ) : null}
                 </h3>
 
-                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
-                  {copy}
-                </p>
+                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
 
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
           </div>
 
-          <p className="mt-5 text-center text-xs sm:text-sm text-white/55">
+          <p className="mt-6 text-center text-xs sm:text-sm text-white/55">
             Notifications are optional — the daily briefing works even if you keep it silent.
           </p>
         </div>
@@ -225,7 +313,7 @@ export default function HomePage() {
       {/* Bottom CTA */}
       <section className="px-6 pt-2 pb-16 sm:pb-20 text-center">
         <div className="mx-auto max-w-3xl">
-          <div aria-hidden="true" className="mx-auto mb-8 h-px w-20 bg-white/10" />
+          <AnchorDivider />
 
           <h2 className="text-2xl sm:text-3xl font-semibold">Ready to strengthen your bond?</h2>
           <p className="mt-3 text-white/75 leading-relaxed">
@@ -237,7 +325,7 @@ export default function HomePage() {
               href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
               className="store-btn"
             >
-              <span className="store-btn__icon" aria-hidden>
+              <span className="store-btn__icon" aria-hidden="true">
                 <FaApple />
               </span>
               Download on the App Store
@@ -247,7 +335,7 @@ export default function HomePage() {
               href="https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen"
               className="store-btn"
             >
-              <span className="store-btn__icon" aria-hidden>
+              <span className="store-btn__icon" aria-hidden="true">
                 <FaGooglePlay />
               </span>
               Get it on Google Play
