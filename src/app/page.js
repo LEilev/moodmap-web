@@ -1,13 +1,5 @@
 // src/app/page.js
-import {
-  Map,
-  BellRing,
-  Sparkles,
-  HeartHandshake,
-  Shield,
-  Smartphone,
-  RefreshCcw,
-} from "lucide-react";
+import { Map, BellRing, Sparkles, HeartHandshake, Shield } from "lucide-react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { PROOF_EXAMPLE } from "../lib/proofContent";
 
@@ -44,8 +36,16 @@ const FEATURES = [
   },
 ];
 
+function SectionDivider() {
+  return (
+    <div className="mx-auto max-w-5xl px-6">
+      <div className="h-px bg-white/10" />
+    </div>
+  );
+}
+
 export default function HomePage() {
-  // Proof flag: default ON (P0 ships proof). Set NEXT_PUBLIC_SHOW_PROOF="false" to disable quickly.
+  // Proof flag: default ON. Set NEXT_PUBLIC_SHOW_PROOF="false" to disable.
   const showProof = process.env.NEXT_PUBLIC_SHOW_PROOF !== "false";
 
   return (
@@ -61,7 +61,7 @@ export default function HomePage() {
       />
 
       {/* 1) Hero / CTA */}
-      <section className="px-6 pt-12 pb-10 sm:pt-20 sm:pb-14 text-center">
+      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12 text-center">
         <h1 className="mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Understand her cycle.
@@ -108,35 +108,26 @@ export default function HomePage() {
         <p className="mt-2 mx-auto max-w-2xl text-xs sm:text-sm text-white/50 leading-relaxed">
           A support tool, not surveillance. No awkward tracking — just timing and guidance.
         </p>
-
-        {/* Trust strip */}
-        <div className="mt-7 flex justify-center">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 rounded-full bg-white/10 px-4 py-2 text-[13px] text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <span className="inline-flex items-center gap-1.5">
-              <Shield className="h-4 w-4 opacity-90" />
-              Private by design
-            </span>
-            <span className="opacity-30">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <RefreshCcw className="h-4 w-4 opacity-90" />
-              Cancel anytime
-            </span>
-            <span className="opacity-30">•</span>
-            <span className="inline-flex items-center gap-1.5">
-              <Smartphone className="h-4 w-4 opacity-90" />
-              Available on iOS &amp; Android
-            </span>
-          </div>
-        </div>
       </section>
 
-      {/* 2) Proof of Output */}
+      <SectionDivider />
+
+      {/* 2) Proof of Output (simplified, single focal point) */}
       {showProof && (
-        <section id="proof" className="scroll-mt-28 px-6 pb-12 sm:pb-14">
-          <div className="mx-auto max-w-5xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-start">
-              {/* On mobile, show the card first (show, don’t tell) */}
-              <div className="order-1 lg:order-2 glass-card p-6 text-left group">
+        <>
+          <section id="proof" className="scroll-mt-28 px-6 py-12 sm:py-14">
+            <div className="mx-auto max-w-5xl">
+              <div className="text-center">
+                <h2 className="text-2xl sm:text-3xl font-semibold">
+                  See what MoodMap actually says
+                </h2>
+                <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
+                  One concrete suggestion. Clear reasoning. Respectful execution — shown exactly in
+                  the app’s format (emoji removed on web).
+                </p>
+              </div>
+
+              <div className="mt-8 mx-auto max-w-3xl glass-card p-6 text-left group">
                 <div className="text-xs font-semibold tracking-wide text-white/55">
                   Proof of output
                 </div>
@@ -145,9 +136,7 @@ export default function HomePage() {
                   {PROOF_EXAMPLE.text}
                 </div>
 
-                <div className="mt-5 text-xs font-semibold tracking-wide text-white/55">
-                  WHY
-                </div>
+                <div className="mt-5 text-xs font-semibold tracking-wide text-white/55">WHY</div>
 
                 <ul className="mt-2 space-y-2 text-sm sm:text-[15px] text-white/75 leading-relaxed">
                   {PROOF_EXAMPLE.why.map((line) => (
@@ -166,36 +155,15 @@ export default function HomePage() {
 
                 <div aria-hidden="true" className="glass-gloss" />
               </div>
-
-              <div className="order-2 lg:order-1 text-center lg:text-left">
-                <h2 className="text-2xl sm:text-3xl font-semibold">See what MoodMap actually says</h2>
-                <p className="mt-4 text-white/75 leading-relaxed">
-                  One concrete suggestion. Clear reasoning. Respectful execution. This is the format
-                  MoodMap delivers — fast, actionable, and grounded in timing.
-                </p>
-
-                <div className="mt-6 space-y-3 text-sm text-white/70">
-                  <p className="inline-flex items-start gap-2">
-                    <Sparkles className="mt-0.5 h-4 w-4 opacity-90" aria-hidden />
-                    Specific action, not generic advice.
-                  </p>
-                  <p className="inline-flex items-start gap-2">
-                    <Map className="mt-0.5 h-4 w-4 opacity-90" aria-hidden />
-                    Matched to her day in the cycle (not a one-size-fits-all model).
-                  </p>
-                  <p className="inline-flex items-start gap-2">
-                    <HeartHandshake className="mt-0.5 h-4 w-4 opacity-90" aria-hidden />
-                    Designed for steadiness, not pressure.
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
-        </section>
+          </section>
+
+          <SectionDivider />
+        </>
       )}
 
       {/* 3) Benefits */}
-      <section id="about" className="scroll-mt-28 px-6 pb-12 sm:pb-14">
+      <section id="about" className="scroll-mt-28 px-6 py-12 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold">Benefits</h2>
@@ -221,7 +189,9 @@ export default function HomePage() {
                   ) : null}
                 </h3>
 
-                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{copy}</p>
+                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
+                  {copy}
+                </p>
                 <div aria-hidden="true" className="glass-gloss" />
               </article>
             ))}
@@ -233,8 +203,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* 4) Trust */}
-      <section id="trust" className="scroll-mt-28 px-6 pb-12 sm:pb-14">
+      <section id="trust" className="scroll-mt-28 px-6 py-12 sm:py-14">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-semibold">Trust</h2>
@@ -287,8 +259,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      <SectionDivider />
+
       {/* 5) Final CTA */}
-      <section className="px-6 pb-16 sm:pb-20">
+      <section className="px-6 py-14 sm:py-16">
         <div className="mx-auto max-w-5xl text-center">
           <h2 className="text-2xl sm:text-3xl font-semibold">Download MoodMap</h2>
           <p className="mt-4 mx-auto max-w-2xl text-white/75 leading-relaxed">
@@ -310,10 +284,6 @@ export default function HomePage() {
               Get it on Google Play
             </a>
           </div>
-
-          <p className="mt-4 mx-auto max-w-2xl text-xs sm:text-sm text-white/55 leading-relaxed">
-            Relationship guidance — not medical advice. Not for contraception or fertility planning.
-          </p>
         </div>
       </section>
     </main>
