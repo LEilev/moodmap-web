@@ -8,6 +8,16 @@
 html,
 body {
   height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Prefer overflow-x: clip when supported (prevents scrollbars without creating a scroll container). */
+@supports (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
 }
 
 body {

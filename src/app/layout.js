@@ -254,7 +254,7 @@ export default function RootLayout({ children }) {
           <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-6 py-10 text-center">
               <p className="text-sm text-white/60">
-                Private by design. Informed by physiology and hormone research.
+                Built in Norway. Private by design. Informed by physiology and hormone research.
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white/70">
@@ -272,6 +272,10 @@ export default function RootLayout({ children }) {
                 <span className="opacity-30">•</span>
                 <Link className="mm-link" href="/privacy-policy">
                   Privacy Policy
+                </Link>
+                <span className="opacity-30">•</span>
+                <Link className="mm-link" href="/terms">
+                  Terms
                 </Link>
               </div>
 
