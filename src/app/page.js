@@ -95,11 +95,7 @@ export default function HomePage() {
           and intimacy — with clarity, not guesswork.
         </p>
 
-        <p className="mt-3 mx-auto max-w-2xl text-sm text-white/60">
-          Built for real life: direct, respectful, and actionable in under a minute.
-        </p>
-
-        <p className="mt-2 mx-auto max-w-2xl text-xs sm:text-sm text-white/55">
+        <p className="mt-3 mx-auto max-w-2xl text-xs sm:text-sm text-white/55">
           Built in Norway. Informed by physiology and hormone research.
         </p>
 

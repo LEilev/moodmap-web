@@ -172,9 +172,7 @@ export default function TermsPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">2. What MoodMap Is</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              MoodMap provides general, cycle-aware guidance and relationship support prompts.
-              MoodMap is designed to help users improve timing, communication, and daily support.
-              It is not a diagnostic tool.
+              MoodMap provides cycle-aware insight designed to improve timing, interpretation, and emotional context in relationships. It is not a diagnostic tool.
             </p>
           </GlassCard>
 
@@ -208,14 +206,10 @@ export default function TermsPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">5. Subscriptions, Billing & Refunds</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              Paid features (e.g., Premium+) are billed through the Apple App Store or Google Play
-              Store, depending on your device. Subscription management (including cancellation,
-              renewal settings, and refunds) is handled by the relevant store and subject to their
-              policies.
+              Paid features (such as Premium+) may be billed through the Apple App Store, Google Play Store, or via Stripe for web purchases, depending on how you subscribe. App Store / Google Play subscriptions are managed through your store account (including billing, renewals, cancellations, and refunds) and are subject to the store’s policies. Stripe (web) subscriptions are billed to the payment method you provide at checkout and can be managed through your MoodMap account; refunds (if any) are handled according to applicable law and the relevant platform’s policies.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-blue-100">
-              Tip: If you need to cancel, do it from your App Store / Google Play subscription
-              settings. Deleting the app does not automatically cancel a subscription.
+              Tip: If you subscribed through the App Store or Google Play, cancel from your store subscription settings. If you subscribed on the web via Stripe, manage or cancel via your MoodMap account (or contact support). Deleting the app does not automatically cancel a subscription.
             </p>
           </GlassCard>
 
@@ -237,7 +231,7 @@ export default function TermsPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">7. Intellectual Property</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              MoodMap and its content (including branding, copy, UI, and guidance prompts) are
+              MoodMap and its content (including branding, copy, UI, and guidance content) are
               protected by intellectual property laws. You may not copy, distribute, or create
               derivative works from MoodMap without permission, except where permitted by law.
             </p>
