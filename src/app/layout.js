@@ -235,7 +235,7 @@ export default function RootLayout({ children }) {
                 <Link href="/#download" className="hover:text-white transition-colors">
                   Download
                 </Link>
-                <Link href="/support" className="hover:text-white transition-colors">
+                <Link href="/support.html" className="hover:text-white transition-colors">
                   Support
                 </Link>
                 <Link href="/pro" className="hover:text-white transition-colors">
@@ -262,7 +262,7 @@ export default function RootLayout({ children }) {
                   Guides
                 </Link>
                 <span className="opacity-30">•</span>
-                <Link className="mm-link" href="/support">
+                <Link className="mm-link" href="/support.html">
                   Support
                 </Link>
                 <span className="opacity-30">•</span>

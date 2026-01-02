@@ -3,17 +3,23 @@ const nextConfig = {
   async redirects() {
     return [
       // ---------------------------------------------------------------------
-      // SUPPORT (Apple-approved static support.html)
-      // Canonicalize all support variants to /support.html
+      // SUPPORT (clean URL: /support)
+      // - /support should NOT redirect (serve content)
+      // - /support.html is legacy (Apple / old links) and should canonicalize to /support
       // ---------------------------------------------------------------------
       {
-        source: "/support",
-        destination: "/support.html",
+        source: "/support.html",
+        destination: "/support",
+        permanent: true,
+      },
+      {
+        source: "/support.html/",
+        destination: "/support",
         permanent: true,
       },
       {
         source: "/support/",
-        destination: "/support.html",
+        destination: "/support",
         permanent: true,
       },
 
@@ -64,6 +70,12 @@ const nextConfig = {
 
   async rewrites() {
     return [
+      // ---------------------------------------------------------------------
+      // Clean support URL:
+      // Serve the static Apple-approved support.html at /support (URL stays /support).
+      // ---------------------------------------------------------------------
+      { source: "/support", destination: "/support.html" },
+
       // Support both endpoints: /api/version and /api/version.json
       { source: "/api/version.json", destination: "/api/version" },
     ];
