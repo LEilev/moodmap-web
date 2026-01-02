@@ -1,0 +1,84 @@
+/*
+  Premium material polish (P1.5)
+  Loaded AFTER globals.css.
+
+  Goals
+  - Reduce the "flat grey plate" feeling by increasing edge definition.
+  - Add depth via subtle rim-light + inner hairlines (inset shadows).
+  - Keep performance safe (no large-area blur additions, no animations).
+*/
+
+/* ---- Glass surfaces ---- */
+
+.glass-card {
+  /* Keep the existing blur from globals.css; we only refine the surface. */
+  position: relative;
+
+  /* Darker, less "grey fill" — lets the background breathe while staying readable. */
+  background-color: rgba(255, 255, 255, 0.072);
+
+  /* Stronger edge definition (hairline). */
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  /* Depth: one external shadow + two subtle inner strokes. */
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* A very subtle top gloss that reads as "material" on desktop. */
+.glass-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.10),
+    rgba(255, 255, 255, 0.03) 22%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  opacity: 0.9;
+}
+
+.glass-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow:
+    0 34px 110px rgba(0, 0, 0, 0.62),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Icon tiles: slightly more "machined" and less flat. */
+.glass-icon {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background-color: rgba(255, 255, 255, 0.085);
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Store buttons: tighter, higher-contrast edge + cleaner hover lift. */
+.store-btn {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}
+
+.store-btn:hover {
+  border-color: rgba(255, 255, 255, 0.30);
+  box-shadow:
+    0 26px 80px rgba(0, 0, 0, 0.50),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Keep motion respectful for users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .store-btn,
+  .glass-card-hover {
+    transition: none !important;
+  }
+}

@@ -139,11 +139,22 @@ export default function HomePage() {
           <AnchorDivider variant="plan" />
 
           <div className="mx-auto max-w-[980px]">
-            <article className="glass-card overflow-hidden relative ring-1 ring-white/20">
+            <article className="glass-card overflow-hidden relative ring-1 ring-white/25">
               {/* Rim light + subtle gradients (depth) */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-white/0 to-transparent"
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `radial-gradient(900px 360px at 90% 0%, ${PLAN_TINT}33 0%, transparent 60%)`,
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-10 right-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
               />
               <div
                 aria-hidden="true"
@@ -183,11 +194,19 @@ export default function HomePage() {
                   {SAMPLE_GUIDANCE.text}
                 </h3>
 
-                <div className="mt-6 h-px w-full bg-white/10" />
+                <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
               </div>
 
               {/* WHY block (separate surface) */}
-              <div className="relative px-6 sm:px-8 py-6 bg-black/15">
+              <div className="relative px-6 sm:px-8 py-6 bg-gradient-to-b from-white/[0.06] to-black/20 border-t border-white/10">
+                {/* Deck identity hairline (subtle, app-like) */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-0 top-0 bottom-0 w-px"
+                  style={{
+                    background: `linear-gradient(to bottom, transparent, ${PLAN_TINT}66, transparent)`,
+                  }}
+                />
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-white/50 font-semibold">
                     Why it works
@@ -257,7 +276,12 @@ export default function HomePage() {
       <AnchorDivider />
 
       {/* About + Features (P1: anchors + less “template” grid) */}
-      <section id="about" className="px-6 pb-12 sm:pb-14">
+      <section id="about" className="relative px-6 pb-12 sm:pb-14">
+        {/* Subtle section glows to avoid a flat, uniform dark field */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -left-24 top-14 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-emerald-500/10 via-sky-500/5 to-transparent blur-3xl" />
+          <div className="absolute -right-24 bottom-6 h-[360px] w-[360px] rounded-full bg-gradient-to-br from-sky-500/10 via-emerald-500/5 to-transparent blur-3xl" />
+        </div>
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
@@ -278,15 +302,26 @@ export default function HomePage() {
                 key={title}
                 className={[
                   "glass-card glass-card-hover p-6 text-left group relative overflow-hidden ring-1",
-                  isPrimary ? "ring-green-500/25" : "ring-white/15",
+                  isPrimary ? "ring-green-500/25" : "ring-white/18",
                 ].join(" ")}
               >
                 {isPrimary ? (
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full blur-3xl"
-                    style={{ backgroundColor: `${PLAN_TINT}14` }}
-                  />
+                  <>
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full blur-3xl"
+                      style={{ backgroundColor: `${PLAN_TINT}14` }}
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-white/0 to-transparent"
+                    />
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute left-10 right-10 top-0 h-px"
+                      style={{ background: `linear-gradient(to right, transparent, ${PLAN_TINT}99, transparent)` }}
+                    />
+                  </>
                 ) : null}
 
                 <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
