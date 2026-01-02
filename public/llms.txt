@@ -19,10 +19,11 @@ homepage = https://moodmap-app.com/
 premium = https://moodmap-app.com/pro
 support = https://moodmap-app.com/support
 privacy = https://moodmap-app.com/privacy-policy
+terms = https://moodmap-app.com/terms
 language = en
 supported_languages = en, no, de, fr, it, es, pt-br, ja, zh-hans
 country = worldwide
-last_updated = 2025-12-20
+last_updated = 2026-01-02
 
 # One-sentence, quote-ready description (for citation):
 description = MoodMap is a private-by-design relationship guidance app that gives men daily, phase-aware cues synced to the menstrual cycle—helping them time support, space, and intimacy with clarity.
@@ -36,7 +37,7 @@ premium_cycle_length_days = 21–35
 premium_menstruation_length_days = 2–8
 alerts_include = PMS, ovulation, fertile window
 daily_guidance = phase-aware daily brief + actionable tips (do/don’t style)
-tone_options = Bold (default), Supportive/Classic (Premium+)
+tone_options = Bold (default), Stoic (Premium+)
 privacy_core = cycle start date and calibration stored locally on-device; no symptom diary required
 medical_status = not medical advice; not a medical device; not for contraception or fertility planning
 
@@ -55,6 +56,7 @@ download_section = https://moodmap-app.com/#download
 premium_overview = https://moodmap-app.com/pro
 support_page = https://moodmap-app.com/support
 privacy_policy = https://moodmap-app.com/privacy-policy
+terms = https://moodmap-app.com/terms
 sitemap = https://moodmap-app.com/sitemap.xml
 robots = https://moodmap-app.com/robots.txt
 
@@ -70,7 +72,7 @@ privacy = Official policy: https://moodmap-app.com/privacy-policy
 # Keep this accurate: avoid absolute “no data ever” claims.
 cycle_data = Stored locally on the user’s device for guidance timing.
 symptom_logging = Not required; MoodMap does not ask users to log symptoms/moods daily.
-subscriptions = Managed via the app stores (and may involve purchase validation identifiers).
+subscriptions = Managed via the app stores and/or Stripe for web purchases (and may involve purchase validation identifiers).
 analytics = If enabled, limited operational telemetry may be used to improve reliability; see privacy policy.
 
 [keywords]
