@@ -7,16 +7,22 @@ import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 // Matches app deck tint for OPS/PLAN (from cockpitMaterialTokens.js)
 const PLAN_TINT = "#22C55E";
 
-function AnchorDivider({ variant = "neutral" }) {
+function AnchorDivider({ variant = "neutral", tight = false }) {
   const isPlan = variant === "plan";
+  const spacing = tight ? "my-7 sm:my-8" : "my-10";
 
   return (
-    <div aria-hidden="true" className="mx-auto my-10 flex items-center justify-center">
+    <div
+      aria-hidden="true"
+      className={["mx-auto flex items-center justify-center", spacing].join(" ")}
+    >
       <div className="relative h-px w-16 bg-white/15">
         <span
           className={[
             "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full",
-            isPlan ? "bg-green-500/80 ring-1 ring-green-500/25" : "bg-white/35 ring-1 ring-white/15",
+            isPlan
+              ? "bg-green-500/80 ring-1 ring-green-500/25"
+              : "bg-white/35 ring-1 ring-white/15",
           ].join(" ")}
         />
       </div>
@@ -31,24 +37,32 @@ const FEATURES = [
     copy:
       "See the cycle mapped clearly — calibrated to her cycle length (21–35 days), not a generic 28-day template.",
     isPrimary: true,
+    // emerald
+    accent: "34 197 94",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
     copy:
       "Optional notifications for key windows (PMS, ovulation, fertile window) — so you can time support before it’s needed.",
+    // sky
+    accent: "56 189 248",
   },
   {
     Icon: Sparkles,
     title: "Tips & Intimacy",
     copy:
       "Daily phase-aware guidance — practical actions, guardrails, and connection cues — matched to the day.",
+    // teal
+    accent: "45 212 191",
   },
   {
     Icon: HeartHandshake,
     title: "Self-Regulation",
     copy:
       "Short daily checks to keep you steady — calmer tone, steadier pacing, better timing.",
+    // blue
+    accent: "96 165 250",
   },
 ];
 
@@ -66,7 +80,7 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="px-6 pt-14 pb-10 sm:pt-20 sm:pb-12 text-center">
+      <section className="px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 text-center">
         <h1 className="mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Understand her cycle.
@@ -88,7 +102,7 @@ export default function HomePage() {
         {/* Download */}
         <div
           id="download"
-          className="mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4"
+          className="mt-7 sm:mt-8 flex flex-col sm:flex-row justify-center items-stretch gap-3 sm:gap-4"
         >
           <a
             href="https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb"
@@ -135,11 +149,11 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Section anchor (hairline + dot) */}
-          <AnchorDivider variant="plan" />
+          {/* Section anchor (tightened to bring proof up on desktop) */}
+          <AnchorDivider variant="plan" tight />
 
           <div className="mx-auto max-w-[980px]">
-            <article className="glass-card overflow-hidden relative ring-1 ring-white/25">
+            <article className="glass-card mm-sample-card overflow-hidden relative ring-1 ring-white/25">
               {/* Rim light + subtle gradients (depth) */}
               <div
                 aria-hidden="true"
@@ -152,10 +166,27 @@ export default function HomePage() {
                   background: `radial-gradient(900px 360px at 90% 0%, ${PLAN_TINT}33 0%, transparent 60%)`,
                 }}
               />
+
+              {/* Cockpit topbar: subtle, intentional, “machined” */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute left-10 right-10 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent"
+                className="pointer-events-none absolute inset-x-0 top-0 h-12"
+                style={{
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 70%)",
+                }}
               />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-0 h-px"
+                style={{
+                  background: `linear-gradient(to right, transparent, ${PLAN_TINT}CC, transparent)`,
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-px h-px bg-gradient-to-r from-transparent via-white/18 to-transparent"
+              />
+
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -right-32 -top-32 h-72 w-72 rounded-full blur-3xl"
@@ -194,11 +225,17 @@ export default function HomePage() {
                   {SAMPLE_GUIDANCE.text}
                 </h3>
 
-                <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+                <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/18 to-transparent" />
               </div>
 
               {/* WHY block (separate surface) */}
               <div className="relative px-6 sm:px-8 py-6 bg-gradient-to-b from-white/[0.06] to-black/20 border-t border-white/10">
+                {/* Subtle split highlight to emphasize the “two-surface” construction */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent"
+                />
+
                 {/* Deck identity hairline (subtle, app-like) */}
                 <div
                   aria-hidden="true"
@@ -207,6 +244,7 @@ export default function HomePage() {
                     background: `linear-gradient(to bottom, transparent, ${PLAN_TINT}66, transparent)`,
                   }}
                 />
+
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-white/50 font-semibold">
                     Why it works
@@ -221,10 +259,7 @@ export default function HomePage() {
                     return (
                       <li
                         key={`${SAMPLE_GUIDANCE.id}-${i}`}
-                        className={[
-                          "flex gap-3",
-                          isPrimary ? "mb-4" : "mb-[11px]",
-                        ].join(" ")}
+                        className={["flex gap-3", isPrimary ? "mb-4" : "mb-[11px]"].join(" ")}
                       >
                         {/* App-like bullet: outer ring + inner dot (tinted) */}
                         <span className="mt-[0.22em] flex h-5 w-5 items-center justify-center">
@@ -282,6 +317,7 @@ export default function HomePage() {
           <div className="absolute -left-24 top-14 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-emerald-500/10 via-sky-500/5 to-transparent blur-3xl" />
           <div className="absolute -right-24 bottom-6 h-[360px] w-[360px] rounded-full bg-gradient-to-br from-sky-500/10 via-emerald-500/5 to-transparent blur-3xl" />
         </div>
+
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
@@ -297,14 +333,18 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-7">
-            {FEATURES.map(({ Icon, title, copy, isPrimary }) => (
+            {FEATURES.map(({ Icon, title, copy, isPrimary, accent }) => (
               <article
                 key={title}
+                style={{ "--mm-accent": accent }}
                 className={[
                   "glass-card glass-card-hover p-6 text-left group relative overflow-hidden ring-1",
                   isPrimary ? "ring-green-500/25" : "ring-white/18",
                 ].join(" ")}
               >
+                {/* Micro-differentiation (very subtle) */}
+                <div aria-hidden="true" className="mm-card-accent" />
+
                 {isPrimary ? (
                   <>
                     <div
@@ -319,7 +359,9 @@ export default function HomePage() {
                     <div
                       aria-hidden="true"
                       className="pointer-events-none absolute left-10 right-10 top-0 h-px"
-                      style={{ background: `linear-gradient(to right, transparent, ${PLAN_TINT}99, transparent)` }}
+                      style={{
+                        background: `linear-gradient(to right, transparent, ${PLAN_TINT}99, transparent)`,
+                      }}
                     />
                   </>
                 ) : null}
