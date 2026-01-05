@@ -82,9 +82,9 @@ export default function HomePage() {
       {/* Hero */}
       <section className="px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 text-center">
         {/* Targeting / clarity without repeating the logo */}
-        <p className="mx-auto inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
-          FOR MEN
-        </p>
+<p className="mx-auto inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
+  DAILY CYCLE-AWARE BRIEFINGS FOR MEN
+</p>
 
         <h1 className="mt-5 mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
