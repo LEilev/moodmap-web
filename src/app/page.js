@@ -81,9 +81,14 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 text-center">
-        <h1 className="mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
+        {/* Eyebrow: “what it is” (quick clarity for new users + Google) */}
+        <p className="mx-auto inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
+          Daily cycle-aware briefings for partners
+        </p>
+
+        <h1 className="mt-5 mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-            Understand her cycle.
+            MoodMap – Understand Her Cycle.
           </span>{" "}
           <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Strengthen your bond.
@@ -91,7 +96,7 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-5 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-          Daily, phase-aware guidance that helps you anticipate her needs — and time your support
+          Daily, phase-aware briefings that help you anticipate her needs — and time your support
           and intimacy — with clarity, not guesswork.
         </p>
 
@@ -124,6 +129,11 @@ export default function HomePage() {
             Get it on Google Play
           </a>
         </div>
+
+        {/* Trust / policy / expectation management (discreet) */}
+        <p className="mt-5 mx-auto max-w-2xl text-xs text-white/45 leading-relaxed">
+          Relationship guidance — not medical advice. Not for contraception or fertility planning.
+        </p>
       </section>
 
       {/* Single sample (P1 polish: anchors + deck tint cues) */}
@@ -172,7 +182,8 @@ export default function HomePage() {
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-x-0 top-0 h-12"
                 style={{
-                  background: "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 70%)",
+                  background:
+                    "linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0) 70%)",
                 }}
               />
               <div
@@ -300,8 +311,8 @@ export default function HomePage() {
             </article>
 
             <p className="mt-6 text-center text-xs sm:text-sm text-white/55">
-              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional notifications
-              for key timing moments.
+              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional
+              notifications for key timing moments.
             </p>
           </div>
         </div>

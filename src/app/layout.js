@@ -6,43 +6,66 @@ import Image from "next/image";
 import Script from "next/script";
 import MobileMenu from "../components/MobileMenu";
 
+const SITE_NAME = "MoodMap";
+
+// Viktig: dere har både www og non-www live.
+// Velg én canonical. Jeg setter non-www som canonical her (match med eksisterende kodebase).
 const SITE_URL = "https://moodmap-app.com";
+
+const SITE_TITLE = `${SITE_NAME} – Understand Her Cycle`;
+
+const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
+const PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
+
+const META_DESCRIPTION =
+  "MoodMap delivers daily, phase-aware briefings for partners — so you can anticipate needs and time support and intimacy with clarity, not guesswork. Optional alerts for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: "MoodMap",
-    template: "%s · MoodMap",
+
+  // Canonical er spesielt viktig når både www og non-www er tilgjengelig
+  alternates: {
+    canonical: SITE_URL,
   },
-  description:
-    "Understand her cycle. Strengthen your bond. MoodMap delivers daily, phase-aware guidance — plus optional notification timing cues for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).",
+
+  title: {
+    // Homepage title-tag
+    default: SITE_TITLE,
+
+    // Undersider: "Guides | MoodMap" osv.
+    template: `%s | ${SITE_NAME}`,
+  },
+
+  description: META_DESCRIPTION,
+
   robots: {
     index: true,
     follow: true,
   },
+
   openGraph: {
     type: "website",
     url: SITE_URL,
-    title: "MoodMap",
-    description:
-      "Daily, phase-aware guidance for better timing and deeper connection — plus optional notification timing cues for PMS, ovulation, and the fertile window. Supports 21–35 day cycles (2–8 day menstruation).",
-    siteName: "MoodMap",
+    title: SITE_TITLE,
+    description: META_DESCRIPTION,
+    siteName: SITE_NAME,
     images: [
       {
         url: "/icon.png",
         width: 512,
         height: 512,
-        alt: "MoodMap",
+        alt: SITE_NAME,
       },
     ],
   },
+
   twitter: {
     card: "summary",
-    title: "MoodMap",
-    description:
-      "Daily, phase-aware guidance for partners — with optional notification timing cues for PMS, ovulation, and fertile-window timing. Supports 21–35 day cycles (2–8 day menstruation).",
+    title: SITE_TITLE,
+    description: META_DESCRIPTION,
     images: ["/icon.png"],
   },
+
   icons: {
     icon: "/icon.png",
     apple: "/icon.png",
@@ -57,11 +80,12 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "Organization",
     "@id": `${SITE_URL}#organization`,
-    name: "MoodMap",
+    name: SITE_NAME,
     url: SITE_URL,
     logo: `${SITE_URL}/icon.png`,
     email: "support@moodmap-app.com",
     availableLanguage: ["en", "no", "de", "fr", "it", "es", "pt-BR", "ja", "zh-Hans"],
+    sameAs: [APPSTORE_URL, PLAYSTORE_URL],
   };
 
   const websiteJsonLd = {
@@ -69,7 +93,7 @@ export default function RootLayout({ children }) {
     "@type": "WebSite",
     "@id": `${SITE_URL}#website`,
     url: SITE_URL,
-    name: "MoodMap",
+    name: SITE_NAME,
     publisher: { "@id": `${SITE_URL}#organization` },
     inLanguage: "en",
   };
@@ -77,7 +101,7 @@ export default function RootLayout({ children }) {
   const appJsonLd = {
     "@context": "https://schema.org",
     "@type": "MobileApplication",
-    name: "MoodMap",
+    name: SITE_NAME,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
     publisher: { "@id": `${SITE_URL}#organization` },
@@ -88,10 +112,7 @@ export default function RootLayout({ children }) {
       availability: "https://schema.org/InStock",
     },
     downloadUrl: `${SITE_URL}/#download`,
-    installUrl: [
-      "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626",
-      "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen",
-    ],
+    installUrl: [APPSTORE_URL, PLAYSTORE_URL],
   };
 
   return (
@@ -216,7 +237,7 @@ export default function RootLayout({ children }) {
                 href="/"
                 className="flex items-center text-xl font-semibold tracking-tight"
               >
-                MoodMap
+                {SITE_NAME}
                 <Image
                   src="/icon.png"
                   alt="MoodMap logo"
@@ -234,6 +255,9 @@ export default function RootLayout({ children }) {
                 </Link>
                 <Link href="/#download" className="hover:text-white transition-colors">
                   Download
+                </Link>
+                <Link href="/learn" className="hover:text-white transition-colors">
+                  Guides
                 </Link>
                 <Link href="/support.html" className="hover:text-white transition-colors">
                   Support
@@ -286,7 +310,7 @@ export default function RootLayout({ children }) {
                 </a>
               </p>
 
-              <p className="mt-5 text-xs text-white/45">© 2025 MoodMap. All rights reserved.</p>
+              <p className="mt-5 text-xs text-white/45">© 2025 {SITE_NAME}. All rights reserved.</p>
             </div>
           </footer>
         </div>

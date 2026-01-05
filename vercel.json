@@ -40,6 +40,12 @@
   ],
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "www.moodmap-app.com" }],
+      "destination": "https://moodmap-app.com/$1",
+      "permanent": true
+    },
+    {
       "source": "/support.html",
       "destination": "/support",
       "permanent": true
