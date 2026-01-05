@@ -299,7 +299,7 @@ export default function RootLayout({ children }) {
                 </a>
               </p>
 
-              <p className="mt-5 text-xs text-white/45">© 2025 {SITE_NAME}. All rights reserved.</p>
+              <p className="mt-5 text-xs text-white/45">© 2026 {SITE_NAME}. All rights reserved.</p>
             </div>
           </footer>
         </div>
