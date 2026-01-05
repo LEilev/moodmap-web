@@ -7,10 +7,7 @@ import Script from "next/script";
 import MobileMenu from "../components/MobileMenu";
 
 const SITE_NAME = "MoodMap";
-
-// Viktig: dere har både www og non-www live.
-// Velg én canonical. Jeg setter non-www som canonical her (match med eksisterende kodebase).
-const SITE_URL = "https://moodmap-app.com";
+const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
 const SITE_TITLE = `${SITE_NAME} – Understand Her Cycle`;
 
@@ -18,21 +15,16 @@ const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id674610262
 const PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap delivers daily, phase-aware briefings for partners — so you can anticipate needs and time support and intimacy with clarity, not guesswork. Optional alerts for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).";
+  "MoodMap delivers daily, phase-aware briefings for men — so you can anticipate her needs and time support and intimacy with clarity, not guesswork. Optional alerts for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
 
-  // Canonical er spesielt viktig når både www og non-www er tilgjengelig
-  alternates: {
-    canonical: SITE_URL,
-  },
-
   title: {
-    // Homepage title-tag
+    // Homepage <title>
     default: SITE_TITLE,
 
-    // Undersider: "Guides | MoodMap" osv.
+    // Undersider: "Guides | MoodMap"
     template: `%s | ${SITE_NAME}`,
   },
 
@@ -230,7 +222,6 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-full bg-primary-blue text-white">
         <div className="flex min-h-full flex-col">
-          {/* Premium header (litt mer solid for å unngå glow “bleed”) */}
           <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
               <Link
@@ -267,14 +258,12 @@ export default function RootLayout({ children }) {
                 </Link>
               </nav>
 
-              {/* Mobile hamburger */}
               <MobileMenu />
             </div>
           </header>
 
           <main className="flex-1">{children}</main>
 
-          {/* Global premium footer (one footer, everywhere) */}
           <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-6 py-10 text-center">
               <p className="text-sm text-white/60">

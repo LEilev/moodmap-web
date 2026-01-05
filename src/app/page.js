@@ -81,14 +81,14 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="px-6 pt-14 pb-8 sm:pt-20 sm:pb-10 text-center">
-        {/* Eyebrow: “what it is” (quick clarity for new users + Google) */}
+        {/* Targeting / clarity without repeating the logo */}
         <p className="mx-auto inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.28em] uppercase text-white/70">
-          Daily cycle-aware briefings for partners
+          FOR MEN
         </p>
 
         <h1 className="mt-5 mx-auto max-w-5xl text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
           <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-            MoodMap – Understand Her Cycle.
+            Understand her cycle.
           </span>{" "}
           <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
             Strengthen your bond.
@@ -96,8 +96,8 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-5 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-          Daily, phase-aware briefings that help you anticipate her needs — and time your support
-          and intimacy — with clarity, not guesswork.
+          Daily, phase-aware briefings for men that help you anticipate her needs — and time your
+          support and intimacy — with clarity, not guesswork.
         </p>
 
         <p className="mt-3 mx-auto max-w-2xl text-xs sm:text-sm text-white/55">
@@ -136,7 +136,7 @@ export default function HomePage() {
         </p>
       </section>
 
-      {/* Single sample (P1 polish: anchors + deck tint cues) */}
+      {/* Single sample */}
       <section className="px-6 pb-14 sm:pb-16">
         <div className="mx-auto max-w-5xl">
           <div className="text-center">
@@ -159,12 +159,10 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Section anchor (tightened to bring proof up on desktop) */}
           <AnchorDivider variant="plan" tight />
 
           <div className="mx-auto max-w-[980px]">
             <article className="glass-card mm-sample-card overflow-hidden relative ring-1 ring-white/25">
-              {/* Rim light + subtle gradients (depth) */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-white/0 to-transparent"
@@ -177,7 +175,6 @@ export default function HomePage() {
                 }}
               />
 
-              {/* Cockpit topbar: subtle, intentional, “machined” */}
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute inset-x-0 top-0 h-12"
@@ -204,7 +201,6 @@ export default function HomePage() {
                 style={{ backgroundColor: `${PLAN_TINT}14` }}
               />
 
-              {/* Top block */}
               <div className="relative p-6 sm:p-8">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-3">
@@ -239,15 +235,12 @@ export default function HomePage() {
                 <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/18 to-transparent" />
               </div>
 
-              {/* WHY block (separate surface) */}
               <div className="relative px-6 sm:px-8 py-6 bg-gradient-to-b from-white/[0.06] to-black/20 border-t border-white/10">
-                {/* Subtle split highlight to emphasize the “two-surface” construction */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/12 to-transparent"
                 />
 
-                {/* Deck identity hairline (subtle, app-like) */}
                 <div
                   aria-hidden="true"
                   className="pointer-events-none absolute left-0 top-0 bottom-0 w-px"
@@ -272,7 +265,6 @@ export default function HomePage() {
                         key={`${SAMPLE_GUIDANCE.id}-${i}`}
                         className={["flex gap-3", isPrimary ? "mb-4" : "mb-[11px]"].join(" ")}
                       >
-                        {/* App-like bullet: outer ring + inner dot (tinted) */}
                         <span className="mt-[0.22em] flex h-5 w-5 items-center justify-center">
                           <span
                             className="flex h-[18px] w-[18px] items-center justify-center rounded-full border"
@@ -311,19 +303,17 @@ export default function HomePage() {
             </article>
 
             <p className="mt-6 text-center text-xs sm:text-sm text-white/55">
-              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional
-              notifications for key timing moments.
+              MoodMap delivers a full daily briefing tuned to her rhythm — plus optional notifications
+              for key timing moments.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Section anchor between Sample and Benefits */}
       <AnchorDivider />
 
-      {/* About + Features (P1: anchors + less “template” grid) */}
+      {/* About + Features */}
       <section id="about" className="relative px-6 pb-12 sm:pb-14">
-        {/* Subtle section glows to avoid a flat, uniform dark field */}
         <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute -left-24 top-14 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-emerald-500/10 via-sky-500/5 to-transparent blur-3xl" />
           <div className="absolute -right-24 bottom-6 h-[360px] w-[360px] rounded-full bg-gradient-to-br from-sky-500/10 via-emerald-500/5 to-transparent blur-3xl" />
@@ -353,7 +343,6 @@ export default function HomePage() {
                   isPrimary ? "ring-green-500/25" : "ring-white/18",
                 ].join(" ")}
               >
-                {/* Micro-differentiation (very subtle) */}
                 <div aria-hidden="true" className="mm-card-accent" />
 
                 {isPrimary ? (
