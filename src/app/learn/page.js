@@ -1,11 +1,18 @@
 // src/app/learn/page.js
 import Link from "next/link";
-import { CalendarDays, Shield, Sparkles, Map, HeartHandshake } from "lucide-react";
+import {
+  CalendarDays,
+  Shield,
+  Sparkles,
+  Map,
+  HeartHandshake,
+  Layers,
+} from "lucide-react";
 
 export const metadata = {
   title: "Guides",
   description:
-    "Short, high-signal guides for men and partners: respectful cycle tracking, PMS support, cycle phases, and fertile-window context. Relationship guidance, not medical advice.",
+    "Short, high-signal guides for men and partners: respectful cycle tracking, why MoodMap is different, PMS support, cycle phases, and fertile-window context. Relationship guidance, not medical advice.",
   alternates: {
     canonical: "/learn",
   },
@@ -20,6 +27,13 @@ const GUIDES = [
     description:
       "A respectful, practical guide: what to track, how to ask, and how to use timing as context (not control).",
     Icon: CalendarDays,
+  },
+  {
+    href: "/learn/why-moodmap",
+    title: "Why MoodMap",
+    description:
+      "MoodMap covers cycle-tracking basics — and adds a partner layer of daily context and practical guidance for men.",
+    Icon: Layers,
   },
   {
     href: "/learn/support-partner-during-pms",
@@ -94,7 +108,7 @@ export default function LearnIndexPage() {
 
       {/* Guide list */}
       <section className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
+        <div className="mx-auto max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
           {GUIDES.map(({ href, title, description, Icon }) => (
             <article key={href} className="glass-card glass-card-hover p-6 text-left group">
               <span className="glass-icon">
