@@ -12,7 +12,8 @@ const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det dom
 const SITE_TITLE = `${SITE_NAME} – Understand Her Cycle`;
 
 const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
-const PLAYSTORE_URL = "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
+const PLAYSTORE_URL =
+  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
   "MoodMap delivers daily, phase-aware briefings for men — so you can anticipate her needs and time support and intimacy with clarity, not guesswork. Optional alerts for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).";
@@ -58,9 +59,17 @@ export const metadata = {
     images: ["/icon.png"],
   },
 
+  // FAVICONS (tab, SERP, iOS homescreen)
+  // Krever at disse filene ligger i /public:
+  // favicon-16x16.png, favicon-32x32.png, favicon-48x48.png, favicon-96x96.png, apple-touch-icon.png
   icons: {
-    icon: "/icon.png",
-    apple: "/icon.png",
+    icon: [
+      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
 };
 
@@ -299,7 +308,9 @@ export default function RootLayout({ children }) {
                 </a>
               </p>
 
-              <p className="mt-5 text-xs text-white/45">© 2026 {SITE_NAME}. All rights reserved.</p>
+              <p className="mt-5 text-xs text-white/45">
+                © 2026 {SITE_NAME}. All rights reserved.
+              </p>
             </div>
           </footer>
         </div>
