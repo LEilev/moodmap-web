@@ -1,22 +1,24 @@
 // app/partner/page.js
 import Link from "next/link";
-import Image from "next/image";
+import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
+const SITE_URL = "https://moodmap-app.com";
+
+// Keep consistent with layout.js
+const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
+const PLAYSTORE_URL =
+  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 /**
  * Optional: set these env vars to show a concrete earnings example.
  * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PRICE (number, e.g. "19.99")
  * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_CURRENCY (e.g. "USD", "NOK", "EUR")
  * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PERIOD (e.g. "mo", "month")
- *
- * Optional: set an image (relative path) to show a real product screenshot in the preview card.
- * - NEXT_PUBLIC_PARTNER_PREVIEW_IMAGE (e.g. "/images/moodmap-briefing.png")
  */
 const SUB_PRICE_RAW = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PRICE;
 const SUB_CURRENCY = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_CURRENCY || "USD";
 const SUB_PERIOD = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PERIOD || "mo";
-const PREVIEW_IMAGE_SRC = process.env.NEXT_PUBLIC_PARTNER_PREVIEW_IMAGE || "";
 
 export const metadata = {
   title: "Partner Program — MoodMap",
@@ -30,7 +32,6 @@ export const metadata = {
 };
 
 function formatMoney(amount, currency) {
-  // Keep formatting simple & predictable (no locale surprises).
   const n = Number(amount);
   if (!Number.isFinite(n)) return null;
   return `${currency} ${n.toFixed(2)}`;
@@ -40,12 +41,12 @@ function earningsExampleLine() {
   const price = Number(SUB_PRICE_RAW);
   if (Number.isFinite(price) && price > 0) {
     const share = price * 0.5;
-    return `Example math: ${formatMoney(price, SUB_CURRENCY)}/${SUB_PERIOD} → you earn ${formatMoney(
+    return `Example: ${formatMoney(price, SUB_CURRENCY)}/${SUB_PERIOD} → you earn ${formatMoney(
       share,
       SUB_CURRENCY
     )}/${SUB_PERIOD} per active subscriber.`;
   }
-  return `Math: subscriber pays $X/${SUB_PERIOD} → you earn $X/2/${SUB_PERIOD} (50%) while they stay subscribed.`;
+  return null; // Avoid $X placeholders on a “premium” page
 }
 
 function AccentCheck() {
@@ -106,74 +107,85 @@ function Card({ title, children, accent = false }) {
   );
 }
 
-function Chip({ children }) {
-  return (
-    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-white/80">
-      {children}
-    </span>
-  );
-}
+/**
+ * Replaces the fake/placeholder product preview.
+ * This is a trust element that is always true (official links), without leaking the primary flow.
+ */
+function VerifyMoodMapCard() {
+  const example = earningsExampleLine();
 
-function ProductPreviewCard() {
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold text-white/70">Product preview</p>
+        <p className="text-xs font-semibold text-white/70">Verify MoodMap</p>
         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-[11px] font-medium text-white/70">
-          Daily briefing (sample)
+          Official links
         </span>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-white/10 bg-black/20">
-        {PREVIEW_IMAGE_SRC ? (
-          <div className="relative aspect-[9/16] w-full">
-            <Image
-              src={PREVIEW_IMAGE_SRC}
-              alt="MoodMap daily briefing preview"
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 85vw, 360px"
-              priority={false}
-            />
-          </div>
-        ) : (
-          <div className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="h-3 w-24 rounded bg-white/10" />
-              <div className="h-3 w-12 rounded bg-white/10" />
-            </div>
+      <p className="mt-3 text-sm leading-relaxed text-white/70">
+        Want to sanity‑check the product before joining? These are the official listings.
+      </p>
 
-            <div className="mt-4 space-y-2">
-              <div className="h-4 w-3/4 rounded bg-white/10" />
-              <div className="h-4 w-5/6 rounded bg-white/10" />
-              <div className="h-4 w-2/3 rounded bg-white/10" />
-            </div>
+      <div className="mt-4 grid gap-3">
+        <a
+          href={APPSTORE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
+        >
+          <span className="inline-flex items-center gap-2">
+            <FaApple aria-hidden="true" />
+            App Store listing
+          </span>
+          <span className="text-white/45" aria-hidden="true">
+            ↗
+          </span>
+        </a>
 
-            <div className="mt-5 rounded-xl border border-white/10 bg-white/5 p-3">
-              <p className="text-[11px] font-semibold text-white/80">Today’s context</p>
-              <p className="mt-1 text-[11px] leading-relaxed text-white/65">
-                Cycle timing → practical relationship context. Clear, respectful, actionable.
-              </p>
-            </div>
+        <a
+          href={PLAYSTORE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
+        >
+          <span className="inline-flex items-center gap-2">
+            <FaGooglePlay aria-hidden="true" />
+            Google Play listing
+          </span>
+          <span className="text-white/45" aria-hidden="true">
+            ↗
+          </span>
+        </a>
 
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <p className="text-[10px] font-semibold text-white/70">Phase model</p>
-                <p className="mt-1 text-[11px] text-white/60">Follicular → Ovulatory → Luteal → Menstrual</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <p className="text-[10px] font-semibold text-white/70">Fertility-aware</p>
-                <p className="mt-1 text-[11px] text-white/60">Fertile window + ovulation estimates</p>
-              </div>
-            </div>
-          </div>
-        )}
+        <a
+          href={SITE_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
+        >
+          <span className="inline-flex items-center gap-2">
+            <span className="text-white/70" aria-hidden="true">
+              🌐
+            </span>
+            Website
+          </span>
+          <span className="text-white/45" aria-hidden="true">
+            ↗
+          </span>
+        </a>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Chip>Premium</Chip>
-        <Chip>Science‑informed</Chip>
-        <Chip>Fertility‑aware timing</Chip>
+      <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+        <p className="text-xs font-semibold text-white/80">Partner economics</p>
+        <p className="mt-1 text-xs leading-relaxed text-white/60">
+          Earn <span className="text-white/80">50% lifetime recurring</span> — paid every billing
+          cycle while the subscriber stays active (attributed to your link).
+        </p>
+        {example ? <p className="mt-2 text-xs text-white/55">{example}</p> : null}
+        <p className="mt-2 text-[11px] text-white/45">
+          Exact pricing and payouts are shown in the partner portal.
+        </p>
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-white/55">
@@ -217,7 +229,7 @@ export default function PartnerPage() {
 
       {/* Add extra bottom padding so content isn't hidden behind mobile sticky CTA */}
       <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-14 md:pb-24 md:pt-20">
-        {/* HERO (now explicitly a partner page + clearer offer) */}
+        {/* HERO */}
         <div className="mx-auto max-w-5xl">
           <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-10">
             {/* Left */}
@@ -235,7 +247,7 @@ export default function PartnerPage() {
                 so he knows what matters today.
               </p>
 
-              {/* Offer callout (moved up + higher contrast) */}
+              {/* Offer callout (high contrast, above fold) */}
               <div className="mt-6 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4 text-left">
                 <p className="text-sm font-semibold text-white">
                   Earn 50% lifetime recurring commissions.
@@ -245,11 +257,8 @@ export default function PartnerPage() {
                   to your link).
                 </p>
 
-                <p className="mt-3 text-xs leading-relaxed text-white/65">
-                  {earningsExampleLine()}{" "}
-                  <span className="text-white/50">
-                    Exact pricing and payouts are shown in the partner portal.
-                  </span>
+                <p className="mt-3 text-xs leading-relaxed text-white/60">
+                  Free to join. Setup takes minutes. Tracking & payouts via PromoteKit.
                 </p>
               </div>
 
@@ -262,10 +271,6 @@ export default function PartnerPage() {
                   Join the Partner Program
                 </a>
 
-                <p className="text-xs text-white/55">
-                  Free to join. Setup takes minutes. Tracking & payouts via PromoteKit.
-                </p>
-
                 {/* Downplayed “details” link */}
                 <Link
                   href="#details"
@@ -274,18 +279,16 @@ export default function PartnerPage() {
                   See details <span aria-hidden="true">↓</span>
                 </Link>
               </div>
-
-              {/* (De-emphasized: no “private page” line here) */}
             </div>
 
-            {/* Right: proof/preview */}
+            {/* Right: Trust links instead of fake preview */}
             <div className="mx-auto w-full max-w-sm md:mx-0 md:justify-self-end">
-              <ProductPreviewCard />
+              <VerifyMoodMapCard />
             </div>
           </div>
         </div>
 
-        {/* 3 cards (still strong; keep) */}
+        {/* 3 cards */}
         <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 md:mt-12 md:grid-cols-3">
           <Card title="A real upgrade for couples">
             Helps couples avoid misreads by giving him the right context at the right time — clearer
@@ -402,7 +405,7 @@ export default function PartnerPage() {
               </div>
             </div>
 
-            {/* Mid-page CTA to reduce friction */}
+            {/* Mid-page CTA */}
             <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur md:flex-row md:text-left">
               <div>
                 <p className="text-sm font-semibold text-white">Ready to join?</p>
@@ -542,9 +545,7 @@ export default function PartnerPage() {
             Join the Partner Program
           </a>
 
-          <p className="mt-3 text-xs text-white/55">
-            Free to join. Tracking & payouts via PromoteKit.
-          </p>
+          <p className="mt-3 text-xs text-white/55">Free to join. Tracking & payouts via PromoteKit.</p>
 
           <p className="mt-4 text-sm text-white/65">
             Questions?{" "}
@@ -557,7 +558,6 @@ export default function PartnerPage() {
             (support@moodmap-app.com).
           </p>
 
-          {/* De-emphasized “private page” note moved down here */}
           <p className="mt-4 text-xs text-white/35">Invitation link • Not indexed.</p>
         </div>
       </div>
