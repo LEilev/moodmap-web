@@ -12,10 +12,6 @@ const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id674610262
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
-// Optional company info for footer (leave empty if not needed)
-const LEGAL_ENTITY = process.env.NEXT_PUBLIC_MOODMAP_LEGAL_ENTITY || "";
-const ORG_NO = process.env.NEXT_PUBLIC_MOODMAP_ORG_NO || "";
-
 export const metadata = {
   title: "Partner Program — MoodMap",
   description:
@@ -167,14 +163,14 @@ function MobileStickyCTA() {
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-white">50% lifetime recurring</p>
           <p className="truncate text-[11px] text-white/60">
-            Stripe payments • PromoteKit tracking & payouts
+            Stripe subscriptions • PromoteKit tracking & payouts
           </p>
         </div>
         <a
           href={PARTNER_PORTAL_URL}
           className="shrink-0 rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95"
         >
-          Join
+          Get link
         </a>
       </div>
     </div>
@@ -182,15 +178,6 @@ function MobileStickyCTA() {
 }
 
 export default function PartnerPage() {
-  const companyLine =
-    LEGAL_ENTITY && ORG_NO
-      ? `${LEGAL_ENTITY} • Org. no. ${ORG_NO}`
-      : LEGAL_ENTITY
-      ? LEGAL_ENTITY
-      : ORG_NO
-      ? `Org. no. ${ORG_NO}`
-      : "";
-
   return (
     <main className="relative overflow-hidden bg-[#070A12] text-white">
       <MobileStickyCTA />
@@ -228,28 +215,58 @@ export default function PartnerPage() {
               href={PARTNER_PORTAL_URL}
               className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 sm:w-auto"
             >
-              Join free
+              Get your link
             </a>
 
             <p className="text-xs text-white/60">
-              Stripe payments • PromoteKit tracking & payouts • Free to join
+              Stripe subscriptions • PromoteKit tracking & payouts
             </p>
 
-            <Link
-              href="#faq"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
-            >
-              Read the FAQ <span aria-hidden="true">↓</span>
-            </Link>
+            <div className="flex items-center gap-3 text-sm font-semibold">
+              <Link
+                href="#creators"
+                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
+              >
+                What you get <span aria-hidden="true">↓</span>
+              </Link>
 
-            <p className="mt-2 text-xs leading-relaxed text-white/55">
-              Relationship guidance — not medical advice, not contraception, not fertility planning.
-            </p>
+              <span className="text-white/30" aria-hidden="true">
+                •
+              </span>
+
+              <Link
+                href="#faq"
+                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
+              >
+                FAQ <span aria-hidden="true">↓</span>
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* MAIN CONTENT (reduced) */}
+        {/* MAIN CONTENT */}
         <div className="mx-auto mt-10 max-w-5xl space-y-6 md:mt-12 md:space-y-8">
+          <Section
+            id="creators"
+            title="What you get"
+            subtitle="Simple: your tracked link, transparent attribution, and recurring payouts."
+          >
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+              <CheckList
+                items={[
+                  "50% lifetime recurring commission for subscribers attributed to your link",
+                  "Unique tracked link + real‑time dashboard (PromoteKit)",
+                  "Payout timing and thresholds are shown inside your partner portal",
+                  "Creator assets + approved claim guidance (logos, screenshots, b‑roll)",
+                ]}
+              />
+              <p className="mt-4 text-xs leading-relaxed text-white/50">
+                Full terms, attribution rules, and allowed traffic are shown inside the partner
+                portal.
+              </p>
+            </div>
+          </Section>
+
           <Section
             id="details"
             title="What you’re promoting"
@@ -272,33 +289,13 @@ export default function PartnerPage() {
                 <p className="text-sm font-semibold text-white">Guardrails (important)</p>
                 <CheckList
                   items={[
-                    "Not medical advice and not a diagnostic tool",
+                    "Relationship guidance — not medical advice or diagnosis",
                     "Not contraception and not fertility planning guarantees",
                     "Does not predict individual outcomes — it provides timing context",
-                    "Use accurate, respectful language (avoid absolute claims)",
+                    "Avoid absolute claims (keep it accurate and respectful)",
                   ]}
                 />
               </div>
-            </div>
-          </Section>
-
-          <Section
-            title="What creators get"
-            subtitle="Everything you need to promote confidently — without a wall of text."
-          >
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-              <CheckList
-                items={[
-                  "Unique tracked link and real‑time dashboard (PromoteKit)",
-                  "Visibility into attributed signups, subscriptions, and earnings",
-                  "Payout history and reporting inside your account",
-                  "Creator assets (logos, screenshots, b‑roll) and approved claim guidance",
-                ]}
-              />
-              <p className="mt-4 text-xs leading-relaxed text-white/50">
-                Full terms, attribution rules, and allowed traffic are shown inside the partner
-                portal.
-              </p>
             </div>
           </Section>
 
@@ -315,10 +312,11 @@ export default function PartnerPage() {
                 </p>
               </FaqItem>
 
-              <FaqItem q="When do you pay?">
+              <FaqItem q="How do payouts work?">
                 <p>
-                  Payout cadence and any processing delays are shown in the partner portal along with
-                  your payout history.
+                  Subscriptions are processed via Stripe. Tracking and payout reporting is handled in
+                  PromoteKit. Your portal shows payout cadence, thresholds (if any), and your full
+                  payout history.
                 </p>
               </FaqItem>
 
@@ -335,65 +333,24 @@ export default function PartnerPage() {
               <div>
                 <p className="text-sm font-semibold text-white">Ready to join?</p>
                 <p className="mt-1 text-sm text-white/70">
-                  Get your tracked link + dashboard in minutes.
+                  Create your account and get your tracked link in minutes.
                 </p>
               </div>
               <a
                 href={PARTNER_PORTAL_URL}
                 className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 md:w-auto"
               >
-                Join free
+                Get your link
               </a>
             </div>
           </Section>
 
-          <Section title="Official listings" subtitle="For a quick legitimacy check before you promote.">
+          <Section
+            title="Official listings"
+            subtitle="For a quick legitimacy check before you promote."
+          >
             <OfficialLinks />
           </Section>
-        </div>
-
-        {/* Footer CTA (clean) */}
-        <div className="mx-auto mt-10 max-w-3xl text-center md:mt-12">
-          <a
-            href={PARTNER_PORTAL_URL}
-            className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 sm:w-auto"
-          >
-            Join free
-          </a>
-
-          <p className="mt-3 text-xs text-white/55">
-            Stripe payments • PromoteKit tracking & payouts • Free to join
-          </p>
-
-          <p className="mt-4 text-sm text-white/65">
-            Questions?{" "}
-            <a
-              href="mailto:support@moodmap-app.com"
-              className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-            >
-              support@moodmap-app.com
-            </a>
-          </p>
-
-          <p className="mt-4 text-xs text-white/45">
-            <Link
-              href="/terms"
-              className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-            >
-              Terms
-            </Link>{" "}
-            <span className="opacity-40">•</span>{" "}
-            <Link
-              href="/privacy-policy"
-              className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
-            >
-              Privacy
-            </Link>
-          </p>
-
-          {companyLine ? <p className="mt-3 text-xs text-white/35">{companyLine}</p> : null}
-
-          <p className="mt-4 text-xs text-white/35">Invitation link • Not indexed.</p>
         </div>
       </div>
     </main>
