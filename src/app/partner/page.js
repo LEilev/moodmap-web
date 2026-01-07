@@ -1,9 +1,12 @@
-// app/partner/page.js
+// src/app/partner/page.js
 import Link from "next/link";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 
-const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 const SITE_URL = "https://moodmap-app.com";
+const PAGE_PATH = "/partner";
+const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
+
+const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 
 // Keep consistent with layout.js
 const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
@@ -11,14 +14,30 @@ const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 /**
- * Optional: set these env vars to show a concrete earnings example.
- * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PRICE (number, e.g. "19.99")
+ * Optional env vars for showing concrete examples / hard program facts.
+ * (If not provided, we show truthful “shown in portal” language.)
+ *
+ * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PRICE (e.g. "19.99")
  * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_CURRENCY (e.g. "USD", "NOK", "EUR")
  * - NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PERIOD (e.g. "mo", "month")
+ *
+ * - NEXT_PUBLIC_MOODMAP_ATTRIBUTION_MODEL (e.g. "Last-click")
+ * - NEXT_PUBLIC_MOODMAP_ATTRIBUTION_WINDOW_DAYS (e.g. "30")
+ * - NEXT_PUBLIC_MOODMAP_PAYOUT_SCHEDULE (e.g. "Monthly (Net-30)")
+ * - NEXT_PUBLIC_MOODMAP_PAYOUT_THRESHOLD (e.g. "USD 25")
+ * - NEXT_PUBLIC_MOODMAP_LEGAL_ENTITY (e.g. "MoodMap AS")
+ * - NEXT_PUBLIC_MOODMAP_ORG_NO (e.g. "123 456 789")
  */
 const SUB_PRICE_RAW = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PRICE;
 const SUB_CURRENCY = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_CURRENCY || "USD";
 const SUB_PERIOD = process.env.NEXT_PUBLIC_MOODMAP_SUBSCRIPTION_PERIOD || "mo";
+
+const ATTRIBUTION_MODEL = process.env.NEXT_PUBLIC_MOODMAP_ATTRIBUTION_MODEL || "";
+const ATTRIBUTION_WINDOW_DAYS = process.env.NEXT_PUBLIC_MOODMAP_ATTRIBUTION_WINDOW_DAYS || "";
+const PAYOUT_SCHEDULE = process.env.NEXT_PUBLIC_MOODMAP_PAYOUT_SCHEDULE || "";
+const PAYOUT_THRESHOLD = process.env.NEXT_PUBLIC_MOODMAP_PAYOUT_THRESHOLD || "";
+const LEGAL_ENTITY = process.env.NEXT_PUBLIC_MOODMAP_LEGAL_ENTITY || "";
+const ORG_NO = process.env.NEXT_PUBLIC_MOODMAP_ORG_NO || "";
 
 export const metadata = {
   title: "Partner Program — MoodMap",
@@ -28,6 +47,29 @@ export const metadata = {
     index: false,
     follow: false,
     googleBot: { index: false, follow: false },
+  },
+  openGraph: {
+    type: "website",
+    url: PAGE_URL,
+    title: "Partner Program — MoodMap",
+    description:
+      "Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Free to join. Tracking & payouts via PromoteKit.",
+    siteName: "MoodMap",
+    images: [
+      {
+        url: "/icon.png",
+        width: 512,
+        height: 512,
+        alt: "MoodMap",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "Partner Program — MoodMap",
+    description:
+      "Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Free to join.",
+    images: ["/icon.png"],
   },
 };
 
@@ -46,7 +88,30 @@ function earningsExampleLine() {
       SUB_CURRENCY
     )}/${SUB_PERIOD} per active subscriber.`;
   }
-  return null; // Avoid $X placeholders on a “premium” page
+  return null;
+}
+
+function compactJoinTermsLine() {
+  return (
+    <>
+      <span className="text-white/80">50% lifetime recurring</span> (as long as the subscriber stays
+      active).{" "}
+      <Link
+        href="/terms"
+        className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+      >
+        Terms apply
+      </Link>
+      .
+    </>
+  );
+}
+
+function attributionSummary() {
+  const parts = [];
+  if (ATTRIBUTION_MODEL) parts.push(ATTRIBUTION_MODEL);
+  if (ATTRIBUTION_WINDOW_DAYS) parts.push(`${ATTRIBUTION_WINDOW_DAYS}-day window`);
+  return parts.length ? parts.join(" • ") : null;
 }
 
 function AccentCheck() {
@@ -107,12 +172,44 @@ function Card({ title, children, accent = false }) {
   );
 }
 
+function MiniKpi({ label, value }) {
+  if (!value) return null;
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">
+        {label}
+      </p>
+      <p className="mt-1 text-sm font-semibold text-white/80">{value}</p>
+    </div>
+  );
+}
+
+function FaqItem({ q, children }) {
+  return (
+    <details className="group rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+      <summary className="cursor-pointer list-none">
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-sm font-semibold text-white">{q}</p>
+          <span className="mt-0.5 text-white/45 transition group-open:rotate-45" aria-hidden="true">
+            +
+          </span>
+        </div>
+        <p className="mt-2 text-sm text-white/60">
+          {/* reserve space so the click target feels stable */}
+        </p>
+      </summary>
+
+      <div className="-mt-2 text-sm leading-relaxed text-white/70">{children}</div>
+    </details>
+  );
+}
+
 /**
- * Replaces the fake/placeholder product preview.
- * This is a trust element that is always true (official links), without leaking the primary flow.
+ * Trust element that is always true (official links + clear “what it is / isn't”)
  */
 function VerifyMoodMapCard() {
   const example = earningsExampleLine();
+  const attrib = attributionSummary();
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur">
@@ -124,14 +221,14 @@ function VerifyMoodMapCard() {
       </div>
 
       <p className="mt-3 text-sm leading-relaxed text-white/70">
-        Want to sanity‑check the product before joining? These are the official listings.
+        Sanity‑check the product before joining. These are the official listings.
       </p>
 
       <div className="mt-4 grid gap-3">
         <a
           href={APPSTORE_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
         >
           <span className="inline-flex items-center gap-2">
@@ -146,7 +243,7 @@ function VerifyMoodMapCard() {
         <a
           href={PLAYSTORE_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
         >
           <span className="inline-flex items-center gap-2">
@@ -161,7 +258,7 @@ function VerifyMoodMapCard() {
         <a
           href={SITE_URL}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
         >
           <span className="inline-flex items-center gap-2">
@@ -179,17 +276,52 @@ function VerifyMoodMapCard() {
       <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-4">
         <p className="text-xs font-semibold text-white/80">Partner economics</p>
         <p className="mt-1 text-xs leading-relaxed text-white/60">
-          Earn <span className="text-white/80">50% lifetime recurring</span> — paid every billing
-          cycle while the subscriber stays active (attributed to your link).
+          Earn <span className="text-white/80">50% lifetime recurring</span> for every subscriber
+          attributed to your link — paid each billing cycle while they stay active.
         </p>
+
+        <p className="mt-2 text-[11px] leading-relaxed text-white/50">
+          Commission is calculated on <span className="text-white/70">eligible subscription revenue</span>{" "}
+          (handling of platform fees, taxes, refunds/chargebacks is defined in the program terms).
+        </p>
+
         {example ? <p className="mt-2 text-xs text-white/55">{example}</p> : null}
+
         <p className="mt-2 text-[11px] text-white/45">
-          Exact pricing and payouts are shown in the partner portal.
+          {attrib ? (
+            <>
+              Attribution: <span className="text-white/60">{attrib}</span>. Full details in the
+              portal.
+            </>
+          ) : (
+            <>Attribution settings are shown in the partner portal.</>
+          )}
+        </p>
+
+        <p className="mt-2 text-[11px] text-white/45">
+          <Link
+            href="/terms"
+            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+          >
+            Terms
+          </Link>{" "}
+          <span className="opacity-40">•</span>{" "}
+          <Link
+            href="/privacy-policy"
+            className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+          >
+            Privacy
+          </Link>
         </p>
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-white/55">
-        Built in Norway. Private by design. Tracked & paid via the partner portal (PromoteKit).
+        Built in Norway. Private by design. Tracking & payouts via the partner portal (PromoteKit).
+      </p>
+
+      <p className="mt-3 text-[11px] leading-relaxed text-white/45">
+        Not medical advice. Not contraception. MoodMap provides timing context — it does not diagnose
+        or predict individual outcomes.
       </p>
     </div>
   );
@@ -201,7 +333,9 @@ function MobileStickyCTA() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-white">50% lifetime recurring</p>
-          <p className="truncate text-[11px] text-white/60">Join free • Tracking via PromoteKit</p>
+          <p className="truncate text-[11px] text-white/60">
+            Join free • Tracking via PromoteKit • Terms apply
+          </p>
         </div>
         <a
           href={PARTNER_PORTAL_URL}
@@ -217,7 +351,6 @@ function MobileStickyCTA() {
 export default function PartnerPage() {
   return (
     <main className="relative overflow-hidden bg-[#070A12] text-white">
-      {/* Sticky CTA (mobile) */}
       <MobileStickyCTA />
 
       {/* Background glow */}
@@ -227,7 +360,7 @@ export default function PartnerPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/30" />
       </div>
 
-      {/* Add extra bottom padding so content isn't hidden behind mobile sticky CTA */}
+      {/* Extra bottom padding so content isn't hidden behind mobile sticky CTA */}
       <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-14 md:pb-24 md:pt-20">
         {/* HERO */}
         <div className="mx-auto max-w-5xl">
@@ -239,75 +372,117 @@ export default function PartnerPage() {
               </p>
 
               <h1 className="mt-3 text-balance text-4xl font-semibold tracking-tight text-emerald-300 md:text-6xl">
-                Built for him. Better for both of you.
+                Earn 50% lifetime recurring.
               </h1>
 
-              <p className="mt-5 text-pretty text-base leading-relaxed text-white/85 md:text-lg">
-                A premium daily briefing that translates cycle timing into relationship context —
-                so he knows what matters today.
+              <p className="mt-4 text-pretty text-base leading-relaxed text-white/85 md:text-lg">
+                Promote a premium daily briefing that turns cycle timing into relationship context —
+                so partners communicate better with less guesswork.
               </p>
 
-              {/* Offer callout (high contrast, above fold) */}
+              <p className="mt-3 text-sm text-white/70">
+                <span className="italic text-white/70">Built for him. Better for both of you.</span>
+              </p>
+
+              {/* Offer callout (tight + trust-forward) */}
               <div className="mt-6 rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4 text-left">
                 <p className="text-sm font-semibold text-white">
-                  Earn 50% lifetime recurring commissions.
+                  {compactJoinTermsLine()}
                 </p>
-                <p className="mt-1 text-sm leading-relaxed text-white/80">
-                  Paid every billing cycle for as long as the subscriber remains active (attributed
-                  to your link).
-                </p>
-
-                <p className="mt-3 text-xs leading-relaxed text-white/60">
+                <p className="mt-2 text-sm leading-relaxed text-white/80">
                   Free to join. Setup takes minutes. Tracking & payouts via PromoteKit.
+                </p>
+                <p className="mt-3 text-xs leading-relaxed text-white/60">
+                  Educational relationship tool — not medical advice, not contraception, not fertility
+                  planning.
                 </p>
               </div>
 
-              {/* Primary CTA only */}
+              {/* Primary CTA */}
               <div className="mt-6 flex flex-col items-center gap-2 md:items-start">
                 <a
                   href={PARTNER_PORTAL_URL}
                   className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 sm:w-auto"
                 >
-                  Join the Partner Program
+                  Join free
                 </a>
 
-                {/* Downplayed “details” link */}
-                <Link
-                  href="#details"
-                  className="mt-1 inline-flex items-center gap-2 text-sm font-semibold text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
-                >
-                  See details <span aria-hidden="true">↓</span>
-                </Link>
+                <div className="flex items-center gap-3 text-sm font-semibold">
+                  <Link
+                    href="#faq"
+                    className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
+                  >
+                    Read the FAQ <span aria-hidden="true">↓</span>
+                  </Link>
+
+                  <span className="text-white/30" aria-hidden="true">
+                    •
+                  </span>
+
+                  <Link
+                    href="#details"
+                    className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
+                  >
+                    What you’re promoting <span aria-hidden="true">↓</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Legitimacy strip (short, not salesy) */}
+              <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <MiniKpi
+                  label="Tracking"
+                  value="PromoteKit portal + dashboard"
+                />
+                <MiniKpi
+                  label="Policies"
+                  value="Terms + Privacy on-site"
+                />
+                <MiniKpi
+                  label="Support"
+                  value="support@moodmap-app.com"
+                />
+                <MiniKpi
+                  label="Company"
+                  value={
+                    LEGAL_ENTITY && ORG_NO
+                      ? `${LEGAL_ENTITY} • Org. no. ${ORG_NO}`
+                      : LEGAL_ENTITY
+                      ? LEGAL_ENTITY
+                      : ORG_NO
+                      ? `Org. no. ${ORG_NO}`
+                      : ""
+                  }
+                />
               </div>
             </div>
 
-            {/* Right: Trust links instead of fake preview */}
+            {/* Right */}
             <div className="mx-auto w-full max-w-sm md:mx-0 md:justify-self-end">
               <VerifyMoodMapCard />
             </div>
           </div>
         </div>
 
-        {/* 3 cards */}
+        {/* 3 cards (tight + conversion-relevant) */}
         <div className="mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 md:mt-12 md:grid-cols-3">
-          <Card title="A real upgrade for couples">
-            Helps couples avoid misreads by giving him the right context at the right time — clearer
-            timing, better communication, fewer unnecessary conflicts.
+          <Card title="Recurring offer that retains">
+            MoodMap is a daily habit product — strong fit for recurring revenue share when retention
+            is driven by real day‑to‑day utility.
           </Card>
 
-          <Card title="50% recurring — lifetime" accent>
-            Earn <span className="text-white">50% of subscription revenue</span> from every subscriber
-            attributed to your link — <span className="text-white">each billing cycle</span>, for as
-            long as they stay subscribed.
+          <Card title="Clear positioning" accent>
+            Designed for men, payoff shared: clearer timing, better conversations, fewer misreads.
+            Easy to explain in one sentence.
           </Card>
 
           <Card title="Clean tracking, transparent payouts">
-            Get your own tracked link + dashboard via the partner portal (PromoteKit). Track signups
-            and subscriptions clearly, in real time.
+            Your tracked link + dashboard in PromoteKit. See attributed signups/subscribers and payouts
+            in one place.
           </Card>
         </div>
 
-        {/* Details */}
+        {/* DETAILS */}
         <div className="mt-10 space-y-6 md:mt-12 md:space-y-8">
           <Section
             id="details"
@@ -316,25 +491,27 @@ export default function PartnerPage() {
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <h3 className="text-sm font-semibold text-white">For him</h3>
+                <h3 className="text-sm font-semibold text-white">
+                  For the partner using MoodMap
+                </h3>
                 <CheckList
                   items={[
-                    "Fewer misreads, better timing",
+                    "Better timing, fewer misreads",
                     "Clear “what matters today” context",
                     "Practical language for communication",
-                    "Less guessing, more confidence",
                   ]}
                 />
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <h3 className="text-sm font-semibold text-white">For her</h3>
+                <h3 className="text-sm font-semibold text-white">
+                  For the partner who benefits
+                </h3>
                 <CheckList
                   items={[
-                    "Feeling understood (without explaining everything)",
-                    "Better emotional timing and support",
-                    "Less friction from “wrong moment” conversations",
-                    "More empathy in daily life",
+                    "Feels understood (without over-explaining)",
+                    "Better emotional timing & support",
+                    "Less friction from “wrong moment” talks",
                   ]}
                 />
               </div>
@@ -343,10 +520,9 @@ export default function PartnerPage() {
                 <h3 className="text-sm font-semibold text-white">For the relationship</h3>
                 <CheckList
                   items={[
-                    "Fewer unnecessary conflicts",
+                    "Fewer avoidable conflicts",
                     "More alignment and closeness",
-                    "Better conversations, better outcomes",
-                    "A calmer baseline over time",
+                    "Calmer baseline over time",
                   ]}
                 />
               </div>
@@ -354,58 +530,154 @@ export default function PartnerPage() {
 
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm leading-relaxed text-white/75 backdrop-blur">
               <span className="font-semibold text-white">He uses it — she feels it.</span> MoodMap is
-              designed for men, but the payoff is shared: more empathy, better timing, fewer
-              avoidable misreads.
+              designed for men, but the payoff is shared: more empathy, better timing, fewer avoidable
+              misreads.
             </div>
           </Section>
 
           <Section
-            title="Trust & science"
-            subtitle="Reproductive endocrinology → fertility timing → relationship context. Clear about uncertainty."
+            title="What creators get"
+            subtitle="Creator-ready assets and guardrails — so you can promote confidently and accurately."
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm leading-relaxed text-white/75 backdrop-blur">
-                <p>
-                  MoodMap is informed by{" "}
-                  <span className="text-white">
-                    reproductive endocrinology, neuroendocrinology, and psychophysiology
-                  </span>
-                  , using the canonical phase model{" "}
-                  <span className="text-white">(follicular → ovulatory → luteal → menstrual)</span>{" "}
-                  plus <span className="text-white">fertility‑aware timing</span> (fertile window +
-                  ovulation estimates).
-                </p>
-                <p className="mt-3">
-                  We translate that biology through{" "}
-                  <span className="text-white">behavioral psychology and relationship science</span>{" "}
-                  into short daily context briefings — practical, respectful, immediately usable.
-                </p>
-                <p className="mt-3">
-                  Cycles vary. Ovulation is an <span className="text-white">estimate</span>, not a
-                  timestamp. MoodMap models timing as{" "}
-                  <span className="text-white">windows</span>, not certainties — focused on what to
-                  do <span className="text-white">today</span>.
-                </p>
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                <h3 className="text-sm font-semibold text-white">In the partner portal</h3>
+                <CheckList
+                  items={[
+                    "Tracked link + real-time dashboard",
+                    "Attributed signups / subscribers visibility",
+                    "Payout history + reporting",
+                    "Swipe copy + hooks you can adapt",
+                    "Media kit (logos, screenshots, b-roll)",
+                    "Claim guidelines (what to say / avoid)",
+                  ]}
+                />
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm leading-relaxed text-white/75 backdrop-blur">
-                <p className="font-semibold text-white">What this means in practice</p>
-                <CheckList
-                  items={[
-                    "Phase + fertile‑window awareness (without chart obsession)",
-                    "Better timing for conversations, support, and intimacy",
-                    "Actionable daily briefings (quick to read, easy to share)",
-                    "Premium tone: practical, respectful, non‑moralizing",
-                  ]}
-                />
-                <p className="mt-4 text-xs text-white/55">
-                  Educational tool — not medical advice or contraception. Timing is modeled as
-                  estimates and windows.
+                <p className="font-semibold text-white">Why this matters</p>
+                <p className="mt-2 text-white/70">
+                  Creators win when tracking is clean and messaging is safe. We optimize for long-term
+                  trust: realistic claims, clear disclaimers, and transparent attribution.
+                </p>
+
+                <div className="mt-5 rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs font-semibold text-white/80">Plain-English terms summary</p>
+                  <ul className="mt-2 space-y-2 text-xs leading-relaxed text-white/60">
+                    <li>
+                      • <span className="text-white/75">50% lifetime recurring</span> while the subscriber
+                      stays active (attributed to your link).
+                    </li>
+                    <li>
+                      • Commission is calculated on <span className="text-white/70">eligible subscription revenue</span>{" "}
+                      (fees/taxes/refunds handled per terms).
+                    </li>
+                    <li>
+                      • Full terms, attribution rules, and payouts are shown inside the portal.
+                    </li>
+                  </ul>
+                </div>
+
+                <p className="mt-4 text-[11px] text-white/45">
+                  See{" "}
+                  <Link
+                    href="/terms"
+                    className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+                  >
+                    Terms
+                  </Link>{" "}
+                  and{" "}
+                  <Link
+                    href="/privacy-policy"
+                    className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
                 </p>
               </div>
             </div>
+          </Section>
 
-            {/* Mid-page CTA */}
+          <Section
+            id="faq"
+            title="FAQ (2 minutes)"
+            subtitle="The practical questions creators ask before they promote."
+          >
+            <div className="grid grid-cols-1 gap-4">
+              <FaqItem q="How does attribution work (cookie window / model)?">
+                <p>
+                  Attribution is tracked via the PromoteKit portal.{" "}
+                  {attributionSummary() ? (
+                    <>
+                      Current settings: <span className="text-white/80">{attributionSummary()}</span>.
+                    </>
+                  ) : (
+                    <>
+                      The exact attribution model and window are shown in your dashboard.
+                    </>
+                  )}{" "}
+                  You’ll be able to verify attributed subscribers and earnings directly in the portal.
+                </p>
+              </FaqItem>
+
+              <FaqItem q="What about App Store / Google Play installs?">
+                <p>
+                  We use official store listings (no unofficial APKs). If a user comes through your
+                  tracked flow and later subscribes, attribution is reflected in the partner portal
+                  where technically possible. Your dashboard is the source of truth for which
+                  subscribers are attributed to you.
+                </p>
+              </FaqItem>
+
+              <FaqItem q="When do you pay?">
+                <p>
+                  {PAYOUT_SCHEDULE ? (
+                    <>
+                      Payout schedule: <span className="text-white/80">{PAYOUT_SCHEDULE}</span>.
+                    </>
+                  ) : (
+                    <>
+                      Payout timing is shown in the partner portal (including the payout cadence and
+                      any processing delays).
+                    </>
+                  )}{" "}
+                  All payout details are visible inside your account.
+                </p>
+              </FaqItem>
+
+              <FaqItem q="Is there a minimum payout threshold?">
+                <p>
+                  {PAYOUT_THRESHOLD ? (
+                    <>
+                      Minimum payout: <span className="text-white/80">{PAYOUT_THRESHOLD}</span>.
+                    </>
+                  ) : (
+                    <>
+                      Any minimum payout threshold (if applicable) is shown in the partner portal.
+                    </>
+                  )}
+                </p>
+              </FaqItem>
+
+              <FaqItem q="What happens on refunds, cancellations, or chargebacks?">
+                <p>
+                  Earnings are paid for active, eligible subscriptions. Refunds/chargebacks and early
+                  cancellations are handled according to the program terms and may adjust the
+                  associated commission in your payout history.
+                </p>
+              </FaqItem>
+
+              <FaqItem q="What traffic is allowed (paid ads, email, brand bidding)?">
+                <p>
+                  Allowed promotion methods are defined in the program terms inside the portal. In
+                  practice, most creators use organic social content, podcasts, newsletters, and owned
+                  communities. If you want to run paid search or brand bidding, check the portal rules
+                  first (or email support).
+                </p>
+              </FaqItem>
+            </div>
+
             <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur md:flex-row md:text-left">
               <div>
                 <p className="text-sm font-semibold text-white">Ready to join?</p>
@@ -423,91 +695,63 @@ export default function PartnerPage() {
           </Section>
 
           <Section
-            title="Best‑fit creators & audiences"
-            subtitle="Broad creator appeal — strongest in relationship content, couples content, and cycle education with a partner‑friendly framing."
+            title="Creator-safe framing"
+            subtitle="Keep it accurate, high-trust, and platform-friendly."
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <h3 className="text-sm font-semibold text-white">Where it wins</h3>
+                <h3 className="text-sm font-semibold text-white">What you can say</h3>
                 <CheckList
                   items={[
-                    "Relationship, dating, and communication creators (men, women, or couples)",
-                    "Women’s health / cycle educators who want a partner‑friendly tool",
-                    "Men’s lifestyle / self‑improvement with a relationship audience",
-                    "Couples creators focused on practical tools and dynamics",
-                    "Audiences 25–45: committed relationships, dating seriously, or married",
+                    "Daily briefings that provide timing context (not certainty)",
+                    "Helps reduce misreads and improve conversation timing",
+                    "Models timing as windows — cycles vary",
+                    "Relationship guidance, not medical advice",
                   ]}
                 />
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <h3 className="text-sm font-semibold text-white">Not the best fit if</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  Your content requires you to provide clinical guidance, diagnosis, or treatment
-                  recommendations. MoodMap is a consumer product for everyday context — not a
-                  substitute for medical care.
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-white/70">
-                  Creators who frame cycle timing as <span className="text-white">context</span>{" "}
-                  (not blame) tend to perform best.
-                </p>
+                <h3 className="text-sm font-semibold text-white">Avoid claims like</h3>
+                <CheckList
+                  items={[
+                    "“Predicts mood/behavior”",
+                    "“Explains or justifies reactions”",
+                    "“Contraception” or fertility planning guarantees",
+                    "Medical/clinical diagnosis or treatment claims",
+                  ]}
+                />
               </div>
             </div>
-          </Section>
 
-          <Section title="How it works" subtitle="Simple flow. Clean attribution. Transparent payouts.">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-xs font-semibold text-white/60">1) Join</p>
-                <h3 className="mt-2 text-sm font-semibold text-white">Sign up in the partner portal</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  Join via PromoteKit (free). Setup takes minutes.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-xs font-semibold text-white/60">2) Get your link</p>
-                <h3 className="mt-2 text-sm font-semibold text-white">Use it anywhere</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  You’ll get a tracked link you can use in content, newsletters, or your bio.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-xs font-semibold text-white/60">3) Earn</p>
-                <h3 className="mt-2 text-sm font-semibold text-white">
-                  50% recurring revenue share — lifetime
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  Earn <span className="text-white">50% recurring</span> subscription revenue for
-                  every subscriber attributed to your link —{" "}
-                  <span className="text-white">every billing cycle</span>, for as long as they
-                  remain subscribed.
-                </p>
-              </div>
+            <div className="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5">
+              <p className="text-xs font-semibold text-white/80">Copy‑paste (safe description)</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">
+                “MoodMap is a premium daily briefing that turns cycle timing into relationship context —
+                helping couples avoid misreads and bad timing. It models timing as windows (cycles vary)
+                and is for relationship guidance — not medical advice or contraception.”
+              </p>
             </div>
           </Section>
 
           <Section
             title="Creator quick start"
-            subtitle="Creator‑ready angles + a copy‑paste script you can use today."
+            subtitle="3 angles + one short script you can use today."
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
                 <h3 className="text-sm font-semibold text-white">Angles that work</h3>
                 <ul className="mt-3 space-y-2 text-sm leading-relaxed text-white/70">
                   <li>
-                    <span className="text-white">“Same message. Wrong day. Disaster.”</span>{" "}
-                    Timing is leverage.
+                    <span className="text-white">“Same message. Wrong day.”</span> Timing is leverage.
                   </li>
                   <li>
-                    <span className="text-white">“He uses it — she feels it.”</span>{" "}
-                    A small daily habit that changes how he shows up.
+                    <span className="text-white">“He uses it — she feels it.”</span> Small daily habit,
+                    shared payoff.
                   </li>
                   <li>
-                    <span className="text-white">“Fertility‑aware, relationship‑first.”</span>{" "}
-                    Phase timing + fertile window / ovulation estimates — translated into what
-                    matters today.
+                    <span className="text-white">“Context, not prediction.”</span> It’s about better
+                    interpretation, not certainty.
                   </li>
                 </ul>
 
@@ -517,19 +761,17 @@ export default function PartnerPage() {
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <h3 className="text-sm font-semibold text-white">Copy‑paste story script</h3>
+                <h3 className="text-sm font-semibold text-white">Short script</h3>
                 <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-4 text-sm leading-relaxed text-white/75">
                   <p>
-                    I’ve been testing MoodMap — it’s a premium app that gives a short daily “context
-                    briefing” based on cycle timing, so you don’t misread the moment.
+                    I’ve been testing MoodMap — it’s a premium daily “context briefing” based on cycle
+                    timing, so you don’t misread the moment.
                   </p>
                   <p className="mt-3">
-                    It’s fertility‑aware (phase timing + fertile window / ovulation estimates), but
-                    honest about variability — timing is modeled as windows, not certainties.
+                    It models timing as windows (cycles vary). It’s relationship guidance — not medical
+                    advice or contraception.
                   </p>
-                  <p className="mt-3">
-                    If you’re in a relationship and want things to feel easier, check it out.
-                  </p>
+                  <p className="mt-3">If you’re in a relationship and want things to feel easier, check it out.</p>
                 </div>
               </div>
             </div>
@@ -542,10 +784,12 @@ export default function PartnerPage() {
             href={PARTNER_PORTAL_URL}
             className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 sm:w-auto"
           >
-            Join the Partner Program
+            Join free
           </a>
 
-          <p className="mt-3 text-xs text-white/55">Free to join. Tracking & payouts via PromoteKit.</p>
+          <p className="mt-3 text-xs text-white/55">
+            {compactJoinTermsLine()} Tracking & payouts via PromoteKit.
+          </p>
 
           <p className="mt-4 text-sm text-white/65">
             Questions?{" "}
@@ -553,9 +797,8 @@ export default function PartnerPage() {
               href="mailto:support@moodmap-app.com"
               className="underline decoration-white/20 underline-offset-4 hover:decoration-white/40"
             >
-              Contact us
-            </a>{" "}
-            (support@moodmap-app.com).
+              support@moodmap-app.com
+            </a>
           </p>
 
           <p className="mt-4 text-xs text-white/35">Invitation link • Not indexed.</p>
