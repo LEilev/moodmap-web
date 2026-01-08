@@ -54,6 +54,95 @@ function Eyebrow({ children }) {
   );
 }
 
+function StepCard({ step, title, detail }) {
+  return (
+    <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center shadow-sm shadow-black/20 backdrop-blur-sm">
+      <div className="flex items-center justify-center gap-2">
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-[11px] font-semibold text-white/70">
+          {step}
+        </span>
+        <span className="text-xs font-semibold text-white/85">{title}</span>
+      </div>
+      <p className="mt-1 text-[11px] leading-snug text-white/55">{detail}</p>
+    </div>
+  );
+}
+
+function StepArrow() {
+  return (
+    <span
+      className="mx-auto select-none text-white/35 sm:mx-0"
+      aria-hidden="true"
+    >
+      <span className="sm:hidden">↓</span>
+      <span className="hidden sm:inline">→</span>
+    </span>
+  );
+}
+
+function EarningsCard() {
+  return (
+    <div className="w-full max-w-xl">
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-sm shadow-black/20 backdrop-blur-sm">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+          <p className="text-xs font-semibold text-white/80">
+            Earnings (intro pricing)
+          </p>
+          <p className="text-[11px] text-white/45">Prices may change over time.</p>
+        </div>
+
+        <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
+          <div className="overflow-x-auto">
+            <table className="min-w-[360px] w-full text-left text-xs">
+              <thead className="bg-white/5 text-white/60">
+                <tr>
+                  <th scope="col" className="px-3 py-2 font-medium">
+                    Plan
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right font-medium">
+                    Price
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right font-medium">
+                    Your 50%
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10 text-white/80">
+                <tr>
+                  <td className="px-3 py-2">Monthly</td>
+                  <td className="px-3 py-2 text-right">
+                    {INTRO_MONTHLY_PRICE.toFixed(2)}/mo
+                  </td>
+                  <td className="px-3 py-2 text-right">~{MONTHLY_EARNING}/mo</td>
+                </tr>
+                <tr>
+                  <td className="px-3 py-2">Annual</td>
+                  <td className="px-3 py-2 text-right">
+                    {INTRO_YEARLY_PRICE.toFixed(2)}/yr
+                  </td>
+                  <td className="px-3 py-2 text-right">~{YEARLY_EARNING}/yr</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <p className="mt-3 text-[11px] leading-relaxed text-white/45">
+          Earnings are per active subscriber attributed to your link.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function MetaPill({ children }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/60">
+      {children}
+    </span>
+  );
+}
+
 export default function PartnerPage() {
   return (
     <main className="relative overflow-hidden bg-[#070A12] text-white">
@@ -88,10 +177,10 @@ export default function PartnerPage() {
 
           {/* Proof anchor (over the fold) */}
           <p className="mt-3 text-xs text-white/60">
-            Private by design. Built in Norway. Subscriptions via Stripe.
+            Private by design. Built in Norway.
           </p>
 
-          <div className="mt-7 flex flex-col items-center gap-3">
+          <div className="mt-7 flex flex-col items-center gap-5">
             <a
               href={PARTNER_PORTAL_URL}
               target="_blank"
@@ -101,26 +190,39 @@ export default function PartnerPage() {
               Get your link
             </a>
 
-            {/* 3-step flow */}
-            <p className="text-xs text-white/65">
-              1) Get your link → 2) Share it → 3) Earn 50% recurring on every
-              active subscriber.
-            </p>
+            {/* 3-step flow (boxed) */}
+            <div className="w-full max-w-3xl">
+              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-3">
+                <StepCard
+                  step="1"
+                  title="Get your link"
+                  detail="Instant access via PromoteKit"
+                />
+                <StepArrow />
+                <StepCard
+                  step="2"
+                  title="Share it"
+                  detail="Bio link, posts, newsletter"
+                />
+                <StepArrow />
+                <StepCard
+                  step="3"
+                  title="Earn recurring"
+                  detail="50% on active subscribers"
+                />
+              </div>
+            </div>
 
-            {/* Earnings intuition */}
-            <p className="text-xs leading-relaxed text-white/60">
-              Earnings (intro pricing): ~{MONTHLY_EARNING}/mo per monthly
-              subscriber (50% of {INTRO_MONTHLY_PRICE.toFixed(2)}/mo) and
-              ~{YEARLY_EARNING}/yr per annual subscriber (50% of{" "}
-              {INTRO_YEARLY_PRICE.toFixed(2)}/yr).
-              <span className="text-white/45"> Prices may change over time.</span>
-            </p>
+            {/* Earnings table */}
+            <EarningsCard />
 
-            <p className="text-xs text-white/60">
-              Tracking & payouts via PromoteKit.
-            </p>
+            {/* Infrastructure / trust pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <MetaPill>Subscriptions via Stripe</MetaPill>
+              <MetaPill>Tracking & payouts via PromoteKit</MetaPill>
+            </div>
 
-            <p className="mt-2 text-xs leading-relaxed text-white/55">
+            <p className="mt-1 text-xs leading-relaxed text-white/55">
               Context, not certainty. Not contraception. Not fertility planning.
             </p>
           </div>
