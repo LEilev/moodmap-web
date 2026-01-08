@@ -152,6 +152,19 @@ function MetaPill({ children }) {
   );
 }
 
+function SecondaryCTA() {
+  return (
+    <a
+      href={PARTNER_PORTAL_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.05] px-5 py-2 text-xs font-semibold text-white/80 shadow-sm shadow-black/20 transition hover:bg-white/[0.08] hover:text-white"
+    >
+      Get your link
+    </a>
+  );
+}
+
 export default function PartnerPage() {
   return (
     <main className="relative overflow-hidden bg-[#070A12] text-white">
@@ -199,36 +212,39 @@ export default function PartnerPage() {
               Get your link
             </a>
 
-            {/* 3-step flow (boxed) */}
-            <div className="w-full max-w-3xl">
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
-                How it works
-              </p>
-              <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-3">
-                <StepCard
-                  step="1"
-                  title="Get your link"
-                  detail="Instant access via PromoteKit"
-                />
-                <StepArrow />
-                <StepCard
-                  step="2"
-                  title="Share it"
-                  detail="Bio link, posts, newsletter"
-                />
-                <StepArrow />
-                <StepCard
-                  step="3"
-                  title="Earn recurring"
-                  detail="50% on active subscribers"
-                />
+            {/* Steps + Earnings grouped tighter */}
+            <div className="flex w-full flex-col items-center gap-3">
+              <div className="w-full max-w-3xl">
+                <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
+                  How it works
+                </p>
+                <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-3">
+                  <StepCard
+                    step="1"
+                    title="Get your link"
+                    detail="Instant access via PromoteKit"
+                  />
+                  <StepArrow />
+                  <StepCard
+                    step="2"
+                    title="Share it"
+                    detail="Bio link, posts, newsletter"
+                  />
+                  <StepArrow />
+                  <StepCard
+                    step="3"
+                    title="Earn recurring"
+                    detail="50% on active subscribers"
+                  />
+                </div>
               </div>
+
+              <EarningsCard />
+
+              {/* Secondary CTA */}
+              <SecondaryCTA />
             </div>
 
-            {/* Earnings table */}
-            <EarningsCard />
-
-            {/* Infrastructure / trust pills */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               <MetaPill>Subscriptions via Stripe</MetaPill>
               <MetaPill>Tracking & payouts via PromoteKit</MetaPill>
