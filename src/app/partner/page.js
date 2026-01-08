@@ -50,6 +50,14 @@ function AccentCheck() {
   );
 }
 
+function Eyebrow({ children }) {
+  return (
+    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
+      {children}
+    </p>
+  );
+}
+
 function CheckList({ items }) {
   return (
     <ul className="mt-3 space-y-2 text-sm leading-relaxed text-white/70">
@@ -137,17 +145,18 @@ export default function PartnerPage() {
       <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-14 md:pb-24 md:pt-20">
         {/* HERO (decision UI, not a manual) */}
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
-            MoodMap Partner Program
-          </p>
+          {/* Eyebrow */}
+          <Eyebrow>MoodMap Partner Program</Eyebrow>
 
           <h1 className="mt-3 text-balance text-4xl font-semibold tracking-tight text-emerald-300 md:text-6xl">
             Earn 50% lifetime recurring.
           </h1>
 
           <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-relaxed text-white/85 md:text-lg">
-            Promote MoodMap — a premium daily briefing that turns cycle timing into practical
-            relationship context, so couples communicate better with less guesswork.
+            Promote MoodMap — a premium daily relationship briefing for men. Each morning, it
+            translates the hormone‑driven phases of the menstrual cycle into practical relationship
+            context — what’s more likely to feel high‑friction vs low‑friction today, and which
+            conversations tend to land better (or worse).
           </p>
 
           <p className="mt-4 text-sm text-white/70">Built for men. Better timing for both partners.</p>
@@ -165,7 +174,7 @@ export default function PartnerPage() {
             </p>
 
             <p className="mt-2 text-xs leading-relaxed text-white/55">
-              Relationship guidance — not medical advice, not contraception, not fertility planning.
+              Context, not certainty. Not contraception. Not fertility planning.
             </p>
           </div>
         </div>
@@ -188,26 +197,27 @@ export default function PartnerPage() {
               />
               <p className="mt-4 text-xs leading-relaxed text-white/50">
                 We keep the program lightweight and high-trust — use common sense, keep claims
-                accurate, and avoid absolute/medical guarantees.
+                accurate, and avoid absolute guarantees or health claims.
               </p>
             </div>
           </Section>
 
           <Section
             id="what-you-point-to"
-            title="What you’re pointing people to"
-            subtitle="Your audience gets the full story on moodmap-app.com. This is the one‑sentence version."
+            title="What you’re promoting"
+            subtitle="A clear description you can say out loud — plus where your audience lands."
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
                 <p className="text-sm font-semibold text-white">One‑liner you can use</p>
                 <p className="mt-3 text-sm leading-relaxed text-white/70">
-                  “MoodMap is a premium daily briefing for men that turns cycle timing into
-                  relationship context — helping couples avoid misreads and improve conversation
-                  timing.”
+                  “MoodMap is a premium daily relationship briefing for men. It translates the
+                  hormone‑driven phases of the menstrual cycle into practical relationship context
+                  — so you’re less likely to misread the room and more likely to time conversations
+                  well.”
                 </p>
                 <p className="mt-4 text-xs leading-relaxed text-white/55">
-                  Keep it truthful: context, not prediction. Cycles vary person to person.
+                  Keep it truthful: context, not certainty. Cycles vary person to person.
                 </p>
               </div>
 
@@ -258,9 +268,9 @@ export default function PartnerPage() {
 
               <FaqItem q="What promotion methods are allowed?">
                 <p>
-                  Use common sense and keep claims accurate (avoid medical or absolute guarantees).
-                  Organic content is the typical fit. If you want to run paid ads, brand bidding, or
-                  anything that could be ambiguous, email support first.
+                  Use common sense and keep claims accurate (avoid absolute guarantees or health
+                  claims). Organic content is the typical fit. If you want to run paid ads, brand
+                  bidding, or anything that could be ambiguous, email support first.
                 </p>
               </FaqItem>
             </div>
