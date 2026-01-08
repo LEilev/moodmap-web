@@ -66,10 +66,8 @@ export default function PartnerPage() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-relaxed text-white/85 md:text-lg">
-            Promote MoodMap — a premium daily relationship briefing for men. Each morning, it
-            translates the hormone-driven phases of the menstrual cycle into practical relationship
-            context — what’s more likely to feel high-friction vs low-friction today, and which
-            conversations tend to land better (or worse).
+           Promote MoodMap — a premium daily relationship briefing for men.
+		   Based on her cycle, translated into practical relationship context.
           </p>
 
           <p className="mt-4 text-sm text-white/70">Built for men. Better timing for both partners.</p>
