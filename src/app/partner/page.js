@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 const SITE_URL = "https://moodmap-app.com";
 const PAGE_PATH = "/partner";
@@ -7,15 +6,10 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 
 const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 
-// Keep consistent with layout.js
-const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
-const PLAYSTORE_URL =
-  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
-
 export const metadata = {
   title: "Partner Program — MoodMap",
   description:
-    "Join the MoodMap Partner Program. Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Subscriptions processed via Stripe. Tracking & payouts via PromoteKit.",
+    "Join the MoodMap Partner Program. Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Subscriptions via Stripe. Tracking & payouts via PromoteKit.",
   robots: {
     index: false,
     follow: false,
@@ -26,7 +20,7 @@ export const metadata = {
     url: PAGE_URL,
     title: "Partner Program — MoodMap",
     description:
-      "Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Subscriptions processed via Stripe. Tracking & payouts via PromoteKit.",
+      "Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Subscriptions via Stripe. Tracking & payouts via PromoteKit.",
     siteName: "MoodMap",
     images: [
       {
@@ -41,7 +35,7 @@ export const metadata = {
     card: "summary",
     title: "Partner Program — MoodMap",
     description:
-      "Earn 50% lifetime recurring revenue share. Subscriptions processed via Stripe. Tracking & payouts via PromoteKit.",
+      "Earn 50% lifetime recurring. Subscriptions via Stripe. Tracking & payouts via PromoteKit.",
     images: ["/icon.png"],
   },
 };
@@ -108,54 +102,6 @@ function FaqItem({ q, children }) {
   );
 }
 
-function OfficialLinks() {
-  return (
-    <div className="grid gap-3 md:grid-cols-3">
-      <a
-        href={APPSTORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
-      >
-        <span className="inline-flex items-center gap-2">
-          <FaApple aria-hidden="true" />
-          App Store
-        </span>
-        <span className="text-white/45" aria-hidden="true">
-          ↗
-        </span>
-      </a>
-
-      <a
-        href={PLAYSTORE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
-      >
-        <span className="inline-flex items-center gap-2">
-          <FaGooglePlay aria-hidden="true" />
-          Google Play
-        </span>
-        <span className="text-white/45" aria-hidden="true">
-          ↗
-        </span>
-      </a>
-
-      <a
-        href={SITE_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-white/85 transition hover:bg-white/10"
-      >
-        <span className="inline-flex items-center gap-2">moodmap-app.com</span>
-        <span className="text-white/45" aria-hidden="true">
-          ↗
-        </span>
-      </a>
-    </div>
-  );
-}
-
 function MobileStickyCTA() {
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#070A12]/80 backdrop-blur md:hidden">
@@ -163,7 +109,7 @@ function MobileStickyCTA() {
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-white">50% lifetime recurring</p>
           <p className="truncate text-[11px] text-white/60">
-            Stripe subscriptions • PromoteKit tracking & payouts
+            Subscriptions via Stripe • Tracking & payouts via PromoteKit
           </p>
         </div>
         <a
@@ -191,7 +137,7 @@ export default function PartnerPage() {
 
       {/* Extra bottom padding so content isn't hidden behind mobile sticky CTA */}
       <div className="relative mx-auto max-w-6xl px-6 pb-28 pt-14 md:pb-24 md:pt-20">
-        {/* HERO (simplified) */}
+        {/* HERO (decision UI, not a manual) */}
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
             MoodMap Partner Program
@@ -202,13 +148,11 @@ export default function PartnerPage() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-relaxed text-white/85 md:text-lg">
-            Promote a premium daily briefing that turns cycle timing into practical relationship
-            context — helping couples communicate better with less guesswork.
+            Promote MoodMap — a premium daily briefing that turns cycle timing into practical
+            relationship context, so couples communicate better with less guesswork.
           </p>
 
-          <p className="mt-4 text-sm text-white/70">
-            Built for men. Better timing for both partners.
-          </p>
+          <p className="mt-4 text-sm text-white/70">Built for men. Better timing for both partners.</p>
 
           <div className="mt-7 flex flex-col items-center gap-3">
             <a
@@ -219,12 +163,12 @@ export default function PartnerPage() {
             </a>
 
             <p className="text-xs text-white/60">
-              Stripe subscriptions • PromoteKit tracking & payouts
+              Subscriptions via Stripe • Tracking & payouts via PromoteKit
             </p>
 
-            <div className="flex items-center gap-3 text-sm font-semibold">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
               <Link
-                href="#creators"
+                href="#what-you-get"
                 className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
               >
                 What you get <span aria-hidden="true">↓</span>
@@ -240,61 +184,88 @@ export default function PartnerPage() {
               >
                 FAQ <span aria-hidden="true">↓</span>
               </Link>
+
+              <span className="text-white/30" aria-hidden="true">
+                •
+              </span>
+
+              <a
+                href={SITE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
+              >
+                View MoodMap site <span aria-hidden="true">↗</span>
+              </a>
             </div>
+
+            <p className="mt-2 text-xs leading-relaxed text-white/55">
+              Relationship guidance — not medical advice, not contraception, not fertility planning.
+            </p>
           </div>
         </div>
 
-        {/* MAIN CONTENT */}
+        {/* MAIN CONTENT (tight, conversion-relevant) */}
         <div className="mx-auto mt-10 max-w-5xl space-y-6 md:mt-12 md:space-y-8">
           <Section
-            id="creators"
+            id="what-you-get"
             title="What you get"
             subtitle="Simple: your tracked link, transparent attribution, and recurring payouts."
           >
             <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
               <CheckList
                 items={[
-                  "50% lifetime recurring commission for subscribers attributed to your link",
-                  "Unique tracked link + real‑time dashboard (PromoteKit)",
-                  "Payout timing and thresholds are shown inside your partner portal",
-                  "Creator assets + approved claim guidance (logos, screenshots, b‑roll)",
+                  "50% lifetime recurring commission on subscribers attributed to your link",
+                  "A unique tracked link and real-time dashboard (PromoteKit)",
+                  "Clear visibility into attributed subscriptions and earnings",
+                  "Payout status and timing are visible inside your partner account",
                 ]}
               />
               <p className="mt-4 text-xs leading-relaxed text-white/50">
-                Full terms, attribution rules, and allowed traffic are shown inside the partner
-                portal.
+                We keep the program lightweight and high-trust — use common sense, keep claims
+                accurate, and avoid absolute/medical guarantees.
               </p>
             </div>
           </Section>
 
           <Section
-            id="details"
-            title="What you’re promoting"
-            subtitle="Cycle timing → practical relationship context. Context, not prediction."
+            id="what-you-point-to"
+            title="What you’re pointing people to"
+            subtitle="Your audience gets the full story on moodmap-app.com. This is the one‑sentence version."
           >
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-sm font-semibold text-white">The product (in plain English)</p>
-                <CheckList
-                  items={[
-                    "Daily briefings that translate timing into “what matters today” context",
-                    "Helps reduce misreads and bad‑timing conversations",
-                    "Models timing as windows — cycles vary person to person",
-                    "Designed for men; shared payoff for both partners",
-                  ]}
-                />
+                <p className="text-sm font-semibold text-white">One‑liner you can use</p>
+                <p className="mt-3 text-sm leading-relaxed text-white/70">
+                  “MoodMap is a premium daily briefing for men that turns cycle timing into
+                  relationship context — helping couples avoid misreads and improve conversation
+                  timing.”
+                </p>
+                <p className="mt-4 text-xs leading-relaxed text-white/55">
+                  Keep it truthful: context, not prediction. Cycles vary person to person.
+                </p>
               </div>
 
               <div className="rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                <p className="text-sm font-semibold text-white">Guardrails (important)</p>
+                <p className="text-sm font-semibold text-white">Where your audience lands</p>
                 <CheckList
                   items={[
-                    "Relationship guidance — not medical advice or diagnosis",
-                    "Not contraception and not fertility planning guarantees",
-                    "Does not predict individual outcomes — it provides timing context",
-                    "Avoid absolute claims (keep it accurate and respectful)",
+                    "They learn what MoodMap is (and what it isn’t) on the website",
+                    "They download via the official store links from there",
+                    "They subscribe through the standard flow",
                   ]}
                 />
+
+                <div className="mt-5">
+                  <a
+                    href={SITE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center rounded-full border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/85 transition hover:bg-white/10 md:w-auto"
+                  >
+                    Open moodmap-app.com ↗
+                  </a>
+                </div>
               </div>
             </div>
           </Section>
@@ -307,31 +278,31 @@ export default function PartnerPage() {
             <div className="grid grid-cols-1 gap-4">
               <FaqItem q="How does attribution work?">
                 <p>
-                  Attribution is tracked in the PromoteKit partner portal. Your dashboard is the
-                  source of truth for what is attributed to you (signups, subscribers, and earnings).
+                  Attribution is tracked in your PromoteKit dashboard. Your dashboard is the source
+                  of truth for what is attributed to you (signups/subscriptions and earnings).
                 </p>
               </FaqItem>
 
               <FaqItem q="How do payouts work?">
                 <p>
-                  Subscriptions are processed via Stripe. Tracking and payout reporting is handled in
-                  PromoteKit. Your portal shows payout cadence, thresholds (if any), and your full
-                  payout history.
+                  Payouts are handled through the partner system. Your partner account shows payout
+                  status and timing. If there is a minimum threshold or payout cadence, it will be
+                  visible there.
                 </p>
               </FaqItem>
 
               <FaqItem q="What promotion methods are allowed?">
                 <p>
-                  Allowed traffic (organic, email, paid ads, brand bidding, etc.) is defined in the
-                  program terms inside the portal. If you’re unsure, email support before running
-                  anything at scale.
+                  Use common sense and keep claims accurate (avoid medical or absolute guarantees).
+                  Organic content is the typical fit. If you want to run paid ads, brand bidding, or
+                  anything that could be ambiguous, email support first.
                 </p>
               </FaqItem>
             </div>
 
             <div className="mt-6 flex flex-col items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-5 text-center backdrop-blur md:flex-row md:text-left">
               <div>
-                <p className="text-sm font-semibold text-white">Ready to join?</p>
+                <p className="text-sm font-semibold text-white">Ready?</p>
                 <p className="mt-1 text-sm text-white/70">
                   Create your account and get your tracked link in minutes.
                 </p>
@@ -343,13 +314,6 @@ export default function PartnerPage() {
                 Get your link
               </a>
             </div>
-          </Section>
-
-          <Section
-            title="Official listings"
-            subtitle="For a quick legitimacy check before you promote."
-          >
-            <OfficialLinks />
           </Section>
         </div>
       </div>
