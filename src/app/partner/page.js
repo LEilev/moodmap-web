@@ -56,26 +56,25 @@ function Eyebrow({ children }) {
 
 function StepCard({ step, title, detail }) {
   return (
-    <div className="flex-1 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-center shadow-sm shadow-black/20 backdrop-blur-sm">
+    <div className="flex-1 rounded-2xl border border-white/20 bg-white/[0.06] px-5 py-4 text-center shadow-sm shadow-black/30 backdrop-blur-md transition-all duration-200 hover:border-white/30 hover:bg-white/[0.09] hover:shadow-md hover:shadow-black/40">
       <div className="flex items-center justify-center gap-2">
-        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-[11px] font-semibold text-white/70">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/[0.16] text-[12px] font-semibold text-white/90 ring-1 ring-white/10">
           {step}
         </span>
-        <span className="text-xs font-semibold text-white/85">{title}</span>
+        <span className="text-xs font-semibold text-white/90">{title}</span>
       </div>
-      <p className="mt-1 text-[11px] leading-snug text-white/55">{detail}</p>
+      <p className="mt-1 text-[11px] leading-snug text-white/60">{detail}</p>
     </div>
   );
 }
 
 function StepArrow() {
   return (
-    <span
-      className="mx-auto select-none text-white/35 sm:mx-0"
-      aria-hidden="true"
-    >
-      <span className="sm:hidden">↓</span>
-      <span className="hidden sm:inline">→</span>
+    <span className="mx-auto select-none sm:mx-0" aria-hidden="true">
+      <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/[0.04] text-white/60 shadow-sm shadow-black/20">
+        <span className="text-base leading-none sm:hidden">↓</span>
+        <span className="hidden text-lg leading-none sm:inline">→</span>
+      </span>
     </span>
   );
 }
@@ -83,52 +82,62 @@ function StepArrow() {
 function EarningsCard() {
   return (
     <div className="w-full max-w-xl">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-left shadow-sm shadow-black/20 backdrop-blur-sm">
+      <div className="rounded-2xl border border-white/20 bg-white/[0.06] p-4 text-left shadow-sm shadow-black/30 backdrop-blur-md">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-          <p className="text-xs font-semibold text-white/80">
+          <p className="text-xs font-semibold text-white/85">
             Earnings (intro pricing)
           </p>
-          <p className="text-[11px] text-white/45">Prices may change over time.</p>
+          <p className="text-[11px] text-white/45">
+            USD • Prices may change over time.
+          </p>
         </div>
 
-        <div className="mt-3 overflow-hidden rounded-xl border border-white/10">
+        <div className="mt-3 overflow-hidden rounded-xl border border-white/15">
           <div className="overflow-x-auto">
-            <table className="min-w-[360px] w-full text-left text-xs">
-              <thead className="bg-white/5 text-white/60">
+            <table className="w-full min-w-[380px] text-left text-xs tabular-nums">
+              <thead className="bg-white/[0.06] text-white/60">
                 <tr>
                   <th scope="col" className="px-3 py-2 font-medium">
                     Plan
                   </th>
                   <th scope="col" className="px-3 py-2 text-right font-medium">
-                    Price
+                    Price (USD)
                   </th>
-                  <th scope="col" className="px-3 py-2 text-right font-medium">
-                    Your 50%
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-right font-medium text-white/75 bg-white/[0.08] border-l border-white/10"
+                  >
+                    Your 50% (USD)
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10 text-white/80">
+              <tbody className="divide-y divide-white/10 text-white/85">
                 <tr>
                   <td className="px-3 py-2">Monthly</td>
                   <td className="px-3 py-2 text-right">
-                    {INTRO_MONTHLY_PRICE.toFixed(2)}/mo
+                    ${INTRO_MONTHLY_PRICE.toFixed(2)}/mo
                   </td>
-                  <td className="px-3 py-2 text-right">~{MONTHLY_EARNING}/mo</td>
+                  <td className="px-3 py-2 text-right font-semibold text-white bg-white/[0.08] border-l border-white/10">
+                    ~${MONTHLY_EARNING}/mo
+                  </td>
                 </tr>
                 <tr>
                   <td className="px-3 py-2">Annual</td>
                   <td className="px-3 py-2 text-right">
-                    {INTRO_YEARLY_PRICE.toFixed(2)}/yr
+                    ${INTRO_YEARLY_PRICE.toFixed(2)}/yr
                   </td>
-                  <td className="px-3 py-2 text-right">~{YEARLY_EARNING}/yr</td>
+                  <td className="px-3 py-2 text-right font-semibold text-white bg-white/[0.08] border-l border-white/10">
+                    ~${YEARLY_EARNING}/yr
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
-        <p className="mt-3 text-[11px] leading-relaxed text-white/45">
-          Earnings are per active subscriber attributed to your link.
+        <p className="mt-3 text-[11px] leading-relaxed text-white/50">
+          Earnings are per active subscriber attributed to your link (amounts
+          rounded to cents).
         </p>
       </div>
     </div>
@@ -137,7 +146,7 @@ function EarningsCard() {
 
 function MetaPill({ children }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] text-white/60">
+    <span className="inline-flex items-center rounded-full border border-white/15 bg-white/[0.05] px-3 py-1 text-[11px] text-white/65 shadow-sm shadow-black/20">
       {children}
     </span>
   );
@@ -192,6 +201,9 @@ export default function PartnerPage() {
 
             {/* 3-step flow (boxed) */}
             <div className="w-full max-w-3xl">
+              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/50">
+                How it works
+              </p>
               <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-3">
                 <StepCard
                   step="1"
