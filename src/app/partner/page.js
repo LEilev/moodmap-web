@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const SITE_URL = "https://moodmap-app.com";
 const PAGE_PATH = "/partner";
 const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
@@ -165,39 +163,6 @@ export default function PartnerPage() {
             <p className="text-xs text-white/60">
               Subscriptions via Stripe • Tracking & payouts via PromoteKit
             </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-semibold">
-              <Link
-                href="#what-you-get"
-                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
-              >
-                What you get <span aria-hidden="true">↓</span>
-              </Link>
-
-              <span className="text-white/30" aria-hidden="true">
-                •
-              </span>
-
-              <Link
-                href="#faq"
-                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
-              >
-                FAQ <span aria-hidden="true">↓</span>
-              </Link>
-
-              <span className="text-white/30" aria-hidden="true">
-                •
-              </span>
-
-              <a
-                href={SITE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-white/75 underline decoration-white/20 underline-offset-4 hover:text-white hover:decoration-white/40"
-              >
-                View MoodMap site <span aria-hidden="true">↗</span>
-              </a>
-            </div>
 
             <p className="mt-2 text-xs leading-relaxed text-white/55">
               Relationship guidance — not medical advice, not contraception, not fertility planning.
