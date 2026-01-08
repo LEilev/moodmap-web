@@ -1,4 +1,3 @@
-// src/app/api/_health/route.js
 import { Redis } from '@upstash/redis';
 
 export const runtime = 'edge';
@@ -6,7 +5,6 @@ export const runtime = 'edge';
 const url = process.env.UPSTASH_REDIS_REST_URL;
 const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-// Reuse a single client across invocations on the edge
 const redis = url && token ? new Redis({ url, token }) : null;
 
 function json(body, status = 200, extraHeaders) {
@@ -29,7 +27,6 @@ export async function GET() {
       );
     }
 
-    // Minimal connectivity check to Upstash Redis (no writes)
     if (typeof redis.ping === 'function') {
       await redis.ping();
     } else {
@@ -43,7 +40,6 @@ export async function GET() {
   }
 }
 
-// Optional: allow HEAD for lightweight liveness probes
 export async function HEAD() {
   const res = await GET();
   return new Response(null, { status: res.status, headers: res.headers });

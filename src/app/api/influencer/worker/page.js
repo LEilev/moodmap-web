@@ -60,7 +60,6 @@ async function sendEmail({ to, subject, html, listUnsub, from, apiKey, idempoten
       html,
       headers: {
         'List-Unsubscribe': listUnsub,
-        // Optional: improves Gmail one-click unsubscribe behavior in some clients
         'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
       },
     }),
@@ -75,16 +74,12 @@ async function sendEmail({ to, subject, html, listUnsub, from, apiKey, idempoten
     throw err;
   }
 
-  // Not strictly needed, but helpful when debugging
   try { return await res.json(); } catch { return { ok: true }; }
 }
 
 /**
  * Reconcile stuck "processing" items:
- * If a previous worker crashed after LPOP, the email may be missing from INF_QUEUE
- * but stuck with status=processing. We requeue stale processing items.
- *
- * This runs at most once per 10 minutes (INF_RECONCILE_LOCK).
+ * Requeue stale processing items that got popped but never completed.
  */
 async function reconcileStaleProcessing({ staleMs = 10 * 60 * 1000, maxKeys = 1500 } = {}) {
   const ok = await tryAcquire(INF_RECONCILE_LOCK, 600);
@@ -129,7 +124,6 @@ async function reconcileStaleProcessing({ staleMs = 10 * 60 * 1000, maxKeys = 15
       const email = normEmail(h.email || key.replace(/^inf:/, ''));
       if (!email) continue;
 
-      // If they unsubscribed while stuck, do not requeue
       const isUnsub = await redis.sismember(INF_UNSUB, email);
       if (isUnsub) {
         await redis.hset(key, { status: 'unsubscribed', processingAt: '' });
@@ -172,13 +166,11 @@ export async function GET(req) {
     return json({ error: 'missing_env', need: ['BASE_URL', 'EMAIL_FROM', 'RESEND_API_KEY'] }, 500);
   }
 
-  // Pause switch
   const paused = await redis.get(INF_PAUSE);
   if (paused) {
     return json({ ok: true, paused: true, didWork: false }, 200);
   }
 
-  // Global lock (prevents overlapping cron/manual triggers)
   const gotLock = await tryAcquire(INF_WORKER_LOCK, 55);
   if (!gotLock) {
     return json({ ok: true, skipped: true, reason: 'locked' }, 200);
@@ -200,7 +192,6 @@ export async function GET(req) {
     skipped: 0,
     errors: 0,
 
-    // masked samples for debugging without leaking full list
     sentSample: [],
     skippedSample: [],
     errorSample: [],
@@ -212,18 +203,16 @@ export async function GET(req) {
   };
 
   try {
-    // Reconcile stale processing only for queue mode (not needed for followups scan)
     if (!followups && !dry) {
       result.reconciled = await reconcileStaleProcessing();
     }
 
     if (!followups) {
-      // QUEUE DRAIN (initial outreach)
       const domainCounts = {};
 
-      // Dry-run: peek without mutating queue
-      let peek = [];
+      // DRY RUN: peek only
       if (dry) {
+        let peek = [];
         if (typeof redis.lrange === 'function') {
           peek = await redis.lrange(INF_QUEUE, 0, max - 1);
         } else if (typeof redis.lindex === 'function') {
@@ -274,27 +263,25 @@ export async function GET(req) {
           if (result.sentSample.length < 15) result.sentSample.push({ email: masked, note: 'would_send' });
         }
 
-        // Reset "sent" in dry-run to reflect "would send"
         return json(result, 200);
       }
 
-      // Real run: pop up to max items and process
+      // REAL RUN
       for (let i = 0; i < max; i++) {
         const raw = await redis.lpop(INF_QUEUE);
         if (!raw) break;
 
         const email = normEmail(raw);
         const masked = maskEmail(email);
+
         if (!email) {
           result.skipped++;
           if (result.skippedSample.length < 15) result.skippedSample.push({ email: masked, reason: 'empty_email' });
           continue;
         }
 
-        // Pause flag check between items
         const pauseNow = await redis.get(INF_PAUSE);
         if (pauseNow) {
-          // Put current email back since we didn't process it
           await redis.rpush(INF_QUEUE, email);
           break;
         }
@@ -303,7 +290,6 @@ export async function GET(req) {
         const key = infKey(email);
 
         if (isUnsub) {
-          // Never send; mark and drop
           await redis.hset(key, { status: 'unsubscribed', processingAt: '' });
           result.skipped++;
           if (result.skippedSample.length < 15) result.skippedSample.push({ email: masked, reason: 'unsubscribed' });
@@ -312,7 +298,6 @@ export async function GET(req) {
 
         let inf = await redis.hgetall(key);
         if (!inf || Object.keys(inf).length === 0) {
-          // Queue contained an email with no hash; create minimal record
           await redis.hset(key, {
             email,
             name: '',
@@ -340,7 +325,6 @@ export async function GET(req) {
           continue;
         }
 
-        // Per-domain cap inside one invocation
         const domain = email.split('@')[1] || '';
         if (domain) {
           domainCounts[domain] = domainCounts[domain] || 0;
@@ -352,7 +336,6 @@ export async function GET(req) {
           }
         }
 
-        // Mark processing
         await redis.hset(key, { status: 'processing', processingAt: nowISO() });
 
         const { subject, html, listUnsub } = initialTemplate({
@@ -395,7 +378,6 @@ export async function GET(req) {
             result.errorSample.push({ email: masked, error: msg, status: statusCode ?? undefined });
           }
 
-          // Fatal misconfig: don't burn the list into failed. Requeue and stop.
           if (statusCode === 401 || statusCode === 403) {
             await redis.hset(key, { status: 'queued', processingAt: '', lastError: msg });
             await redis.rpush(INF_QUEUE, email);
@@ -403,12 +385,10 @@ export async function GET(req) {
             break;
           }
 
-          // Count attempt
           let attemptsNow = 1;
           try {
             attemptsNow = await redis.hincrby(key, 'attempts', 1);
           } catch {
-            // fallback best-effort
             const prev = parseInt(inf?.attempts ?? '0', 10);
             attemptsNow = (Number.isFinite(prev) ? prev : 0) + 1;
             await redis.hset(key, { attempts: attemptsNow });
@@ -417,10 +397,7 @@ export async function GET(req) {
           await redis.hset(key, { processingAt: '', lastError: msg });
 
           const is429 = (statusCode === 429) || msg.includes('Resend 429');
-          const isPermanent =
-            statusCode === 400 ||
-            statusCode === 422;
-
+          const isPermanent = statusCode === 400 || statusCode === 422;
           const giveUp = isPermanent || attemptsNow >= maxAttempts;
 
           if (giveUp) {
@@ -438,18 +415,15 @@ export async function GET(req) {
             break;
           }
 
-          // tiny delay to avoid hot looping on immediate failures
           if (minDelayMs > 0) await sleep(Math.min(300, minDelayMs));
         }
       }
     } else {
-      // FOLLOWUPS (SCAN instead of KEYS)
+      // FOLLOWUPS (SCAN, not KEYS)
       const FOLLOWUP_AGE_DAYS = parseIntClamped(searchParams.get('followupDays'), 7, 1, 60);
       const cutoffMs = Date.now() - FOLLOWUP_AGE_DAYS * 24 * 60 * 60 * 1000;
 
-      // Dry-run is allowed; no state changes/sends
       let sentThisRun = 0;
-
       let cursor = '0';
       let guard = 0;
 
@@ -491,8 +465,6 @@ export async function GET(req) {
 
           const masked = maskEmail(email);
 
-          // Optional throttle per run (reuse domainCap logic)
-          // (This is simplistic; followups are usually low volume.)
           const { subject, html, listUnsub } = followupTemplate({
             baseUrl,
             email,
@@ -507,7 +479,6 @@ export async function GET(req) {
             continue;
           }
 
-          // Pause between keys
           const pauseNow = await redis.get(INF_PAUSE);
           if (pauseNow) break;
 
@@ -538,19 +509,18 @@ export async function GET(req) {
             const msg = String(e?.message ?? e);
 
             result.errors++;
-            if (result.errorSample.length < 15) result.errorSample.push({ email: masked, error: msg, status: statusCode ?? undefined });
+            if (result.errorSample.length < 15) {
+              result.errorSample.push({ email: masked, error: msg, status: statusCode ?? undefined });
+            }
 
-            // Track followup-specific attempts (so we don't poison initial attempts)
             try {
               await redis.hincrby(key, 'followupAttempts', 1);
               await redis.hset(key, { followupLastError: msg });
-            } catch {
-              // ignore
-            }
+            } catch {}
 
             if (statusCode === 429 || msg.includes('Resend 429')) {
               result.backoff429 = true;
-              sentThisRun = max; // force stop
+              sentThisRun = max;
               break;
             }
 
@@ -565,7 +535,6 @@ export async function GET(req) {
       } while (cursor !== '0');
     }
 
-    // return queue length snapshot
     try { result.queueLen = await redis.llen(INF_QUEUE); } catch { result.queueLen = 0; }
 
     return json(result, 200);
