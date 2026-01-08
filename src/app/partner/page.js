@@ -4,6 +4,14 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 
 const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 
+// NOTE: Current intro prices (subject to change as pricing is tested/optimized).
+const INTRO_MONTHLY_PRICE = 7.99;
+const INTRO_YEARLY_PRICE = 49.99;
+const REV_SHARE = 0.5;
+
+const MONTHLY_EARNING = (INTRO_MONTHLY_PRICE * REV_SHARE).toFixed(2);
+const YEARLY_EARNING = (INTRO_YEARLY_PRICE * REV_SHARE).toFixed(2);
+
 export const metadata = {
   title: "Partner Program — MoodMap",
   description:
@@ -66,22 +74,50 @@ export default function PartnerPage() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-relaxed text-white/85 md:text-lg">
-           Promote MoodMap — a premium daily relationship briefing for men.
-		   Her cycle, translated into practical relationship context.
+            <span className="block">
+              Promote MoodMap — a premium daily relationship briefing for men.
+            </span>
+            <span className="block">
+              Her cycle timing, translated into practical relationship context.
+            </span>
           </p>
 
-          <p className="mt-4 text-sm text-white/70">Built for men. Better timing for both partners.</p>
+          <p className="mt-4 text-sm text-white/70">
+            Built for men. Better timing for both partners.
+          </p>
+
+          {/* Proof anchor (over the fold) */}
+          <p className="mt-3 text-xs text-white/60">
+            Private by design. Built in Norway. Subscriptions via Stripe.
+          </p>
 
           <div className="mt-7 flex flex-col items-center gap-3">
             <a
               href={PARTNER_PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-emerald-400 to-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/10 transition hover:opacity-95 sm:w-auto"
             >
               Get your link
             </a>
 
+            {/* 3-step flow */}
+            <p className="text-xs text-white/65">
+              1) Get your link → 2) Share it → 3) Earn 50% recurring on every
+              active subscriber.
+            </p>
+
+            {/* Earnings intuition */}
+            <p className="text-xs leading-relaxed text-white/60">
+              Earnings (intro pricing): ~{MONTHLY_EARNING}/mo per monthly
+              subscriber (50% of {INTRO_MONTHLY_PRICE.toFixed(2)}/mo) and
+              ~{YEARLY_EARNING}/yr per annual subscriber (50% of{" "}
+              {INTRO_YEARLY_PRICE.toFixed(2)}/yr).
+              <span className="text-white/45"> Prices may change over time.</span>
+            </p>
+
             <p className="text-xs text-white/60">
-              Subscriptions via Stripe • Tracking & payouts via PromoteKit
+              Tracking & payouts via PromoteKit.
             </p>
 
             <p className="mt-2 text-xs leading-relaxed text-white/55">
