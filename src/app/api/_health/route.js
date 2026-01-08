@@ -1,4 +1,4 @@
-// app/api/_health/route.js
+// src/app/api/_health/route.js
 import { Redis } from '@upstash/redis';
 
 export const runtime = 'edge';
@@ -15,8 +15,8 @@ function json(body, status = 200, extraHeaders) {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store, max-age=0',
-      ...(extraHeaders || {})
-    }
+      ...(extraHeaders || {}),
+    },
   });
 }
 
@@ -33,7 +33,6 @@ export async function GET() {
     if (typeof redis.ping === 'function') {
       await redis.ping();
     } else {
-      // Fallback: harmless read to ensure connectivity
       await redis.get('__healthcheck__');
     }
 

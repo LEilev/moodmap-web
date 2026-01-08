@@ -1,33 +1,41 @@
 // src/lib/email-templates.js
 //
 // Purpose:
-//   Canonical outreach email templates used by /api/influencer/send.
-//   Updated: initialTemplate now sends the exact content from email.html
-//   (same copy/structure), with an added unsubscribe footer for compliance.
+//   Canonical outreach email templates used by /api/influencer/worker.
+//   initialTemplate sends the exact content you showed (from email.html),
+//   with an unsubscribe footer + optional postal address for compliance.
 //
-// Notes:
-// - We keep List-Unsubscribe header via `listUnsub`.
-// - We also render an in-body unsubscribe link (good practice for compliance).
-// - `baseUrl` must be set (e.g. https://moodmap-app.com) in env as BASE_URL.
+// Env:
+// - BASE_URL must be set (e.g. https://moodmap-app.com)
+// - COMPANY_POSTAL_ADDRESS (optional but recommended for compliance)
 
 const PARTNER_URL = "https://moodmap-app.com/partner";
 const HOME_URL = "https://moodmap-app.com";
 
+const COMPANY_POSTAL_ADDRESS = (process.env.COMPANY_POSTAL_ADDRESS || '').trim();
+
+const esc = (s = '') => {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+  return String(s).replace(/[&<>"']/g, (c) => map[c]);
+};
+
 const unsubUrl = (baseUrl, email) =>
   `${baseUrl}/api/influencer/unsubscribe?email=${encodeURIComponent(email)}`;
 
-const footer = (baseUrl, email) => `
+const footer = (baseUrl, email) => {
+  const addr = COMPANY_POSTAL_ADDRESS ? `<br/>${esc(COMPANY_POSTAL_ADDRESS)}` : '';
+  return `
   <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
   <p style="font-size:12px;color:#666;margin:0;line-height:1.4">
     You’re receiving this because your contact email is listed publicly for collaborations.
     Not interested? <a href="${unsubUrl(baseUrl, email)}">Unsubscribe</a>.
+    ${addr}
   </p>
 `;
+};
 
 /**
  * initialTemplate
- * Sends the exact outreach content you showed (from email.html),
- * plus a compliance footer (unsubscribe link).
  */
 export function initialTemplate({ baseUrl, email, name, handle }) {
   const subject = "Partner program: MoodMap (50% lifetime recurring)";
@@ -77,7 +85,6 @@ export function initialTemplate({ baseUrl, email, name, handle }) {
 
 /**
  * followupTemplate
- * Kept simple + consistent. You can rewrite later, but this is production-safe.
  */
 export function followupTemplate({ baseUrl, email, name, handle }) {
   const subject = "Quick follow-up: MoodMap partner program (50% lifetime)";

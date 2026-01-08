@@ -1,15 +1,20 @@
 export const runtime = 'edge';
 
 import { redis } from '@/lib/redis';
-import { INF_QUEUE, INF_UNSUB } from '@/lib/inf-keys';
+import {
+  INF_QUEUE,
+  INF_UNSUB,
+  INF_DEAD,
+  INF_PAUSE
+} from '@/lib/inf-keys';
 
 /**
  * Edge-safe stats endpoint for Upstash REST client.
  * - Auth via ?token=CRON_TOKEN
  * - Uses manual SCAN loop (redis.scan) instead of KEYS / scanIterator
- * - Skips utility keys (inf:queue, inf:unsubscribed)
- * - Counts: total, queued, sent, unsubscribed, bounced, opened, clicked
- * - Returns { counts, queueLen } as JSON
+ * - Skips utility keys (inf:queue, inf:unsubscribed, inf:dead)
+ * - Counts: total, queued, processing, sent, failed, unsubscribed, bounced, opened, clicked
+ * - Returns { counts, queueLen, deadCount, paused }
  */
 export async function GET(req) {
   try {
@@ -22,7 +27,9 @@ export async function GET(req) {
     const counts = {
       total: 0,
       queued: 0,
+      processing: 0,
       sent: 0,
+      failed: 0,
       unsubscribed: 0,
       bounced: 0,
       opened: 0,
@@ -31,29 +38,25 @@ export async function GET(req) {
 
     // Manual SCAN loop
     let cursor = '0';
-    let guard = 0; // safety guard to avoid infinite loops
+    let guard = 0;
 
     do {
-      // Upstash REST client returns either [cursor, keys] (array) or { cursor, keys } (object).
       const res = await redis.scan(cursor, { match: 'inf:*', count: 200 });
       let nextCursor = '0';
       let keys = [];
 
       if (Array.isArray(res)) {
-        // Standard Redis style: [cursor, keys[]]
         nextCursor = String(res[0] ?? '0');
         keys = Array.isArray(res[1]) ? res[1] : [];
       } else if (res && typeof res === 'object') {
-        // Upstash object style: { cursor, keys } (or sometimes { cursor, values })
         nextCursor = String(res.cursor ?? res[0] ?? '0');
         keys = Array.isArray(res.keys) ? res.keys : (Array.isArray(res.values) ? res.values : []);
       }
 
       for (const key of keys) {
         if (!key) continue;
-        if (key === INF_QUEUE || key === INF_UNSUB) continue; // skip utility keys
+        if (key === INF_QUEUE || key === INF_UNSUB || key === INF_DEAD) continue;
 
-        // Try reading hash; skip non-hash keys gracefully
         let h;
         try {
           h = await redis.hgetall(key);
@@ -77,20 +80,21 @@ export async function GET(req) {
 
       cursor = nextCursor;
       guard++;
-      if (guard > 1000) break; // extreme safety for unexpected server responses
+      if (guard > 1000) break;
     } while (cursor !== '0');
 
-    // Queue length
     let queueLen = 0;
-    try {
-      queueLen = await redis.llen(INF_QUEUE);
-    } catch {
-      queueLen = 0;
-    }
+    try { queueLen = await redis.llen(INF_QUEUE); } catch { queueLen = 0; }
 
-    return new Response(JSON.stringify({ counts, queueLen }), {
+    let deadCount = 0;
+    try { deadCount = await redis.scard(INF_DEAD); } catch { deadCount = 0; }
+
+    let paused = false;
+    try { paused = Boolean(await redis.get(INF_PAUSE)); } catch { paused = false; }
+
+    return new Response(JSON.stringify({ counts, queueLen, deadCount, paused }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
     });
   } catch (e) {
     return new Response(
