@@ -372,22 +372,7 @@ export default function PartnerPage() {
               planning.
             </p>
 
-            <footer className="mt-6 text-center text-[11px] text-white/35">
-              © {new Date().getFullYear()} MoodMap •{" "}
-              <a
-                href={`${SITE_URL}/privacy`}
-                className="text-white/45 hover:text-white/75"
-              >
-                Privacy
-              </a>{" "}
-              •{" "}
-              <a
-                href="mailto:support@moodmap-app.com"
-                className="text-white/45 hover:text-white/75"
-              >
-                Support
-              </a>
-            </footer>
+            {/* NOTE: Footer is handled by the global site layout. */}
           </div>
         </div>
       </div>
