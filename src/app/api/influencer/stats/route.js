@@ -8,9 +8,26 @@ import {
   INF_PAUSE
 } from '@/lib/inf-keys';
 
+function bearerToken(req) {
+  const h = req.headers.get('authorization') || '';
+  const m = h.match(/^Bearer\s+(.+)$/i);
+  return (m?.[1] || '').trim();
+}
+
+function cronAuthorized(req, url) {
+  const cronSecret = (process.env.CRON_SECRET || '').trim();
+  if (cronSecret) {
+    return bearerToken(req) === cronSecret;
+  }
+  const token = (url.searchParams.get('token') || '').trim();
+  const expected = (process.env.CRON_TOKEN || '').trim();
+  return Boolean(token && expected && token === expected);
+}
+
 /**
  * Edge-safe stats endpoint for Upstash REST client.
- * - Auth via ?token=CRON_TOKEN
+ * - Auth via Authorization: Bearer CRON_SECRET (preferred)
+ * - Legacy: ?token=CRON_TOKEN (only if CRON_SECRET is not set)
  * - Uses manual SCAN loop (redis.scan) instead of KEYS / scanIterator
  * - Skips utility keys (inf:queue, inf:unsubscribed, inf:dead)
  * - Counts: total, queued, processing, sent, failed, unsubscribed, bounced, opened, clicked
@@ -19,8 +36,7 @@ import {
 export async function GET(req) {
   try {
     const url = new URL(req.url);
-    const token = url.searchParams.get('token');
-    if (token !== process.env.CRON_TOKEN) {
+    if (!cronAuthorized(req, url)) {
       return new Response('Forbidden', { status: 403 });
     }
 

@@ -14,10 +14,25 @@ function normEmail(v) {
   return String(v || '').trim().toLowerCase();
 }
 
+function bearerToken(req) {
+  const h = req.headers.get('authorization') || '';
+  const m = h.match(/^Bearer\s+(.+)$/i);
+  return (m?.[1] || '').trim();
+}
+
+function cronAuthorized(req, url) {
+  const cronSecret = (process.env.CRON_SECRET || '').trim();
+  if (cronSecret) {
+    return bearerToken(req) === cronSecret;
+  }
+  const token = (url.searchParams.get('token') || '').trim();
+  const expected = (process.env.CRON_TOKEN || '').trim();
+  return Boolean(token && expected && token === expected);
+}
+
 export async function POST(req) {
   const url = new URL(req.url);
-  const token = url.searchParams.get('token');
-  if (token !== process.env.CRON_TOKEN) return new Response('Forbidden', { status: 403 });
+  if (!cronAuthorized(req, url)) return new Response('Forbidden', { status: 403 });
 
   let body;
   try {

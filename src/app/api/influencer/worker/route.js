@@ -45,6 +45,26 @@ function parseIntClamped(v, def, min, max) {
   return Math.max(min, Math.min(max, n));
 }
 
+function bearerToken(req) {
+  const h = req.headers.get('authorization') || '';
+  const m = h.match(/^Bearer\s+(.+)$/i);
+  return (m?.[1] || '').trim();
+}
+
+function cronAuthorized(req, searchParams) {
+  const cronSecret = (process.env.CRON_SECRET || '').trim();
+
+  // Preferred: Vercel Cron → Authorization: Bearer <CRON_SECRET>
+  if (cronSecret) {
+    return bearerToken(req) === cronSecret;
+  }
+
+  // Legacy fallback (dev/local): ?token=CRON_TOKEN
+  const token = (searchParams.get('token') || '').trim();
+  const expected = (process.env.CRON_TOKEN || '').trim();
+  return Boolean(token && expected && token === expected);
+}
+
 async function sendEmail({ to, subject, html, listUnsub, from, apiKey, idempotencyKey }) {
   const res = await fetch(RESEND_API, {
     method: 'POST',
@@ -147,8 +167,9 @@ async function reconcileStaleProcessing({ staleMs = 10 * 60 * 1000, maxKeys = 15
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
 
-  const token = searchParams.get('token');
-  if (token !== process.env.CRON_TOKEN) return new Response('Forbidden', { status: 403 });
+  if (!cronAuthorized(req, searchParams)) {
+    return new Response('Forbidden', { status: 403 });
+  }
 
   const followups = searchParams.get('followups') === '1';
   const dry = searchParams.get('dry') === '1';

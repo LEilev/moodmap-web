@@ -30,11 +30,11 @@
   ],
   "crons": [
     {
-      "path": "/api/influencer/worker?token=moodmap_cron_4J7F93gH32sd%402025&max=5",
+      "path": "/api/influencer/worker?max=5",
       "schedule": "*/1 9-13,15-17 * * 1-5"
     },
     {
-      "path": "/api/influencer/worker?token=moodmap_cron_4J7F93gH32sd%402025&followups=1&max=5",
+      "path": "/api/influencer/worker?followups=1&followupDays=3&max=5",
       "schedule": "*/1 14 * * 1-5"
     }
   ],
