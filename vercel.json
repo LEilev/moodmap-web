@@ -3,39 +3,39 @@
     {
       "source": "/.well-known/apple-app-site-association",
       "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/json"
-        }
+        { "key": "Content-Type", "value": "application/json" }
       ]
     },
     {
       "source": "/api/version",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400" }
       ]
     },
     {
       "source": "/api/version.json",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=0, s-maxage=7200, stale-while-revalidate=86400" }
       ]
     }
   ],
   "crons": [
     {
       "path": "/api/influencer/worker?max=5",
-      "schedule": "1-59/2 9-13,15-17 * * 1-5"
+      "schedule": "*/1 9-13 * * 1-5"
     },
     {
       "path": "/api/influencer/worker?followups=1&followupDays=3&max=5",
-      "schedule": "*/2 14-17 * * 1-5"
+      "schedule": "*/1 14 * * 1-5"
+    },
+
+    {
+      "path": "/api/influencer/worker?max=5",
+      "schedule": "1-59/2 15-17 * * 1-5"
+    },
+    {
+      "path": "/api/influencer/worker?followups=1&followupDays=3&max=5",
+      "schedule": "*/2 15-17 * * 1-5"
     }
   ],
   "redirects": [
