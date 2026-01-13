@@ -9,33 +9,62 @@ import {
   Clock,
 } from "lucide-react";
 
+const SLUG = "/learn/menstrual-cycle-phases-for-partners";
+const SITE_URL = "https://www.moodmap-app.com";
+const CANONICAL_URL = `${SITE_URL}${SLUG}`;
+
 export const metadata = {
-  title: "Menstrual cycle phases explained for partners · MoodMap",
+  title: "Menstrual cycle phases for partners: a practical relationship guide · MoodMap",
   description:
-    "A clear, partner-friendly explanation of menstrual cycle phases—what happens, why timing matters, and how to show up well. Relationship guidance, not medical advice.",
+    "A partner-friendly guide to the four menstrual cycle phases—what may change, why timing matters, and how to support your partner well. Relationship guidance, not medical advice.",
   alternates: {
-    canonical: "/learn/menstrual-cycle-phases-for-partners",
+    canonical: SLUG,
+  },
+  openGraph: {
+    title: "Menstrual cycle phases for partners: a practical relationship guide",
+    description:
+      "Understand the four phases of the menstrual cycle and how timing can affect energy, stress tolerance, and communication—plus practical ways to support your partner.",
+    url: SLUG,
+    type: "article",
+  },
+  twitter: {
+    card: "summary",
+    title: "Menstrual cycle phases for partners: a practical relationship guide",
+    description:
+      "A partner-friendly guide to cycle phases, timing, and practical support—relationship guidance, not medical advice.",
   },
 };
 
 export default function CyclePhasesForPartnersPage() {
-  // One source of truth: used for BOTH JSON-LD and visible FAQs
+  /**
+   * One source of truth:
+   * - Used for JSON-LD (FAQ rich results)
+   * - Used for visible FAQs (consistency)
+   */
   const FAQ = [
     {
-      q: "What are the phases of the menstrual cycle?",
-      a: "A common model includes Menstruation, Follicular, Ovulation, and Luteal (often including PMS near the end). Phases can influence energy and sensitivity—use it as context, not a stereotype.",
+      q: "What are the four phases of the menstrual cycle?",
+      a: "A common model includes Menstruation, Follicular, Ovulation, and Luteal (often including PMS near the end). Not everyone experiences these phases the same way—use it as context, not a stereotype.",
     },
     {
       q: "Why isn’t every cycle exactly 28 days?",
-      a: "Cycle length varies naturally from person to person and sometimes month to month. That’s why calibration and flexible expectations matter more than a fixed calendar.",
+      a: "Cycle length varies naturally from person to person and sometimes month to month. Stress, sleep, travel, illness, and life changes can also shift timing. Flexible expectations matter more than a fixed calendar.",
     },
     {
       q: "Does ovulation affect mood or behavior?",
-      a: "For some people, ovulation can coincide with higher energy or confidence, while others notice little change. Patterns vary—timing awareness is about context, not assumptions.",
+      a: "For some people, ovulation can coincide with higher energy or confidence, while others notice little change. Timing awareness is about context—never assumptions.",
+    },
+    {
+      q: "What’s the difference between PMS and PMDD?",
+      a: "PMS is common and usually mild-to-moderate. PMDD is less common and can be severe, with symptoms that significantly disrupt daily life. If symptoms are intense or scary, encourage professional support.",
+    },
+    {
+      q: "Should I track my partner’s cycle?",
+      a: "Only with explicit consent. Cycle awareness should support communication and planning—not control. Agree together on what to track and what’s off limits.",
     },
     {
       q: "Is this medical advice?",
-      a: "No. This page (and MoodMap) provides relationship guidance informed by general physiology. It is not medical advice and should not be used for contraception or fertility planning.",
+      a: "No. This page provides relationship guidance informed by general physiology. It is not medical advice and should not be used for contraception or fertility planning.",
     },
   ];
 
@@ -49,9 +78,38 @@ export default function CyclePhasesForPartnersPage() {
     })),
   };
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "Menstrual cycle phases, explained for partners",
+    description:
+      "A partner-friendly guide to the four menstrual cycle phases—what may change, why timing matters, and how to support your partner well.",
+    inLanguage: "en",
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": CANONICAL_URL,
+    },
+    url: CANONICAL_URL,
+    author: {
+      "@type": "Organization",
+      name: "MoodMap",
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "MoodMap",
+      url: SITE_URL,
+    },
+    isAccessibleForFree: true,
+  };
+
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD for AI / rich results */}
+      {/* JSON-LD for rich results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
@@ -80,9 +138,9 @@ export default function CyclePhasesForPartnersPage() {
           </h1>
 
           <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            If you’ve ever thought “she feels like a different person week to week,” you’re not
-            crazy. Timing and context matter. This guide breaks the cycle into simple phases and
-            shows what tends to change—so you can respond well, not late.
+            If you’ve ever felt like your partner’s bandwidth changes week to week, you’re not
+            imagining it. Timing and context can matter. This guide breaks the cycle into simple
+            phases and shows what may change—so you can respond well, not late.
           </p>
 
           <p className="mt-3 text-sm text-white/60">
@@ -94,6 +152,37 @@ export default function CyclePhasesForPartnersPage() {
       {/* Content */}
       <section className="px-6 pb-14">
         <div className="mx-auto max-w-4xl grid gap-6">
+          {/* NEW: Citation-ready summary */}
+          <article id="citation-summary" className="glass-card p-6 sm:p-7">
+            <div className="flex items-start gap-4">
+              <span className="glass-icon">
+                <Sparkles className="h-6 w-6 text-white" aria-hidden />
+              </span>
+              <div className="text-left">
+                <h2 className="text-xl sm:text-2xl font-semibold">
+                  Citation-ready summary (for writers & educators)
+                </h2>
+                <p className="mt-2 text-white/75 leading-relaxed">
+                  The menstrual cycle is often described in four phases—{" "}
+                  <strong className="text-white">
+                    menstruation, follicular, ovulation, and luteal
+                  </strong>
+                  . Some people experience fairly predictable shifts in{" "}
+                  <strong className="text-white">
+                    energy, stress tolerance, sleep, and emotional sensitivity
+                  </strong>{" "}
+                  across those phases. Partners can use this framework to improve timing,
+                  communication, and support—without blame.
+                </p>
+
+                <p className="mt-4 text-white/70">
+                  If you’re referencing this page elsewhere, a descriptive link text helps readers
+                  (and search engines) understand what they’ll get.
+                </p>
+              </div>
+            </div>
+          </article>
+
           {/* Card: quick overview */}
           <article className="glass-card p-6 sm:p-7">
             <div className="flex items-start gap-4">
@@ -112,8 +201,8 @@ export default function CyclePhasesForPartnersPage() {
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
                   <li>
-                    <strong className="text-white">Menstruation:</strong> lower energy, more physical
-                    discomfort for some, more inward days.
+                    <strong className="text-white">Menstruation:</strong> lower energy and more
+                    physical discomfort for some; more inward days.
                   </li>
                   <li>
                     <strong className="text-white">Follicular:</strong> energy often rises; planning
@@ -124,7 +213,7 @@ export default function CyclePhasesForPartnersPage() {
                     confident, or playful—others feel no change.
                   </li>
                   <li>
-                    <strong className="text-white">Luteal/PMS:</strong> sensitivity and stress
+                    <strong className="text-white">Luteal / PMS:</strong> sensitivity and stress
                     tolerance can shift; recovery and calm matter more.
                   </li>
                 </ul>
@@ -147,7 +236,7 @@ export default function CyclePhasesForPartnersPage() {
                 <h2 className="text-xl sm:text-2xl font-semibold">Why not every cycle is 28 days</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   The “28-day cycle” is a teaching average—not a rule. Real cycles vary naturally.
-                  Stress, sleep, travel, and illness can also shift timing.
+                  Stress, sleep, travel, and illness can shift timing too.
                 </p>
                 <p className="mt-3 text-white/75 leading-relaxed">
                   That’s why rigid calendar expectations often fail partners: if timing is off, your
@@ -200,11 +289,13 @@ export default function CyclePhasesForPartnersPage() {
 
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-white">
-                      3) Reducing friction
+                      3) Reducing friction (a simple “pause protocol”)
                     </h3>
                     <p className="mt-2 text-white/75 leading-relaxed">
-                      When sensitivity is higher, small things land bigger. Cleaner tone, fewer
-                      interruptions, and less pressure can prevent conflict before it starts.
+                      When sensitivity is higher, small things land bigger. Agree on a phrase like{" "}
+                      <strong className="text-white">“Let’s pause and revisit this tomorrow.”</strong>{" "}
+                      Cleaner tone, fewer interruptions, and less pressure can prevent conflict
+                      before it starts.
                     </p>
                   </div>
                 </div>
@@ -213,6 +304,55 @@ export default function CyclePhasesForPartnersPage() {
                   This is why timing awareness helps: you’re not “tiptoeing”—you’re operating with
                   context.
                 </p>
+              </div>
+            </div>
+          </article>
+
+          {/* Card: practical next steps */}
+          <article className="glass-card p-6 sm:p-7">
+            <div className="flex items-start gap-4">
+              <span className="glass-icon">
+                <Shield className="h-6 w-6 text-white" aria-hidden />
+              </span>
+              <div className="text-left">
+                <h2 className="text-xl sm:text-2xl font-semibold">Practical rules that keep you safe</h2>
+
+                <ul className="mt-3 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
+                  <li>
+                    Don’t weaponize timing:{" "}
+                    <strong className="text-white">“You’re just hormonal”</strong> is never helpful.
+                  </li>
+                  <li>
+                    Don’t overfit patterns: one bad day ≠ a phase.
+                  </li>
+                  <li>
+                    Always use consent: cycle awareness should support—not control.
+                  </li>
+                  <li>
+                    If symptoms are severe or disruptive, encourage professional support.
+                  </li>
+                </ul>
+
+                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
+                  <Link
+                    href="/learn/support-partner-during-pms"
+                    className="mm-link text-sm text-white/80"
+                  >
+                    Read: Support your partner during PMS →
+                  </Link>
+                  <Link
+                    href="/learn/fertile-window-explained"
+                    className="mm-link text-sm text-white/80"
+                  >
+                    Read: Fertile window explained →
+                  </Link>
+                  <Link
+                    href="/learn/period-tracking-for-men"
+                    className="mm-link text-sm text-white/80"
+                  >
+                    Read: Period tracking for men →
+                  </Link>
+                </div>
               </div>
             </div>
           </article>
@@ -228,30 +368,53 @@ export default function CyclePhasesForPartnersPage() {
                   How MoodMap uses this (without being creepy)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap turns phase timing into a daily briefing: what phase it is, what may be
-                  harder or easier today, and practical do/don’t cues. It can highlight timing
-                  moments like PMS, ovulation, and fertile-window context so you’re not guessing.
+                  MoodMap turns general phase timing into a daily briefing: what phase it is, what
+                  may be harder or easier today, and practical do/don’t cues. It’s designed to help
+                  partners show up well—without turning the relationship into a tracking project.
                 </p>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
+                  <li>Consent-first: cycle awareness is meant to be shared and respectful.</li>
                   <li>No symptom diary required.</li>
-                  <li>Guidance is general and respectful—built for partners.</li>
                   <li>Premium+ calibration keeps timing aligned to her rhythm.</li>
                 </ul>
 
-                {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
                   <Link href="/pro" className="mm-link text-sm text-white/80">
                     See what Premium+ unlocks →
                   </Link>
-                  <Link
-                    href="/learn/support-partner-during-pms"
-                    className="mm-link text-sm text-white/80"
-                  >
-                    Read: Support your partner during PMS →
+                  <Link href="/learn/why-moodmap" className="mm-link text-sm text-white/80">
+                    Read: Why MoodMap →
                   </Link>
                 </div>
               </div>
+            </div>
+          </article>
+
+          {/* NEW: Link-text guidance (citation nudge) */}
+          <article className="glass-card p-6 sm:p-7">
+            <div className="text-left">
+              <h2 className="text-xl sm:text-2xl font-semibold">If you’re writing about this topic</h2>
+              <p className="mt-2 text-white/75 leading-relaxed">
+                If you reference this guide, consider using descriptive link text so readers know
+                what they’re clicking:
+              </p>
+              <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
+                <li>
+                  <strong className="text-white">
+                    “menstrual cycle phases and how they affect relationships”
+                  </strong>
+                </li>
+                <li>
+                  <strong className="text-white">
+                    “overview of menstrual cycle phases for partners”
+                  </strong>
+                </li>
+              </ul>
+              <p className="mt-4 text-white/70">
+                That kind of language is more useful than generic anchors like “website” or “click
+                here”.
+              </p>
             </div>
           </article>
 
@@ -279,7 +442,7 @@ export default function CyclePhasesForPartnersPage() {
             </div>
           </section>
 
-          {/* NEW: Visible FAQs (matches JSON-LD) */}
+          {/* Visible FAQs (matches JSON-LD) */}
           <section className="mt-2">
             <div className="glass-card p-6 sm:p-7">
               <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
@@ -308,9 +471,14 @@ export default function CyclePhasesForPartnersPage() {
 
           {/* Bottom nav */}
           <div className="pt-2 text-center">
-            <Link href="/" className="mm-link text-sm text-white/70">
-              ← Back to Home
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/learn" className="mm-link text-sm text-white/70">
+                ← Back to Learn hub
+              </Link>
+              <Link href="/" className="mm-link text-sm text-white/70">
+                Back to Home →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
