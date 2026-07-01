@@ -12,41 +12,38 @@ const APP_SURFACES = [
     screenshotPath: "/screenshots/daily-briefing.webp",
     kicker: "Daily Briefing",
     title: "What changed today.",
-    copy: "Late luteal load can make small friction feel louder.",
-    meta: "Phase terrain",
+    copy: "Phase, risk, and briefing in one private read.",
+    meta: "PMS · Day 28",
     tone: "emerald",
+    alt: "MoodMap Daily Briefing screen showing PMS day 28, capacity, hormones, risk, and brief.",
   },
   {
     screenshotPath: "/screenshots/sitrep.webp",
     kicker: "SitRep",
     title: "What matters now.",
-    copy: "Keep the plan simple. Do not make her manage your uncertainty.",
+    copy: "The tactical room read: lean toward, avoid, and what costs more today.",
     meta: "Room read",
     tone: "blue",
+    alt: "MoodMap SitRep screen showing guidance for day 3 in PMS.",
   },
   {
     screenshotPath: "/screenshots/risk-radar.webp",
     kicker: "Risk Radar",
     title: "What not to step on.",
-    copy: "Tone debate costs more when the real issue is capacity.",
+    copy: "A clear tripwire, containment move, and why this day needs better timing.",
     meta: "Friction risk",
     tone: "rose",
+    alt: "MoodMap Risk Radar screen showing tripwire and containment guidance.",
   },
   {
     screenshotPath: "/screenshots/commanddeck.webp",
     kicker: "CommandDeck",
     title: "The move to make.",
-    copy: "If the room feels tight, lower your volume first.",
+    copy: "Guardrails and practical moves for support, communication, intimacy, and steadiness.",
     meta: "Next move",
-    tone: "violet",
+    tone: "cyan",
+    alt: "MoodMap CommandDeck screen showing key insights and practical daily moves.",
   },
-];
-
-const HERO_ROWS = [
-  ["Briefing", "Late luteal load can make small friction feel louder."],
-  ["SitRep", "Keep the plan simple and lower the ask."],
-  ["Risk Radar", "Do not turn capacity into a tone debate."],
-  ["CommandDeck", "Remove one task, then check in cleanly."],
 ];
 
 const HOW_STEPS = [
@@ -94,62 +91,57 @@ function SectionLabel({ children }) {
   return <span className="mm-section-label">{children}</span>;
 }
 
-function HeroPhone() {
+function DeviceShot({ src, alt, className = "", priority = false }) {
   return (
-    <div className="mm-phone-stage" aria-label="MoodMap daily read preview" data-reveal>
-      <div className="mm-phone" role="img" aria-label="MoodMap app screen showing one daily read">
-        <div className="mm-phone__speaker" aria-hidden="true" />
-        <div className="mm-phone__screen">
-          <div className="mm-phone__topbar">
-            <span>Daily Read</span>
-            <span>Luteal · Day 23</span>
-          </div>
-
-          <div className="mm-phone__hero-card">
-            <span className="mm-live-dot">Private read</span>
-            <h2>Read the day before you react.</h2>
-            <p>
-              Same behavior. Different phase. Different outcome. Start with context, then choose the move.
-            </p>
-          </div>
-
-          <div className="mm-phone__rows">
-            {HERO_ROWS.map(([label, copy], index) => (
-              <div key={label} className="mm-phone-row">
-                <span className="mm-phone-row__index">0{index + 1}</span>
-                <div>
-                  <strong>{label}</strong>
-                  <p>{copy}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+    <div className={["mm-device-shot", className].filter(Boolean).join(" ")}> 
+      <div className="mm-device-shot__rail" aria-hidden="true" />
+      <div className="mm-device-shot__frame">
+        <div className="mm-device-shot__notch" aria-hidden="true" />
+        <div className="mm-device-shot__screen">
+          <img
+            src={src}
+            alt={alt}
+            loading={priority ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={priority ? "high" : "auto"}
+          />
         </div>
       </div>
     </div>
   );
 }
 
+function HeroPhone() {
+  return (
+    <div className="mm-phone-stage" aria-label="MoodMap daily read preview" data-reveal>
+      <DeviceShot
+        src="/screenshots/daily-briefing.webp"
+        alt="MoodMap app showing the Daily Briefing for PMS day 28."
+        className="mm-device-shot--hero"
+        priority
+      />
+    </div>
+  );
+}
+
 function AppSurface({ surface, index }) {
   return (
-    <article
-      className={["mm-app-surface", `mm-app-surface--${surface.tone}`].join(" ")}
-      data-screenshot={surface.screenshotPath}
-      data-reveal
-    >
-      <div className="mm-app-surface__chrome" aria-hidden="true">
-        <span />
-        <span />
+    <article className={["mm-proof-card", `mm-proof-card--${surface.tone}`].join(" ")} data-reveal>
+      <div className="mm-proof-card__copy">
+        <span className="mm-proof-card__number">0{index + 1}</span>
+        <div>
+          <span className="mm-proof-card__meta">{surface.meta}</span>
+          <h3>{surface.kicker}</h3>
+          <p className="mm-proof-card__title">{surface.title}</p>
+          <p>{surface.copy}</p>
+        </div>
       </div>
-      <div className="mm-app-surface__meta">
-        <span>{surface.kicker}</span>
-        <span>{surface.meta}</span>
-      </div>
-      <div className="mm-app-surface__body">
-        <span className="mm-app-surface__number">0{index + 1}</span>
-        <h3>{surface.title}</h3>
-        <p>{surface.copy}</p>
-      </div>
+
+      <DeviceShot
+        src={surface.screenshotPath}
+        alt={surface.alt}
+        className="mm-device-shot--proof"
+      />
     </article>
   );
 }
@@ -159,14 +151,14 @@ function ProductProof() {
     <section id="product" className="mm-section mm-product-proof">
       <div className="mm-container">
         <div className="mm-section-heading" data-reveal>
-          <SectionLabel>Product proof</SectionLabel>
+          <SectionLabel>Real app proof</SectionLabel>
           <h2>One daily read. Four useful layers.</h2>
           <p>
-            MoodMap keeps the daily loop compact: what changed, what matters, what not to step on, and what move to make.
+            The same day, shown as one loop: what changed, what matters, what not to step on, and what move to make.
           </p>
         </div>
 
-        <div className="mm-proof-strip" aria-label="MoodMap app surfaces">
+        <div className="mm-proof-strip" aria-label="MoodMap app screens">
           {APP_SURFACES.map((surface, index) => (
             <AppSurface key={surface.kicker} surface={surface} index={index} />
           ))}
