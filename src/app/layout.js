@@ -9,14 +9,14 @@ import MobileMenu from "../components/MobileMenu";
 const SITE_NAME = "MoodMap";
 const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
-const SITE_TITLE = `${SITE_NAME} – Understand Her Cycle`;
+const SITE_TITLE = `${SITE_NAME} — Daily Cycle Intelligence for Men`;
 
 const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap delivers daily, phase-aware briefings for men — so you can anticipate her needs and time support and intimacy with clarity, not guesswork. Optional alerts for PMS, ovulation, and the fertile window. Supports cycle lengths 21–35 days (menstruation 2–8 days).";
+  "MoodMap is daily cycle intelligence for men in relationships: period timing, PMS awareness, ovulation context, luteal-phase friction, intimacy timing, and support cues translated into practical daily guidance.";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -85,7 +85,7 @@ export default function RootLayout({ children }) {
     url: SITE_URL,
     logo: `${SITE_URL}/icon.png`,
     email: "support@moodmap-app.com",
-    availableLanguage: ["en", "no", "de", "fr", "it", "es", "pt-BR", "ja", "zh-Hans"],
+    availableLanguage: ["en"],
     sameAs: [APPSTORE_URL, PLAYSTORE_URL],
   };
 
@@ -103,15 +103,25 @@ export default function RootLayout({ children }) {
     "@context": "https://schema.org",
     "@type": "MobileApplication",
     name: SITE_NAME,
+    description: META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
-    publisher: { "@id": `${SITE_URL}#organization` },
-    offers: {
-      "@type": "Offer",
-      price: "0",
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
+    applicationSubCategory: "Cycle-aware relationship guidance",
+    inLanguage: "en",
+    audience: {
+      "@type": "Audience",
+      audienceType: "Men in relationships",
     },
+    featureList: [
+      "Daily cycle briefing",
+      "PMS awareness",
+      "Ovulation timing context",
+      "Luteal-phase friction guidance",
+      "CommandDeck actions",
+      "Hormone graph intelligence",
+      "Optional timing alerts",
+    ],
+    publisher: { "@id": `${SITE_URL}#organization` },
     downloadUrl: `${SITE_URL}/#download`,
     installUrl: [APPSTORE_URL, PLAYSTORE_URL],
   };
@@ -250,8 +260,8 @@ export default function RootLayout({ children }) {
 
               {/* Desktop nav */}
               <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-white/70">
-                <Link href="/#about" className="hover:text-white transition-colors">
-                  About
+                <Link href="/#product" className="hover:text-white transition-colors">
+                  Product
                 </Link>
                 <Link href="/#download" className="hover:text-white transition-colors">
                   Download
@@ -276,7 +286,7 @@ export default function RootLayout({ children }) {
           <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
             <div className="mx-auto max-w-7xl px-6 py-10 text-center">
               <p className="text-sm text-white/60">
-                Built in Norway. Private by design. Informed by physiology and hormone research.
+                Built in Norway. Private by design. Cycle-aware relationship guidance — not medical advice.
               </p>
 
               <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white/70">

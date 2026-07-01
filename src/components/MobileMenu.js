@@ -5,8 +5,9 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 const LINKS = [
-  { href: "/#about", label: "About" },
+  { href: "/#product", label: "Product" },
   { href: "/#download", label: "Download" },
+  { href: "/learn", label: "Guides" },
   { href: "/support", label: "Support" },
   { href: "/pro", label: "Premium+" },
   // /partner skal være “semi-offentlig” → ikke i meny

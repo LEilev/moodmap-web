@@ -5,7 +5,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { COMMAND_DECK, PROOF_EXAMPLES } from "../lib/proofContent";
 
-const DECK_ORDER = ["ops", "intel", "contact", "core"];
+const DECK_ORDER = ["support", "comms", "intimacy", "core"];
 
 function clampIndex(idx, len) {
   if (len <= 0) return 0;
@@ -33,7 +33,7 @@ export default function CommandDeckPreview() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   const active = examples[clampIndex(activeIndex, total)];
-  const activeDeck = active?.deck || "ops";
+  const activeDeck = active?.deck || "support";
 
   const activeTabIndex = Math.max(0, DECK_ORDER.indexOf(activeDeck));
 
@@ -111,11 +111,11 @@ export default function CommandDeckPreview() {
       <div className="mx-auto max-w-5xl">
         <div className="text-center">
           <p className="text-[11px] sm:text-xs uppercase tracking-[0.26em] text-white/45">
-            Command Deck
+            CommandDeck
           </p>
 
           <h2 className="mt-3 text-2xl sm:text-3xl font-semibold">
-            What MoodMap actually says
+            Four moves, one daily read
           </h2>
 
           <p className="mt-4 mx-auto max-w-3xl text-white/75 leading-relaxed">
@@ -230,7 +230,7 @@ export default function CommandDeckPreview() {
 
                     <div className="mt-5 border-t border-white/10 pt-4">
                       <p className="text-[11px] uppercase tracking-[0.18em] text-white/45">
-                        Notes
+                        Why it matters
                       </p>
 
                       <ul className="mt-3 space-y-2.5 text-sm sm:text-[15px] text-white/70 leading-relaxed">
