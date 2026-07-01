@@ -12,37 +12,33 @@ const APP_SURFACES = [
     screenshotPath: "/screenshots/daily-briefing.webp",
     kicker: "Daily Briefing",
     title: "What changed today.",
-    copy: "Phase, risk, and briefing in one private read.",
+    quote: "Land it soft. Warmth, easy food, short support.",
     meta: "PMS · Day 28",
-    tone: "emerald",
     alt: "MoodMap Daily Briefing screen showing PMS day 28, capacity, hormones, risk, and brief.",
   },
   {
     screenshotPath: "/screenshots/sitrep.webp",
     kicker: "SitRep",
     title: "What matters now.",
-    copy: "The tactical room read: lean toward, avoid, and what costs more today.",
+    quote: "Close it softly. Warmth, simple food, low light, short support.",
     meta: "Room read",
-    tone: "blue",
     alt: "MoodMap SitRep screen showing guidance for day 3 in PMS.",
   },
   {
     screenshotPath: "/screenshots/risk-radar.webp",
     kicker: "Risk Radar",
     title: "What not to step on.",
-    copy: "A clear tripwire, containment move, and why this day needs better timing.",
+    quote: "Your need for closure is the fresh war.",
     meta: "Friction risk",
-    tone: "rose",
     alt: "MoodMap Risk Radar screen showing tripwire and containment guidance.",
   },
   {
     screenshotPath: "/screenshots/commanddeck.webp",
     kicker: "CommandDeck",
     title: "The move to make.",
-    copy: "Guardrails and practical moves for support, communication, intimacy, and steadiness.",
+    quote: "A real issue can still be opened at the wrong hour.",
     meta: "Next move",
-    tone: "cyan",
-    alt: "MoodMap CommandDeck screen showing key insights and practical daily moves.",
+    alt: "MoodMap CommandDeck key insights screen showing why timing matters today.",
   },
 ];
 
@@ -115,7 +111,7 @@ function HeroPhone() {
   return (
     <div className="mm-phone-stage" aria-label="MoodMap daily read preview" data-reveal>
       <DeviceShot
-        src="/screenshots/daily-briefing.webp"
+        src="/screenshots/daily-briefing-hero.webp"
         alt="MoodMap app showing the Daily Briefing for PMS day 28."
         className="mm-device-shot--hero"
         priority
@@ -124,24 +120,24 @@ function HeroPhone() {
   );
 }
 
-function AppSurface({ surface, index }) {
+function AppSurface({ surface, index, lead = false }) {
   return (
-    <article className={["mm-proof-card", `mm-proof-card--${surface.tone}`].join(" ")} data-reveal>
+    <article className={["mm-proof-card", lead ? "mm-proof-card--lead" : ""].join(" ")} data-reveal>
       <div className="mm-proof-card__copy">
         <span className="mm-proof-card__number">0{index + 1}</span>
-        <div>
-          <span className="mm-proof-card__meta">{surface.meta}</span>
-          <h3>{surface.kicker}</h3>
-          <p className="mm-proof-card__title">{surface.title}</p>
-          <p>{surface.copy}</p>
-        </div>
+        <span className="mm-proof-card__meta">{surface.meta}</span>
+        <h3>{surface.kicker}</h3>
+        <p className="mm-proof-card__title">{surface.title}</p>
+        <p className="mm-proof-card__quote">“{surface.quote}”</p>
       </div>
 
-      <DeviceShot
-        src={surface.screenshotPath}
-        alt={surface.alt}
-        className="mm-device-shot--proof"
-      />
+      <div className="mm-proof-card__visual">
+        <DeviceShot
+          src={surface.screenshotPath}
+          alt={surface.alt}
+          className="mm-device-shot--proof"
+        />
+      </div>
     </article>
   );
 }
@@ -151,14 +147,14 @@ function ProductProof() {
     <section id="product" className="mm-section mm-product-proof">
       <div className="mm-container">
         <div className="mm-section-heading" data-reveal>
-          <SectionLabel>Real app proof</SectionLabel>
-          <h2>One daily read. Four useful layers.</h2>
+          <SectionLabel>Inside today’s read</SectionLabel>
+          <h2>What changed. What matters. What to avoid. What to do.</h2>
           <p>
-            The same day, shown as one loop: what changed, what matters, what not to step on, and what move to make.
+            One PMS day, shown from four angles — the read, the room, the tripwire, and the cleaner move.
           </p>
         </div>
 
-        <div className="mm-proof-strip" aria-label="MoodMap app screens">
+        <div className="mm-proof-gallery" aria-label="MoodMap app screens">
           {APP_SURFACES.map((surface, index) => (
             <AppSurface key={surface.kicker} surface={surface} index={index} />
           ))}
