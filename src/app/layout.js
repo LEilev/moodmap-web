@@ -8,14 +8,14 @@ import MobileMenu from "../components/MobileMenu";
 const SITE_NAME = "MoodMap";
 const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
-const SITE_TITLE = `${SITE_NAME} — Daily Cycle Intelligence for Better Timing`;
+const SITE_TITLE = `${SITE_NAME} — One Daily Read for Better Timing`;
 
-const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
+const APPSTORE_URL = "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap uses saved cycle settings and standard cycle-phase modeling to turn PMS timing, ovulation-window context, luteal load, intimacy readiness, and support cues into practical daily guidance for men in relationships.";
+  "MoodMap gives men one private daily read from their partner’s cycle context: better timing, less friction, and practical relationship guidance.";
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
@@ -37,23 +37,14 @@ export const metadata = {
     "PMS guide for men",
     "cycle app for couples",
     "menstrual cycle guide for partners",
-    "period tracker for partners",
+    "partner period guide",
+    "daily relationship briefing",
+    "cycle-aware relationship guide",
+    "relationship timing",
     "PMS timing",
-    "ovulation-window context",
-    "fertile-window awareness",
-    "estimated ovulation window",
     "luteal phase",
     "intimacy timing",
-    "relationship timing",
-    "cycle-aware relationship guide",
-    "hormone graph",
-    "hormone-aware timing context",
-    "standard cycle physiology",
-    "cycle intelligence",
-    "daily relationship briefing",
-    "partner period guide",
-    "standard cycle-phase modeling",
-    "research-informed cycle intelligence",
+    "practical relationship guidance",
   ],
 
   alternates: {
@@ -153,15 +144,14 @@ export default function RootLayout({ children }) {
       audienceType: "Men in relationships",
     },
     featureList: [
-      "Daily cycle briefing",
-      "Standard cycle-phase modeling",
-      "PMS timing awareness",
-      "Estimated ovulation-window context",
-      "Fertile-window awareness",
-      "Luteal load guidance",
+      "Daily Briefing",
+      "SitRep",
+      "Risk Radar",
       "CommandDeck actions",
-      "Hormone graph intelligence",
-      "Optional timing alerts",
+      "Cycle-aware relationship timing",
+      "PMS timing awareness",
+      "Luteal load context",
+      "Intimacy timing context",
     ],
     publisher: { "@id": `${SITE_URL}#organization` },
     downloadUrl: `${SITE_URL}/#download`,
@@ -295,6 +285,9 @@ export default function RootLayout({ children }) {
                 <Link href="/#how-it-works" className="mm-nav-link">
                   How it works
                 </Link>
+                <Link href="/#trust" className="mm-nav-link">
+                  Trust
+                </Link>
                 <Link href="/learn" className="mm-nav-link">
                   Guides
                 </Link>
@@ -318,7 +311,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Research-informed cycle context for everyday relationship timing. Practical guidance, not diagnosis.
+                    Built in Norway. Private by design. Cycle-aware relationship timing. Practical guidance, not diagnosis.
                   </p>
                 </div>
 
