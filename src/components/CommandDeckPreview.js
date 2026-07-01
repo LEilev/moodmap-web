@@ -116,7 +116,7 @@ export default function CommandDeckPreview() {
           <div data-reveal>
             <p className="mm-section-label">CommandDeck</p>
             <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-              Four moves, one daily read.
+              The read becomes a move.
             </h2>
             <p className="mt-5 max-w-xl leading-relaxed text-white/72">
               {explain.general}
@@ -159,7 +159,7 @@ export default function CommandDeckPreview() {
 
             <div className="mm-command-topbar">
               <div>
-                <span>App surface preview</span>
+                <span>CommandDeck preview</span>
                 <strong>
                   Briefing {activeIndex + 1} / {total}
                 </strong>
@@ -249,7 +249,7 @@ export default function CommandDeckPreview() {
             </div>
 
             <p className="mt-4 text-center text-[11px] text-white/42 sm:text-xs">
-              Representative guidance. Use <span className="text-white/70">←</span>/
+              Sample guidance. Use <span className="text-white/70">←</span>/
               <span className="text-white/70">→</span> keys, or swipe on mobile.
             </p>
           </div>

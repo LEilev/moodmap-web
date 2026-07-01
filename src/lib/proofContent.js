@@ -24,14 +24,14 @@ export const COMMAND_DECK = {
     support: "Support move",
     comms: "Communication move",
     intimacy: "Intimacy move",
-    core: "Self-control move",
+    core: "Core move",
   },
   commandDeckExplainer: {
     general:
-      "CommandDeck turns the daily read into four practical move types: support, communication, intimacy, and self-control. Not generic tips — timing-aware actions.",
+      "CommandDeck turns the daily read into four practical move types: support, communication, intimacy, and steadiness. Four moves, one daily read.",
     support: "Reduce load before asking for a report.",
-    comms: "Keep timing, tone, and length under control.",
-    intimacy: "Read momentum without assuming access.",
+    comms: "Keep timing, tone, and length clean.",
+    intimacy: "Read momentum before you move closer.",
     core: "Stay steady when the room tightens.",
   },
 };
@@ -59,11 +59,11 @@ export const PROOF_EXAMPLES = [
     deck: "support",
     phase: "Menstruation",
     day: 1,
-    text: "Start with heat, water, and one solved task. Do not make her manage your good intentions.",
+    text: "Start with heat, water, and one solved task. Solve the obvious thing before you ask for a report.",
     why: [
       "Early-cycle load can make extra questions feel like extra work.",
       "The useful move is practical: heat pad, food, clean space, lower noise.",
-      "No hero speech. Just make one friction point disappear.",
+      "Skip the hero speech. Make one friction point disappear.",
     ],
   },
   {
@@ -83,11 +83,11 @@ export const PROOF_EXAMPLES = [
     deck: "intimacy",
     phase: "Ovulation",
     day: 14,
-    text: "Lean into play, but do not assume access. Read momentum, then match it.",
+    text: "Lean into play, but do not assume a green light. Read momentum, then match it.",
     why: [
-      "Ovulation can come with more energy or openness for some people; it is not a promise.",
+      "Ovulation can come with more energy or openness for some people; treat it as context, not a promise.",
       "Play works better when pressure stays low and attention stays high.",
-      "The move is invitation, not extraction. Match the signal you actually get.",
+      "The move is invitation, not expectation. Match the signal you actually get.",
     ],
   },
   {
@@ -95,11 +95,11 @@ export const PROOF_EXAMPLES = [
     deck: "core",
     phase: "Luteal",
     day: 22,
-    text: "If the room feels tight, lower your volume first. Your calm is not weakness; it is control.",
+    text: "If the room feels tight, lower your volume first. Steadiness is the move you fully own.",
     why: [
       "Luteal load can make noise, ambiguity, and repeated asks cost more.",
       "Lowering your intensity changes the room before you try to win the point.",
-      "Self-control is the part of timing you fully own.",
+      "Steadiness is the part of timing you fully own.",
     ],
   },
 ].map((example) => ({

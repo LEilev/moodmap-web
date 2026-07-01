@@ -15,7 +15,9 @@ const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap is daily cycle intelligence for men in relationships: period timing, PMS awareness, ovulation context, luteal-phase friction, intimacy timing, and support cues translated into practical daily guidance.";
+  "MoodMap uses saved cycle settings and standard cycle-phase modeling to turn PMS timing, ovulation-window context, luteal load, intimacy readiness, and support cues into practical daily guidance for men in relationships.";
+
+const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -37,16 +39,21 @@ export const metadata = {
     "menstrual cycle guide for partners",
     "period tracker for partners",
     "PMS timing",
-    "ovulation timing",
+    "ovulation-window context",
+    "fertile-window awareness",
+    "estimated ovulation window",
     "luteal phase",
     "intimacy timing",
     "relationship timing",
     "cycle-aware relationship guide",
     "hormone graph",
+    "hormone-aware timing context",
+    "standard cycle physiology",
     "cycle intelligence",
     "daily relationship briefing",
     "partner period guide",
-    "understand her cycle",
+    "standard cycle-phase modeling",
+    "research-informed cycle intelligence",
   ],
 
   alternates: {
@@ -66,7 +73,7 @@ export const metadata = {
     siteName: SITE_NAME,
     images: [
       {
-        url: "/icon.png",
+        url: BRAND_MARK_SRC,
         width: 512,
         height: 512,
         alt: SITE_NAME,
@@ -78,7 +85,7 @@ export const metadata = {
     card: "summary",
     title: SITE_TITLE,
     description: META_DESCRIPTION,
-    images: ["/icon.png"],
+    images: [BRAND_MARK_SRC],
   },
 
   // FAVICONS (tab, SERP, iOS homescreen)
@@ -95,6 +102,17 @@ export const metadata = {
   },
 };
 
+function BrandLockup({ className = "", footer = false }) {
+  return (
+    <Link href="/" className={["mm-brand-lockup", className].filter(Boolean).join(" ")} aria-label="MoodMap home">
+      <span className="mm-brand-mark" aria-hidden="true">
+        <img src={BRAND_MARK_SRC} alt="" width={footer ? 30 : 34} height={footer ? 30 : 34} />
+      </span>
+      <span>{SITE_NAME}</span>
+    </Link>
+  );
+}
+
 export default function RootLayout({ children }) {
   const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // LIVE
 
@@ -105,7 +123,7 @@ export default function RootLayout({ children }) {
     "@id": `${SITE_URL}#organization`,
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/icon.png`,
+    logo: `${SITE_URL}${BRAND_MARK_SRC}`,
     email: "support@moodmap-app.com",
     availableLanguage: ["en"],
     sameAs: [APPSTORE_URL, PLAYSTORE_URL],
@@ -128,7 +146,7 @@ export default function RootLayout({ children }) {
     description: META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
-    applicationSubCategory: "Cycle-aware relationship guidance",
+    applicationSubCategory: "Cycle-aware relationship timing",
     inLanguage: "en",
     audience: {
       "@type": "Audience",
@@ -136,9 +154,11 @@ export default function RootLayout({ children }) {
     },
     featureList: [
       "Daily cycle briefing",
-      "PMS awareness",
-      "Ovulation timing context",
-      "Luteal-phase friction guidance",
+      "Standard cycle-phase modeling",
+      "PMS timing awareness",
+      "Estimated ovulation-window context",
+      "Fertile-window awareness",
+      "Luteal load guidance",
       "CommandDeck actions",
       "Hormone graph intelligence",
       "Optional timing alerts",
@@ -265,20 +285,15 @@ export default function RootLayout({ children }) {
         <div className="flex min-h-full flex-col">
           <header className="mm-site-header sticky top-0 z-40">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
-              <Link href="/" className="mm-brand-lockup" aria-label="MoodMap home">
-                <span className="mm-brand-mark" aria-hidden="true">
-                  <span />
-                </span>
-                <span>{SITE_NAME}</span>
-              </Link>
+              <BrandLockup />
 
               {/* Desktop nav */}
-              <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex">
+              <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl lg:flex">
                 <Link href="/#product" className="mm-nav-link">
                   Product
                 </Link>
-                <Link href="/#download" className="mm-nav-link">
-                  Download
+                <Link href="/#how-it-works" className="mm-nav-link">
+                  How it works
                 </Link>
                 <Link href="/learn" className="mm-nav-link">
                   Guides
@@ -301,14 +316,9 @@ export default function RootLayout({ children }) {
             <div className="mx-auto max-w-7xl px-6 py-10">
               <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
                 <div className="max-w-xl">
-                  <Link href="/" className="mm-brand-lockup" aria-label="MoodMap home">
-                    <span className="mm-brand-mark" aria-hidden="true">
-                      <span />
-                    </span>
-                    <span>{SITE_NAME}</span>
-                  </Link>
+                  <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Cycle-aware relationship guidance for better timing — not medical advice, contraception, fertility planning, diagnosis, or therapy.
+                    Built in Norway. Private by design. Research-informed cycle context for everyday relationship timing. Practical guidance, not diagnosis.
                   </p>
                 </div>
 

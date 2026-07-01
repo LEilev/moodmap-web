@@ -1,15 +1,11 @@
 // src/app/page.js
 import {
   Activity,
-  AlertTriangle,
-  ArrowRight,
   BellRing,
   Brain,
-  CheckCircle2,
   ClipboardList,
   Clock,
   Flame,
-  Gauge,
   HeartHandshake,
   LineChart,
   Map,
@@ -21,62 +17,59 @@ import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import CommandDeckPreview from "../components/CommandDeckPreview";
 import ScrollReveal from "../components/ScrollReveal";
-import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 
 const APPSTORE_URL =
   "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
-const PLAN_TINT = "#22C55E";
-
 const PRODUCT_STACK = [
   {
     Icon: ClipboardList,
     title: "Daily Briefing",
-    label: "Read the day",
+    label: "What changed",
     copy:
-      "A fast terrain read for period timing, PMS awareness, ovulation context, energy, and capacity shifts.",
+      "A fast terrain read for period timing, PMS, ovulation context, energy, and stress margin.",
     accent: "34 197 94",
   },
   {
     Icon: Brain,
     title: "SitRep",
-    label: "Read the room",
+    label: "What matters",
     copy:
-      "A tactical situational read: what to lean toward, what to avoid, and what costs more today.",
+      "The tactical room read: what to lean toward, what to avoid, and what costs more today.",
     accent: "56 189 248",
   },
   {
     Icon: Radar,
     title: "Risk Radar",
-    label: "Spot the traps",
+    label: "What to avoid",
     copy:
-      "Flags common male failure modes before they become the problem: pressure, debate reflex, bad timing, noise, and ambiguity.",
+      "Flags common friction traps early: pressure, debate reflex, bad timing, noise, and ambiguity.",
     accent: "248 113 113",
   },
   {
     Icon: Map,
     title: "CommandDeck",
-    label: "Make the move",
+    label: "What to do",
     copy:
-      "Turns the read into practical actions for support, communication, intimacy, and self-control.",
+      "Turns the read into practical moves for support, communication, intimacy, and core steadiness.",
     accent: "45 212 191",
   },
   {
     Icon: LineChart,
     title: "Hormone Graph Intelligence",
-    label: "Interpret the pattern",
+    label: "Why timing shifts",
     copy:
-      "Shows general cycle physiology as context: biology → consequence → interpretation, without reducing her to hormones.",
+      "Shows general cycle physiology as context: biology → consequence → interpretation.",
     accent: "129 140 248",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
-    label: "Get the heads-up",
+    label: "Heads-up",
     copy:
-      "Optional alerts for PMS timing, ovulation context, phase shifts, and fertile-window awareness — framed as context, not surveillance.",
+      "Optional alerts for PMS timing, phase shifts, estimated ovulation-window context, and fertile-window awareness.",
     accent: "251 191 36",
   },
 ];
@@ -104,47 +97,42 @@ const TIMING_SIGNALS = [
 
 const TRUST_POINTS = [
   {
-    title: "Context, not verdict",
+    title: "Research-informed",
     copy:
-      "Cycle context can explain timing and stress margin. It does not tell you who she is or guarantee how she feels.",
+      "Built around saved cycle settings, standard cycle-phase modeling, and established menstrual-cycle physiology.",
   },
   {
-    title: "Variation matters",
+    title: "Context with variation",
     copy:
-      "Sleep, stress, illness, contraception, life events, and relationship dynamics can override general cycle patterns.",
+      "General cycle patterns can sharpen timing. Sleep, stress, illness, hormonal medication, and life events can still change the day.",
   },
   {
-    title: "Store-safe by design",
+    title: "Private and practical",
     copy:
-      "MoodMap is not medical advice, contraception, fertility planning, diagnosis, therapy, or mood prediction.",
+      "Designed for everyday relationship timing: support, communication, intimacy readiness, PMS, and luteal load.",
   },
 ];
 
 const FAQ_ITEMS = [
   {
-    question: "Is MoodMap a period tracker for partners?",
-    answer:
-      "MoodMap uses saved cycle settings to give cycle-aware relationship guidance for partners. It is closer to a daily cycle-intelligence briefing than a traditional period tracker.",
-  },
-  {
     question: "Is MoodMap for men?",
     answer:
-      "Yes. MoodMap is built for men in relationships who want better timing around period, PMS, ovulation, luteal phase, support, communication, and intimacy context.",
+      "MoodMap is designed primarily for men in relationships who want better timing around period, PMS, ovulation context, luteal load, support, communication, and intimacy.",
   },
   {
     question: "Does MoodMap predict her mood?",
     answer:
-      "No. MoodMap does not claim to know how she feels. It uses general menstrual-cycle patterns as context so you can interpret timing, stress margin, and friction risk more carefully.",
+      "MoodMap gives phase terrain, not certainty. It uses saved cycle settings and research-informed cycle patterns to help you read timing, stress margin, and friction risk more intelligently.",
+  },
+  {
+    question: "How does MoodMap use ovulation and fertile-window awareness?",
+    answer:
+      "MoodMap includes estimated ovulation-window and fertile-window context as part of cycle-aware relationship timing. It is for awareness, support, intimacy timing, and practical context — not contraception, medical ovulation confirmation, or clinical fertility planning.",
   },
   {
     question: "Is MoodMap medical advice or fertility planning?",
     answer:
-      "No. MoodMap is not medical advice, contraception, fertility planning, diagnosis, or therapy. It is cycle-aware relationship guidance and timing context.",
-  },
-  {
-    question: "How does MoodMap use PMS, ovulation, and luteal timing?",
-    answer:
-      "MoodMap translates PMS timing, ovulation context, luteal-phase friction, period timing, hormone graph patterns, and support cues into practical daily guidance.",
+      "MoodMap is built for everyday relationship timing and cycle context. It is not a medical device and does not diagnose, treat, cure, or prevent medical conditions. It is not contraception or a clinical fertility-planning tool.",
   },
 ];
 
@@ -170,18 +158,24 @@ function StoreButtons({ compact = false }) {
         compact ? "mt-7 justify-center" : "mt-8 justify-start",
       ].join(" ")}
     >
-      <a href={APPSTORE_URL} className="store-btn">
+      <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap on the App Store">
         <span className="store-btn__icon" aria-hidden="true">
           <FaApple />
         </span>
-        <span>Download on the App Store</span>
+        <span className="store-btn__copy">
+          <small>Download on the</small>
+          <strong>App Store</strong>
+        </span>
       </a>
 
-      <a href={PLAYSTORE_URL} className="store-btn">
+      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Google Play">
         <span className="store-btn__icon" aria-hidden="true">
           <FaGooglePlay />
         </span>
-        <span>Get it on Google Play</span>
+        <span className="store-btn__copy">
+          <small>Get it on</small>
+          <strong>Google Play</strong>
+        </span>
       </a>
     </div>
   );
@@ -211,16 +205,16 @@ function AnchorDivider({ variant = "neutral", tight = false }) {
   );
 }
 
-function HeroProductTheatre() {
-  const cockpitRows = [
-    ["Briefing", "Late luteal load can make small friction feel louder."],
-    ["SitRep", "Keep the plan simple. Do not make her manage your uncertainty."],
-    ["Risk Radar", "Do not debate tone when the real issue is capacity."],
-    ["CommandDeck", "Remove one task, lower the noise, then check in."],
+function HeroProductSurface() {
+  const flow = [
+    ["01", "Daily Briefing", "Late luteal load can make small friction feel louder."],
+    ["02", "SitRep", "Keep the plan simple. Do not make her manage your uncertainty."],
+    ["03", "Risk Radar", "Tone debate costs more when the real issue is capacity."],
+    ["04", "CommandDeck", "Remove one task, lower the noise, then check in."],
   ];
 
   return (
-    <div className="mm-hero-theatre" aria-label="MoodMap product preview" data-reveal>
+    <div className="mm-hero-theatre mm-hero-theatre--focused" aria-label="MoodMap product preview" data-reveal>
       <div className="mm-hero-orbit" aria-hidden="true" />
       <div className="mm-hero-curve" aria-hidden="true">
         <svg viewBox="0 0 620 220" preserveAspectRatio="none">
@@ -229,16 +223,16 @@ function HeroProductTheatre() {
         </svg>
       </div>
 
-      <div className="mm-cockpit-object">
+      <div className="mm-cockpit-object mm-app-surface-object">
         <div className="mm-cockpit-topbar">
-          <span>Cycle cockpit</span>
+          <span>Daily read</span>
           <span>Luteal • Day 23</span>
         </div>
 
-        <div className="mm-cockpit-hero-card">
+        <div className="mm-cockpit-hero-card mm-app-briefing-card">
           <div className="mm-cockpit-card-header">
             <span className="mm-live-dot">Phase-aware</span>
-            <span>Context, not verdict</span>
+            <span>Context first</span>
           </div>
 
           <h2>Read the day before you react to it.</h2>
@@ -262,66 +256,48 @@ function HeroProductTheatre() {
           </div>
         </div>
 
-        <div className="mm-cockpit-grid">
-          {cockpitRows.map(([label, copy]) => (
-            <div key={label} className="mm-cockpit-tile">
-              <span>{label}</span>
-              <p>{copy}</p>
+        <div className="mm-app-flow">
+          {flow.map(([index, label, copy]) => (
+            <div key={label} className="mm-app-flow-step">
+              <span>{index}</span>
+              <div>
+                <strong>{label}</strong>
+                <p>{copy}</p>
+              </div>
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="mm-floating-panel mm-floating-panel--left" aria-hidden="true">
-        <span>Risk Radar</span>
-        <p>Pressure + ambiguity cost more today.</p>
-      </div>
-      <div className="mm-floating-panel mm-floating-panel--right" aria-hidden="true">
-        <span>CommandDeck</span>
-        <p>Lower the load. Shorten the ask.</p>
       </div>
     </div>
   );
 }
 
-function ProductArchitecture() {
+function ProductProof() {
   return (
-    <section id="product" className="px-6 pb-16 sm:pb-20">
+    <section id="product" className="px-6 pb-14 sm:pb-16">
       <div className="mx-auto max-w-7xl">
-        <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
-          <div data-reveal>
-            <SectionLabel>Product stack</SectionLabel>
-            <h2 className="mt-5 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-              A daily cycle-intelligence cockpit — not another soft tip feed.
+        <div className="mm-read-system" data-reveal>
+          <div className="mm-read-system__intro">
+            <SectionLabel>Daily read</SectionLabel>
+            <h2 className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              One daily read. Four practical moves.
             </h2>
-            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/72 sm:text-lg">
-              MoodMap is built as a layered product system: orientation, tactical read, friction
-              prevention, practical action, biology context, and optional timing alerts.
-            </p>
-            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/52 sm:text-base">
-              The point is better timing with your partner — not mind reading, surveillance, or
-              pretending hormones explain everything.
+            <p className="mt-5 max-w-2xl text-base leading-relaxed sm:text-lg">
+              MoodMap turns phase terrain into a compact system: what changed, what matters, what trap to avoid, and what move to make.
             </p>
           </div>
 
-          <div className="mm-system-map" data-reveal>
-            <div className="mm-system-map__rail" aria-hidden="true" />
+          <div className="mm-system-map mm-system-map--compact">
             {PRODUCT_STACK.map(({ Icon, title, label, copy, accent }, index) => (
-              <article
-                key={title}
-                className="mm-system-layer"
-                style={{ "--mm-accent": accent }}
-              >
+              <article key={title} className="mm-system-layer" style={{ "--mm-accent": accent }}>
                 <div className="mm-system-index">0{index + 1}</div>
                 <div className="mm-system-icon">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/38">
-                    {label}
-                  </p>
-                  <h3 className="mt-1 text-base font-semibold text-white sm:text-lg">{title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-white/66">{copy}</p>
+                  <p className="mm-system-label">{label}</p>
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
                 </div>
               </article>
             ))}
@@ -334,23 +310,23 @@ function ProductArchitecture() {
 
 function TimingScene() {
   return (
-    <section id="about" className="px-6 pb-16 sm:pb-20">
+    <section id="how-it-works" className="px-6 pb-14 sm:pb-16">
       <div className="mx-auto max-w-7xl">
-        <div className="mm-timing-scene" data-reveal>
+        <div className="mm-timing-scene mm-timing-scene--compact" data-reveal>
           <div>
             <SectionLabel>Why timing matters</SectionLabel>
             <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
-              The same move can land clean — or cost you — depending on the day.
+              Same behavior. Different phase. Different outcome.
             </h2>
             <p className="mt-5 max-w-2xl leading-relaxed text-white/72">
-              MoodMap gives cycle-aware context before interpretation: what may be easier today,
-              what may be heavier, and where men often add friction by reacting too fast.
+              Cycle context changes the read: what may be easier today, what may be heavier, and
+              where a fast reaction can add friction.
             </p>
           </div>
 
           <div className="mm-before-after">
             <div className="mm-compare-card mm-compare-card--muted">
-              <span>Without context</span>
+              <span>Without cycle context</span>
               <p>“Why are you making this a thing?”</p>
               <small>Turns a capacity issue into a debate about tone.</small>
             </div>
@@ -362,9 +338,9 @@ function TimingScene() {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
           {TIMING_SIGNALS.map(({ Icon, title, copy }) => (
-            <article key={title} className="mm-signal-card" data-reveal>
+            <article key={title} className="mm-signal-card mm-signal-card--lean" data-reveal>
               <span className="mm-signal-icon">
                 <Icon className="h-5 w-5" aria-hidden="true" />
               </span>
@@ -378,81 +354,16 @@ function TimingScene() {
   );
 }
 
-function SampleGuidanceCard() {
-  return (
-    <article className="mm-guidance-object" data-reveal>
-      <div className="mm-guidance-header">
-        <div className="flex items-center gap-3">
-          <span className="mm-plan-pill">Plan</span>
-          <span>CommandDeck sample</span>
-        </div>
-        <span>
-          {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
-        </span>
-      </div>
-
-      <div className="mm-guidance-body">
-        <h3>{SAMPLE_GUIDANCE.text}</h3>
-        <p>
-          The move is deliberately small: reduce one friction point before you ask for emotional
-          reporting.
-        </p>
-      </div>
-
-      <div className="mm-guidance-notes">
-        <div className="mm-guidance-notes__top">
-          <span>Why it works</span>
-          <span>{SAMPLE_GUIDANCE.why.length} notes</span>
-        </div>
-        <ul>
-          {SAMPLE_GUIDANCE.why.map((bullet, index) => (
-            <li key={`${SAMPLE_GUIDANCE.id}-${index}`}>
-              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
-              <span>{bullet}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </article>
-  );
-}
-
-function SampleSection() {
-  return (
-    <section className="px-6 pb-16 sm:pb-20">
-      <div className="mx-auto max-w-6xl">
-        <div className="mx-auto max-w-3xl text-center" data-reveal>
-          <SectionLabel tone="plan">Sample guidance</SectionLabel>
-          <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-            The read becomes a move.
-          </h2>
-          <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/70">
-            No vague “be supportive” advice. MoodMap compresses cycle context into a practical
-            action without making her explain everything first.
-          </p>
-        </div>
-
-        <AnchorDivider variant="plan" tight />
-        <SampleGuidanceCard />
-
-        <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed text-white/52 sm:text-sm">
-          Daily guidance is phase-aware and framed as context — useful, practical, and non-deterministic.
-        </p>
-      </div>
-    </section>
-  );
-}
-
 function HormoneGraphScene() {
   const points = [
-    ["Period timing", "Lower capacity can make practical support more valuable than questions."],
-    ["Ovulation context", "Energy or openness may rise for some people — never treat it as a promise."],
-    ["Luteal phase", "Stress margin can narrow, so pressure and ambiguity cost more."],
-    ["PMS awareness", "Small friction can become bigger if you add defensiveness, noise, or debate."],
+    ["Standard phase modeling", "Saved cycle settings estimate likely phase terrain for everyday timing context."],
+    ["Ovulation-window context", "Energy or openness may rise for some people — useful context, never a promise."],
+    ["Luteal and PMS timing", "Stress margin can narrow, so pressure, noise, and ambiguity can cost more."],
+    ["Individual variation", "Sleep, stress, illness, hormonal medication, life events, and relationship dynamics still matter."],
   ];
 
   return (
-    <section className="px-6 pb-16 sm:pb-20">
+    <section id="science" className="px-6 pb-14 sm:pb-16">
       <div className="mx-auto max-w-7xl">
         <div className="mm-hormone-scene" data-reveal>
           <div>
@@ -461,13 +372,13 @@ function HormoneGraphScene() {
               Biology → consequence → interpretation.
             </h2>
             <p className="mt-5 max-w-xl leading-relaxed text-white/72">
-              MoodMap does not reduce her to hormones. It uses general cycle physiology as one layer
-              of context: energy, stress margin, intimacy readiness, and friction risk can shift
-              across the cycle.
+              MoodMap uses saved cycle settings and standard phase modeling to translate established
+              menstrual-cycle physiology into timing context: PMS, estimated ovulation-window terrain,
+              fertile-window awareness, luteal load, energy, stress margin, and intimacy readiness.
             </p>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/52">
-              Individual variation still matters. Sleep, stress, illness, contraception, life events,
-              and relationship dynamics can override the pattern.
+              It is useful context for daily decisions, not medical diagnosis. Individual variation
+              remains part of the read.
             </p>
           </div>
 
@@ -480,13 +391,13 @@ function HormoneGraphScene() {
               <defs>
                 <linearGradient id="estrogenGradient" x1="0" x2="1" y1="0" y2="0">
                   <stop offset="0%" stopColor="#34d399" stopOpacity="0.25" />
-                  <stop offset="48%" stopColor="#22d3ee" stopOpacity="0.95" />
-                  <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.35" />
+                  <stop offset="48%" stopColor="#22d3ee" stopOpacity="0.88" />
+                  <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.32" />
                 </linearGradient>
                 <linearGradient id="progesteroneGradient" x1="0" x2="1" y1="0" y2="0">
-                  <stop offset="0%" stopColor="#818cf8" stopOpacity="0.18" />
-                  <stop offset="60%" stopColor="#a78bfa" stopOpacity="0.85" />
-                  <stop offset="100%" stopColor="#fb7185" stopOpacity="0.55" />
+                  <stop offset="0%" stopColor="#818cf8" stopOpacity="0.16" />
+                  <stop offset="60%" stopColor="#a78bfa" stopOpacity="0.78" />
+                  <stop offset="100%" stopColor="#fb7185" stopOpacity="0.44" />
                 </linearGradient>
               </defs>
               <g className="mm-graph-grid">
@@ -515,7 +426,7 @@ function HormoneGraphScene() {
                 <circle cx="632" cy="204" r="5" />
               </g>
             </svg>
-            <div className="mm-graph-legend">
+            <div className="mm-graph-legend mm-graph-legend--five">
               <span>Period</span>
               <span>Follicular</span>
               <span>Ovulation</span>
@@ -541,22 +452,22 @@ function HormoneGraphScene() {
 
 function TrustSection() {
   return (
-    <section id="trust" className="px-6 pb-16 sm:pb-20">
+    <section id="trust" className="px-6 pb-14 sm:pb-16">
       <div className="mx-auto max-w-6xl text-center" data-reveal>
-        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs text-white/72 ring-1 ring-white/14 backdrop-blur sm:text-sm">
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.08] px-4 py-2 text-xs text-white/72 ring-1 ring-white/[0.12] backdrop-blur sm:text-sm">
           <ShieldCheck className="h-4 w-4 opacity-90" aria-hidden="true" />
-          Accurate enough to be useful. Careful enough to stay honest.
+          Research-informed. Phase-aware. Practical.
         </div>
 
         <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Built for better reading, not control.
+          Better timing starts with better context.
         </h2>
         <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/72">
-          MoodMap is for men who want better timing with their partner — without stereotypes,
-          surveillance, fertility claims, or mind-reading nonsense.
+          MoodMap is built for men who want cleaner timing with their partner: confident enough to be
+          useful, careful enough to stay honest.
         </p>
 
-        <div className="mt-9 grid gap-4 text-left md:grid-cols-3">
+        <div className="mt-8 grid gap-4 text-left md:grid-cols-3">
           {TRUST_POINTS.map(({ title, copy }) => (
             <article key={title} className="mm-trust-card">
               <MessageCircle className="h-5 w-5 text-white/70" aria-hidden="true" />
@@ -572,7 +483,7 @@ function TrustSection() {
 
 function FaqSection() {
   return (
-    <section className="px-6 pb-16 sm:pb-20">
+    <section className="px-6 pb-14 sm:pb-16">
       <div className="mx-auto max-w-5xl" data-reveal>
         <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
           <div>
@@ -581,8 +492,7 @@ function FaqSection() {
               Clear answers before download.
             </h2>
             <p className="mt-4 leading-relaxed text-white/62">
-              Compact review-safe answers for men searching for a period app, PMS guide, cycle app,
-              or menstrual-cycle guide for partners.
+              Compact answers on men, phase terrain, ovulation-window context, and medical boundaries.
             </p>
           </div>
 
@@ -609,7 +519,7 @@ function BottomCta() {
           Stop guessing the room. Read the phase first.
         </h2>
         <p className="mt-4 leading-relaxed text-white/75">
-          Download MoodMap and start with today’s daily cycle briefing.
+          Start with today’s daily cycle briefing.
         </p>
         <StoreButtons compact />
         <p className="mt-6 text-center text-sm text-white/55">
@@ -633,9 +543,9 @@ export default function HomePage() {
         <div aria-hidden="true" className="mm-background-field" />
         <div aria-hidden="true" className="mm-grid-field" />
 
-        <section className="relative px-6 pt-12 pb-16 sm:pt-20 sm:pb-20">
-          <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
-            <div className="relative z-10 max-w-3xl text-center lg:text-left" data-reveal>
+        <section className="mm-hero-section relative px-6 pt-12 pb-14 sm:pt-20 sm:pb-16">
+          <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
+            <div className="mm-hero-copy relative z-10 max-w-3xl text-center lg:text-left" data-reveal>
               <p className="mm-hero-pill mx-auto lg:mx-0">
                 Daily cycle intelligence for men in relationships
               </p>
@@ -645,8 +555,9 @@ export default function HomePage() {
               </h1>
 
               <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/76 sm:text-lg lg:text-xl">
-                MoodMap translates period timing, PMS awareness, ovulation context, luteal-phase
-                friction, intimacy timing, and support cues into a daily briefing you can actually use.
+                MoodMap uses saved cycle settings and standard cycle-phase modeling to estimate likely
+                phase terrain — then turns research-informed cycle physiology into practical guidance
+                for timing, support, intimacy, PMS, ovulation context, and luteal load.
               </p>
 
               <div className="mt-6 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
@@ -663,19 +574,17 @@ export default function HomePage() {
 
               <StoreButtons />
 
-              <p className="mt-5 max-w-2xl text-xs leading-relaxed text-white/45 sm:text-sm">
-                Cycle-aware relationship guidance — not medical advice, contraception, fertility
-                planning, diagnosis, therapy, surveillance, or mood prediction.
+              <p className="mm-hero-trust mt-5 max-w-2xl text-xs leading-relaxed text-white/48 sm:text-sm">
+                Cycle context for better timing. Practical guidance, not diagnosis.
               </p>
             </div>
 
-            <HeroProductTheatre />
+            <HeroProductSurface />
           </div>
         </section>
 
-        <ProductArchitecture />
+        <ProductProof />
         <TimingScene />
-        <SampleSection />
         <CommandDeckPreview />
         <HormoneGraphScene />
         <TrustSection />
