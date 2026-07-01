@@ -2,14 +2,13 @@
 import "./globals.css";
 import "./polish.css";
 import Link from "next/link";
-import Image from "next/image";
 import Script from "next/script";
 import MobileMenu from "../components/MobileMenu";
 
 const SITE_NAME = "MoodMap";
 const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
-const SITE_TITLE = `${SITE_NAME} — Daily Cycle Intelligence for Men`;
+const SITE_TITLE = `${SITE_NAME} — Daily Cycle Intelligence for Better Timing`;
 
 const APPSTORE_URL = "https://apps.apple.com/app/moodmap-moodcoaster/id6746102626";
 const PLAYSTORE_URL =
@@ -30,6 +29,29 @@ export const metadata = {
   },
 
   description: META_DESCRIPTION,
+
+  keywords: [
+    "period app for men",
+    "PMS guide for men",
+    "cycle app for couples",
+    "menstrual cycle guide for partners",
+    "period tracker for partners",
+    "PMS timing",
+    "ovulation timing",
+    "luteal phase",
+    "intimacy timing",
+    "relationship timing",
+    "cycle-aware relationship guide",
+    "hormone graph",
+    "cycle intelligence",
+    "daily relationship briefing",
+    "partner period guide",
+    "understand her cycle",
+  ],
+
+  alternates: {
+    canonical: "/",
+  },
 
   robots: {
     index: true,
@@ -241,38 +263,30 @@ export default function RootLayout({ children }) {
 
       <body className="min-h-full bg-primary-blue text-white">
         <div className="flex min-h-full flex-col">
-          <header className="sticky top-0 z-40 border-b border-white/10 bg-primary-blue/80 backdrop-blur-xl">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-              <Link
-                href="/"
-                className="flex items-center text-xl font-semibold tracking-tight"
-              >
-                {SITE_NAME}
-                <Image
-                  src="/icon.png"
-                  alt="MoodMap logo"
-                  width={28}
-                  height={28}
-                  className="ml-2"
-                  priority
-                />
+          <header className="mm-site-header sticky top-0 z-40">
+            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+              <Link href="/" className="mm-brand-lockup" aria-label="MoodMap home">
+                <span className="mm-brand-mark" aria-hidden="true">
+                  <span />
+                </span>
+                <span>{SITE_NAME}</span>
               </Link>
 
               {/* Desktop nav */}
-              <nav className="hidden sm:flex items-center gap-6 text-sm font-medium text-white/70">
-                <Link href="/#product" className="hover:text-white transition-colors">
+              <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl sm:flex">
+                <Link href="/#product" className="mm-nav-link">
                   Product
                 </Link>
-                <Link href="/#download" className="hover:text-white transition-colors">
+                <Link href="/#download" className="mm-nav-link">
                   Download
                 </Link>
-                <Link href="/learn" className="hover:text-white transition-colors">
+                <Link href="/learn" className="mm-nav-link">
                   Guides
                 </Link>
-                <Link href="/support.html" className="hover:text-white transition-colors">
+                <Link href="/support" className="mm-nav-link">
                   Support
                 </Link>
-                <Link href="/pro" className="hover:text-white transition-colors">
+                <Link href="/pro" className="mm-nav-link mm-nav-link--strong">
                   Premium+
                 </Link>
               </nav>
@@ -283,44 +297,52 @@ export default function RootLayout({ children }) {
 
           <main className="flex-1">{children}</main>
 
-          <footer className="border-t border-white/10 bg-primary-blue/70 backdrop-blur-sm">
-            <div className="mx-auto max-w-7xl px-6 py-10 text-center">
-              <p className="text-sm text-white/60">
-                Built in Norway. Private by design. Cycle-aware relationship guidance — not medical advice.
-              </p>
+          <footer className="mm-site-footer">
+            <div className="mx-auto max-w-7xl px-6 py-10">
+              <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+                <div className="max-w-xl">
+                  <Link href="/" className="mm-brand-lockup" aria-label="MoodMap home">
+                    <span className="mm-brand-mark" aria-hidden="true">
+                      <span />
+                    </span>
+                    <span>{SITE_NAME}</span>
+                  </Link>
+                  <p className="mt-4 text-sm leading-relaxed text-white/58">
+                    Built in Norway. Private by design. Cycle-aware relationship guidance for better timing — not medical advice, contraception, fertility planning, diagnosis, or therapy.
+                  </p>
+                </div>
 
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-white/70">
-                <Link className="mm-link" href="/learn">
-                  Guides
-                </Link>
-                <span className="opacity-30">•</span>
-                <Link className="mm-link" href="/support.html">
-                  Support
-                </Link>
-                <span className="opacity-30">•</span>
-                <Link className="mm-link" href="/pro">
-                  Premium+
-                </Link>
-                <span className="opacity-30">•</span>
-                <Link className="mm-link" href="/privacy-policy">
-                  Privacy Policy
-                </Link>
-                <span className="opacity-30">•</span>
-                <Link className="mm-link" href="/terms">
-                  Terms
-                </Link>
+                <div className="text-left md:text-right">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/68 md:justify-end">
+                    <Link className="mm-link" href="/learn">
+                      Guides
+                    </Link>
+                    <Link className="mm-link" href="/support">
+                      Support
+                    </Link>
+                    <Link className="mm-link" href="/pro">
+                      Premium+
+                    </Link>
+                    <Link className="mm-link" href="/privacy-policy">
+                      Privacy Policy
+                    </Link>
+                    <Link className="mm-link" href="/terms">
+                      Terms
+                    </Link>
+                  </div>
+
+                  <p className="mt-4 text-sm text-white/62">
+                    Contact:{" "}
+                    <a className="mm-link" href="mailto:support@moodmap-app.com">
+                      support@moodmap-app.com
+                    </a>
+                  </p>
+
+                  <p className="mt-5 text-xs text-white/40">
+                    © 2026 {SITE_NAME}. All rights reserved.
+                  </p>
+                </div>
               </div>
-
-              <p className="mt-4 text-sm text-white/70">
-                Contact:{" "}
-                <a className="mm-link" href="mailto:support@moodmap-app.com">
-                  support@moodmap-app.com
-                </a>
-              </p>
-
-              <p className="mt-5 text-xs text-white/45">
-                © 2026 {SITE_NAME}. All rights reserved.
-              </p>
             </div>
           </footer>
         </div>

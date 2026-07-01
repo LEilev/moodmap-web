@@ -1,11 +1,15 @@
 // src/app/page.js
 import {
   Activity,
+  AlertTriangle,
+  ArrowRight,
   BellRing,
   Brain,
+  CheckCircle2,
   ClipboardList,
   Clock,
   Flame,
+  Gauge,
   HeartHandshake,
   LineChart,
   Map,
@@ -16,6 +20,7 @@ import {
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import CommandDeckPreview from "../components/CommandDeckPreview";
+import ScrollReveal from "../components/ScrollReveal";
 import { SAMPLE_GUIDANCE } from "../lib/proofContent";
 
 const APPSTORE_URL =
@@ -23,57 +28,7 @@ const APPSTORE_URL =
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
-// Matches app deck tint for OPS/PLAN (from cockpitMaterialTokens.js)
 const PLAN_TINT = "#22C55E";
-
-function AnchorDivider({ variant = "neutral", tight = false }) {
-  const isPlan = variant === "plan";
-  const spacing = tight ? "my-7 sm:my-8" : "my-10";
-
-  return (
-    <div
-      aria-hidden="true"
-      className={["mx-auto flex items-center justify-center", spacing].join(" ")}
-    >
-      <div className="relative h-px w-16 bg-white/15">
-        <span
-          className={[
-            "absolute left-1/2 top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full",
-            isPlan
-              ? "bg-green-500/80 ring-1 ring-green-500/25"
-              : "bg-white/35 ring-1 ring-white/15",
-          ].join(" ")}
-        />
-      </div>
-    </div>
-  );
-}
-
-function StoreButtons({ compact = false }) {
-  return (
-    <div
-      id={compact ? undefined : "download"}
-      className={[
-        "flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:gap-4",
-        compact ? "mt-7" : "mt-7 sm:mt-8",
-      ].join(" ")}
-    >
-      <a href={APPSTORE_URL} className="store-btn">
-        <span className="store-btn__icon" aria-hidden="true">
-          <FaApple />
-        </span>
-        Download on the App Store
-      </a>
-
-      <a href={PLAYSTORE_URL} className="store-btn">
-        <span className="store-btn__icon" aria-hidden="true">
-          <FaGooglePlay />
-        </span>
-        Get it on Google Play
-      </a>
-    </div>
-  );
-}
 
 const PRODUCT_STACK = [
   {
@@ -81,16 +36,15 @@ const PRODUCT_STACK = [
     title: "Daily Briefing",
     label: "Read the day",
     copy:
-      "A top-level terrain read for period timing, PMS risk, ovulation momentum, energy, and capacity shifts.",
+      "A fast terrain read for period timing, PMS awareness, ovulation context, energy, and capacity shifts.",
     accent: "34 197 94",
-    isPrimary: true,
   },
   {
     Icon: Brain,
     title: "SitRep",
     label: "Read the room",
     copy:
-      "A tactical situational read: what to lean toward, what to avoid, and what may cost more today.",
+      "A tactical situational read: what to lean toward, what to avoid, and what costs more today.",
     accent: "56 189 248",
   },
   {
@@ -98,7 +52,7 @@ const PRODUCT_STACK = [
     title: "Risk Radar",
     label: "Spot the traps",
     copy:
-      "Flags common failure modes before they happen: pressure, debate reflex, bad jokes, ambiguity, and wrong timing.",
+      "Flags common male failure modes before they become the problem: pressure, debate reflex, bad timing, noise, and ambiguity.",
     accent: "248 113 113",
   },
   {
@@ -106,23 +60,23 @@ const PRODUCT_STACK = [
     title: "CommandDeck",
     label: "Make the move",
     copy:
-      "Turns the read into practical action for support, communication, intimacy, and self-control.",
+      "Turns the read into practical actions for support, communication, intimacy, and self-control.",
     accent: "45 212 191",
   },
   {
     Icon: LineChart,
     title: "Hormone Graph Intelligence",
-    label: "Biology → consequence",
+    label: "Interpret the pattern",
     copy:
-      "Translates general hormone patterns into plain-language context without turning biology into a verdict.",
-    accent: "96 165 250",
+      "Shows general cycle physiology as context: biology → consequence → interpretation, without reducing her to hormones.",
+    accent: "129 140 248",
   },
   {
     Icon: BellRing,
     title: "Timing Alerts",
-    label: "Optional heads-up",
+    label: "Get the heads-up",
     copy:
-      "Optional notifications for phase shifts, PMS timing, ovulation context, and fertile-window awareness.",
+      "Optional alerts for PMS timing, ovulation context, phase shifts, and fertile-window awareness — framed as context, not surveillance.",
     accent: "251 191 36",
   },
 ];
@@ -149,13 +103,116 @@ const TIMING_SIGNALS = [
 ];
 
 const TRUST_POINTS = [
-  "Cycle context is context, not a verdict.",
-  "Individual variation matters: sleep, stress, illness, contraception, life context, and relationship dynamics still count.",
-  "MoodMap is not medical advice, contraception, fertility planning, diagnosis, or therapy.",
+  {
+    title: "Context, not verdict",
+    copy:
+      "Cycle context can explain timing and stress margin. It does not tell you who she is or guarantee how she feels.",
+  },
+  {
+    title: "Variation matters",
+    copy:
+      "Sleep, stress, illness, contraception, life events, and relationship dynamics can override general cycle patterns.",
+  },
+  {
+    title: "Store-safe by design",
+    copy:
+      "MoodMap is not medical advice, contraception, fertility planning, diagnosis, therapy, or mood prediction.",
+  },
 ];
 
-function HeroBriefingCard() {
-  const rows = [
+const FAQ_ITEMS = [
+  {
+    question: "Is MoodMap a period tracker for partners?",
+    answer:
+      "MoodMap uses saved cycle settings to give cycle-aware relationship guidance for partners. It is closer to a daily cycle-intelligence briefing than a traditional period tracker.",
+  },
+  {
+    question: "Is MoodMap for men?",
+    answer:
+      "Yes. MoodMap is built for men in relationships who want better timing around period, PMS, ovulation, luteal phase, support, communication, and intimacy context.",
+  },
+  {
+    question: "Does MoodMap predict her mood?",
+    answer:
+      "No. MoodMap does not claim to know how she feels. It uses general menstrual-cycle patterns as context so you can interpret timing, stress margin, and friction risk more carefully.",
+  },
+  {
+    question: "Is MoodMap medical advice or fertility planning?",
+    answer:
+      "No. MoodMap is not medical advice, contraception, fertility planning, diagnosis, or therapy. It is cycle-aware relationship guidance and timing context.",
+  },
+  {
+    question: "How does MoodMap use PMS, ovulation, and luteal timing?",
+    answer:
+      "MoodMap translates PMS timing, ovulation context, luteal-phase friction, period timing, hormone graph patterns, and support cues into practical daily guidance.",
+  },
+];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
+function StoreButtons({ compact = false }) {
+  return (
+    <div
+      id={compact ? undefined : "download"}
+      className={[
+        "flex flex-col items-stretch gap-3 sm:flex-row sm:items-center",
+        compact ? "mt-7 justify-center" : "mt-8 justify-start",
+      ].join(" ")}
+    >
+      <a href={APPSTORE_URL} className="store-btn">
+        <span className="store-btn__icon" aria-hidden="true">
+          <FaApple />
+        </span>
+        <span>Download on the App Store</span>
+      </a>
+
+      <a href={PLAYSTORE_URL} className="store-btn">
+        <span className="store-btn__icon" aria-hidden="true">
+          <FaGooglePlay />
+        </span>
+        <span>Get it on Google Play</span>
+      </a>
+    </div>
+  );
+}
+
+function SectionLabel({ children, tone = "neutral" }) {
+  return (
+    <span
+      className={[
+        "mm-section-label",
+        tone === "plan" ? "mm-section-label--plan" : "",
+      ].join(" ")}
+    >
+      {children}
+    </span>
+  );
+}
+
+function AnchorDivider({ variant = "neutral", tight = false }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={["mm-anchor-divider", tight ? "my-7 sm:my-8" : "my-12 sm:my-14"].join(" ")}
+    >
+      <span className={variant === "plan" ? "is-plan" : ""} />
+    </div>
+  );
+}
+
+function HeroProductTheatre() {
+  const cockpitRows = [
     ["Briefing", "Late luteal load can make small friction feel louder."],
     ["SitRep", "Keep the plan simple. Do not make her manage your uncertainty."],
     ["Risk Radar", "Do not debate tone when the real issue is capacity."],
@@ -163,463 +220,468 @@ function HeroBriefingCard() {
   ];
 
   return (
-    <div className="mx-auto mt-10 max-w-4xl">
-      <div className="glass-card mm-sample-card overflow-hidden p-5 text-left sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
-              Today’s cycle cockpit
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-white sm:text-2xl">
-              Read timing before you react to behavior.
-            </h2>
-          </div>
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-100">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" aria-hidden="true" />
-            Phase-aware
-          </span>
+    <div className="mm-hero-theatre" aria-label="MoodMap product preview" data-reveal>
+      <div className="mm-hero-orbit" aria-hidden="true" />
+      <div className="mm-hero-curve" aria-hidden="true">
+        <svg viewBox="0 0 620 220" preserveAspectRatio="none">
+          <path d="M8 170 C 96 168, 118 92, 188 104 C 270 118, 282 28, 356 46 C 430 64, 440 156, 516 130 C 562 114, 590 78, 616 86" />
+          <path d="M8 164 C 106 158, 144 132, 220 136 C 308 140, 356 98, 418 108 C 480 118, 526 154, 616 142" />
+        </svg>
+      </div>
+
+      <div className="mm-cockpit-object">
+        <div className="mm-cockpit-topbar">
+          <span>Cycle cockpit</span>
+          <span>Luteal • Day 23</span>
         </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2">
-          {rows.map(([label, copy]) => (
-            <div
-              key={label}
-              className="rounded-2xl border border-white/12 bg-black/20 p-4 shadow-sm shadow-black/20"
-            >
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/40">
+        <div className="mm-cockpit-hero-card">
+          <div className="mm-cockpit-card-header">
+            <span className="mm-live-dot">Phase-aware</span>
+            <span>Context, not verdict</span>
+          </div>
+
+          <h2>Read the day before you react to it.</h2>
+          <p>
+            Same behavior. Different phase. Different outcome. MoodMap turns cycle context into a
+            daily read you can actually use.
+          </p>
+
+          <div className="mm-phase-strip" aria-hidden="true">
+            {[
+              ["Period", "18%"],
+              ["Follicular", "42%"],
+              ["Ovulation", "68%"],
+              ["Luteal", "82%"],
+              ["PMS", "92%"],
+            ].map(([label, left]) => (
+              <span key={label} style={{ left }}>
                 {label}
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-white/76 sm:text-[15px]">
-                {copy}
-              </p>
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mm-cockpit-grid">
+          {cockpitRows.map(([label, copy]) => (
+            <div key={label} className="mm-cockpit-tile">
+              <span>{label}</span>
+              <p>{copy}</p>
             </div>
           ))}
         </div>
+      </div>
 
-        <p className="mt-5 text-xs leading-relaxed text-white/48">
-          Representative preview. MoodMap uses general cycle patterns and your saved cycle settings;
-          it gives context without claiming certainty about anyone’s mood.
-        </p>
-
-        <div aria-hidden="true" className="glass-gloss" />
+      <div className="mm-floating-panel mm-floating-panel--left" aria-hidden="true">
+        <span>Risk Radar</span>
+        <p>Pressure + ambiguity cost more today.</p>
+      </div>
+      <div className="mm-floating-panel mm-floating-panel--right" aria-hidden="true">
+        <span>CommandDeck</span>
+        <p>Lower the load. Shorten the ask.</p>
       </div>
     </div>
   );
 }
 
-function SampleGuidanceCard() {
+function ProductArchitecture() {
   return (
-    <article className="glass-card mm-sample-card relative overflow-hidden ring-1 ring-white/25">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-white/0 to-transparent"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: `radial-gradient(900px 360px at 90% 0%, ${PLAN_TINT}33 0%, transparent 60%)`,
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 h-px"
-        style={{
-          background: `linear-gradient(to right, transparent, ${PLAN_TINT}CC, transparent)`,
-        }}
-      />
-
-      <div className="relative p-6 sm:p-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em]"
-              style={{
-                borderColor: `${PLAN_TINT}66`,
-                backgroundColor: `${PLAN_TINT}10`,
-                color: "rgba(240,253,244,0.92)",
-              }}
-            >
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: PLAN_TINT }}
-              />
-              PLAN
-            </span>
-
-            <span className="text-[11px] text-white/55 sm:text-xs">CommandDeck sample</span>
+    <section id="product" className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+          <div data-reveal>
+            <SectionLabel>Product stack</SectionLabel>
+            <h2 className="mt-5 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              A daily cycle-intelligence cockpit — not another soft tip feed.
+            </h2>
+            <p className="mt-5 max-w-xl text-base leading-relaxed text-white/72 sm:text-lg">
+              MoodMap is built as a layered product system: orientation, tactical read, friction
+              prevention, practical action, biology context, and optional timing alerts.
+            </p>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/52 sm:text-base">
+              The point is better timing with your partner — not mind reading, surveillance, or
+              pretending hormones explain everything.
+            </p>
           </div>
 
-          <span className="text-[11px] font-medium text-white/55 sm:text-xs">
-            {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
-          </span>
+          <div className="mm-system-map" data-reveal>
+            <div className="mm-system-map__rail" aria-hidden="true" />
+            {PRODUCT_STACK.map(({ Icon, title, label, copy, accent }, index) => (
+              <article
+                key={title}
+                className="mm-system-layer"
+                style={{ "--mm-accent": accent }}
+              >
+                <div className="mm-system-index">0{index + 1}</div>
+                <div className="mm-system-icon">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/38">
+                    {label}
+                  </p>
+                  <h3 className="mt-1 text-base font-semibold text-white sm:text-lg">{title}</h3>
+                  <p className="mt-1 text-sm leading-relaxed text-white/66">{copy}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TimingScene() {
+  return (
+    <section id="about" className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="mm-timing-scene" data-reveal>
+          <div>
+            <SectionLabel>Why timing matters</SectionLabel>
+            <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              The same move can land clean — or cost you — depending on the day.
+            </h2>
+            <p className="mt-5 max-w-2xl leading-relaxed text-white/72">
+              MoodMap gives cycle-aware context before interpretation: what may be easier today,
+              what may be heavier, and where men often add friction by reacting too fast.
+            </p>
+          </div>
+
+          <div className="mm-before-after">
+            <div className="mm-compare-card mm-compare-card--muted">
+              <span>Without context</span>
+              <p>“Why are you making this a thing?”</p>
+              <small>Turns a capacity issue into a debate about tone.</small>
+            </div>
+            <div className="mm-compare-card mm-compare-card--active">
+              <span>With MoodMap</span>
+              <p>“I’ll simplify the plan and take one thing off the list.”</p>
+              <small>Reads the room, lowers load, and keeps pressure out of it.</small>
+            </div>
+          </div>
         </div>
 
-        <h3 className="mt-5 text-xl font-semibold leading-snug tracking-tight text-white sm:text-2xl md:text-[26px]">
-          {SAMPLE_GUIDANCE.text}
-        </h3>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {TIMING_SIGNALS.map(({ Icon, title, copy }) => (
+            <article key={title} className="mm-signal-card" data-reveal>
+              <span className="mm-signal-icon">
+                <Icon className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
-        <div className="mt-6 h-px w-full bg-gradient-to-r from-transparent via-white/18 to-transparent" />
+function SampleGuidanceCard() {
+  return (
+    <article className="mm-guidance-object" data-reveal>
+      <div className="mm-guidance-header">
+        <div className="flex items-center gap-3">
+          <span className="mm-plan-pill">Plan</span>
+          <span>CommandDeck sample</span>
+        </div>
+        <span>
+          {SAMPLE_GUIDANCE.phase} • Day {SAMPLE_GUIDANCE.day}
+        </span>
       </div>
 
-      <div className="relative border-t border-white/10 bg-gradient-to-b from-white/[0.06] to-black/20 px-6 py-6 sm:px-8">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-0 top-0 bottom-0 w-px"
-          style={{
-            background: `linear-gradient(to bottom, transparent, ${PLAN_TINT}66, transparent)`,
-          }}
-        />
+      <div className="mm-guidance-body">
+        <h3>{SAMPLE_GUIDANCE.text}</h3>
+        <p>
+          The move is deliberately small: reduce one friction point before you ask for emotional
+          reporting.
+        </p>
+      </div>
 
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/50">
-            Why it works
-          </p>
-          <p className="text-[11px] text-white/35">{SAMPLE_GUIDANCE.why.length} notes</p>
+      <div className="mm-guidance-notes">
+        <div className="mm-guidance-notes__top">
+          <span>Why it works</span>
+          <span>{SAMPLE_GUIDANCE.why.length} notes</span>
         </div>
-
-        <ul className="mt-4">
-          {SAMPLE_GUIDANCE.why.map((bullet, i) => {
-            const isPrimary = i === 0;
-
-            return (
-              <li
-                key={`${SAMPLE_GUIDANCE.id}-${i}`}
-                className={["flex gap-3", isPrimary ? "mb-4" : "mb-[11px]"].join(" ")}
-              >
-                <span className="mt-[0.22em] flex h-5 w-5 items-center justify-center">
-                  <span
-                    className="flex h-[18px] w-[18px] items-center justify-center rounded-full border"
-                    style={{
-                      borderColor: `${PLAN_TINT}66`,
-                      backgroundColor: `${PLAN_TINT}10`,
-                    }}
-                  >
-                    <span
-                      className="h-[7px] w-[7px] rounded-full"
-                      style={{ backgroundColor: PLAN_TINT, opacity: isPrimary ? 1 : 0.85 }}
-                    />
-                  </span>
-                </span>
-
-                <span
-                  className={[
-                    "leading-relaxed",
-                    isPrimary
-                      ? "text-sm font-medium text-white/85 sm:text-[15px]"
-                      : "text-sm text-white/72 sm:text-[15px]",
-                  ].join(" ")}
-                >
-                  {bullet}
-                </span>
-              </li>
-            );
-          })}
+        <ul>
+          {SAMPLE_GUIDANCE.why.map((bullet, index) => (
+            <li key={`${SAMPLE_GUIDANCE.id}-${index}`}>
+              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              <span>{bullet}</span>
+            </li>
+          ))}
         </ul>
       </div>
-
-      <div aria-hidden="true" className="glass-gloss" />
     </article>
+  );
+}
+
+function SampleSection() {
+  return (
+    <section className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-6xl">
+        <div className="mx-auto max-w-3xl text-center" data-reveal>
+          <SectionLabel tone="plan">Sample guidance</SectionLabel>
+          <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+            The read becomes a move.
+          </h2>
+          <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/70">
+            No vague “be supportive” advice. MoodMap compresses cycle context into a practical
+            action without making her explain everything first.
+          </p>
+        </div>
+
+        <AnchorDivider variant="plan" tight />
+        <SampleGuidanceCard />
+
+        <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-relaxed text-white/52 sm:text-sm">
+          Daily guidance is phase-aware and framed as context — useful, practical, and non-deterministic.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function HormoneGraphScene() {
+  const points = [
+    ["Period timing", "Lower capacity can make practical support more valuable than questions."],
+    ["Ovulation context", "Energy or openness may rise for some people — never treat it as a promise."],
+    ["Luteal phase", "Stress margin can narrow, so pressure and ambiguity cost more."],
+    ["PMS awareness", "Small friction can become bigger if you add defensiveness, noise, or debate."],
+  ];
+
+  return (
+    <section className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="mm-hormone-scene" data-reveal>
+          <div>
+            <SectionLabel>Hormone Graph Intelligence</SectionLabel>
+            <h2 className="mt-5 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl md:text-5xl">
+              Biology → consequence → interpretation.
+            </h2>
+            <p className="mt-5 max-w-xl leading-relaxed text-white/72">
+              MoodMap does not reduce her to hormones. It uses general cycle physiology as one layer
+              of context: energy, stress margin, intimacy readiness, and friction risk can shift
+              across the cycle.
+            </p>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/52">
+              Individual variation still matters. Sleep, stress, illness, contraception, life events,
+              and relationship dynamics can override the pattern.
+            </p>
+          </div>
+
+          <div className="mm-graph-object" aria-label="Hormone graph intelligence preview">
+            <div className="mm-graph-topbar">
+              <span>Cycle graph</span>
+              <span>General pattern</span>
+            </div>
+            <svg viewBox="0 0 680 320" role="img" aria-label="Stylized hormone context curves">
+              <defs>
+                <linearGradient id="estrogenGradient" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stopColor="#34d399" stopOpacity="0.25" />
+                  <stop offset="48%" stopColor="#22d3ee" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.35" />
+                </linearGradient>
+                <linearGradient id="progesteroneGradient" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0%" stopColor="#818cf8" stopOpacity="0.18" />
+                  <stop offset="60%" stopColor="#a78bfa" stopOpacity="0.85" />
+                  <stop offset="100%" stopColor="#fb7185" stopOpacity="0.55" />
+                </linearGradient>
+              </defs>
+              <g className="mm-graph-grid">
+                <line x1="48" y1="56" x2="632" y2="56" />
+                <line x1="48" y1="132" x2="632" y2="132" />
+                <line x1="48" y1="208" x2="632" y2="208" />
+                <line x1="48" y1="284" x2="632" y2="284" />
+              </g>
+              <path
+                className="mm-graph-path"
+                stroke="url(#estrogenGradient)"
+                d="M48 245 C110 242 122 202 168 196 C230 188 264 88 326 74 C390 58 416 150 460 166 C520 188 564 166 632 178"
+              />
+              <path
+                className="mm-graph-path mm-graph-path--soft"
+                stroke="url(#progesteroneGradient)"
+                d="M48 268 C142 268 198 262 250 244 C328 216 356 150 422 118 C502 80 570 142 632 190"
+              />
+              <path
+                className="mm-graph-path mm-graph-path--risk"
+                d="M48 278 C124 276 190 264 248 246 C314 226 356 212 416 226 C500 246 562 240 632 204"
+              />
+              <g className="mm-graph-markers">
+                <circle cx="326" cy="74" r="5" />
+                <circle cx="422" cy="118" r="5" />
+                <circle cx="632" cy="204" r="5" />
+              </g>
+            </svg>
+            <div className="mm-graph-legend">
+              <span>Period</span>
+              <span>Follicular</span>
+              <span>Ovulation</span>
+              <span>Luteal</span>
+              <span>PMS</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-4">
+          {points.map(([title, copy]) => (
+            <article key={title} className="mm-hormone-point" data-reveal>
+              <Activity className="h-4 w-4" aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustSection() {
+  return (
+    <section id="trust" className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-6xl text-center" data-reveal>
+        <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs text-white/72 ring-1 ring-white/14 backdrop-blur sm:text-sm">
+          <ShieldCheck className="h-4 w-4 opacity-90" aria-hidden="true" />
+          Accurate enough to be useful. Careful enough to stay honest.
+        </div>
+
+        <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+          Built for better reading, not control.
+        </h2>
+        <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/72">
+          MoodMap is for men who want better timing with their partner — without stereotypes,
+          surveillance, fertility claims, or mind-reading nonsense.
+        </p>
+
+        <div className="mt-9 grid gap-4 text-left md:grid-cols-3">
+          {TRUST_POINTS.map(({ title, copy }) => (
+            <article key={title} className="mm-trust-card">
+              <MessageCircle className="h-5 w-5 text-white/70" aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  return (
+    <section className="px-6 pb-16 sm:pb-20">
+      <div className="mx-auto max-w-5xl" data-reveal>
+        <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+          <div>
+            <SectionLabel>FAQ</SectionLabel>
+            <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+              Clear answers before download.
+            </h2>
+            <p className="mt-4 leading-relaxed text-white/62">
+              Compact review-safe answers for men searching for a period app, PMS guide, cycle app,
+              or menstrual-cycle guide for partners.
+            </p>
+          </div>
+
+          <div className="mm-faq-list">
+            {FAQ_ITEMS.map((item, index) => (
+              <details key={item.question} open={index === 0}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BottomCta() {
+  return (
+    <section className="px-6 pt-2 pb-16 text-center sm:pb-20">
+      <div className="mx-auto max-w-3xl" data-reveal>
+        <AnchorDivider />
+        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+          Stop guessing the room. Read the phase first.
+        </h2>
+        <p className="mt-4 leading-relaxed text-white/75">
+          Download MoodMap and start with today’s daily cycle briefing.
+        </p>
+        <StoreButtons compact />
+        <p className="mt-6 text-center text-sm text-white/55">
+          Better timing. Cleaner support. Fewer preventable mistakes.
+        </p>
+      </div>
+    </section>
   );
 }
 
 export default function HomePage() {
   return (
-    <main className="relative isolate overflow-x-hidden bg-primary-blue text-white">
-      {/* Subtle premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 -z-10 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-500/20 blur-[160px] sm:blur-[200px] md:opacity-30"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 -z-10 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/20 to-emerald-400/18 blur-[170px] sm:blur-[220px] md:opacity-30"
+    <>
+      <ScrollReveal />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="px-6 pt-14 pb-10 text-center sm:pt-20 sm:pb-14">
-        <p className="mx-auto inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-[10px] font-semibold tracking-[0.14em] text-white/70 sm:text-[11px]">
-          Daily cycle intelligence for men in relationships
-        </p>
+      <div className="mm-page relative isolate overflow-x-hidden bg-primary-blue text-white">
+        <div aria-hidden="true" className="mm-background-field" />
+        <div aria-hidden="true" className="mm-grid-field" />
 
-        <h1 className="mx-auto mt-5 max-w-5xl text-balance text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-            Understand the phase
-          </span>{" "}
-          <span className="block bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-            before you respond.
-          </span>
-        </h1>
-
-        <p className="mx-auto mt-5 max-w-3xl text-pretty text-base leading-relaxed text-white/76 sm:text-lg">
-          MoodMap translates period timing, PMS awareness, ovulation context, luteal-phase friction,
-          intimacy timing, and support cues into a daily briefing you can actually use.
-        </p>
-
-        <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-white/56">
-          Same behavior. Different phase. Different outcome. Read the day before you react to it.
-        </p>
-
-        <StoreButtons />
-
-        <p className="mx-auto mt-5 max-w-3xl text-xs leading-relaxed text-white/45">
-          Cycle-aware relationship guidance — not medical advice, contraception, fertility planning,
-          diagnosis, or therapy.
-        </p>
-
-        <HeroBriefingCard />
-      </section>
-
-      <AnchorDivider />
-
-      {/* Product stack */}
-      <section id="product" className="relative px-6 pb-14 sm:pb-16">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -left-24 top-14 h-[420px] w-[420px] rounded-full bg-gradient-to-br from-emerald-500/10 via-sky-500/5 to-transparent blur-3xl" />
-          <div className="absolute -right-24 bottom-6 h-[360px] w-[360px] rounded-full bg-gradient-to-br from-sky-500/10 via-emerald-500/5 to-transparent blur-3xl" />
-        </div>
-
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70 sm:text-[11px]">
-              Product stack
-            </span>
-
-            <h2 className="mt-4 text-2xl font-semibold sm:text-3xl md:text-4xl">
-              A daily cycle-intelligence cockpit — not a soft tip feed.
-            </h2>
-            <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/75">
-              MoodMap is built around layers: fast orientation, tactical room read, friction risk,
-              action, biology, and optional alerts. The point is better timing — not mind reading.
-            </p>
-          </div>
-
-          <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {PRODUCT_STACK.map(({ Icon, title, label, copy, isPrimary, accent }) => (
-              <article
-                key={title}
-                style={{ "--mm-accent": accent }}
-                className={[
-                  "glass-card glass-card-hover group relative overflow-hidden p-6 text-left ring-1",
-                  isPrimary ? "ring-green-500/25" : "ring-white/18",
-                ].join(" ")}
-              >
-                <div aria-hidden="true" className="mm-card-accent" />
-
-                {isPrimary ? (
-                  <>
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full blur-3xl"
-                      style={{ backgroundColor: `${PLAN_TINT}14` }}
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-white/0 to-transparent"
-                    />
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute left-10 right-10 top-0 h-px"
-                      style={{
-                        background: `linear-gradient(to right, transparent, ${PLAN_TINT}99, transparent)`,
-                      }}
-                    />
-                  </>
-                ) : null}
-
-                <span className="glass-icon transition-transform duration-300 group-hover:scale-[1.03]">
-                  <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden="true" />
-                </span>
-
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/42">
-                  {label}
-                </p>
-                <h3 className="mt-2 text-base font-semibold text-white sm:text-lg">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/70 sm:text-[15px]">
-                  {copy}
-                </p>
-
-                <div aria-hidden="true" className="glass-gloss" />
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Timing thesis */}
-      <section id="about" className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
-                Why timing matters
+        <section className="relative px-6 pt-12 pb-16 sm:pt-20 sm:pb-20">
+          <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-10">
+            <div className="relative z-10 max-w-3xl text-center lg:text-left" data-reveal>
+              <p className="mm-hero-pill mx-auto lg:mx-0">
+                Daily cycle intelligence for men in relationships
               </p>
-              <h2 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
-                The same move can land clean — or cost you — depending on the day.
-              </h2>
-              <p className="mt-4 leading-relaxed text-white/72">
-                MoodMap gives cycle-aware context before interpretation: what may be easier today,
-                what may be heavier, and where men often add friction by reacting too fast.
+
+              <h1 className="mt-6 text-balance text-4xl font-extrabold leading-[0.98] tracking-[-0.045em] sm:text-6xl md:text-7xl">
+                Understand the phase before you respond.
+              </h1>
+
+              <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/76 sm:text-lg lg:text-xl">
+                MoodMap translates period timing, PMS awareness, ovulation context, luteal-phase
+                friction, intimacy timing, and support cues into a daily briefing you can actually use.
               </p>
-              <p className="mt-4 leading-relaxed text-white/58">
-                It does not tell you who she is. It helps you understand the terrain so your timing,
-                tone, pressure, and expectations are less sloppy.
-              </p>
-            </div>
 
-            <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1">
-              {TIMING_SIGNALS.map(({ Icon, title, copy }) => (
-                <article key={title} className="glass-card p-5 text-left">
-                  <div className="flex items-start gap-4">
-                    <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10">
-                      <Icon className="h-5 w-5 text-white" aria-hidden="true" />
-                    </span>
-                    <div>
-                      <h3 className="font-semibold text-white">{title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-white/68">{copy}</p>
-                    </div>
-                  </div>
-                  <div aria-hidden="true" className="glass-gloss" />
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Single sample */}
-      <section className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/70 sm:text-[11px]">
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full bg-green-500/90"
-                style={{ boxShadow: `0 0 0 6px ${PLAN_TINT}1A` }}
-              />
-              Sample guidance
-            </span>
-
-            <h2 className="mt-4 text-2xl font-semibold sm:text-3xl md:text-4xl">
-              The read becomes a move.
-            </h2>
-
-            <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/70">
-              No vague “be supportive” advice. MoodMap compresses cycle context into an action you
-              can execute without making her explain everything first.
-            </p>
-          </div>
-
-          <AnchorDivider variant="plan" tight />
-
-          <div className="mx-auto max-w-[980px]">
-            <SampleGuidanceCard />
-
-            <p className="mt-6 text-center text-xs text-white/55 sm:text-sm">
-              Daily guidance is phase-aware and framed as context — useful, practical, and non-deterministic.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <CommandDeckPreview />
-
-      {/* Hormone intelligence */}
-      <section className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-6xl">
-          <div className="glass-card overflow-hidden p-6 sm:p-8">
-            <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-              <div>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-white/45">
-                  Hormone Graph Intelligence
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold leading-tight sm:text-3xl md:text-4xl">
-                  Biology → consequence → interpretation.
-                </h2>
-                <p className="mt-4 leading-relaxed text-white/72">
-                  MoodMap does not reduce her to hormones. It uses general cycle physiology as one
-                  layer of context: energy, stress margin, intimacy readiness, and friction risk can
-                  shift across the cycle.
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-white/52">
-                  Individual variation still matters. Sleep, stress, illness, contraception, life
-                  events, and relationship dynamics can override the pattern.
-                </p>
-              </div>
-
-              <div className="grid gap-3">
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
                 {[
-                  ["Period timing", "Lower capacity can make practical support more valuable than questions."],
-                  ["Ovulation context", "Energy or openness may rise for some people — never treat it as a promise."],
-                  ["Luteal phase", "Stress margin can narrow, so pressure and ambiguity cost more."],
-                  ["PMS awareness", "Small friction can become bigger if you add defensiveness, noise, or debate."],
-                ].map(([title, copy]) => (
-                  <div key={title} className="rounded-2xl border border-white/12 bg-black/20 p-4">
-                    <div className="flex items-start gap-3">
-                      <Activity className="mt-0.5 h-4 w-4 shrink-0 text-white/65" aria-hidden="true" />
-                      <div>
-                        <h3 className="text-sm font-semibold text-white">{title}</h3>
-                        <p className="mt-1 text-sm leading-relaxed text-white/66">{copy}</p>
-                      </div>
-                    </div>
-                  </div>
+                  "Same behavior",
+                  "Different phase",
+                  "Different outcome",
+                ].map((item) => (
+                  <span key={item} className="mm-hero-chip">
+                    {item}
+                  </span>
                 ))}
               </div>
+
+              <StoreButtons />
+
+              <p className="mt-5 max-w-2xl text-xs leading-relaxed text-white/45 sm:text-sm">
+                Cycle-aware relationship guidance — not medical advice, contraception, fertility
+                planning, diagnosis, therapy, surveillance, or mood prediction.
+              </p>
             </div>
 
-            <div aria-hidden="true" className="glass-gloss" />
+            <HeroProductTheatre />
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Trust */}
-      <section id="trust" className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs text-white/70 ring-1 ring-white/12 backdrop-blur sm:text-sm">
-            <ShieldCheck className="h-4 w-4 opacity-90" aria-hidden="true" />
-            Accurate enough to be useful. Careful enough to stay honest.
-          </div>
-
-          <h2 className="mt-5 text-2xl font-semibold sm:text-3xl">
-            Built for better reading, not control.
-          </h2>
-          <p className="mx-auto mt-4 max-w-3xl leading-relaxed text-white/72">
-            MoodMap is for men who want better timing with their partner — without stereotypes,
-            surveillance, fertility claims, or mind-reading nonsense.
-          </p>
-
-          <div className="mt-8 grid gap-4 text-left sm:grid-cols-3">
-            {TRUST_POINTS.map((point) => (
-              <article key={point} className="glass-card p-5">
-                <MessageCircle className="h-5 w-5 text-white/70" aria-hidden="true" />
-                <p className="mt-3 text-sm leading-relaxed text-white/72">{point}</p>
-                <div aria-hidden="true" className="glass-gloss" />
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Bottom CTA */}
-      <section className="px-6 pt-2 pb-16 text-center sm:pb-20">
-        <div className="mx-auto max-w-3xl">
-          <AnchorDivider />
-
-          <h2 className="text-2xl font-semibold sm:text-3xl">
-            Stop guessing the room. Read the phase first.
-          </h2>
-          <p className="mt-3 leading-relaxed text-white/75">
-            Download MoodMap and start with today’s daily cycle briefing.
-          </p>
-
-          <StoreButtons compact />
-
-          <p className="mt-6 text-center text-sm text-white/55">
-            Better timing. Cleaner support. Fewer preventable mistakes.
-          </p>
-        </div>
-      </section>
-    </main>
+        <ProductArchitecture />
+        <TimingScene />
+        <SampleSection />
+        <CommandDeckPreview />
+        <HormoneGraphScene />
+        <TrustSection />
+        <FaqSection />
+        <BottomCta />
+      </div>
+    </>
   );
 }

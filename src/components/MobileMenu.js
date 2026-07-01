@@ -10,13 +10,11 @@ const LINKS = [
   { href: "/learn", label: "Guides" },
   { href: "/support", label: "Support" },
   { href: "/pro", label: "Premium+" },
-  // /partner skal være “semi-offentlig” → ikke i meny
 ];
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
 
-  // Lock scroll når meny er åpen
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -26,7 +24,6 @@ export default function MobileMenu() {
     };
   }, [open]);
 
-  // ESC lukker
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === "Escape") setOpen(false);
@@ -37,20 +34,9 @@ export default function MobileMenu() {
 
   return (
     <>
-      {/* Hamburger button (more solid on iOS) */}
       <button
         type="button"
-        className="
-          sm:hidden inline-flex items-center justify-center
-          rounded-full px-3 py-2
-          bg-[#0B1220]/75 ring-1 ring-white/20
-          text-white/95 shadow-lg shadow-black/30
-          backdrop-blur-xl
-          hover:bg-[#0B1220]/85 hover:ring-white/25
-          active:scale-[0.98]
-          transition
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/50
-        "
+        className="mm-mobile-menu-button"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
@@ -65,38 +51,23 @@ export default function MobileMenu() {
           aria-modal="true"
           aria-label="Navigation menu"
         >
-          {/* Overlay (slightly more solid) */}
           <div
-            className="absolute inset-0 bg-[#070B14]/97 backdrop-blur-xl"
+            className="absolute inset-0 bg-[#050915]/96 backdrop-blur-2xl"
             onClick={() => setOpen(false)}
           />
 
-          {/* Panel (much less transparent) */}
-          <div
-            className="
-              relative mx-auto mt-20 w-[92%] max-w-sm
-              rounded-3xl
-              bg-[#0B1220]/92 ring-1 ring-white/16
-              backdrop-blur-2xl
-              shadow-2xl shadow-black/50
-              overflow-hidden
-            "
-          >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
-              <div className="text-sm font-semibold text-white/90">Menu</div>
+          <div className="mm-mobile-panel">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+              <div className="mm-brand-lockup text-base" aria-hidden="true">
+                <span className="mm-brand-mark">
+                  <span />
+                </span>
+                <span>MoodMap</span>
+              </div>
 
               <button
                 type="button"
-                className="
-                  inline-flex items-center justify-center
-                  rounded-full px-3 py-2
-                  bg-white/10 ring-1 ring-white/18
-                  text-white/95
-                  hover:bg-white/14 hover:ring-white/22
-                  active:scale-[0.98]
-                  transition
-                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/50
-                "
+                className="mm-mobile-menu-button inline-flex"
                 aria-label="Close menu"
                 onClick={() => setOpen(false)}
               >
@@ -109,18 +80,19 @@ export default function MobileMenu() {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="
-                    block rounded-2xl px-4 py-3
-                    text-base font-semibold text-white/92
-                    hover:bg-white/10
-                    transition
-                  "
+                  className="block rounded-2xl px-4 py-3 text-base font-semibold text-white/92 transition hover:bg-white/10"
                   onClick={() => setOpen(false)}
                 >
                   {l.label}
                 </Link>
               ))}
             </nav>
+
+            <div className="border-t border-white/10 px-5 py-4">
+              <p className="text-sm leading-relaxed text-white/58">
+                Daily cycle intelligence for better timing — not medical advice or mood prediction.
+              </p>
+            </div>
           </div>
         </div>
       )}

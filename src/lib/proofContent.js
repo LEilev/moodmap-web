@@ -28,7 +28,7 @@ export const COMMAND_DECK = {
   },
   commandDeckExplainer: {
     general:
-      "CommandDeck turns the daily read into practical moves: support, communication, intimacy, and self-control. Not generic tips — timing-aware actions.",
+      "CommandDeck turns the daily read into four practical move types: support, communication, intimacy, and self-control. Not generic tips — timing-aware actions.",
     support: "Reduce load before asking for a report.",
     comms: "Keep timing, tone, and length under control.",
     intimacy: "Read momentum without assuming access.",
@@ -95,7 +95,7 @@ export const PROOF_EXAMPLES = [
     deck: "core",
     phase: "Luteal",
     day: 22,
-    text: "If the room feels tight, lower your volume first. Your calm is not weakness; it is leverage.",
+    text: "If the room feels tight, lower your volume first. Your calm is not weakness; it is control.",
     why: [
       "Luteal load can make noise, ambiguity, and repeated asks cost more.",
       "Lowering your intensity changes the room before you try to win the point.",
