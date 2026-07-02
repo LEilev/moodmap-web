@@ -284,12 +284,37 @@
 }
 
 .mm-device-shot--hero {
-  width: min(80vw, 438px);
-  min-width: 292px;
+  width: min(74vw, 396px);
+  min-width: 280px;
+}
+
+.mm-device-shot--hero .mm-device-shot__frame {
+  aspect-ratio: 0.548;
+  border-radius: 46px;
+  padding: 12px;
+}
+
+.mm-device-shot--hero .mm-device-shot__frame::after {
+  inset: 8px;
+  border-radius: 38px;
+}
+
+.mm-device-shot--hero .mm-device-shot__notch {
+  top: 13px;
+  width: 68px;
+  height: 20px;
+}
+
+.mm-device-shot--hero .mm-device-shot__screen {
+  border-radius: 34px;
+  background: #050914;
 }
 
 .mm-device-shot--hero .mm-device-shot__screen img {
   object-position: top center;
+  transform: translateY(5px) scale(0.958);
+  transform-origin: top center;
+  border-radius: 31px;
 }
 
 .mm-section-heading {
@@ -719,7 +744,7 @@
 
   .mm-device-shot--hero {
     min-width: 0;
-    width: min(88vw, 338px);
+    width: min(84vw, 320px);
   }
 
   .mm-device-shot__frame {
@@ -734,6 +759,31 @@
 
   .mm-device-shot__screen {
     border-radius: 30px;
+  }
+
+  .mm-device-shot--hero .mm-device-shot__frame {
+    border-radius: 40px;
+    padding: 10px;
+  }
+
+  .mm-device-shot--hero .mm-device-shot__frame::after {
+    inset: 7px;
+    border-radius: 33px;
+  }
+
+  .mm-device-shot--hero .mm-device-shot__notch {
+    top: 11px;
+    width: 58px;
+    height: 17px;
+  }
+
+  .mm-device-shot--hero .mm-device-shot__screen {
+    border-radius: 30px;
+  }
+
+  .mm-device-shot--hero .mm-device-shot__screen img {
+    transform: translateY(4px) scale(0.96);
+    border-radius: 28px;
   }
 }
 
