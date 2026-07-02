@@ -10,6 +10,7 @@ const PLAYSTORE_URL =
 const APP_SURFACES = [
   {
     screenshotPath: "/screenshots/daily-briefing.webp",
+    shotClass: "mm-device-shot--daily-briefing",
     kicker: "Daily Briefing",
     title: "What changed today.",
     quote: "Land it soft. Warmth, easy food, short support.",
@@ -18,6 +19,7 @@ const APP_SURFACES = [
   },
   {
     screenshotPath: "/screenshots/sitrep.webp",
+    shotClass: "mm-device-shot--sitrep",
     kicker: "SitRep",
     title: "What matters now.",
     quote: "Close it softly. Warmth, simple food, low light, short support.",
@@ -26,6 +28,7 @@ const APP_SURFACES = [
   },
   {
     screenshotPath: "/screenshots/risk-radar.webp",
+    shotClass: "mm-device-shot--risk-radar",
     kicker: "Risk Radar",
     title: "What not to step on.",
     quote: "Your need for closure is the fresh war.",
@@ -34,6 +37,7 @@ const APP_SURFACES = [
   },
   {
     screenshotPath: "/screenshots/commanddeck.webp",
+    shotClass: "mm-device-shot--commanddeck",
     kicker: "CommandDeck",
     title: "The move to make.",
     quote: "A real issue can still be opened at the wrong hour.",
@@ -135,7 +139,7 @@ function AppSurface({ surface, index, lead = false }) {
         <DeviceShot
           src={surface.screenshotPath}
           alt={surface.alt}
-          className="mm-device-shot--proof"
+          className={["mm-device-shot--proof", surface.shotClass].filter(Boolean).join(" ")}
         />
       </div>
     </article>
