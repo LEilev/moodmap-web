@@ -1,6 +1,7 @@
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import ScrollReveal from "../components/ScrollReveal";
+import ProductShowcase from "../components/ProductShowcase";
 
 const APPSTORE_URL =
   "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
@@ -124,45 +125,11 @@ function HeroPhone() {
   );
 }
 
-function AppSurface({ surface, index, lead = false }) {
-  return (
-    <article className={["mm-proof-card", lead ? "mm-proof-card--lead" : ""].join(" ")} data-reveal>
-      <div className="mm-proof-card__copy">
-        <span className="mm-proof-card__number">0{index + 1}</span>
-        <span className="mm-proof-card__meta">{surface.meta}</span>
-        <h3>{surface.kicker}</h3>
-        <p className="mm-proof-card__title">{surface.title}</p>
-        <p className="mm-proof-card__quote">“{surface.quote}”</p>
-      </div>
-
-      <div className="mm-proof-card__visual">
-        <DeviceShot
-          src={surface.screenshotPath}
-          alt={surface.alt}
-          className={["mm-device-shot--proof", surface.shotClass].filter(Boolean).join(" ")}
-        />
-      </div>
-    </article>
-  );
-}
-
 function ProductProof() {
   return (
     <section id="product" className="mm-section mm-product-proof">
       <div className="mm-container">
-        <div className="mm-section-heading" data-reveal>
-          <SectionLabel>Inside today’s read</SectionLabel>
-          <h2>What changed. What matters. What to avoid. What to do.</h2>
-          <p>
-            One PMS day, shown from four angles — the read, the room, the tripwire, and the cleaner move.
-          </p>
-        </div>
-
-        <div className="mm-proof-gallery" aria-label="MoodMap app screens">
-          {APP_SURFACES.map((surface, index) => (
-            <AppSurface key={surface.kicker} surface={surface} index={index} />
-          ))}
-        </div>
+        <ProductShowcase surfaces={APP_SURFACES} />
       </div>
     </section>
   );
