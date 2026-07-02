@@ -37,26 +37,30 @@ const APP_SURFACES = [
     alt: "MoodMap Risk Radar screen showing tripwire and containment guidance.",
   },
   {
-    screenshotPath: "/screenshots/commanddeck.webp",
-    shotClass: "mm-device-shot--commanddeck",
+    screenshotPath: "/screenshots/commanddeck-main.webp",
+    secondaryScreenshotPath: "/screenshots/commanddeck.webp",
+    shotClass: "mm-device-shot--commanddeck-main",
     kicker: "CommandDeck",
     title: "The move to make.",
     quote: "A real issue can still be opened at the wrong hour.",
     meta: "Next move",
-    alt: "MoodMap CommandDeck key insights screen showing why timing matters today.",
+    alt: "MoodMap CommandDeck screen showing key insight cards and why prompts.",
+    secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
+    secondaryLabel: "Why layer",
+    secondaryCaption: "Open a move. See the reason.",
   },
 ];
 
 const HOW_STEPS = [
-  ["01", "Set her cycle", "Save the basics once."],
-  ["02", "Read today", "Get the current phase, risk, and timing context."],
-  ["03", "Make the cleaner move", "Support, communicate, approach, or hold steady."],
+  ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily context."],
+  ["02", "Read the signal", "See phase, capacity, risk, and timing before you move."],
+  ["03", "Choose the cleaner move", "Support, talk, initiate, or hold steady with better timing."],
 ];
 
 const TRUST_ITEMS = [
-  ["Private by design", "Built for everyday relationship timing."],
-  ["Cycle-aware, not predictive", "General patterns help context. They do not define her."],
-  ["Practical, not clinical", "Not diagnosis, contraception, or fertility planning."],
+  ["Private by design", "Built for a private daily read, not a public scorecard."],
+  ["Cycle-aware, not predictive", "Patterns create context. They do not define her."],
+  ["Guidance, not diagnosis", "Not medical advice, contraception, or fertility planning."],
 ];
 
 function StoreButtons({ compact = false }) {

@@ -16,6 +16,41 @@ function DeviceShot({ src, alt, className = "" }) {
   );
 }
 
+function ShowcaseVisual({ surface }) {
+  const shotClass = [
+    "mm-device-shot--showcase",
+    surface.shotClass,
+  ].filter(Boolean).join(" ");
+
+  if (!surface.secondaryScreenshotPath) {
+    return <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />;
+  }
+
+  return (
+    <div className="mm-layered-showcase" aria-label={`${surface.kicker} layered preview`}>
+      <div className="mm-layered-showcase__main">
+        <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />
+      </div>
+
+      <div className="mm-layered-showcase__detail" aria-label={surface.secondaryLabel ?? "Deeper layer"}>
+        <span className="mm-layered-showcase__eyebrow">{surface.secondaryLabel ?? "Why layer"}</span>
+        <div className="mm-layered-showcase__screen">
+          <img
+            key={surface.secondaryScreenshotPath}
+            src={surface.secondaryScreenshotPath}
+            alt={surface.secondaryAlt ?? "MoodMap secondary product layer preview."}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        {surface.secondaryCaption ? (
+          <p className="mm-layered-showcase__caption">{surface.secondaryCaption}</p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export default function ProductShowcase({ surfaces = [] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const activeSurface = surfaces[activeIndex] ?? surfaces[0];
@@ -24,14 +59,16 @@ export default function ProductShowcase({ surfaces = [] }) {
     return null;
   }
 
+  const isLayered = Boolean(activeSurface.secondaryScreenshotPath);
+
   return (
     <div className="mm-product-showcase" data-reveal>
       <div className="mm-showcase-copy">
         <span className="mm-section-label">Inside today’s read</span>
         <h2>What changed. What matters. What to avoid. What to do.</h2>
         <p>
-          One PMS day, shown as a controlled intelligence stack — the read, the room, the tripwire,
-          and the cleaner move.
+          One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
+          the tripwire, and the cleaner move.
         </p>
 
         <div className="mm-showcase-tabs" role="tablist" aria-label="MoodMap product layers">
@@ -67,23 +104,16 @@ export default function ProductShowcase({ surfaces = [] }) {
 
       <div
         id="mm-showcase-panel"
-        className="mm-showcase-preview"
+        className={["mm-showcase-preview", isLayered ? "mm-showcase-preview--layered" : ""].filter(Boolean).join(" ")}
         role="tabpanel"
         aria-labelledby={`mm-showcase-tab-${activeIndex}`}
       >
         <div className="mm-showcase-preview__header">
-          <span>Live app layer</span>
+          <span>{isLayered ? "Two-layer move" : "Live app layer"}</span>
           <strong>{activeSurface.kicker}</strong>
         </div>
 
-        <DeviceShot
-          src={activeSurface.screenshotPath}
-          alt={activeSurface.alt}
-          className={[
-            "mm-device-shot--showcase",
-            activeSurface.shotClass,
-          ].filter(Boolean).join(" ")}
-        />
+        <ShowcaseVisual surface={activeSurface} />
 
         <p className="mm-showcase-preview__caption">{activeSurface.title}</p>
       </div>
