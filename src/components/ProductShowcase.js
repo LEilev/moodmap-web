@@ -63,56 +63,54 @@ export default function ProductShowcase({ surfaces = [] }) {
 
   return (
     <div className="mm-product-showcase" data-reveal>
-      <header className="mm-showcase-copy">
-        <span className="mm-section-label">Inside today’s read</span>
-        <h2
-          className="mm-showcase-heading"
-          aria-label="What changed. What matters. What to avoid. What to do."
-        >
-          <span className="mm-showcase-heading__line">
-            <span className="mm-showcase-heading__unit">What changed.</span>
-            <span className="mm-showcase-heading__unit">What matters.</span>
-          </span>
-          <span className="mm-showcase-heading__line">
-            <span className="mm-showcase-heading__unit">What to avoid.</span>
-            <span className="mm-showcase-heading__unit">What to do.</span>
-          </span>
-        </h2>
-        <p>
-          One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
-          the tripwire, and the cleaner move.
-        </p>
-      </header>
-
       <div className="mm-showcase-demo-grid">
-        <div className="mm-showcase-tabs" role="tablist" aria-label="MoodMap product layers">
-          {surfaces.map((surface, index) => {
-            const isActive = index === activeIndex;
-            const tabId = `mm-showcase-tab-${index}`;
+        <div className="mm-showcase-left">
+          <header className="mm-showcase-copy">
+            <span className="mm-section-label">Inside today’s read</span>
+            <h2
+              className="mm-showcase-heading"
+              aria-label="What changed. What matters. What to avoid. What to do."
+            >
+              <span>What changed.</span>
+              <span>What matters.</span>
+              <span>What to avoid.</span>
+              <span>What to do.</span>
+            </h2>
+            <p>
+              One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
+              the tripwire, and the cleaner move.
+            </p>
+          </header>
 
-            return (
-              <button
-                key={surface.kicker}
-                id={tabId}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-controls="mm-showcase-panel"
-                className={["mm-showcase-tab", isActive ? "is-active" : ""].filter(Boolean).join(" ")}
-                onClick={() => setActiveIndex(index)}
-                onFocus={() => setActiveIndex(index)}
-                onMouseEnter={() => setActiveIndex(index)}
-              >
-                <span className="mm-showcase-tab__index">0{index + 1}</span>
-                <span className="mm-showcase-tab__body">
-                  <span className="mm-showcase-tab__meta">{surface.meta}</span>
-                  <strong>{surface.kicker}</strong>
-                  <span className="mm-showcase-tab__title">{surface.title}</span>
-                  <span className="mm-showcase-tab__quote" aria-hidden={!isActive}>“{surface.quote}”</span>
-                </span>
-              </button>
-            );
-          })}
+          <div className="mm-showcase-tabs" role="tablist" aria-label="MoodMap product layers">
+            {surfaces.map((surface, index) => {
+              const isActive = index === activeIndex;
+              const tabId = `mm-showcase-tab-${index}`;
+
+              return (
+                <button
+                  key={surface.kicker}
+                  id={tabId}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-controls="mm-showcase-panel"
+                  className={["mm-showcase-tab", isActive ? "is-active" : ""].filter(Boolean).join(" ")}
+                  onClick={() => setActiveIndex(index)}
+                  onFocus={() => setActiveIndex(index)}
+                  onMouseEnter={() => setActiveIndex(index)}
+                >
+                  <span className="mm-showcase-tab__index">0{index + 1}</span>
+                  <span className="mm-showcase-tab__body">
+                    <span className="mm-showcase-tab__meta">{surface.meta}</span>
+                    <strong>{surface.kicker}</strong>
+                    <span className="mm-showcase-tab__title">{surface.title}</span>
+                    <span className="mm-showcase-tab__quote" aria-hidden={!isActive}>“{surface.quote}”</span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div
@@ -122,7 +120,7 @@ export default function ProductShowcase({ surfaces = [] }) {
           aria-labelledby={`mm-showcase-tab-${activeIndex}`}
         >
           <div className="mm-showcase-preview__header">
-            <span>{isLayered ? "Two-layer move" : "Live app layer"}</span>
+            <span>{isLayered ? "Move + why" : "Live app layer"}</span>
             <strong>{activeSurface.kicker}</strong>
           </div>
 

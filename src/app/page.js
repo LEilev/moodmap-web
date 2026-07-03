@@ -46,34 +46,34 @@ const APP_SURFACES = [
     meta: "Next move",
     alt: "MoodMap CommandDeck screen showing key insight cards and why prompts.",
     secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
-    secondaryLabel: "Why layer",
-    secondaryCaption: "Tap WHY. See the reason behind the move.",
+    secondaryLabel: "WHY layer",
+    secondaryCaption: "Tap WHY. See the reason before you move.",
   },
 ];
 
 const PROOF_STRIP_ITEMS = [
-  ["Live on iOS + Android", "Open it where you already use apps."],
+  ["Live on iOS + Android", "Available where users already download apps."],
   ["Private daily read", "Built for him, not a public scorecard."],
-  ["Cycle-aware context", "Patterns help timing. They do not define her."],
-  ["Not medical advice", "No diagnosis, contraception, or fertility planning."],
+  ["Cycle-aware, not predictive", "Patterns create context. They do not define her."],
+  ["Guidance, not diagnosis", "No medical, fertility, or contraception claims."],
 ];
 
 const CONSEQUENCE_ITEMS = [
   [
     "Wrong-hour talks",
-    "A real issue can turn into a second fight when it is opened at the wrong capacity.",
+    "A serious topic opened at low capacity can become a second fight instead of a clean repair.",
   ],
   [
     "Closure pressure",
-    "When her system is low, pushing for resolution often creates resistance instead.",
+    "Pushing for resolution at the wrong time often creates resistance, not clarity.",
   ],
   [
     "Missed reset windows",
-    "Small support, food, warmth, or silence can prevent repair work later.",
+    "The right small move — food, warmth, silence, or support — can prevent repair work later.",
   ],
   [
     "Default reactions",
-    "MoodMap gives him one cleaner move before impulse, jokes, or fixes make it worse.",
+    "One daily read gives him a cleaner move before impulse, jokes, or fixing energy makes it worse.",
   ],
 ];
 
@@ -229,35 +229,6 @@ function CostSection() {
   );
 }
 
-function WhyItMatters() {
-  return (
-    <section id="why" className="mm-section mm-why-section">
-      <div className="mm-container">
-        <div className="mm-why-card" data-reveal>
-          <div className="mm-why-copy">
-            <SectionLabel>Why timing matters</SectionLabel>
-            <h2>Timing changes the outcome.</h2>
-            <p>
-              The same question, joke, fix, or touch can land differently depending on the day. MoodMap helps you read the room before you react to the moment.
-            </p>
-          </div>
-
-          <div className="mm-compare-stack" aria-label="Timing example">
-            <div className="mm-compare-card mm-compare-card--quiet">
-              <span>Without context</span>
-              <p>“Why are you making this a thing?”</p>
-            </div>
-            <div className="mm-compare-card mm-compare-card--active">
-              <span>With MoodMap</span>
-              <p>“I’ll simplify the plan and take one thing off the list.”</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function HowItWorks() {
   return (
     <section id="how-it-works" className="mm-section mm-how-section">
@@ -313,13 +284,17 @@ function FaqSection() {
         <div className="mm-faq-panel" data-reveal>
           <div className="mm-faq-intro">
             <SectionLabel>Questions</SectionLabel>
-            <h2>Not prediction. Not surveillance. Just timing.</h2>
-            <p>Short answers to the doubts that make this category fragile.</p>
+            <h2 className="mm-faq-headline">
+              <span>Not prediction.</span>
+              <span>Not surveillance.</span>
+              <span>Just timing.</span>
+            </h2>
+            <p>Clear guardrails for a category that has to stay careful.</p>
           </div>
 
           <div className="mm-faq-list">
-            {FAQ_ITEMS.map(([question, answer]) => (
-              <details key={question} className="mm-faq-item">
+            {FAQ_ITEMS.map(([question, answer], index) => (
+              <details key={question} className="mm-faq-item" open={index === 0}>
                 <summary>{question}</summary>
                 <p>{answer}</p>
               </details>
@@ -371,7 +346,6 @@ export default function HomePage() {
         <ProofStrip />
         <ProductProof />
         <CostSection />
-        <WhyItMatters />
         <HowItWorks />
         <TrustSection />
         <FaqSection />
