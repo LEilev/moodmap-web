@@ -47,7 +47,7 @@ const APP_SURFACES = [
     alt: "MoodMap CommandDeck screen showing key insight cards and why prompts.",
     secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
     secondaryLabel: "Why layer",
-    secondaryCaption: "Open a move. See the reason.",
+    secondaryCaption: "Tap WHY. See the reason behind the move.",
   },
 ];
 

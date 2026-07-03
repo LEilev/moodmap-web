@@ -65,11 +65,18 @@ export default function ProductShowcase({ surfaces = [] }) {
     <div className="mm-product-showcase" data-reveal>
       <div className="mm-showcase-copy">
         <span className="mm-section-label">Inside today’s read</span>
-        <h2 className="mm-showcase-heading">
-          <span>What changed.</span>
-          <span>What matters.</span>
-          <span>What to avoid.</span>
-          <span>What to do.</span>
+        <h2
+          className="mm-showcase-heading"
+          aria-label="What changed. What matters. What to avoid. What to do."
+        >
+          <span className="mm-showcase-heading__line">
+            <span className="mm-showcase-heading__unit">What changed.</span>
+            <span className="mm-showcase-heading__unit">What matters.</span>
+          </span>
+          <span className="mm-showcase-heading__line">
+            <span className="mm-showcase-heading__unit">What to avoid.</span>
+            <span className="mm-showcase-heading__unit">What to do.</span>
+          </span>
         </h2>
         <p>
           One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
