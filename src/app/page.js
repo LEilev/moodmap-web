@@ -52,28 +52,28 @@ const APP_SURFACES = [
 ];
 
 const PROOF_STRIP_ITEMS = [
-  ["Live on iOS + Android", "Available where users already download apps."],
-  ["Private daily read", "Built for him, not a public scorecard."],
-  ["Cycle-aware, not predictive", "Patterns create context. They do not define her."],
+  ["Live on iOS + Android", "Direct App Store and Google Play links."],
+  ["Private daily read", "Built for his read, not a public scorecard."],
+  ["Context, not judgment", "Cycle patterns create context. They do not define her."],
   ["Guidance, not diagnosis", "No medical, fertility, or contraception claims."],
 ];
 
 const CONSEQUENCE_ITEMS = [
   [
     "Wrong-hour talks",
-    "A serious topic opened at low capacity can become a second fight instead of a clean repair.",
+    "The same serious topic can land as repair or as a second fight. Timing decides which room you walk into.",
   ],
   [
     "Closure pressure",
-    "Pushing for resolution at the wrong time often creates resistance, not clarity.",
+    "Pushing for resolution at low capacity usually buys resistance, not clarity.",
   ],
   [
     "Missed reset windows",
-    "The right small move — food, warmth, silence, or support — can prevent repair work later.",
+    "Food, warmth, silence, or short support can save hours of cleanup when the day is near the floor.",
   ],
   [
     "Default reactions",
-    "One daily read gives him a cleaner move before impulse, jokes, or fixing energy makes it worse.",
+    "One private read gives him the cleaner move before jokes, fixing energy, or impulse makes it heavier.",
   ],
 ];
 
@@ -100,11 +100,11 @@ const FAQ_ITEMS = [
   ],
   [
     "Why would this be worth paying for?",
-    "Because one badly timed conversation can cost more than a month of clean daily reads. The product is built to reduce avoidable friction before it starts.",
+    "Because the expensive part is not the read. It is the badly timed conversation, the repair work, and the avoidable friction MoodMap helps you prevent.",
   ],
   [
     "Does this make relationships mechanical?",
-    "No. It does the opposite: it gives context so he can be more careful, less reactive, and more human in the moment.",
+    "No. It removes guesswork so he can be less reactive, more careful, and more human in the moment.",
   ],
 ];
 
@@ -207,10 +207,10 @@ function CostSection() {
       <div className="mm-container">
         <div className="mm-cost-panel" data-reveal>
           <div className="mm-cost-intro">
-            <SectionLabel>What this prevents</SectionLabel>
+            <SectionLabel>Why it matters</SectionLabel>
             <h2>Bad timing is expensive.</h2>
             <p>
-              MoodMap is not there to diagnose her. It is there to stop him from walking into the wrong conversation, at the wrong hour, with the wrong move.
+              MoodMap earns its place before the mistake: the wrong talk, the wrong tone, the wrong hour, the extra repair work.
             </p>
           </div>
 
@@ -289,7 +289,7 @@ function FaqSection() {
               <span>Not surveillance.</span>
               <span>Just timing.</span>
             </h2>
-            <p>Clear guardrails for a category that has to stay careful.</p>
+            <p>Built with clear guardrails: context, not judgment.</p>
           </div>
 
           <div className="mm-faq-list">
@@ -312,7 +312,7 @@ function FinalCta() {
       <div className="mm-container" data-reveal>
         <span className="mm-cta-dot" aria-hidden="true" />
         <h2>Stop guessing the room. Read today first.</h2>
-        <p>One daily read. Fewer timing mistakes. Less repair work.</p>
+        <p>Thirty seconds before the day costs more than it should.</p>
         <StoreButtons compact />
       </div>
     </section>
@@ -344,8 +344,8 @@ export default function HomePage() {
         </section>
 
         <ProofStrip />
-        <ProductProof />
         <CostSection />
+        <ProductProof />
         <HowItWorks />
         <TrustSection />
         <FaqSection />

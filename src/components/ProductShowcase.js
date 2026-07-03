@@ -77,8 +77,8 @@ export default function ProductShowcase({ surfaces = [] }) {
               <span>What to do.</span>
             </h2>
             <p>
-              One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
-              the tripwire, and the cleaner move.
+              One PMS day, shown as a controlled intelligence stack: context, risk, timing,
+              and the move that prevents extra repair work.
             </p>
           </header>
 
@@ -120,7 +120,7 @@ export default function ProductShowcase({ surfaces = [] }) {
           aria-labelledby={`mm-showcase-tab-${activeIndex}`}
         >
           <div className="mm-showcase-preview__header">
-            <span>{isLayered ? "Move + why" : "Live app layer"}</span>
+            <span>{isLayered ? "Move + reason" : "Live app layer"}</span>
             <strong>{activeSurface.kicker}</strong>
           </div>
 

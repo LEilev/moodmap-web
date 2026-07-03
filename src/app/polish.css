@@ -2281,3 +2281,190 @@
     font-size: clamp(36px, 11vw, 48px);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Premium value-gravity pass
+   - Pulls the money argument directly after hero.
+   - Makes proof feel like a credibility rail, not another heavy panel.
+   - Gives the consequence section a different, sharper rhythm from the product demo.
+   -------------------------------------------------------------------------- */
+
+.mm-proof-strip-section {
+  padding-block: clamp(10px, 1.8vw, 18px) clamp(14px, 2.4vw, 26px);
+}
+
+.mm-proof-strip {
+  max-width: 1120px;
+  margin-inline: auto;
+  border-radius: 22px;
+  border-color: rgba(245, 242, 234, 0.085);
+  background:
+    linear-gradient(90deg, rgba(37, 211, 107, 0.085), rgba(245, 242, 234, 0.035) 48%, rgba(37, 211, 107, 0.055)),
+    rgba(7, 11, 20, 0.48);
+  box-shadow:
+    0 18px 58px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  padding: 10px;
+}
+
+.mm-proof-strip__item {
+  border-radius: 15px;
+  background: rgba(5, 7, 13, 0.18);
+  padding: 12px 13px;
+}
+
+.mm-proof-strip__item strong {
+  font-size: 13.2px;
+}
+
+.mm-proof-strip__item span {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.mm-cost-section {
+  padding-block: clamp(18px, 2.7vw, 40px) clamp(22px, 3.2vw, 46px);
+}
+
+.mm-cost-panel {
+  max-width: 1120px;
+  margin-inline: auto;
+  border-radius: 34px;
+  border-color: rgba(245, 242, 234, 0.115);
+  background:
+    radial-gradient(520px 320px at 11% 0%, rgba(37, 211, 107, 0.14), transparent 70%),
+    radial-gradient(620px 360px at 100% 100%, rgba(37, 211, 107, 0.06), transparent 70%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.055), rgba(245, 242, 234, 0.016)),
+    rgba(7, 11, 20, 0.78);
+  box-shadow:
+    0 34px 104px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.105);
+}
+
+.mm-cost-intro h2 {
+  max-width: 520px;
+  font-size: clamp(42px, 5.2vw, 68px);
+  letter-spacing: -0.072em;
+  line-height: 0.9;
+}
+
+.mm-cost-intro p {
+  max-width: 540px;
+  font-size: clamp(15.5px, 1.4vw, 17px);
+  color: rgba(245, 242, 234, 0.72);
+}
+
+.mm-cost-grid {
+  gap: 10px;
+}
+
+.mm-cost-card {
+  position: relative;
+  min-height: 158px;
+  border-radius: 20px;
+  border-color: rgba(245, 242, 234, 0.092);
+  background:
+    linear-gradient(180deg, rgba(245, 242, 234, 0.05), rgba(245, 242, 234, 0.018)),
+    rgba(5, 7, 13, 0.34);
+}
+
+.mm-cost-card::after {
+  content: "";
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(37, 211, 107, 0.72);
+  box-shadow: 0 0 0 5px rgba(37, 211, 107, 0.055);
+}
+
+.mm-cost-card h3 {
+  margin-top: 18px;
+  font-size: 20px;
+  letter-spacing: -0.055em;
+}
+
+.mm-cost-card p {
+  color: rgba(245, 242, 234, 0.64);
+  font-size: 14px;
+}
+
+.mm-product-proof {
+  padding-block: clamp(20px, 3vw, 40px) clamp(20px, 3vw, 42px);
+}
+
+.mm-showcase-copy > p {
+  max-width: 530px;
+}
+
+.mm-showcase-tab.is-active {
+  background:
+    radial-gradient(220px 90px at 16% 18%, rgba(37, 211, 107, 0.045), transparent 76%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.054), rgba(245, 242, 234, 0.022)),
+    rgba(8, 14, 24, 0.84);
+}
+
+.mm-layered-showcase__detail {
+  box-shadow:
+    0 22px 74px rgba(0, 0, 0, 0.44),
+    0 0 0 1px rgba(245, 242, 234, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.mm-faq-intro p {
+  max-width: 520px;
+}
+
+.mm-final-cta p {
+  color: rgba(245, 242, 234, 0.72);
+}
+
+@media (min-width: 1024px) {
+  .mm-cost-panel {
+    grid-template-columns: minmax(300px, 0.72fr) minmax(560px, 1.28fr);
+    gap: clamp(30px, 4vw, 58px);
+  }
+
+  .mm-cost-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mm-cost-card:nth-child(1),
+  .mm-cost-card:nth-child(4) {
+    transform: translateY(-6px);
+  }
+
+  .mm-cost-card:nth-child(2),
+  .mm-cost-card:nth-child(3) {
+    transform: translateY(6px);
+  }
+}
+
+@media (min-width: 1180px) and (max-height: 940px) {
+  .mm-cost-card {
+    min-height: 142px;
+    padding: 18px;
+  }
+
+  .mm-cost-card h3 {
+    margin-top: 13px;
+  }
+
+  .mm-cost-card p {
+    font-size: 13.4px;
+    line-height: 1.46;
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-cost-card {
+    min-height: auto;
+  }
+
+  .mm-cost-card:nth-child(n) {
+    transform: none;
+  }
+}
