@@ -63,7 +63,7 @@ export default function ProductShowcase({ surfaces = [] }) {
 
   return (
     <div className="mm-product-showcase" data-reveal>
-      <div className="mm-showcase-copy">
+      <header className="mm-showcase-copy">
         <span className="mm-section-label">Inside today’s read</span>
         <h2
           className="mm-showcase-heading"
@@ -82,7 +82,9 @@ export default function ProductShowcase({ surfaces = [] }) {
           One PMS day, shown as a controlled intelligence stack: the briefing, the room read,
           the tripwire, and the cleaner move.
         </p>
+      </header>
 
+      <div className="mm-showcase-demo-grid">
         <div className="mm-showcase-tabs" role="tablist" aria-label="MoodMap product layers">
           {surfaces.map((surface, index) => {
             const isActive = index === activeIndex;
@@ -112,22 +114,22 @@ export default function ProductShowcase({ surfaces = [] }) {
             );
           })}
         </div>
-      </div>
 
-      <div
-        id="mm-showcase-panel"
-        className={["mm-showcase-preview", isLayered ? "mm-showcase-preview--layered" : ""].filter(Boolean).join(" ")}
-        role="tabpanel"
-        aria-labelledby={`mm-showcase-tab-${activeIndex}`}
-      >
-        <div className="mm-showcase-preview__header">
-          <span>{isLayered ? "Two-layer move" : "Live app layer"}</span>
-          <strong>{activeSurface.kicker}</strong>
+        <div
+          id="mm-showcase-panel"
+          className={["mm-showcase-preview", isLayered ? "mm-showcase-preview--layered" : ""].filter(Boolean).join(" ")}
+          role="tabpanel"
+          aria-labelledby={`mm-showcase-tab-${activeIndex}`}
+        >
+          <div className="mm-showcase-preview__header">
+            <span>{isLayered ? "Two-layer move" : "Live app layer"}</span>
+            <strong>{activeSurface.kicker}</strong>
+          </div>
+
+          <ShowcaseVisual surface={activeSurface} />
+
+          <p className="mm-showcase-preview__caption">{activeSurface.title}</p>
         </div>
-
-        <ShowcaseVisual surface={activeSurface} />
-
-        <p className="mm-showcase-preview__caption">{activeSurface.title}</p>
       </div>
     </div>
   );

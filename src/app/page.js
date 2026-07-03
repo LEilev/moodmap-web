@@ -51,6 +51,32 @@ const APP_SURFACES = [
   },
 ];
 
+const PROOF_STRIP_ITEMS = [
+  ["Live on iOS + Android", "Open it where you already use apps."],
+  ["Private daily read", "Built for him, not a public scorecard."],
+  ["Cycle-aware context", "Patterns help timing. They do not define her."],
+  ["Not medical advice", "No diagnosis, contraception, or fertility planning."],
+];
+
+const CONSEQUENCE_ITEMS = [
+  [
+    "Wrong-hour talks",
+    "A real issue can turn into a second fight when it is opened at the wrong capacity.",
+  ],
+  [
+    "Closure pressure",
+    "When her system is low, pushing for resolution often creates resistance instead.",
+  ],
+  [
+    "Missed reset windows",
+    "Small support, food, warmth, or silence can prevent repair work later.",
+  ],
+  [
+    "Default reactions",
+    "MoodMap gives him one cleaner move before impulse, jokes, or fixes make it worse.",
+  ],
+];
+
 const HOW_STEPS = [
   ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily context."],
   ["02", "Read the signal", "See phase, capacity, risk, and timing before you move."],
@@ -61,6 +87,25 @@ const TRUST_ITEMS = [
   ["Private by design", "Built for a private daily read, not a public scorecard."],
   ["Cycle-aware, not predictive", "Patterns create context. They do not define her."],
   ["Guidance, not diagnosis", "Not medical advice, contraception, or fertility planning."],
+];
+
+const FAQ_ITEMS = [
+  [
+    "Is MoodMap predicting her mood?",
+    "No. It gives cycle-aware context, risk, and timing guidance. It is not a verdict on her or a replacement for talking to her.",
+  ],
+  [
+    "Is this medical or fertility advice?",
+    "No. MoodMap is relationship timing guidance, not diagnosis, contraception, fertility planning, or medical treatment.",
+  ],
+  [
+    "Why would this be worth paying for?",
+    "Because one badly timed conversation can cost more than a month of clean daily reads. The product is built to reduce avoidable friction before it starts.",
+  ],
+  [
+    "Does this make relationships mechanical?",
+    "No. It does the opposite: it gives context so he can be more careful, less reactive, and more human in the moment.",
+  ],
 ];
 
 function StoreButtons({ compact = false }) {
@@ -129,11 +174,56 @@ function HeroPhone() {
   );
 }
 
+function ProofStrip() {
+  return (
+    <section className="mm-proof-strip-section" aria-label="MoodMap trust proof">
+      <div className="mm-container">
+        <div className="mm-proof-strip" data-reveal>
+          {PROOF_STRIP_ITEMS.map(([title, copy]) => (
+            <article key={title} className="mm-proof-strip__item">
+              <strong>{title}</strong>
+              <span>{copy}</span>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function ProductProof() {
   return (
     <section id="product" className="mm-section mm-product-proof">
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
+      </div>
+    </section>
+  );
+}
+
+function CostSection() {
+  return (
+    <section id="cost" className="mm-section mm-cost-section">
+      <div className="mm-container">
+        <div className="mm-cost-panel" data-reveal>
+          <div className="mm-cost-intro">
+            <SectionLabel>What this prevents</SectionLabel>
+            <h2>Bad timing is expensive.</h2>
+            <p>
+              MoodMap is not there to diagnose her. It is there to stop him from walking into the wrong conversation, at the wrong hour, with the wrong move.
+            </p>
+          </div>
+
+          <div className="mm-cost-grid">
+            {CONSEQUENCE_ITEMS.map(([title, copy], index) => (
+              <article key={title} className="mm-cost-card">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -216,13 +306,38 @@ function TrustSection() {
   );
 }
 
+function FaqSection() {
+  return (
+    <section id="questions" className="mm-section mm-faq-section">
+      <div className="mm-container">
+        <div className="mm-faq-panel" data-reveal>
+          <div className="mm-faq-intro">
+            <SectionLabel>Questions</SectionLabel>
+            <h2>Not prediction. Not surveillance. Just timing.</h2>
+            <p>Short answers to the doubts that make this category fragile.</p>
+          </div>
+
+          <div className="mm-faq-list">
+            {FAQ_ITEMS.map(([question, answer]) => (
+              <details key={question} className="mm-faq-item">
+                <summary>{question}</summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FinalCta() {
   return (
     <section className="mm-final-cta">
       <div className="mm-container" data-reveal>
         <span className="mm-cta-dot" aria-hidden="true" />
         <h2>Stop guessing the room. Read today first.</h2>
-        <p>One daily read. Better timing. Less unnecessary friction.</p>
+        <p>One daily read. Fewer timing mistakes. Less repair work.</p>
         <StoreButtons compact />
       </div>
     </section>
@@ -243,20 +358,23 @@ export default function HomePage() {
               <SectionLabel>Private daily read for men in relationships</SectionLabel>
               <h1>Read the day before you react.</h1>
               <p className="mm-hero-subline">
-                MoodMap gives men one private daily read from their partner’s cycle context — what changed, what to watch, and the move that lowers friction.
+                MoodMap gives men one private read from their partner’s cycle context — phase, capacity, risk, and the cleaner move before timing costs more than it should.
               </p>
               <StoreButtons />
-              <p className="mm-hero-trust">Cycle-aware guidance. Not mood prediction. Not medical advice.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware guidance. Not mood prediction. Not medical advice.</p>
             </div>
 
             <HeroPhone />
           </div>
         </section>
 
+        <ProofStrip />
         <ProductProof />
+        <CostSection />
         <WhyItMatters />
         <HowItWorks />
         <TrustSection />
+        <FaqSection />
         <FinalCta />
       </div>
     </>
