@@ -53,9 +53,9 @@ const APP_SURFACES = [
 
 const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
-  ["Built in Norway", "A private product, not a social feed."],
-  ["Private daily read", "Built for his context, not a public scorecard."],
-  ["Guidance, not diagnosis", "No medical, fertility, or contraception claims."],
+  ["Built in Norway", "A private product with clear boundaries."],
+  ["Private daily read", "Built for his context and his timing."],
+  ["Relationship guidance", "Timing context with clear medical boundaries."],
 ];
 
 const CONSEQUENCE_ITEMS = [
@@ -84,27 +84,27 @@ const HOW_STEPS = [
 ];
 
 const TRUST_ITEMS = [
-  ["Private by design", "Built for a private daily read, not a public scorecard."],
-  ["Cycle-aware, not predictive", "Patterns create context. They do not define her."],
-  ["Guidance, not diagnosis", "Not medical advice, contraception, or fertility planning."],
+  ["Private by design", "Built for a private daily read, outside public scoring."],
+  ["Cycle-aware context", "Patterns add context while the relationship stays human."],
+  ["Guidance with boundaries", "Relationship timing guidance, outside diagnosis, contraception, or fertility planning."],
 ];
 
 const FAQ_ITEMS = [
   [
-    "Is MoodMap predicting her mood?",
-    "No. It gives cycle-aware context, risk, and timing guidance. It is not a verdict on her or a replacement for talking to her.",
+    "How does MoodMap read the day?",
+    "MoodMap reads cycle-aware context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for the room while the real conversation stays between them.",
   ],
   [
-    "Is this medical or fertility advice?",
-    "No. MoodMap is relationship timing guidance, not diagnosis, contraception, fertility planning, or medical treatment.",
+    "What kind of guidance is MoodMap?",
+    "MoodMap is relationship timing guidance: practical context for support, conversation, intimacy, and restraint. Medical care, contraception, and fertility planning stay outside the product.",
   ],
   [
-    "Why would this be worth paying for?",
-    "Because the expensive part is not the read. It is the wrong-hour conversation, the repair work, and the avoidable friction a cleaner move can prevent.",
+    "Why is the daily read worth paying for?",
+    "The value sits before the mistake: fewer wrong-hour conversations, less repair work, and fewer avoidable friction loops from a cleaner move.",
   ],
   [
-    "Does this make relationships mechanical?",
-    "No. It removes guesswork so he can be less reactive, more careful, and more human in the moment.",
+    "How does this keep the relationship human?",
+    "MoodMap reduces guesswork so he can be less reactive, more careful, and better timed. The point is steadier presence, not mechanical behavior.",
   ],
 ];
 
@@ -260,7 +260,7 @@ function TrustSection() {
           <div className="mm-trust-intro">
             <SectionLabel>Trust</SectionLabel>
             <h2>Private, careful, practical.</h2>
-            <p>Private by design. Cycle-aware, not predictive. Practical guidance, not diagnosis.</p>
+            <p>Private by design. Cycle-aware context. Practical guidance with clear boundaries.</p>
           </div>
 
           <div className="mm-trust-list">
@@ -285,11 +285,11 @@ function FaqSection() {
           <div className="mm-faq-intro">
             <SectionLabel>Questions</SectionLabel>
             <h2 className="mm-faq-headline">
-              <span>Not prediction.</span>
-              <span>Not surveillance.</span>
-              <span>Just timing.</span>
+              <span>Private context.</span>
+              <span>Careful guidance.</span>
+              <span>Better timing.</span>
             </h2>
-            <p>Built with clear guardrails: context, not judgment.</p>
+            <p>Built to make him steadier before he moves.</p>
           </div>
 
           <div className="mm-faq-list">
@@ -336,7 +336,7 @@ export default function HomePage() {
                 MoodMap gives men one private read from their partner’s cycle context — phase, capacity, risk, and the cleaner move before timing costs more than it should.
               </p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware guidance. Not mood prediction. Not medical advice.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware timing guidance with clear medical boundaries.</p>
             </div>
 
             <HeroPhone />
