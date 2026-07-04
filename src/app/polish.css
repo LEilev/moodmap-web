@@ -2468,3 +2468,183 @@
     transform: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Premium value-gravity repair pass
+   - CommandDeck now opens as the default product layer in JS.
+   - Cost section is treated as editorial consequence, not another glass panel.
+   - Final CTA gets a more official, less custom-grey store badge treatment.
+   -------------------------------------------------------------------------- */
+
+.mm-cost-panel {
+  overflow: visible;
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: clamp(10px, 2vw, 18px) 0;
+}
+
+.mm-cost-panel::before {
+  display: none;
+}
+
+.mm-cost-intro {
+  position: relative;
+  padding-top: clamp(18px, 2.4vw, 30px);
+}
+
+.mm-cost-intro::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(100%, 520px);
+  height: 1px;
+  background: linear-gradient(90deg, rgba(37, 211, 107, 0.48), rgba(245, 242, 234, 0.12), transparent);
+}
+
+.mm-cost-intro h2 {
+  max-width: 500px;
+  font-size: clamp(44px, 6.4vw, 78px);
+  line-height: 0.88;
+  letter-spacing: -0.075em;
+}
+
+.mm-cost-intro p {
+  max-width: 530px;
+  color: rgba(245, 242, 234, 0.72);
+  font-size: clamp(16px, 1.6vw, 18px);
+  line-height: 1.58;
+}
+
+.mm-cost-grid {
+  gap: 0;
+  border-top: 1px solid rgba(245, 242, 234, 0.11);
+}
+
+.mm-cost-card {
+  position: relative;
+  min-height: 132px;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(245, 242, 234, 0.105);
+  background: transparent;
+  box-shadow: none;
+  padding: clamp(20px, 2.4vw, 28px) clamp(8px, 1.7vw, 20px);
+}
+
+.mm-cost-card::after {
+  content: "";
+  position: absolute;
+  top: 27px;
+  right: clamp(6px, 1.4vw, 14px);
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(37, 211, 107, 0.72);
+  box-shadow: 0 0 0 6px rgba(37, 211, 107, 0.07);
+}
+
+.mm-cost-card span {
+  color: rgba(37, 211, 107, 0.95);
+}
+
+.mm-cost-card h3 {
+  margin-top: clamp(18px, 2.2vw, 28px);
+  max-width: 320px;
+  font-size: clamp(22px, 2.3vw, 31px);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
+.mm-cost-card p {
+  max-width: 420px;
+  color: rgba(245, 242, 234, 0.66);
+  font-size: 14.5px;
+  line-height: 1.56;
+}
+
+.mm-proof-strip {
+  border-color: rgba(37, 211, 107, 0.13);
+  background:
+    linear-gradient(90deg, rgba(37, 211, 107, 0.045), transparent 24%, transparent 76%, rgba(37, 211, 107, 0.035)),
+    rgba(8, 13, 24, 0.42);
+  box-shadow: 0 18px 58px rgba(0, 0, 0, 0.18);
+}
+
+.mm-proof-strip__item {
+  background: rgba(5, 7, 13, 0.18);
+}
+
+.mm-final-cta .mm-store-row--official .store-btn {
+  min-height: 56px;
+  min-width: 188px;
+  border-radius: 13px;
+  border-color: rgba(245, 242, 234, 0.24);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015)),
+    #05070d;
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.mm-final-cta .mm-store-row--official .store-btn::after {
+  opacity: 0.18;
+}
+
+.mm-final-cta .mm-store-row--official .store-btn:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.025)),
+    #070b12;
+  border-color: rgba(245, 242, 234, 0.34);
+}
+
+.mm-final-cta .mm-store-row--official .store-btn__icon {
+  background: rgba(245, 242, 234, 0.1);
+  border-color: rgba(245, 242, 234, 0.12);
+}
+
+.mm-final-cta .mm-store-row--official .store-btn__copy small {
+  color: rgba(245, 242, 234, 0.68);
+}
+
+.mm-final-cta .mm-store-row--official .store-btn__copy strong {
+  color: rgba(245, 242, 234, 0.98);
+}
+
+@media (min-width: 1024px) {
+  .mm-cost-panel {
+    grid-template-columns: minmax(300px, 0.78fr) minmax(560px, 1.22fr);
+    gap: clamp(34px, 5vw, 76px);
+  }
+
+  .mm-cost-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid rgba(245, 242, 234, 0.11);
+    border-bottom: 1px solid rgba(245, 242, 234, 0.06);
+  }
+
+  .mm-cost-card:nth-child(odd) {
+    border-right: 1px solid rgba(245, 242, 234, 0.095);
+  }
+
+  .mm-cost-card:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-cost-intro h2 {
+    font-size: clamp(42px, 13vw, 58px);
+  }
+
+  .mm-cost-grid {
+    margin-top: 28px;
+  }
+
+  .mm-cost-card {
+    min-height: 0;
+  }
+}

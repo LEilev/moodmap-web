@@ -41,9 +41,9 @@ const APP_SURFACES = [
     secondaryScreenshotPath: "/screenshots/commanddeck.webp",
     shotClass: "mm-device-shot--commanddeck-main",
     kicker: "CommandDeck",
-    title: "The move to make.",
+    title: "The move and the reason.",
     quote: "A real issue can still be opened at the wrong hour.",
-    meta: "Next move",
+    meta: "Move + reason",
     alt: "MoodMap CommandDeck screen showing key insight cards and why prompts.",
     secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
     secondaryLabel: "WHY layer",
@@ -53,27 +53,27 @@ const APP_SURFACES = [
 
 const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
-  ["Private daily read", "Built for his read, not a public scorecard."],
-  ["Context, not judgment", "Cycle patterns create context. They do not define her."],
+  ["Built in Norway", "A private product, not a social feed."],
+  ["Private daily read", "Built for his context, not a public scorecard."],
   ["Guidance, not diagnosis", "No medical, fertility, or contraception claims."],
 ];
 
 const CONSEQUENCE_ITEMS = [
   [
     "Wrong-hour talks",
-    "The same serious topic can land as repair or as a second fight. Timing decides which room you walk into.",
+    "The same serious topic can land as repair or as a second fight. MoodMap helps you know which room you are walking into.",
   ],
   [
     "Closure pressure",
-    "Pushing for resolution at low capacity usually buys resistance, not clarity.",
+    "Pushing for resolution at low capacity usually buys resistance, not clarity. The read tells you when to hold the line.",
   ],
   [
     "Missed reset windows",
     "Food, warmth, silence, or short support can save hours of cleanup when the day is near the floor.",
   ],
   [
-    "Default reactions",
-    "One private read gives him the cleaner move before jokes, fixing energy, or impulse makes it heavier.",
+    "Autopilot moves",
+    "The joke, fix, push, or explanation that feels natural in the moment can make the room heavier. MoodMap interrupts that reflex.",
   ],
 ];
 
@@ -100,7 +100,7 @@ const FAQ_ITEMS = [
   ],
   [
     "Why would this be worth paying for?",
-    "Because the expensive part is not the read. It is the badly timed conversation, the repair work, and the avoidable friction MoodMap helps you prevent.",
+    "Because the expensive part is not the read. It is the wrong-hour conversation, the repair work, and the avoidable friction a cleaner move can prevent.",
   ],
   [
     "Does this make relationships mechanical?",
@@ -108,11 +108,11 @@ const FAQ_ITEMS = [
   ],
 ];
 
-function StoreButtons({ compact = false }) {
+function StoreButtons({ compact = false, official = false }) {
   return (
     <div
       id={compact ? undefined : "download"}
-      className={["mm-store-row", compact ? "mm-store-row--center" : ""].join(" ")}
+      className={["mm-store-row", compact ? "mm-store-row--center" : null, official ? "mm-store-row--official" : null].filter(Boolean).join(" ")}
     >
       <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap on the App Store">
         <span className="store-btn__icon" aria-hidden="true">
@@ -210,7 +210,7 @@ function CostSection() {
             <SectionLabel>Why it matters</SectionLabel>
             <h2>Bad timing is expensive.</h2>
             <p>
-              MoodMap earns its place before the mistake: the wrong talk, the wrong tone, the wrong hour, the extra repair work.
+              MoodMap earns its place before the mistake: the wrong talk at the wrong hour, the fix that sounds like pressure, the joke that lands as neglect, and the repair work you did not need.
             </p>
           </div>
 
@@ -313,7 +313,7 @@ function FinalCta() {
         <span className="mm-cta-dot" aria-hidden="true" />
         <h2>Stop guessing the room. Read today first.</h2>
         <p>Thirty seconds before the day costs more than it should.</p>
-        <StoreButtons compact />
+        <StoreButtons compact official />
       </div>
     </section>
   );

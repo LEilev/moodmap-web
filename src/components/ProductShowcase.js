@@ -52,8 +52,11 @@ function ShowcaseVisual({ surface }) {
 }
 
 export default function ProductShowcase({ surfaces = [] }) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeSurface = surfaces[activeIndex] ?? surfaces[0];
+  const commandDeckIndex = surfaces.findIndex((surface) => surface.kicker === "CommandDeck");
+  const defaultIndex = commandDeckIndex >= 0 ? commandDeckIndex : 0;
+  const [activeIndex, setActiveIndex] = useState(defaultIndex);
+  const safeActiveIndex = activeIndex >= 0 && activeIndex < surfaces.length ? activeIndex : defaultIndex;
+  const activeSurface = surfaces[safeActiveIndex] ?? surfaces[0];
 
   if (!activeSurface) {
     return null;
@@ -84,7 +87,7 @@ export default function ProductShowcase({ surfaces = [] }) {
 
           <div className="mm-showcase-tabs" role="tablist" aria-label="MoodMap product layers">
             {surfaces.map((surface, index) => {
-              const isActive = index === activeIndex;
+              const isActive = index === safeActiveIndex;
               const tabId = `mm-showcase-tab-${index}`;
 
               return (
@@ -117,7 +120,7 @@ export default function ProductShowcase({ surfaces = [] }) {
           id="mm-showcase-panel"
           className={["mm-showcase-preview", isLayered ? "mm-showcase-preview--layered" : ""].filter(Boolean).join(" ")}
           role="tabpanel"
-          aria-labelledby={`mm-showcase-tab-${activeIndex}`}
+          aria-labelledby={`mm-showcase-tab-${safeActiveIndex}`}
         >
           <div className="mm-showcase-preview__header">
             <span>{isLayered ? "Move + reason" : "Live app layer"}</span>
