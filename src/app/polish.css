@@ -3476,3 +3476,227 @@
     padding-top: 42px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Premium+ surgical polish pass
+   - Keeps full-cycle proof above the first fold on common laptop heights.
+   - Gives #product a real anchor target below sticky chrome.
+   - Removes the last SaaS-tier language and tightens low-value explanation space.
+   - Makes download CTAs flatter, cleaner, and less badge-heavy.
+   -------------------------------------------------------------------------- */
+
+html {
+  scroll-padding-top: 96px;
+}
+
+:target {
+  scroll-margin-top: 96px;
+}
+
+.mm-anchor-target {
+  display: block;
+  height: 1px;
+  scroll-margin-top: 96px;
+}
+
+.mm-hero-section {
+  padding-block: clamp(36px, 5.6vw, 72px) clamp(10px, 2vw, 24px);
+}
+
+.mm-hero-grid {
+  gap: clamp(26px, 4.6vw, 58px);
+}
+
+.mm-phone-stage {
+  gap: clamp(4px, 0.9vw, 9px);
+}
+
+.mm-cycle-strip {
+  width: min(100%, 454px);
+  margin-top: clamp(-12px, -0.85vw, -6px);
+  padding: 9px;
+}
+
+.mm-cycle-strip__eyebrow {
+  margin-bottom: 7px;
+}
+
+.mm-cycle-strip__item {
+  min-height: 50px;
+  border-radius: 14px;
+  padding: 7px 6px;
+}
+
+.mm-cycle-strip__item strong {
+  font-size: 10.2px;
+}
+
+.mm-cycle-strip__item small {
+  font-size: 9.4px;
+}
+
+.mm-how-section {
+  padding-block: clamp(14px, 2.2vw, 30px);
+}
+
+.mm-how-section .mm-section-heading {
+  margin-bottom: clamp(14px, 2vw, 22px);
+}
+
+.mm-how-section .mm-section-heading h2 {
+  font-size: clamp(30px, 3.45vw, 44px);
+}
+
+.mm-step {
+  border-radius: 22px;
+  padding: clamp(16px, 2.2vw, 21px);
+}
+
+.mm-step h3 {
+  margin-top: 16px;
+  font-size: 19px;
+}
+
+.mm-step p {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mm-page .store-btn {
+  min-height: 52px;
+  min-width: 196px;
+  border-radius: 13px;
+  border-color: rgba(245, 242, 234, 0.18);
+  background:
+    radial-gradient(130px 62px at 12% 0%, rgba(255, 255, 255, 0.075), transparent 68%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.058), rgba(245, 242, 234, 0.012)),
+    #060910;
+  box-shadow:
+    0 18px 52px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  backdrop-filter: blur(12px);
+}
+
+.mm-page .store-btn::after {
+  opacity: 0.08;
+}
+
+.mm-page .store-btn:hover {
+  border-color: rgba(245, 242, 234, 0.28);
+  background:
+    radial-gradient(140px 68px at 12% 0%, rgba(255, 255, 255, 0.1), transparent 68%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.076), rgba(245, 242, 234, 0.018)),
+    #080d16;
+  box-shadow:
+    0 22px 62px rgba(0, 0, 0, 0.48),
+    0 0 28px rgba(37, 211, 107, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.mm-page .store-btn__icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(245, 242, 234, 0.055);
+  border-color: rgba(245, 242, 234, 0.16);
+}
+
+.mm-page .store-btn__copy small {
+  color: rgba(245, 242, 234, 0.56);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+}
+
+.mm-page .store-btn__copy strong {
+  font-size: 14.5px;
+  letter-spacing: -0.035em;
+}
+
+.mm-page .mm-final-cta .mm-store-row--official .store-btn {
+  min-height: 50px;
+  min-width: 186px;
+  border-radius: 13px;
+  border-color: rgba(245, 242, 234, 0.16);
+  background:
+    radial-gradient(120px 58px at 12% 0%, rgba(255, 255, 255, 0.07), transparent 68%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.052), rgba(245, 242, 234, 0.01)),
+    #060910;
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mm-page .mm-final-cta .mm-store-row--official .store-btn::after {
+  opacity: 0.07;
+}
+
+.mm-page .mm-final-cta .mm-store-row--official .store-btn__icon {
+  width: 31px;
+  height: 31px;
+}
+
+@media (min-width: 1024px) and (max-height: 940px) {
+  .mm-hero-section {
+    padding-block: clamp(30px, 4.8dvh, 54px) clamp(8px, 1.8dvh, 18px);
+  }
+
+  .mm-hero-copy h1 {
+    margin-top: 20px;
+    font-size: clamp(48px, 6.9vw, 78px);
+  }
+
+  .mm-hero-subline {
+    margin-top: 18px;
+    font-size: clamp(16px, 1.42vw, 18px);
+    line-height: 1.48;
+  }
+
+  .mm-hero-boundary {
+    margin-top: 15px;
+  }
+
+  .mm-store-row {
+    margin-top: 22px;
+  }
+
+  .mm-hero-trust {
+    margin-top: 14px;
+  }
+
+  .mm-device-shot--hero {
+    width: min(64vw, 340px);
+  }
+
+  .mm-device-shot--hero .mm-device-shot__frame {
+    padding: 10px;
+  }
+
+  .mm-phone-stage {
+    transform: translateY(-8px);
+  }
+
+  .mm-cycle-strip {
+    margin-top: -14px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mm-product-proof {
+    padding-top: clamp(14px, 2vw, 26px);
+  }
+
+  .mm-steps {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-cycle-strip {
+    margin-top: -6px;
+  }
+
+  .mm-page .store-btn {
+    min-width: 0;
+  }
+}
+

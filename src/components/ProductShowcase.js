@@ -81,6 +81,7 @@ export default function ProductShowcase({ surfaces = [] }) {
           <header className="mm-showcase-copy">
             <span className="mm-section-label">Inside today’s read</span>
             <h2
+              id="product-heading"
               className="mm-showcase-heading"
               aria-label="What changed. What matters. What to avoid. What to do."
             >
@@ -90,7 +91,7 @@ export default function ProductShowcase({ surfaces = [] }) {
               <span>What to do.</span>
             </h2>
             <p>
-              One PMS day shown. The same daily stack adapts across the full cycle: context, risk, timing, and the cleaner move before extra repair work starts.
+              One real day shown. The same daily stack adapts across the full cycle: context, risk, timing, and the cleaner move before extra repair work starts.
             </p>
           </header>
 

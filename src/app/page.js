@@ -73,7 +73,7 @@ const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
   ["Full-cycle context", "Menstrual, follicular, ovulation, luteal, and PMS."],
   ["Private by design", "Built for his timing, not her identity."],
-  ["Boundaried guidance", "Relationship timing, outside medical advice."],
+  ["Clear boundaries", "Relationship timing, outside medical advice."],
 ];
 
 const CONSEQUENCE_ITEMS = [
@@ -236,7 +236,8 @@ function ProofStrip() {
 
 function ProductProof() {
   return (
-    <section id="product" className="mm-section mm-product-proof">
+    <section className="mm-section mm-product-proof" aria-labelledby="product-heading">
+      <span id="product" className="mm-anchor-target" aria-hidden="true" />
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
       </div>
@@ -281,7 +282,7 @@ function PremiumStack() {
             <SectionLabel>Premium+</SectionLabel>
             <h2>The full daily read before the moment gets expensive.</h2>
             <p>
-              Premium+ is not extra noise. It is the paid timing layer: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
+              Premium+ is not extra noise. It is the full timing layer: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
             </p>
             <Link href="/pro" className="mm-premium-link">
               See Premium+
@@ -413,7 +414,7 @@ export default function HomePage() {
               </p>
               <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear medical boundaries.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear boundaries outside medical advice.</p>
             </div>
 
             <HeroPhone />
