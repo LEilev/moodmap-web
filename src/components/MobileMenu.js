@@ -133,7 +133,7 @@ export default function MobileMenu() {
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Download MoodMap
               </Link>
-              <p>One daily read. Better timing. Practical guidance, not diagnosis.</p>
+              <p>One daily read. Better timing. Context for his response, not a verdict on her.</p>
             </div>
           </aside>
         </div>

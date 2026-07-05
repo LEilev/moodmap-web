@@ -2894,3 +2894,353 @@
     display: none;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Premium+ hardening pass
+   - Adds early boundary language so capacity does not read like a score.
+   - Shows full-cycle breadth above the fold.
+   - Adds a concrete Premium+ value stack before the generic how-it-works flow.
+   - Tightens CTA buttons so they read as premium app actions, not blurred badges.
+   -------------------------------------------------------------------------- */
+
+.mm-hero-boundary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin-top: 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 211, 107, 0.18);
+  background:
+    radial-gradient(120px 44px at 8% 18%, rgba(37, 211, 107, 0.15), transparent 72%),
+    rgba(7, 12, 22, 0.54);
+  color: rgba(220, 252, 231, 0.88);
+  font-size: 13px;
+  font-weight: 690;
+  letter-spacing: -0.018em;
+  line-height: 1.2;
+  padding: 9px 12px;
+  box-shadow:
+    0 16px 46px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.mm-hero-boundary::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--mm-emerald);
+  box-shadow: 0 0 0 5px rgba(37, 211, 107, 0.08);
+}
+
+.mm-cycle-rail {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+  width: min(100%, 480px);
+  margin: clamp(16px, 2vw, 22px) auto 0;
+  border-radius: 20px;
+  border: 1px solid rgba(245, 242, 234, 0.1);
+  background:
+    linear-gradient(90deg, rgba(37, 211, 107, 0.06), rgba(245, 242, 234, 0.025), rgba(37, 211, 107, 0.045)),
+    rgba(5, 7, 13, 0.46);
+  box-shadow:
+    0 22px 68px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.065);
+  padding: 7px;
+  backdrop-filter: blur(16px);
+}
+
+.mm-cycle-rail__item {
+  min-width: 0;
+  border-radius: 15px;
+  padding: 9px 8px;
+  background: rgba(245, 242, 234, 0.032);
+  text-align: center;
+}
+
+.mm-cycle-rail__item strong,
+.mm-cycle-rail__item small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-cycle-rail__item strong {
+  color: rgba(245, 242, 234, 0.9);
+  font-size: 11.2px;
+  font-weight: 790;
+  letter-spacing: -0.025em;
+}
+
+.mm-cycle-rail__item small {
+  margin-top: 4px;
+  color: rgba(245, 242, 234, 0.48);
+  font-size: 10px;
+  font-weight: 640;
+  letter-spacing: -0.012em;
+}
+
+.mm-page .store-btn {
+  min-height: 58px;
+  min-width: 216px;
+  border-radius: 16px;
+  border-color: rgba(245, 242, 234, 0.24);
+  background:
+    radial-gradient(180px 78px at 8% 0%, rgba(255, 255, 255, 0.12), transparent 66%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.105), rgba(245, 242, 234, 0.025)),
+    #070b12;
+  box-shadow:
+    0 24px 72px rgba(0, 0, 0, 0.52),
+    0 0 0 1px rgba(245, 242, 234, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.mm-page .store-btn::after {
+  opacity: 0.24;
+}
+
+.mm-page .store-btn:hover {
+  border-color: rgba(245, 242, 234, 0.36);
+  background:
+    radial-gradient(180px 78px at 8% 0%, rgba(255, 255, 255, 0.16), transparent 66%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.13), rgba(245, 242, 234, 0.032)),
+    #090f19;
+  box-shadow:
+    0 30px 86px rgba(0, 0, 0, 0.58),
+    0 0 34px rgba(37, 211, 107, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.mm-page .store-btn__icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(245, 242, 234, 0.09);
+  border-color: rgba(245, 242, 234, 0.13);
+}
+
+.mm-page .store-btn__copy small {
+  color: rgba(245, 242, 234, 0.56);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mm-page .store-btn__copy strong {
+  color: rgba(245, 242, 234, 0.98);
+  font-size: 15.5px;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+
+.mm-premium-section {
+  padding-block: clamp(20px, 3vw, 42px);
+  scroll-margin-top: 110px;
+}
+
+.mm-premium-panel {
+  position: relative;
+  display: grid;
+  gap: clamp(22px, 4vw, 46px);
+  max-width: 1120px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 34px;
+  border: 1px solid rgba(245, 242, 234, 0.115);
+  background:
+    radial-gradient(620px 360px at 16% 0%, rgba(37, 211, 107, 0.14), transparent 72%),
+    radial-gradient(520px 340px at 100% 88%, rgba(54, 207, 249, 0.07), transparent 72%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.058), rgba(245, 242, 234, 0.018)),
+    rgba(8, 13, 24, 0.78);
+  box-shadow:
+    0 34px 104px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
+  padding: clamp(22px, 3.4vw, 38px);
+}
+
+.mm-premium-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(37, 211, 107, 0.08), transparent 28%, transparent 74%, rgba(245, 242, 234, 0.04)),
+    radial-gradient(1px 1px at 79% 23%, rgba(37, 211, 107, 0.42), transparent 100%);
+  opacity: 0.76;
+}
+
+.mm-premium-copy,
+.mm-premium-stack {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.mm-premium-copy {
+  max-width: 570px;
+}
+
+.mm-premium-copy h2 {
+  margin-top: 16px;
+  color: var(--mm-cream);
+  font-size: clamp(36px, 4.8vw, 62px);
+  font-weight: 820;
+  letter-spacing: -0.066em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+.mm-premium-copy p {
+  margin-top: 15px;
+  max-width: 540px;
+  color: rgba(245, 242, 234, 0.72);
+  font-size: clamp(15.5px, 1.45vw, 17px);
+  line-height: 1.58;
+  text-wrap: pretty;
+}
+
+.mm-premium-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 211, 107, 0.26);
+  background: rgba(37, 211, 107, 0.1);
+  color: rgba(220, 252, 231, 0.96);
+  font-size: 14px;
+  font-weight: 760;
+  letter-spacing: -0.018em;
+  padding: 0 17px;
+  transition: transform 180ms ease, border-color 180ms ease, background-color 180ms ease;
+}
+
+.mm-premium-link::after {
+  content: "→";
+  margin-left: 9px;
+  color: rgba(37, 211, 107, 0.92);
+}
+
+.mm-premium-link:hover {
+  transform: translateY(-1px);
+  border-color: rgba(37, 211, 107, 0.38);
+  background: rgba(37, 211, 107, 0.14);
+}
+
+.mm-premium-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.mm-premium-layer {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  border-radius: 20px;
+  border: 1px solid rgba(245, 242, 234, 0.09);
+  background:
+    linear-gradient(180deg, rgba(245, 242, 234, 0.046), rgba(245, 242, 234, 0.017)),
+    rgba(5, 7, 13, 0.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+  padding: 15px 16px;
+}
+
+.mm-premium-layer > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 14px;
+  color: rgba(220, 252, 231, 0.95);
+  background: rgba(37, 211, 107, 0.1);
+  border: 1px solid rgba(37, 211, 107, 0.18);
+  font-size: 11px;
+  font-weight: 840;
+}
+
+.mm-premium-layer h3 {
+  color: var(--mm-cream);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.05;
+}
+
+.mm-premium-layer p {
+  margin-top: 6px;
+  color: rgba(245, 242, 234, 0.64);
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.mm-showcase-preview__header strong {
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mm-faq-panel,
+.mm-trust-panel,
+.mm-premium-panel,
+.mm-product-showcase {
+  scroll-margin-top: 110px;
+}
+
+@media (min-width: 1024px) {
+  .mm-premium-panel {
+    grid-template-columns: minmax(330px, 0.82fr) minmax(430px, 1.18fr);
+    align-items: center;
+  }
+
+  .mm-cycle-rail {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-hero-boundary {
+    margin-inline: auto;
+    font-size: 12.5px;
+  }
+
+  .mm-cycle-rail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 336px);
+  }
+
+  .mm-cycle-rail__item:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .mm-cycle-rail__item strong {
+    font-size: 11px;
+  }
+
+  .mm-page .store-btn {
+    min-width: 0;
+  }
+
+  .mm-premium-panel {
+    border-radius: 30px;
+    padding: 22px 18px;
+  }
+
+  .mm-premium-copy h2 {
+    font-size: clamp(36px, 11vw, 48px);
+  }
+
+  .mm-premium-layer {
+    grid-template-columns: 38px minmax(0, 1fr);
+    padding: 14px;
+  }
+}

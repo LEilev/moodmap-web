@@ -1,6 +1,14 @@
 // src/app/pro/page.js
 import Link from "next/link";
-import { Crown, ShieldCheck, HeartHandshake, BellRing, LineChart } from "lucide-react";
+import {
+  ArrowRight,
+  BellRing,
+  CheckCircle2,
+  Crown,
+  HeartHandshake,
+  LineChart,
+  ShieldCheck,
+} from "lucide-react";
 
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({
@@ -26,233 +34,180 @@ function buildPlanHref(planType, searchParams) {
   return `/buy?${qs.toString()}`;
 }
 
-const FEATURES = [
+const VALUE_STACK = [
   {
     icon: HeartHandshake,
-    title: "Daily Connection Cues",
-    desc: "Know when to reach out and when to give space — without the guesswork.",
+    title: "Full daily stack",
+    desc: "Daily Briefing, Room Read, Friction Risk, and Move + Reason — every day.",
   },
   {
     icon: BellRing,
-    title: "Smart Timing Alerts",
-    desc: "Heads-up for PMS, ovulation, and fertile windows so you stay in sync.",
+    title: "Timing alerts",
+    desc: "Heads-up before PMS, ovulation, reset windows, and high-friction days.",
   },
   {
     icon: LineChart,
-    title: "Hormone-Aware Guidance",
-    desc: "Clear, respectful explanations tailored to her current phase — no fluff.",
+    title: "Cycle-aware context",
+    desc: "Phase and hormone context translated into practical relationship timing.",
   },
   {
     icon: ShieldCheck,
-    title: "Calm & Clarity",
-    desc: "Short, honest notes that reduce friction and build trust over time.",
+    title: "Private boundaries",
+    desc: "Built for his response. Not a medical tool, fertility tool, or verdict on her.",
   },
+];
+
+const INCLUDED = [
+  "Daily Briefing: what changed today",
+  "Room Read: what matters now",
+  "Friction Risk: what not to step on",
+  "Move + Reason: what to do and why",
+  "Intimacy timing context",
+  "Phase guides and practical explanations",
 ];
 
 export const metadata = {
   title: "Premium+ – MoodMap",
   description:
-    "Premium+ daily guidance for better timing and deeper connection. Full access — nothing blurred. Cancel anytime.",
+    "Unlock MoodMap Premium+: the full daily read for phase, capacity, friction risk, and cleaner relationship timing.",
 };
 
-export default function ProPage({ searchParams }) {
+export default async function ProPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const yearlyHref = buildPlanHref("yearly", resolvedSearchParams);
+  const monthlyHref = buildPlanHref("monthly", resolvedSearchParams);
+
   return (
-    <main className="relative isolate bg-primary-blue text-white">
-      {/* Premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-500/20 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/20 to-emerald-400/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
+    <main className="mm-page relative isolate overflow-hidden text-white">
+      <div aria-hidden="true" className="mm-background-field" />
 
-      {/* Hero */}
-      <section className="px-6 pt-14 pb-10 sm:pt-18 sm:pb-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 ring-1 ring-white/15 px-3 py-1 text-sm font-medium text-white/80">
-            <Crown className="h-4 w-4" aria-hidden />
-            <span>MoodMap Premium+</span>
-          </div>
+      <section className="mm-container py-14 sm:py-[4.5rem] lg:py-20">
+        <div className="grid gap-10 lg:grid-cols-[0.94fr_1.06fr] lg:items-center">
+          <div data-reveal="true">
+            <span className="mm-section-label">MoodMap Premium+</span>
+            <h1 className="mt-6 max-w-3xl text-balance text-[clamp(3rem,7.2vw,5.8rem)] font-[860] leading-[0.9] tracking-[-0.075em] text-[#f5f2ea]">
+              Unlock the full read before the wrong hour starts.
+            </h1>
+            <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
+              Premium+ gives him the complete daily stack: what changed, what matters,
+              what not to step on, and the cleaner move with the reason behind it.
+            </p>
+            <p className="mt-4 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100/90">
+              Context for his timing. Not a verdict on her.
+            </p>
 
-          <h1 className="text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight">
-            <span className="bg-gradient-to-r from-emerald-300 via-emerald-400 to-blue-400 bg-clip-text text-transparent">
-              Premium+ daily guidance for better timing and deeper connection.
-            </span>
-          </h1>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href={yearlyHref}
+                prefetch={false}
+                aria-label="Choose MoodMap Premium+ yearly plan"
+                className="group inline-flex min-h-14 items-center justify-center rounded-full border border-emerald-300/35 bg-emerald-400/15 px-6 text-sm font-bold text-emerald-50 shadow-[0_24px_80px_rgba(0,0,0,0.42)] transition hover:-translate-y-0.5 hover:bg-emerald-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
+              >
+                <Crown className="mr-2 h-4 w-4" aria-hidden="true" />
+                Choose yearly
+                <span className="ml-2 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/80">
+                  Best value
+                </span>
+              </Link>
 
-          <p className="mt-5 text-pretty text-base sm:text-lg text-white/75">
-            Unlock phase-aware tips and cues that make each day smoother and your relationship more
-            secure — day by day.
-          </p>
+              <Link
+                href={monthlyHref}
+                prefetch={false}
+                aria-label="Choose MoodMap Premium+ monthly plan"
+                className="group inline-flex min-h-14 items-center justify-center rounded-full border border-white/16 bg-white/[0.055] px-6 text-sm font-bold text-white/90 shadow-[0_20px_70px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+              >
+                Choose monthly
+                <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
+            </div>
 
-          {/* CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row items-stretch justify-center gap-3 sm:gap-4">
-            {/* Yearly */}
-            <Link
-              href={buildPlanHref("yearly", searchParams)}
-              prefetch={false}
-              aria-label="Choose Yearly plan"
-              className="group relative inline-flex items-center justify-center rounded-full px-7 py-4 text-base font-semibold
-                         text-white bg-gradient-to-r from-emerald-400 to-emerald-500
-                         shadow-[0_10px_30px_rgba(16,185,129,0.30)] ring-1 ring-emerald-300/40
-                         transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(16,185,129,0.45)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Crown className="h-5 w-5" aria-hidden />
-                Unlock Premium+ – Yearly
-              </span>
-              <span className="ml-2 inline-flex items-center rounded-full border border-white/30 bg-white/10 px-2 py-0.5 text-xs font-semibold">
-                Best value
-              </span>
-
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.00))",
-                }}
-              />
-            </Link>
-
-            {/* Monthly */}
-            <Link
-              href={buildPlanHref("monthly", searchParams)}
-              prefetch={false}
-              aria-label="Choose Monthly plan"
-              className="group relative inline-flex items-center justify-center rounded-full px-7 py-4 text-base font-semibold
-                         text-white bg-gradient-to-r from-blue-500 to-blue-600
-                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] ring-1 ring-blue-300/45
-                         transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
-            >
-              Unlock Premium+ – Monthly
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.00))",
-                }}
-              />
-            </Link>
-          </div>
-
-          <p className="mt-3 text-xs sm:text-sm text-white/60">
-            Works with your existing free app. Cancel anytime. Your data stays private.
-          </p>
-
-          {/* NEW: explicit guidance + privacy clarification at decision point */}
-          <p className="mt-2 text-xs sm:text-sm text-white/55">
-            Relationship guidance — not medical advice. Not for contraception or fertility planning.
-            No cycle details leave your device.
-          </p>
-
-          {/* NEW: explicit full-access promise (research) */}
-          <p className="mt-2 text-xs sm:text-sm text-white/70">
-            Full access. Nothing blurred or held back.
-          </p>
-        </div>
-      </section>
-
-      {/* Quote strip */}
-      <section className="px-6 pb-10">
-        <div className="mx-auto max-w-6xl">
-          <div className="glass-card p-5 sm:p-6 text-center">
-            <p className="text-sm sm:text-base text-white/80">
-              “Understand what’s happening in her body, and you’ll understand what your relationship
-              needs today.”
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/52">
+              Full access. Cancel anytime. Relationship timing guidance only — not diagnosis,
+              contraception, fertility planning, or medical treatment.
             </p>
           </div>
+
+          <div className="relative" data-reveal="true">
+            <div className="rounded-[2rem] border border-white/12 bg-white/[0.045] p-4 shadow-[0_34px_120px_rgba(0,0,0,0.38)] backdrop-blur-xl sm:p-5">
+              <div className="rounded-[1.5rem] border border-white/10 bg-[#080d18]/80 p-5 sm:p-6">
+                <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+                  <div>
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-emerald-300/80">
+                      Full daily read
+                    </p>
+                    <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.055em] text-[#f5f2ea] sm:text-3xl">
+                      Four layers. One decision.
+                    </h2>
+                  </div>
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-100">
+                    <Crown className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                </div>
+
+                <div className="mt-5 grid gap-3">
+                  {INCLUDED.map((item, index) => (
+                    <div
+                      key={item}
+                      className="grid grid-cols-[2rem_1fr] items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.035] p-3.5"
+                    >
+                      <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-emerald-300/18 bg-emerald-400/10 text-xs font-extrabold text-emerald-100">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="pt-1 text-sm font-semibold leading-relaxed text-white/78">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="px-6 pb-12 sm:pb-16">
-        <div className="mx-auto max-w-7xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7">
-          {FEATURES.map((f) => {
-            const Icon = f.icon;
+      <section className="mm-container pb-14 sm:pb-[4.5rem]">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {VALUE_STACK.map((feature) => {
+            const Icon = feature.icon;
             return (
-              <article key={f.title} className="glass-card glass-card-hover p-6 text-left group">
-                <span className="glass-icon">
-                  <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
+              <article
+                key={feature.title}
+                className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 shadow-[0_22px_80px_rgba(0,0,0,0.25)] backdrop-blur-xl"
+              >
+                <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-emerald-100">
+                  <Icon className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <h3 className="text-base sm:text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">{f.desc}</p>
-                <div aria-hidden="true" className="glass-gloss" />
+                <h3 className="mt-5 text-lg font-extrabold tracking-[-0.045em] text-[#f5f2ea]">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/64">{feature.desc}</p>
               </article>
             );
           })}
         </div>
       </section>
 
-      {/* Secondary CTA */}
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-4xl glass-card p-6 sm:p-8 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold">Ready for Premium+?</h2>
-          <p className="mt-2 text-white/70">
-            Two simple plans — same full access. Choose the one that fits you best:
-          </p>
-
-          <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
-            <Link
-              href={buildPlanHref("yearly", searchParams)}
-              prefetch={false}
-              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
-                         text-white bg-gradient-to-r from-emerald-400 to-emerald-500 ring-1 ring-emerald-300/40
-                         shadow-[0_10px_30px_rgba(16,185,129,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(16,185,129,0.45)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
-            >
-              <Crown className="mr-2 h-4 w-4" aria-hidden />
-              Premium+ – Yearly (Best value)
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.00))",
-                }}
-              />
-            </Link>
-
-            <Link
-              href={buildPlanHref("monthly", searchParams)}
-              prefetch={false}
-              className="group relative inline-flex items-center justify-center rounded-full px-6 py-3 text-sm font-semibold
-                         text-white bg-gradient-to-r from-blue-500 to-blue-600 ring-1 ring-blue-300/45
-                         shadow-[0_10px_30px_rgba(59,130,246,0.30)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_40px_rgba(59,130,246,0.45)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-300/80"
-            >
-              Premium+ – Monthly
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  background:
-                    "linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.00))",
-                }}
-              />
+      <section className="mm-container pb-16 sm:pb-20">
+        <div className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 text-center shadow-[0_26px_94px_rgba(0,0,0,0.28)] backdrop-blur-xl sm:p-8">
+          <div className="mx-auto flex max-w-3xl flex-col items-center">
+            <CheckCircle2 className="h-8 w-8 text-emerald-300" aria-hidden="true" />
+            <h2 className="mt-5 max-w-2xl text-balance text-3xl font-extrabold leading-none tracking-[-0.06em] text-[#f5f2ea] sm:text-4xl">
+              Thirty seconds now. Less repair later.
+            </h2>
+            <p className="mt-4 max-w-2xl text-pretty text-sm leading-relaxed text-white/66 sm:text-base">
+              The expensive part is not the read. It is the wrong-hour conversation,
+              the pressure move, and the repair loop that could have been avoided.
+            </p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link href={yearlyHref} prefetch={false} className="btn-primary">
+                Unlock yearly
+              </Link>
+              <Link href={monthlyHref} prefetch={false} className="btn-primary bg-white/10 shadow-none ring-white/15 hover:bg-white/15">
+                Unlock monthly
+              </Link>
+            </div>
+            <Link href="/" className="mt-6 text-sm font-semibold text-white/56 hover:text-white/78">
+              ← Back to Home
             </Link>
           </div>
-
-          {/* NEW: punchy “nothing blurred” line */}
-          <p className="mt-4 text-sm text-white/70">
-            Nothing blurred. Ever.
-          </p>
-
-          <p className="mt-4 inline-flex items-center gap-2 text-sm text-white/70 justify-center">
-            <ShieldCheck className="h-4 w-4" aria-hidden />
-            Private by design. Backed by real science, distilled for everyday life.
-          </p>
-        </div>
-
-        <div className="mt-10 text-center">
-          <Link href="/" className="btn-primary">
-            ← Back to Home
-          </Link>
         </div>
       </section>
     </main>

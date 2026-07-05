@@ -8,14 +8,14 @@ import MobileMenu from "../components/MobileMenu";
 const SITE_NAME = "MoodMap";
 const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
-const SITE_TITLE = `${SITE_NAME} — One Daily Read for Better Timing`;
+const SITE_TITLE = `${SITE_NAME} — Read the Day Before You React`;
 
 const APPSTORE_URL = "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap gives men one private daily read from their partner’s cycle context: better timing, less friction, and practical relationship guidance.";
+  "MoodMap gives men one private daily read from their partner’s cycle context: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
@@ -145,9 +145,9 @@ export default function RootLayout({ children }) {
     },
     featureList: [
       "Daily Briefing",
-      "SitRep",
-      "Risk Radar",
-      "CommandDeck actions",
+      "Room Read",
+      "Friction Risk",
+      "Move + Reason",
       "Cycle-aware relationship timing",
       "PMS timing awareness",
       "Luteal load context",
@@ -311,7 +311,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Cycle-aware relationship timing. Practical guidance, not diagnosis.
+                    Built in Norway. Private by design. Cycle-aware relationship timing. Context for his response, not a verdict on her.
                   </p>
                 </div>
 

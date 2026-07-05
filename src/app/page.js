@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import ScrollReveal from "../components/ScrollReveal";
@@ -8,6 +9,14 @@ const APPSTORE_URL =
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
+const CYCLE_SIGNALS = [
+  ["Menstrual", "Lower load"],
+  ["Follicular", "Build window"],
+  ["Ovulation", "Connection signal"],
+  ["Luteal", "Friction watch"],
+  ["PMS", "Soft landing"],
+];
+
 const APP_SURFACES = [
   {
     screenshotPath: "/screenshots/daily-briefing.webp",
@@ -15,37 +24,38 @@ const APP_SURFACES = [
     kicker: "Daily Briefing",
     title: "What changed today.",
     quote: "Land it soft. Warmth, easy food, short support.",
-    meta: "PMS · Day 28",
+    meta: "Phase + capacity",
     alt: "MoodMap Daily Briefing screen showing PMS day 28, capacity, hormones, risk, and brief.",
   },
   {
     screenshotPath: "/screenshots/sitrep.webp",
     shotClass: "mm-device-shot--sitrep",
-    kicker: "SitRep",
+    kicker: "Room Read",
     title: "What matters now.",
     quote: "Close it softly. Warmth, simple food, low light, short support.",
-    meta: "Room read",
-    alt: "MoodMap SitRep screen showing guidance for day 3 in PMS.",
+    meta: "Context layer",
+    alt: "MoodMap Room Read screen showing guidance for a low-capacity day.",
   },
   {
     screenshotPath: "/screenshots/risk-radar.webp",
     shotClass: "mm-device-shot--risk-radar",
-    kicker: "Risk Radar",
+    kicker: "Friction Risk",
     title: "What not to step on.",
     quote: "Your need for closure is the fresh war.",
-    meta: "Friction risk",
-    alt: "MoodMap Risk Radar screen showing tripwire and containment guidance.",
+    meta: "Avoid layer",
+    alt: "MoodMap Friction Risk screen showing tripwire and containment guidance.",
   },
   {
     screenshotPath: "/screenshots/commanddeck-main.webp",
     secondaryScreenshotPath: "/screenshots/commanddeck.webp",
     shotClass: "mm-device-shot--commanddeck-main",
-    kicker: "CommandDeck",
-    title: "The move and the reason.",
+    kicker: "Move + Reason",
+    systemLabel: "CommandDeck",
+    title: "What to do — and why.",
     quote: "A real issue can still be opened at the wrong hour.",
-    meta: "Move + reason",
-    alt: "MoodMap CommandDeck screen showing key insight cards and why prompts.",
-    secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
+    meta: "Action layer",
+    alt: "MoodMap Move and Reason screen showing key insight cards and why prompts.",
+    secondaryAlt: "MoodMap WHY layer explaining the reasoning behind a move.",
     secondaryLabel: "WHY layer",
     secondaryCaption: "Tap WHY. See the reason before you move.",
     reasonTitle: "See the reason before you move.",
@@ -55,14 +65,15 @@ const APP_SURFACES = [
       "Separate the real issue from the timing problem.",
       "Make one cleaner move before repair work starts.",
     ],
+    defaultActive: true,
   },
 ];
 
 const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
-  ["Built in Norway", "A private product with clear boundaries."],
-  ["Private daily read", "Built for his context, not public scoring."],
-  ["Relationship timing", "Context and guidance outside diagnosis."],
+  ["Full-cycle context", "Menstrual, follicular, ovulation, luteal, and PMS."],
+  ["Private by design", "Built for his timing, not her identity."],
+  ["Boundaried guidance", "Relationship timing, outside medical advice."],
 ];
 
 const CONSEQUENCE_ITEMS = [
@@ -84,6 +95,13 @@ const CONSEQUENCE_ITEMS = [
   ],
 ];
 
+const PREMIUM_LAYERS = [
+  ["Daily Briefing", "Phase, capacity, and what changed today."],
+  ["Room Read", "What matters in the room before he speaks."],
+  ["Friction Risk", "The move likely to make the hour heavier."],
+  ["Move + Reason", "The cleaner action and the why behind it."],
+];
+
 const HOW_STEPS = [
   ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily context."],
   ["02", "Read the signal", "See phase, capacity, risk, and timing before you move."],
@@ -91,15 +109,15 @@ const HOW_STEPS = [
 ];
 
 const TRUST_ITEMS = [
-  ["Private by design", "Built for a private daily read, outside public scoring."],
-  ["Cycle-aware context", "Patterns add context while the relationship stays human."],
-  ["Guidance with boundaries", "Relationship timing guidance, outside diagnosis, contraception, or fertility planning."],
+  ["Private by design", "Built for a private daily read. Not a public scorecard."],
+  ["Cycle-aware, not medical", "Context for timing, outside diagnosis, contraception, and fertility planning."],
+  ["Built for his response", "The product guides his timing, not her identity, mood, or worth."],
 ];
 
 const FAQ_ITEMS = [
   [
     "How does MoodMap read the day?",
-    "MoodMap reads cycle-aware context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for the room while the real conversation stays between them.",
+    "MoodMap reads cycle-aware context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
   ],
   [
     "What kind of guidance is MoodMap?",
@@ -119,25 +137,31 @@ function StoreButtons({ compact = false, official = false }) {
   return (
     <div
       id={compact ? undefined : "download"}
-      className={["mm-store-row", compact ? "mm-store-row--center" : null, official ? "mm-store-row--official" : null].filter(Boolean).join(" ")}
+      className={[
+        "mm-store-row",
+        compact ? "mm-store-row--center" : null,
+        official ? "mm-store-row--official" : null,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
-      <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap on the App Store">
+      <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap for iPhone on the App Store">
         <span className="store-btn__icon" aria-hidden="true">
           <FaApple />
         </span>
         <span className="store-btn__copy">
-          <small>Download on the</small>
-          <strong>App Store</strong>
+          <small>App Store</small>
+          <strong>Download for iPhone</strong>
         </span>
       </a>
 
-      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Google Play">
+      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap for Android on Google Play">
         <span className="store-btn__icon" aria-hidden="true">
           <FaGooglePlay />
         </span>
         <span className="store-btn__copy">
-          <small>Get it on</small>
-          <strong>Google Play</strong>
+          <small>Google Play</small>
+          <strong>Get for Android</strong>
         </span>
       </a>
     </div>
@@ -177,6 +201,15 @@ function HeroPhone() {
         className="mm-device-shot--hero"
         priority
       />
+
+      <div className="mm-cycle-rail" aria-label="MoodMap covers the full cycle">
+        {CYCLE_SIGNALS.map(([phase, signal]) => (
+          <span key={phase} className="mm-cycle-rail__item">
+            <strong>{phase}</strong>
+            <small>{signal}</small>
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
@@ -236,6 +269,39 @@ function CostSection() {
   );
 }
 
+function PremiumStack() {
+  return (
+    <section id="premium" className="mm-section mm-premium-section">
+      <div className="mm-container">
+        <div className="mm-premium-panel" data-reveal>
+          <div className="mm-premium-copy">
+            <SectionLabel>Premium+</SectionLabel>
+            <h2>One read. Four layers. Better timing.</h2>
+            <p>
+              Premium+ unlocks the full daily stack: context, room read, friction risk, and the cleaner move with its reason. Less guessing before the moment gets expensive.
+            </p>
+            <Link href="/pro" className="mm-premium-link">
+              See Premium+
+            </Link>
+          </div>
+
+          <div className="mm-premium-stack" aria-label="Premium+ daily read layers">
+            {PREMIUM_LAYERS.map(([title, copy], index) => (
+              <article key={title} className="mm-premium-layer">
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function HowItWorks() {
   return (
     <section id="how-it-works" className="mm-section mm-how-section">
@@ -267,7 +333,7 @@ function TrustSection() {
           <div className="mm-trust-intro">
             <SectionLabel>Trust</SectionLabel>
             <h2>Private, careful, practical.</h2>
-            <p>Private by design. Cycle-aware context. Practical guidance with clear boundaries.</p>
+            <p>Context for his timing. Not a verdict on her. Practical guidance with clear boundaries.</p>
           </div>
 
           <div className="mm-trust-list">
@@ -318,8 +384,8 @@ function FinalCta() {
     <section className="mm-final-cta">
       <div className="mm-container" data-reveal>
         <span className="mm-cta-dot" aria-hidden="true" />
-        <h2>Stop guessing the room. Read today first.</h2>
-        <p>Thirty seconds before the wrong hour costs more than it should.</p>
+        <h2>Read the room before you enter it.</h2>
+        <p>Thirty seconds now. Less repair later.</p>
         <StoreButtons compact official />
       </div>
     </section>
@@ -342,8 +408,9 @@ export default function HomePage() {
               <p className="mm-hero-subline">
                 MoodMap gives men one private read from their partner’s cycle context — phase, capacity, risk, and the cleaner move before timing costs more than it should.
               </p>
+              <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware timing guidance with clear medical boundaries.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear medical boundaries.</p>
             </div>
 
             <HeroPhone />
@@ -353,6 +420,7 @@ export default function HomePage() {
         <ProofStrip />
         <CostSection />
         <ProductProof />
+        <PremiumStack />
         <HowItWorks />
         <TrustSection />
         <FaqSection />

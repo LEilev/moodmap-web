@@ -20,7 +20,7 @@ function CommandDeckVisual({ surface, shotClass }) {
   const reasonBullets = surface.reasonBullets ?? [];
 
   return (
-    <div className="mm-commanddeck-showcase" aria-label={`${surface.kicker} move and reason preview`}>
+    <div className="mm-commanddeck-showcase" aria-label={`${surface.systemLabel ?? surface.kicker} move and reason preview`}>
       <div className="mm-commanddeck-showcase__phone" aria-hidden="false">
         <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />
       </div>
@@ -61,8 +61,9 @@ function ShowcaseVisual({ surface }) {
 }
 
 export default function ProductShowcase({ surfaces = [] }) {
-  const commandDeckIndex = surfaces.findIndex((surface) => surface.kicker === "CommandDeck");
-  const defaultIndex = commandDeckIndex >= 0 ? commandDeckIndex : 0;
+  const preferredIndex = surfaces.findIndex((surface) => surface.defaultActive);
+  const layeredIndex = surfaces.findIndex((surface) => surface.secondaryScreenshotPath);
+  const defaultIndex = preferredIndex >= 0 ? preferredIndex : layeredIndex >= 0 ? layeredIndex : 0;
   const [activeIndex, setActiveIndex] = useState(defaultIndex);
   const safeActiveIndex = activeIndex >= 0 && activeIndex < surfaces.length ? activeIndex : defaultIndex;
   const activeSurface = surfaces[safeActiveIndex] ?? surfaces[0];
@@ -89,8 +90,7 @@ export default function ProductShowcase({ surfaces = [] }) {
               <span>What to do.</span>
             </h2>
             <p>
-              One PMS day, shown as a controlled intelligence stack: context, risk, timing,
-              and the move that prevents extra repair work.
+              One real day shown from PMS. The same stack runs across the full cycle: context, risk, timing, and the move that prevents extra repair work.
             </p>
           </header>
 
@@ -132,8 +132,8 @@ export default function ProductShowcase({ surfaces = [] }) {
           aria-labelledby={`mm-showcase-tab-${safeActiveIndex}`}
         >
           <div className="mm-showcase-preview__header">
-            <span>{isLayered ? "Move + reason" : "Live app layer"}</span>
-            <strong>{activeSurface.kicker}</strong>
+            <span>{isLayered ? "Action layer" : "Live app layer"}</span>
+            <strong>{activeSurface.systemLabel ?? activeSurface.kicker}</strong>
           </div>
 
           <ShowcaseVisual surface={activeSurface} />
