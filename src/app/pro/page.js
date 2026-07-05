@@ -38,7 +38,7 @@ const VALUE_STACK = [
   {
     icon: HeartHandshake,
     title: "Full daily read",
-    desc: "Phase, room read, friction risk, cleaner move, and the reason behind it — every day.",
+    desc: "Phase, room read, friction risk, cleaner move, and the reason behind it — in one private read.",
   },
   {
     icon: BellRing,
@@ -47,8 +47,8 @@ const VALUE_STACK = [
   },
   {
     icon: LineChart,
-    title: "Cycle-aware outcomes",
-    desc: "Support, conversation, restraint, and intimacy timing translated into practical moves.",
+    title: "Why layer",
+    desc: "Cycle context translated into biology, consequence, interpretation, and practical timing.",
   },
   {
     icon: ShieldCheck,
@@ -63,13 +63,14 @@ const INCLUDED = [
   "Friction Risk for the move that can make it heavier",
   "Move + Reason so he knows what to do and why",
   "Intimacy timing context without guessing",
+  "Why layer for the biology, consequence, and interpretation behind the read",
   "Phase guides with practical boundaries",
 ];
 
 export const metadata = {
   title: "Premium+ – MoodMap",
   description:
-    "Unlock MoodMap Premium+: the full daily read for phase, capacity, friction risk, and cleaner relationship timing.",
+    "Unlock MoodMap Premium+: the full daily read, why layer, friction risk, and cleaner relationship timing.",
 };
 
 export default async function ProPage({ searchParams }) {
@@ -90,7 +91,7 @@ export default async function ProPage({ searchParams }) {
             </h1>
             <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
               Premium+ gives him the complete daily read: phase, room read, friction risk,
-              cleaner move, and the reason behind it — before timing turns expensive.
+              cleaner move, and the why behind it — before timing turns expensive.
             </p>
             <p className="mt-4 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100/90">
               Context for his timing. Not a verdict on her.
@@ -104,7 +105,7 @@ export default async function ProPage({ searchParams }) {
                 className="group inline-flex min-h-14 items-center justify-center rounded-full border border-emerald-300/35 bg-emerald-400/15 px-6 text-sm font-bold text-emerald-50 shadow-[0_24px_80px_rgba(0,0,0,0.42)] transition hover:-translate-y-0.5 hover:bg-emerald-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
               >
                 <Crown className="mr-2 h-4 w-4" aria-hidden="true" />
-                Choose yearly
+                Start yearly
                 <span className="ml-2 rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[11px] font-bold text-white/80">
                   Best value
                 </span>
@@ -116,7 +117,7 @@ export default async function ProPage({ searchParams }) {
                 aria-label="Choose MoodMap Premium+ monthly plan"
                 className="group inline-flex min-h-14 items-center justify-center rounded-full border border-white/16 bg-white/[0.055] px-6 text-sm font-bold text-white/90 shadow-[0_20px_70px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
               >
-                Choose monthly
+                Start monthly
                 <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </div>
@@ -136,7 +137,7 @@ export default async function ProPage({ searchParams }) {
                       Full daily read
                     </p>
                     <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.055em] text-[#f5f2ea] sm:text-3xl">
-                      The full timing layer.
+                      The full daily stack.
                     </h2>
                   </div>
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-100">

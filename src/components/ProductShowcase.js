@@ -91,7 +91,7 @@ export default function ProductShowcase({ surfaces = [] }) {
               <span>What to do.</span>
             </h2>
             <p>
-              One real day shown. The same daily stack adapts across the full cycle: context, risk, timing, and the cleaner move before extra repair work starts.
+              One daily read shown. The same stack adapts across the full cycle: context, risk, timing, and the cleaner move before extra repair work starts.
             </p>
           </header>
 

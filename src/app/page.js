@@ -104,12 +104,12 @@ const PREMIUM_LAYERS = [
 
 const WHY_LAYER_POINTS = [
   [
-    "Relative signals",
-    "Phase and hormone context are translated into timing signals, not medical readings.",
+    "Timing signals",
+    "Phase and hormone context become timing signals — not medical readings.",
   ],
   [
-    "Plain-English insight",
-    "Biology, consequence, and interpretation stay connected to the daily move.",
+    "Plain-English why",
+    "Biology, consequence, and interpretation stay connected to the move he actually makes.",
   ],
   [
     "Cleaner response",
@@ -118,9 +118,9 @@ const WHY_LAYER_POINTS = [
 ];
 
 const HOW_STEPS = [
-  ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily context."],
-  ["02", "Read the signal", "See phase, capacity, risk, and timing before you move."],
-  ["03", "Choose the cleaner move", "Support, talk, initiate, or hold steady with better timing."],
+  ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily read."],
+  ["02", "Check today’s signal", "See phase, capacity, risk, and timing before the room gets expensive."],
+  ["03", "Move cleaner", "Support, talk, initiate, or hold steady with the right pace."],
 ];
 
 const TRUST_ITEMS = [
@@ -268,7 +268,7 @@ function WhyLayer() {
             <SectionLabel>Why layer</SectionLabel>
             <h2 id="why-layer-heading">The why behind the read.</h2>
             <p>
-              MoodMap turns cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Not prediction. Not a verdict on her.
+              MoodMap turns cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
             </p>
 
             <div className="mm-depth-points" aria-label="MoodMap why layer value">
@@ -474,7 +474,7 @@ export default function HomePage() {
               </p>
               <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear boundaries outside medical advice.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear, non-medical boundaries.</p>
             </div>
 
             <HeroPhone />
