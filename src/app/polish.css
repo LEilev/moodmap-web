@@ -3700,3 +3700,241 @@ html {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   Premium+ intelligence proof pass
+   - Uses hormone chart/insight screenshots only as a controlled why-layer.
+   - Keeps the homepage framed as relationship timing, not medical prediction.
+   - Fixes the last weak CTA and Premium+ language details.
+   -------------------------------------------------------------------------- */
+
+#product {
+  scroll-margin-top: 104px;
+}
+
+.mm-depth-section {
+  padding-block: clamp(18px, 2.8vw, 42px);
+  scroll-margin-top: 104px;
+}
+
+.mm-depth-panel {
+  position: relative;
+  display: grid;
+  gap: clamp(24px, 4vw, 52px);
+  max-width: 1120px;
+  margin-inline: auto;
+  overflow: hidden;
+  border-radius: 34px;
+  border: 1px solid rgba(245, 242, 234, 0.11);
+  background:
+    radial-gradient(640px 360px at 7% 0%, rgba(37, 211, 107, 0.12), transparent 72%),
+    radial-gradient(620px 390px at 100% 78%, rgba(232, 87, 168, 0.09), transparent 72%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.056), rgba(245, 242, 234, 0.017)),
+    rgba(8, 13, 24, 0.76);
+  box-shadow:
+    0 34px 108px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.105);
+  padding: clamp(22px, 3.4vw, 40px);
+}
+
+.mm-depth-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(37, 211, 107, 0.075), transparent 26%, transparent 72%, rgba(232, 87, 168, 0.06)),
+    radial-gradient(1px 1px at 77% 19%, rgba(37, 211, 107, 0.45), transparent 100%);
+  opacity: 0.78;
+}
+
+.mm-depth-copy,
+.mm-depth-visual {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.mm-depth-copy h2 {
+  margin-top: 16px;
+  max-width: 620px;
+  color: var(--mm-cream);
+  font-size: clamp(36px, 4.6vw, 62px);
+  font-weight: 830;
+  letter-spacing: -0.066em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.mm-depth-copy > p {
+  margin-top: 16px;
+  max-width: 620px;
+  color: rgba(245, 242, 234, 0.72);
+  font-size: clamp(15.5px, 1.45vw, 17px);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.mm-depth-points {
+  display: grid;
+  gap: 14px;
+  margin-top: clamp(22px, 3vw, 30px);
+  max-width: 620px;
+}
+
+.mm-depth-point {
+  position: relative;
+  padding-left: 18px;
+}
+
+.mm-depth-point::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 4px;
+  left: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(37, 211, 107, 0.88), rgba(232, 87, 168, 0.62));
+  box-shadow: 0 0 18px rgba(37, 211, 107, 0.12);
+}
+
+.mm-depth-point h3 {
+  color: rgba(245, 242, 234, 0.95);
+  font-size: 17px;
+  font-weight: 805;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.mm-depth-point p {
+  margin-top: 6px;
+  color: rgba(245, 242, 234, 0.62);
+  font-size: 13.8px;
+  line-height: 1.45;
+}
+
+.mm-depth-visual {
+  min-height: clamp(440px, 43vw, 560px);
+}
+
+.mm-depth-chart-card,
+.mm-depth-insight-card {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 1px solid rgba(245, 242, 234, 0.12);
+  background:
+    linear-gradient(180deg, rgba(245, 242, 234, 0.06), rgba(245, 242, 234, 0.015)),
+    rgba(5, 7, 13, 0.72);
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.mm-depth-chart-card img,
+.mm-depth-insight-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mm-depth-chart-card {
+  top: 0;
+  left: 0;
+  width: min(76%, 470px);
+  aspect-ratio: 1 / 0.955;
+  opacity: 0.66;
+  transform: rotate(-1.4deg);
+  filter: saturate(0.92) contrast(0.98);
+}
+
+.mm-depth-chart-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 7, 13, 0.05), rgba(5, 7, 13, 0.34)),
+    radial-gradient(360px 240px at 100% 0%, rgba(37, 211, 107, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.mm-depth-insight-card {
+  right: 0;
+  bottom: 0;
+  width: min(62%, 360px);
+  aspect-ratio: 716 / 1101;
+  transform: rotate(1.1deg);
+  box-shadow:
+    0 38px 116px rgba(0, 0, 0, 0.46),
+    0 0 38px rgba(232, 87, 168, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.mm-depth-insight-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent 70%, rgba(5, 7, 13, 0.18));
+}
+
+@media (min-width: 1024px) {
+  .mm-depth-panel {
+    grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
+    align-items: center;
+  }
+
+  .mm-depth-visual {
+    transform: translateY(4px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .mm-depth-copy {
+    max-width: 680px;
+  }
+
+  .mm-depth-visual {
+    width: min(100%, 620px);
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  #product,
+  .mm-depth-section {
+    scroll-margin-top: 86px;
+  }
+
+  .mm-depth-panel {
+    border-radius: 30px;
+    padding: 22px 18px;
+  }
+
+  .mm-depth-copy h2 {
+    font-size: clamp(36px, 11vw, 48px);
+  }
+
+  .mm-depth-copy > p {
+    font-size: 15px;
+  }
+
+  .mm-depth-visual {
+    min-height: 470px;
+  }
+
+  .mm-depth-chart-card {
+    width: 88%;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    opacity: 0.5;
+  }
+
+  .mm-depth-insight-card {
+    right: 50%;
+    width: min(78%, 335px);
+    transform: translateX(50%) rotate(0.7deg);
+  }
+}

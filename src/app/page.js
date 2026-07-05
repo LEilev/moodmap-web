@@ -102,6 +102,21 @@ const PREMIUM_LAYERS = [
   ["Better intimacy timing", "Read connection, capacity, and pace before he initiates."],
 ];
 
+const WHY_LAYER_POINTS = [
+  [
+    "Relative signals",
+    "Phase and hormone context are translated into timing signals, not medical readings.",
+  ],
+  [
+    "Plain-English insight",
+    "Biology, consequence, and interpretation stay connected to the daily move.",
+  ],
+  [
+    "Cleaner response",
+    "Use the context to choose tone, timing, support, restraint, or intimacy pace.",
+  ],
+];
+
 const HOW_STEPS = [
   ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily context."],
   ["02", "Read the signal", "See phase, capacity, risk, and timing before you move."],
@@ -155,13 +170,13 @@ function StoreButtons({ compact = false, official = false }) {
         </span>
       </a>
 
-      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap for Android on Google Play">
+      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Android with Google Play">
         <span className="store-btn__icon" aria-hidden="true">
           <FaGooglePlay />
         </span>
         <span className="store-btn__copy">
           <small>Google Play</small>
-          <strong>Get for Android</strong>
+          <strong>Get on Android</strong>
         </span>
       </a>
     </div>
@@ -236,10 +251,55 @@ function ProofStrip() {
 
 function ProductProof() {
   return (
-    <section className="mm-section mm-product-proof" aria-labelledby="product-heading">
-      <span id="product" className="mm-anchor-target" aria-hidden="true" />
+    <section id="product" className="mm-section mm-product-proof" aria-labelledby="product-heading">
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
+      </div>
+    </section>
+  );
+}
+
+function WhyLayer() {
+  return (
+    <section id="why-layer" className="mm-section mm-depth-section" aria-labelledby="why-layer-heading">
+      <div className="mm-container">
+        <div className="mm-depth-panel" data-reveal>
+          <div className="mm-depth-copy">
+            <SectionLabel>Why layer</SectionLabel>
+            <h2 id="why-layer-heading">The why behind the read.</h2>
+            <p>
+              MoodMap turns cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Not prediction. Not a verdict on her.
+            </p>
+
+            <div className="mm-depth-points" aria-label="MoodMap why layer value">
+              {WHY_LAYER_POINTS.map(([title, copy]) => (
+                <article key={title} className="mm-depth-point">
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <div className="mm-depth-visual" aria-label="MoodMap hormone chart and insight preview">
+            <div className="mm-depth-chart-card" aria-hidden="true">
+              <img
+                src="/screenshots/hormone-chart-depth.webp"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="mm-depth-insight-card">
+              <img
+                src="/screenshots/hormone-insight-depth.webp"
+                alt="MoodMap insight screen translating cycle context into biology, consequence, and interpretation."
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -282,7 +342,7 @@ function PremiumStack() {
             <SectionLabel>Premium+</SectionLabel>
             <h2>The full daily read before the moment gets expensive.</h2>
             <p>
-              Premium+ is not extra noise. It is the full timing layer: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
+              Premium+ gives him the full daily read: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
             </p>
             <Link href="/pro" className="mm-premium-link">
               See Premium+
@@ -423,6 +483,7 @@ export default function HomePage() {
 
         <ProofStrip />
         <ProductProof />
+        <WhyLayer />
         <CostSection />
         <PremiumStack />
         <HowItWorks />
