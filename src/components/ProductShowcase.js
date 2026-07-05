@@ -79,7 +79,7 @@ export default function ProductShowcase({ surfaces = [] }) {
       <div className="mm-showcase-demo-grid">
         <div className="mm-showcase-left">
           <header className="mm-showcase-copy">
-            <span className="mm-section-label">Inside today’s read</span>
+            <span id="product" className="mm-section-label mm-product-anchor">Inside today’s read</span>
             <h2
               id="product-heading"
               className="mm-showcase-heading"

@@ -105,10 +105,10 @@ const PREMIUM_LAYERS = [
 const WHY_LAYER_POINTS = [
   [
     "Timing signals",
-    "Phase and hormone context become timing signals — not medical readings.",
+    "Phase and hormone context is translated into timing signals — not medical readings.",
   ],
   [
-    "Plain-English why",
+    "Practical interpretation",
     "Biology, consequence, and interpretation stay connected to the move he actually makes.",
   ],
   [
@@ -170,13 +170,13 @@ function StoreButtons({ compact = false, official = false }) {
         </span>
       </a>
 
-      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Android with Google Play">
+      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Google Play">
         <span className="store-btn__icon" aria-hidden="true">
           <FaGooglePlay />
         </span>
         <span className="store-btn__copy">
           <small>Google Play</small>
-          <strong>Get on Android</strong>
+          <strong>Get on Google Play</strong>
         </span>
       </a>
     </div>
@@ -251,7 +251,7 @@ function ProofStrip() {
 
 function ProductProof() {
   return (
-    <section id="product" className="mm-section mm-product-proof" aria-labelledby="product-heading">
+    <section className="mm-section mm-product-proof" aria-labelledby="product-heading">
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
       </div>

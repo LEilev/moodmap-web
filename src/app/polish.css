@@ -4132,3 +4132,27 @@ html {
     width: min(80%, 342px);
   }
 }
+
+/* --------------------------------------------------------------------------
+   Final micro-polish pass
+   - Product nav now targets the label inside the product panel, not the section edge.
+   - Store buttons have enough width for the clearer Google Play CTA without wrapping.
+   -------------------------------------------------------------------------- */
+.mm-product-anchor {
+  scroll-margin-top: 0 !important;
+}
+
+.mm-page .store-btn {
+  min-width: 226px;
+}
+
+.mm-page .store-btn__copy strong {
+  font-size: 15.25px;
+  white-space: nowrap;
+}
+
+@media (max-width: 639px) {
+  .mm-page .store-btn {
+    min-width: 0;
+  }
+}

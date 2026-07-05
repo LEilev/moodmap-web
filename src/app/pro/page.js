@@ -48,7 +48,7 @@ const VALUE_STACK = [
   {
     icon: LineChart,
     title: "Why layer",
-    desc: "Cycle context translated into biology, consequence, interpretation, and practical timing.",
+    desc: "Cycle context translated into timing signals, practical interpretation, and cleaner response.",
   },
   {
     icon: ShieldCheck,
@@ -58,12 +58,12 @@ const VALUE_STACK = [
 ];
 
 const INCLUDED = [
-  "Phase and capacity context before he moves",
+  "Phase and capacity before he moves",
   "Room Read for what matters now",
-  "Friction Risk for the move that can make it heavier",
+  "Friction risk before the move makes the room heavier",
   "Move + Reason so he knows what to do and why",
   "Intimacy timing context without guessing",
-  "Why layer for the biology, consequence, and interpretation behind the read",
+  "Why layer behind the read",
   "Phase guides with practical boundaries",
 ];
 
@@ -198,11 +198,23 @@ export default async function ProPage({ searchParams }) {
               the pressure move, and the repair loop that could have been avoided.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Link href={yearlyHref} prefetch={false} className="btn-primary">
-                Unlock yearly
+              <Link
+                href={yearlyHref}
+                prefetch={false}
+                aria-label="Start MoodMap Premium+ yearly plan"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-emerald-300/35 bg-emerald-400/15 px-7 text-sm font-bold text-emerald-50 shadow-[0_24px_80px_rgba(0,0,0,0.42)] transition hover:-translate-y-0.5 hover:bg-emerald-400/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-300/80"
+              >
+                <Crown className="mr-2 h-4 w-4" aria-hidden="true" />
+                Start yearly
               </Link>
-              <Link href={monthlyHref} prefetch={false} className="btn-primary bg-white/10 shadow-none ring-white/15 hover:bg-white/15">
-                Unlock monthly
+              <Link
+                href={monthlyHref}
+                prefetch={false}
+                aria-label="Start MoodMap Premium+ monthly plan"
+                className="group inline-flex min-h-12 items-center justify-center rounded-full border border-white/16 bg-white/[0.055] px-7 text-sm font-bold text-white/90 shadow-[0_20px_70px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-white/[0.08] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
+              >
+                Start monthly
+                <ArrowRight className="ml-2 h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </div>
             <Link href="/" className="mt-6 text-sm font-semibold text-white/56 hover:text-white/78">
