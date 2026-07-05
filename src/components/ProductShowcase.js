@@ -16,6 +16,37 @@ function DeviceShot({ src, alt, className = "" }) {
   );
 }
 
+function CommandDeckVisual({ surface, shotClass }) {
+  const reasonBullets = surface.reasonBullets ?? [];
+
+  return (
+    <div className="mm-commanddeck-showcase" aria-label={`${surface.kicker} move and reason preview`}>
+      <div className="mm-commanddeck-showcase__phone" aria-hidden="false">
+        <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />
+      </div>
+
+      <article className="mm-commanddeck-reason" aria-label={surface.secondaryLabel ?? "WHY layer"}>
+        <span className="mm-commanddeck-reason__eyebrow">{surface.secondaryLabel ?? "WHY layer"}</span>
+        <h3>{surface.reasonTitle ?? "See the reason before you move."}</h3>
+        <p>{surface.reasonBody ?? surface.quote}</p>
+        {reasonBullets.length ? (
+          <ul>
+            {reasonBullets.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ) : null}
+      </article>
+
+      <div className="mm-commanddeck-flow" aria-hidden="true">
+        <span>Move</span>
+        <span>WHY</span>
+        <span>Reason</span>
+      </div>
+    </div>
+  );
+}
+
 function ShowcaseVisual({ surface }) {
   const shotClass = [
     "mm-device-shot--showcase",
@@ -26,29 +57,7 @@ function ShowcaseVisual({ surface }) {
     return <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />;
   }
 
-  return (
-    <div className="mm-layered-showcase" aria-label={`${surface.kicker} layered preview`}>
-      <div className="mm-layered-showcase__main">
-        <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />
-      </div>
-
-      <div className="mm-layered-showcase__detail" aria-label={surface.secondaryLabel ?? "Deeper layer"}>
-        <span className="mm-layered-showcase__eyebrow">{surface.secondaryLabel ?? "Why layer"}</span>
-        <div className="mm-layered-showcase__screen">
-          <img
-            key={surface.secondaryScreenshotPath}
-            src={surface.secondaryScreenshotPath}
-            alt={surface.secondaryAlt ?? "MoodMap secondary product layer preview."}
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-        {surface.secondaryCaption ? (
-          <p className="mm-layered-showcase__caption">{surface.secondaryCaption}</p>
-        ) : null}
-      </div>
-    </div>
-  );
+  return <CommandDeckVisual surface={surface} shotClass={shotClass} />;
 }
 
 export default function ProductShowcase({ surfaces = [] }) {

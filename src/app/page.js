@@ -48,32 +48,39 @@ const APP_SURFACES = [
     secondaryAlt: "MoodMap CommandDeck why layer explaining the reasoning behind a move.",
     secondaryLabel: "WHY layer",
     secondaryCaption: "Tap WHY. See the reason before you move.",
+    reasonTitle: "See the reason before you move.",
+    reasonBody: "A real issue can still be valid and still land badly at the wrong hour.",
+    reasonBullets: [
+      "Check the hour before the topic becomes the fight.",
+      "Separate the real issue from the timing problem.",
+      "Make one cleaner move before repair work starts.",
+    ],
   },
 ];
 
 const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
   ["Built in Norway", "A private product with clear boundaries."],
-  ["Private daily read", "Built for his context and his timing."],
-  ["Relationship guidance", "Timing context with clear medical boundaries."],
+  ["Private daily read", "Built for his context, not public scoring."],
+  ["Relationship timing", "Context and guidance outside diagnosis."],
 ];
 
 const CONSEQUENCE_ITEMS = [
   [
     "Wrong-hour talks",
-    "The same serious topic can land as repair or as a second fight. MoodMap helps you know which room you are walking into.",
+    "A serious topic opened at the wrong hour can become the second fight.",
   ],
   [
     "Closure pressure",
-    "Pushing for resolution at low capacity usually buys resistance, not clarity. The read tells you when to hold the line.",
+    "Low capacity does not reward pressure. It turns clarity into resistance.",
   ],
   [
     "Missed reset windows",
-    "Food, warmth, silence, or short support can save hours of cleanup when the day is near the floor.",
+    "Food, warmth, silence, or one clean support move can save hours of repair.",
   ],
   [
     "Autopilot moves",
-    "The joke, fix, push, or explanation that feels natural in the moment can make the room heavier. MoodMap interrupts that reflex.",
+    "The joke, fix, push, or explanation that feels natural can make the room heavier.",
   ],
 ];
 
@@ -210,7 +217,7 @@ function CostSection() {
             <SectionLabel>Why it matters</SectionLabel>
             <h2>Bad timing is expensive.</h2>
             <p>
-              MoodMap earns its place before the mistake: the wrong talk at the wrong hour, the fix that sounds like pressure, the joke that lands as neglect, and the repair work you did not need.
+              The cost is not the read. The cost is the wrong-hour talk, the pressure fix, the reflex joke, and the repair work that did not need to happen.
             </p>
           </div>
 
@@ -312,7 +319,7 @@ function FinalCta() {
       <div className="mm-container" data-reveal>
         <span className="mm-cta-dot" aria-hidden="true" />
         <h2>Stop guessing the room. Read today first.</h2>
-        <p>Thirty seconds before the day costs more than it should.</p>
+        <p>Thirty seconds before the wrong hour costs more than it should.</p>
         <StoreButtons compact official />
       </div>
     </section>
