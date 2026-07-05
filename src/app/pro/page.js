@@ -37,18 +37,18 @@ function buildPlanHref(planType, searchParams) {
 const VALUE_STACK = [
   {
     icon: HeartHandshake,
-    title: "Full daily stack",
-    desc: "Daily Briefing, Room Read, Friction Risk, and Move + Reason — every day.",
+    title: "Full daily read",
+    desc: "Phase, room read, friction risk, cleaner move, and the reason behind it — every day.",
   },
   {
     icon: BellRing,
-    title: "Timing alerts",
-    desc: "Heads-up before PMS, ovulation, reset windows, and high-friction days.",
+    title: "Wrong-hour prevention",
+    desc: "A heads-up before PMS, ovulation, reset windows, and high-friction days change the room.",
   },
   {
     icon: LineChart,
-    title: "Cycle-aware context",
-    desc: "Phase and hormone context translated into practical relationship timing.",
+    title: "Cycle-aware outcomes",
+    desc: "Support, conversation, restraint, and intimacy timing translated into practical moves.",
   },
   {
     icon: ShieldCheck,
@@ -58,12 +58,12 @@ const VALUE_STACK = [
 ];
 
 const INCLUDED = [
-  "Daily Briefing: what changed today",
-  "Room Read: what matters now",
-  "Friction Risk: what not to step on",
-  "Move + Reason: what to do and why",
-  "Intimacy timing context",
-  "Phase guides and practical explanations",
+  "Phase and capacity context before he moves",
+  "Room Read for what matters now",
+  "Friction Risk for the move that can make it heavier",
+  "Move + Reason so he knows what to do and why",
+  "Intimacy timing context without guessing",
+  "Phase guides with practical boundaries",
 ];
 
 export const metadata = {
@@ -89,8 +89,8 @@ export default async function ProPage({ searchParams }) {
               Unlock the full read before the wrong hour starts.
             </h1>
             <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-              Premium+ gives him the complete daily stack: what changed, what matters,
-              what not to step on, and the cleaner move with the reason behind it.
+              Premium+ gives him the complete daily read: phase, room read, friction risk,
+              cleaner move, and the reason behind it — before timing turns expensive.
             </p>
             <p className="mt-4 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100/90">
               Context for his timing. Not a verdict on her.
@@ -136,7 +136,7 @@ export default async function ProPage({ searchParams }) {
                       Full daily read
                     </p>
                     <h2 className="mt-2 text-2xl font-extrabold tracking-[-0.055em] text-[#f5f2ea] sm:text-3xl">
-                      Four layers. One decision.
+                      The full timing layer.
                     </h2>
                   </div>
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 text-emerald-100">

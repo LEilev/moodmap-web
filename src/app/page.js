@@ -10,10 +10,10 @@ const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const CYCLE_SIGNALS = [
-  ["Menstrual", "Lower load"],
-  ["Follicular", "Build window"],
-  ["Ovulation", "Connection signal"],
-  ["Luteal", "Friction watch"],
+  ["Menstrual", "Reset support"],
+  ["Follicular", "Talk window"],
+  ["Ovulation", "High connection"],
+  ["Luteal", "Load shift"],
   ["PMS", "Soft landing"],
 ];
 
@@ -50,7 +50,7 @@ const APP_SURFACES = [
     secondaryScreenshotPath: "/screenshots/commanddeck.webp",
     shotClass: "mm-device-shot--commanddeck-main",
     kicker: "Move + Reason",
-    systemLabel: "CommandDeck",
+    systemLabel: "Move + Reason",
     title: "What to do — and why.",
     quote: "A real issue can still be opened at the wrong hour.",
     meta: "Action layer",
@@ -96,10 +96,10 @@ const CONSEQUENCE_ITEMS = [
 ];
 
 const PREMIUM_LAYERS = [
-  ["Daily Briefing", "Phase, capacity, and what changed today."],
-  ["Room Read", "What matters in the room before he speaks."],
-  ["Friction Risk", "The move likely to make the hour heavier."],
-  ["Move + Reason", "The cleaner action and the why behind it."],
+  ["Fewer wrong-hour talks", "Know when a real issue needs better timing."],
+  ["Less repair work", "Catch pressure before it becomes the second fight."],
+  ["Cleaner support", "Choose warmth, space, talk, or restraint with context."],
+  ["Better intimacy timing", "Read connection, capacity, and pace before he initiates."],
 ];
 
 const HOW_STEPS = [
@@ -202,13 +202,16 @@ function HeroPhone() {
         priority
       />
 
-      <div className="mm-cycle-rail" aria-label="MoodMap covers the full cycle">
-        {CYCLE_SIGNALS.map(([phase, signal]) => (
-          <span key={phase} className="mm-cycle-rail__item">
-            <strong>{phase}</strong>
-            <small>{signal}</small>
-          </span>
-        ))}
+      <div className="mm-cycle-strip" aria-label="MoodMap adapts across the full cycle">
+        <span className="mm-cycle-strip__eyebrow">Full-cycle read</span>
+        <div className="mm-cycle-strip__track">
+          {CYCLE_SIGNALS.map(([phase, signal]) => (
+            <span key={phase} className="mm-cycle-strip__item">
+              <strong>{phase}</strong>
+              <small>{signal}</small>
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -276,16 +279,16 @@ function PremiumStack() {
         <div className="mm-premium-panel" data-reveal>
           <div className="mm-premium-copy">
             <SectionLabel>Premium+</SectionLabel>
-            <h2>One read. Four layers. Better timing.</h2>
+            <h2>The full daily read before the moment gets expensive.</h2>
             <p>
-              Premium+ unlocks the full daily stack: context, room read, friction risk, and the cleaner move with its reason. Less guessing before the moment gets expensive.
+              Premium+ is not extra noise. It is the paid timing layer: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
             </p>
             <Link href="/pro" className="mm-premium-link">
               See Premium+
             </Link>
           </div>
 
-          <div className="mm-premium-stack" aria-label="Premium+ daily read layers">
+          <div className="mm-premium-stack" aria-label="Premium+ daily value">
             {PREMIUM_LAYERS.map(([title, copy], index) => (
               <article key={title} className="mm-premium-layer">
                 <span>{String(index + 1).padStart(2, "0")}</span>
@@ -418,8 +421,8 @@ export default function HomePage() {
         </section>
 
         <ProofStrip />
-        <CostSection />
         <ProductProof />
+        <CostSection />
         <PremiumStack />
         <HowItWorks />
         <TrustSection />

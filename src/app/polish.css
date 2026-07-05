@@ -3244,3 +3244,235 @@
     padding: 14px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Premium+ tightening pass
+   - Product anchor now lands cleanly below sticky chrome.
+   - Hero full-cycle proof becomes readable context, not a cryptic side rail.
+   - Premium+ value stack sells outcomes, not repeated product labels.
+   -------------------------------------------------------------------------- */
+
+.mm-section,
+.mm-proof-strip-section,
+.mm-product-proof,
+.mm-premium-section,
+.mm-how-section,
+.mm-trust-section,
+.mm-faq-section {
+  scroll-margin-top: 84px;
+}
+
+.mm-hero-section {
+  padding-block: clamp(46px, 6.6vw, 86px) clamp(22px, 3.4vw, 38px);
+}
+
+.mm-product-proof,
+.mm-cost-section,
+.mm-premium-section,
+.mm-how-section,
+.mm-trust-section,
+.mm-faq-section {
+  padding-block: clamp(18px, 2.7vw, 38px);
+}
+
+.mm-phone-stage {
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(14px, 2vw, 18px);
+}
+
+.mm-cycle-strip {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 430px);
+  border-radius: 22px;
+  border: 1px solid rgba(245, 242, 234, 0.105);
+  background:
+    radial-gradient(240px 120px at 16% 0%, rgba(37, 211, 107, 0.1), transparent 72%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.052), rgba(245, 242, 234, 0.018)),
+    rgba(5, 7, 13, 0.54);
+  box-shadow:
+    0 22px 70px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  padding: 10px;
+  backdrop-filter: blur(16px);
+}
+
+.mm-cycle-strip__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+  color: rgba(245, 242, 234, 0.58);
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.mm-cycle-strip__eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--mm-emerald);
+  box-shadow: 0 0 0 5px rgba(37, 211, 107, 0.07);
+}
+
+.mm-cycle-strip__track {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mm-cycle-strip__item {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+  min-height: 56px;
+  border-radius: 15px;
+  border: 1px solid rgba(245, 242, 234, 0.06);
+  background: rgba(245, 242, 234, 0.028);
+  padding: 8px 6px;
+  text-align: center;
+}
+
+.mm-cycle-strip__item strong,
+.mm-cycle-strip__item small {
+  display: block;
+  min-width: 0;
+}
+
+.mm-cycle-strip__item strong {
+  color: rgba(245, 242, 234, 0.91);
+  font-size: 10.6px;
+  font-weight: 805;
+  letter-spacing: -0.032em;
+  line-height: 1.05;
+}
+
+.mm-cycle-strip__item small {
+  margin-top: 4px;
+  color: rgba(245, 242, 234, 0.52);
+  font-size: 9.8px;
+  font-weight: 650;
+  letter-spacing: -0.018em;
+  line-height: 1.12;
+}
+
+.mm-hero-boundary {
+  margin-top: 18px;
+  border-color: rgba(37, 211, 107, 0.22);
+  color: rgba(220, 252, 231, 0.94);
+  font-size: 13.5px;
+  font-weight: 735;
+  padding: 10px 13px;
+}
+
+.mm-product-showcase {
+  padding: clamp(20px, 2.7vw, 30px);
+}
+
+.mm-showcase-copy > p {
+  max-width: 560px;
+}
+
+.mm-showcase-preview__header span,
+.mm-showcase-preview__header strong {
+  letter-spacing: 0.13em;
+}
+
+.mm-premium-panel {
+  grid-template-columns: 1fr;
+  gap: clamp(20px, 3.4vw, 38px);
+}
+
+.mm-premium-copy h2 {
+  max-width: 720px;
+  font-size: clamp(34px, 4.15vw, 56px);
+  line-height: 0.98;
+}
+
+.mm-premium-copy p {
+  max-width: 660px;
+}
+
+.mm-premium-layer {
+  min-height: 78px;
+}
+
+.mm-premium-layer h3 {
+  font-size: 17.5px;
+}
+
+.mm-premium-layer p {
+  color: rgba(245, 242, 234, 0.68);
+  font-size: 13.8px;
+}
+
+.mm-page .store-btn {
+  min-height: 56px;
+  min-width: 204px;
+  border-radius: 14px;
+  border-color: rgba(245, 242, 234, 0.22);
+  background:
+    radial-gradient(150px 70px at 10% 0%, rgba(255, 255, 255, 0.1), transparent 66%),
+    linear-gradient(180deg, rgba(245, 242, 234, 0.08), rgba(245, 242, 234, 0.018)),
+    #060910;
+}
+
+.mm-page .store-btn::after {
+  opacity: 0.16;
+}
+
+.mm-page .store-btn__icon {
+  width: 35px;
+  height: 35px;
+  background: rgba(245, 242, 234, 0.08);
+}
+
+.mm-page .store-btn__copy small {
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+}
+
+.mm-page .store-btn__copy strong {
+  font-size: 15px;
+}
+
+.mm-final-cta {
+  padding-top: clamp(24px, 3.4vw, 48px);
+}
+
+@media (min-width: 1024px) {
+  .mm-premium-panel {
+    grid-template-columns: minmax(340px, 0.86fr) minmax(430px, 1.14fr);
+  }
+
+  .mm-product-proof {
+    padding-top: clamp(16px, 2.2vw, 30px);
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-cycle-strip {
+    width: min(100%, 346px);
+  }
+
+  .mm-cycle-strip__track {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mm-cycle-strip__item:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .mm-cycle-strip__item {
+    min-height: 52px;
+  }
+
+  .mm-hero-section {
+    padding-top: 42px;
+  }
+}

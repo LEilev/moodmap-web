@@ -16,11 +16,11 @@ function DeviceShot({ src, alt, className = "" }) {
   );
 }
 
-function CommandDeckVisual({ surface, shotClass }) {
+function MoveReasonVisual({ surface, shotClass }) {
   const reasonBullets = surface.reasonBullets ?? [];
 
   return (
-    <div className="mm-commanddeck-showcase" aria-label={`${surface.systemLabel ?? surface.kicker} move and reason preview`}>
+    <div className="mm-commanddeck-showcase" aria-label="Move and Reason preview">
       <div className="mm-commanddeck-showcase__phone" aria-hidden="false">
         <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />
       </div>
@@ -57,7 +57,7 @@ function ShowcaseVisual({ surface }) {
     return <DeviceShot src={surface.screenshotPath} alt={surface.alt} className={shotClass} />;
   }
 
-  return <CommandDeckVisual surface={surface} shotClass={shotClass} />;
+  return <MoveReasonVisual surface={surface} shotClass={shotClass} />;
 }
 
 export default function ProductShowcase({ surfaces = [] }) {
@@ -90,7 +90,7 @@ export default function ProductShowcase({ surfaces = [] }) {
               <span>What to do.</span>
             </h2>
             <p>
-              One real day shown from PMS. The same stack runs across the full cycle: context, risk, timing, and the move that prevents extra repair work.
+              One PMS day shown. The same daily stack adapts across the full cycle: context, risk, timing, and the cleaner move before extra repair work starts.
             </p>
           </header>
 

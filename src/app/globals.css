@@ -500,3 +500,12 @@ body > * {
     transition: none !important;
   }
 }
+
+/* Sticky header anchor correction for homepage sections. */
+html {
+  scroll-padding-top: 84px;
+}
+
+:target {
+  scroll-margin-top: 84px;
+}
