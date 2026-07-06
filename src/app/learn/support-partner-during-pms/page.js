@@ -31,7 +31,7 @@ export default function SupportPartnerDuringPMSPage() {
     },
     {
       q: "Is MoodMap medical advice or fertility planning?",
-      a: "No. MoodMap is relationship guidance informed by cycle physiology—meant for better timing and understanding. It is not medical advice and should not be used for contraception or fertility planning.",
+      a: "No. MoodMap is relationship guidance informed by general menstrual cycle context—meant for better timing and understanding. It is not medical advice and should not be used for contraception or fertility planning.",
     },
     {
       q: "What if her cycle isn’t 28 days?",

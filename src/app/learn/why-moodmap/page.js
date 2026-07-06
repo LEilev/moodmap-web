@@ -35,7 +35,7 @@ export default function WhyMoodMapPage() {
       typical:
         "Track dates, estimate upcoming periods, and optionally support personal health journaling.",
       moodmap:
-        "Provide menstrual-cycle context that helps a partner show up better — calmer timing, clearer expectations, steadier support.",
+        "Provide menstrual cycle context that helps a partner show up better — calmer timing, clearer expectations, steadier support.",
     },
     {
       label: "What you see day-to-day",
@@ -85,12 +85,12 @@ export default function WhyMoodMapPage() {
       a: "Typical trackers focus on the individual user and often rely on ongoing logs. MoodMap is written for men: it focuses on timing, self-regulation, and practical cues — helping you show up better in real life.",
     },
     {
-      q: "Is this creepy or invasive?",
+      q: "Is this intrusive or invasive?",
       a: "It’s supportive when done with consent and transparency. The boundary is simple: ask first, track minimally, and never weaponize timing in arguments.",
     },
     {
       q: "Is this medical advice?",
-      a: "No. MoodMap provides relationship guidance informed by general physiology. If there are health concerns, consult a qualified clinician.",
+      a: "No. MoodMap provides relationship guidance informed by general menstrual cycle context. If there are health concerns, consult a qualified clinician.",
     },
   ];
 
@@ -309,7 +309,7 @@ export default function WhyMoodMapPage() {
             </article>
           </div>
 
-          {/* 4) Timing alerts (clarify without being creepy) */}
+          {/* 4) Timing alerts (clarify without sounding invasive) */}
           <article className="glass-card p-6 sm:p-7 text-left">
             <div className="flex items-start gap-4">
               <span className="glass-icon">

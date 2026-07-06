@@ -33,12 +33,12 @@ export default function PeriodTrackingForMenPage() {
       a: "Keep it simple: Day 1 (first day of bleeding), her typical cycle length (if she wants to share), and any agreed ‘heads-up’ windows (like a PMS watch window). Use it as context, not certainty.",
     },
     {
-      q: "How do I bring it up without sounding creepy?",
+      q: "How do I bring it up respectfully?",
       a: "Be direct and supportive: ‘Would it help if I had a reminder so I can plan better and show up well — or would you rather I don’t track anything?’ Let her set the boundary.",
     },
     {
       q: "Does this replace medical advice or fertility planning?",
-      a: "No. This is relationship guidance informed by general physiology. It’s not medical advice and should not be used for contraception or fertility planning.",
+      a: "No. This is relationship guidance informed by general menstrual cycle context. It’s not medical advice and should not be used for contraception or fertility planning.",
     },
     {
       q: "What if her cycle isn’t 28 days (or varies)?",
@@ -244,7 +244,7 @@ export default function PeriodTrackingForMenPage() {
               <div className="text-left">
                 <h2 className="text-xl sm:text-2xl font-semibold">Consent and communication</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  The line between supportive and creepy is simple:{" "}
+                  The line between supportive and intrusive is simple:{" "}
                   <strong className="text-white">consent + transparency</strong>.
                 </p>
 

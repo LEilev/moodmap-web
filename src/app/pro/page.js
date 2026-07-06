@@ -48,7 +48,7 @@ const VALUE_STACK = [
   {
     icon: LineChart,
     title: "Why layer",
-    desc: "Cycle context translated into timing signals, practical interpretation, and cleaner response.",
+    desc: "Menstrual cycle context translated into timing signals, practical interpretation, and cleaner response.",
   },
   {
     icon: ShieldCheck,
@@ -70,7 +70,7 @@ const INCLUDED = [
 export const metadata = {
   title: "Premium+ – MoodMap",
   description:
-    "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and menstrual-cycle relationship timing.",
+    "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and relationship timing around the menstrual cycle.",
 };
 
 export default async function ProPage({ searchParams }) {
@@ -90,7 +90,7 @@ export default async function ProPage({ searchParams }) {
               Unlock the full read before the wrong hour starts.
             </h1>
             <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-              Premium+ gives him the complete daily read: phase, room read, friction risk,
+              Premium+ gives him the complete daily read from his partner’s menstrual cycle: phase, room read, friction risk,
               cleaner move, and the why behind it — before timing turns expensive.
             </p>
             <p className="mt-4 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100/90">

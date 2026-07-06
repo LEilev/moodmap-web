@@ -35,7 +35,7 @@ export default function FertileWindowExplainedPage() {
     },
     {
       q: "Is MoodMap a fertility or contraception app?",
-      a: "No. MoodMap provides relationship timing guidance informed by general cycle physiology. It is not medical advice and should not be used for contraception or fertility planning.",
+      a: "No. MoodMap provides relationship timing guidance informed by general menstrual cycle context. It is not medical advice and should not be used for contraception or fertility planning.",
     },
     {
       q: "Why should partners care about the fertile window if we’re not trying for a baby?",
@@ -86,7 +86,7 @@ export default function FertileWindowExplainedPage() {
           <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
             “Fertile window” sounds clinical, but as a partner you don’t need jargon—you need
             context. This page explains what it means, how it relates to ovulation, and how timing
-            awareness can help your relationship (without being weird about it).
+            awareness can help your relationship without turning it into prediction, control, or medical advice.
           </p>
 
           <p className="mt-3 text-sm text-white/60">
@@ -210,7 +210,7 @@ export default function FertileWindowExplainedPage() {
               </span>
               <div className="text-left">
                 <h2 className="text-xl sm:text-2xl font-semibold">
-                  What to avoid (so it doesn’t get creepy)
+                  What to avoid (so it stays respectful)
                 </h2>
 
                 <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">

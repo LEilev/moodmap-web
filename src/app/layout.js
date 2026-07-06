@@ -15,7 +15,7 @@ const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap gives men one private daily read from their partner’s menstrual-cycle context: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
+  "MoodMap gives men one private daily read from their partner’s menstrual cycle: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
@@ -135,7 +135,7 @@ export default function RootLayout({ children }) {
     description: META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
-    applicationSubCategory: "Menstrual-cycle relationship timing",
+    applicationSubCategory: "Menstrual cycle relationship timing",
     inLanguage: "en",
     audience: {
       "@type": "Audience",
@@ -146,7 +146,7 @@ export default function RootLayout({ children }) {
       "Room Read",
       "Friction Risk",
       "Move + Reason",
-      "Menstrual-cycle relationship timing",
+      "Menstrual cycle relationship timing",
       "PMS timing awareness",
       "Luteal load context",
       "Intimacy timing context",
@@ -309,7 +309,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Menstrual-cycle relationship timing. Context for his response, not a verdict on her.
+                    Built in Norway. Private by design. Relationship timing around the menstrual cycle. Context for his response, not a verdict on her.
                   </p>
                 </div>
 
