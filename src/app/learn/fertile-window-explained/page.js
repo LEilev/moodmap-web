@@ -12,7 +12,7 @@ import {
 export const metadata = {
   title: "Fertile window explained for partners · MoodMap",
   description:
-    "A calm, partner-friendly explanation of the fertile window, ovulation timing, and why it can matter for relationship timing. Relationship guidance, not medical advice.",
+    "A calm, partner-friendly explanation of fertile-window awareness, ovulation-phase context, and relationship timing. Relationship guidance, not medical advice.",
   alternates: {
     canonical: "/learn/fertile-window-explained",
   },
@@ -23,11 +23,11 @@ export default function FertileWindowExplainedPage() {
   const FAQ = [
     {
       q: "What is the fertile window?",
-      a: "The fertile window is the set of days in a cycle when pregnancy is most likely if unprotected sex occurs. It generally includes days leading up to ovulation plus ovulation day, but timing varies from person to person and month to month.",
+      a: "In health and fertility contexts, the fertile window refers to ovulation-related days in the cycle. MoodMap treats it only as broad cycle context for relationship timing; exact timing varies from person to person and month to month.",
     },
     {
       q: "What’s the difference between ovulation day and the fertile window?",
-      a: "Ovulation day is the day an egg is released. The fertile window includes ovulation day plus the days before it when sperm can still survive. Exact timing isn’t the same for everyone.",
+      a: "Ovulation day refers to the ovulation point in a cycle. Fertile-window awareness refers to the broader ovulation-phase window around it. MoodMap uses this only as general context, not prediction or planning guidance.",
     },
     {
       q: "Does ovulation affect mood, energy, or desire?",
@@ -39,7 +39,7 @@ export default function FertileWindowExplainedPage() {
     },
     {
       q: "Why should partners care about the fertile window if we’re not trying for a baby?",
-      a: "Even if pregnancy isn’t your focus, timing awareness can be useful context: some people feel more energetic or open to connection at certain points in the cycle, and it can help with planning, communication, and avoiding misunderstandings.",
+      a: "Even when fertility planning is not the goal, timing awareness can be useful context: some people feel more energetic or open to connection at certain points in the cycle, and it can help with planning, communication, and avoiding misunderstandings.",
     },
   ];
 
@@ -90,8 +90,8 @@ export default function FertileWindowExplainedPage() {
           </p>
 
           <p className="mt-3 text-sm text-white/60">
-            This is general education and relationship guidance, not health advice or contraception
-            guidance.
+            This is general cycle education and relationship guidance, not health advice, fertility
+            planning, or contraception guidance.
           </p>
         </div>
       </section>
@@ -110,15 +110,13 @@ export default function FertileWindowExplainedPage() {
                   What the “fertile window” means (plain English)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  The fertile window is the set of days in a cycle when pregnancy is most likely{" "}
-                  <em>if</em> unprotected sex occurs. Many educational models include the days leading
-                  up to ovulation plus ovulation day—because sperm can sometimes survive for several
-                  days, while the egg is typically available for a shorter time.
+                  In health and fertility contexts, the fertile window refers to the ovulation-related days in a cycle.{" "}
+                  MoodMap treats that window only as broad cycle context for relationship timing — not as pregnancy, fertility, or contraception guidance.
                 </p>
 
                 <p className="mt-4 text-white/70">
                   Key point: exact timing varies. Bodies aren’t clocks, and cycles aren’t always
-                  identical month to month.
+                  identical month to month, so this should stay general and context-based.
                 </p>
               </div>
             </div>
@@ -135,9 +133,8 @@ export default function FertileWindowExplainedPage() {
                   Ovulation day vs. fertile window
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  <strong className="text-white">Ovulation day</strong> is the day an egg is released.
-                  The <strong className="text-white">fertile window</strong> includes ovulation day
-                  plus the days before it when sperm may still be viable.
+                  <strong className="text-white">Ovulation day</strong> is the ovulation point in a cycle.
+                  <strong className="text-white"> Fertile-window awareness</strong> refers to the broader ovulation-phase context around it.
                 </p>
 
                 <p className="mt-3 text-white/75 leading-relaxed">
@@ -159,7 +156,7 @@ export default function FertileWindowExplainedPage() {
                   Why partners might care (even without baby plans)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  Even if pregnancy isn’t your focus, cycle timing can still matter because it can
+                  Even when fertility planning is not the goal, cycle timing can still matter because it can
                   correlate (for some people) with changes in energy, social appetite, confidence, or
                   desire for closeness. Not always—and not the same for everyone—but it can be useful
                   context.
@@ -230,7 +227,7 @@ export default function FertileWindowExplainedPage() {
                     only saying that because…”).
                   </li>
                   <li>
-                    <strong className="text-white">Don’t use this for contraception/fertility</strong>.
+                    <strong className="text-white">Don’t use this for fertility planning or contraception</strong>.
                     If that’s your goal, talk to a qualified clinician and use appropriate methods.
                   </li>
                 </ul>
@@ -253,7 +250,7 @@ export default function FertileWindowExplainedPage() {
                   How MoodMap uses timing cues (relationship-first)
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap highlights timing moments like PMS, ovulation, and fertile-window context so
+                  MoodMap highlights timing moments like PMS, ovulation-phase context, and other cycle shifts so
                   you can prepare and respond with better timing. It’s built to keep things respectful:
                   guidance is general, and no symptom diary is required.
                 </p>

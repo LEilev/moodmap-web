@@ -15,7 +15,7 @@ import {
 export const metadata = {
   title: "Why MoodMap",
   description:
-    "MoodMap covers the cycle-tracking basics you’d expect — and adds a partner layer: daily, phase-aware context and practical guidance for men. Relationship guidance, not medical advice.",
+    "MoodMap covers the cycle-timing basics you’d expect — and adds a partner layer: daily, phase-aware context and practical guidance for men. Relationship guidance, not medical advice.",
   alternates: {
     canonical: "/learn/why-moodmap",
   },
@@ -33,9 +33,9 @@ export default function WhyMoodMapPage() {
     {
       label: "Primary goal",
       typical:
-        "Track dates, predict the next period, and optionally support fertility or health journaling.",
+        "Track dates, estimate upcoming periods, and optionally support personal health journaling.",
       moodmap:
-        "Provide cycle-aware context that helps a partner show up better — calmer timing, clearer expectations, steadier support.",
+        "Provide menstrual-cycle context that helps a partner show up better — calmer timing, clearer expectations, steadier support.",
     },
     {
       label: "What you see day-to-day",
@@ -70,14 +70,14 @@ export default function WhyMoodMapPage() {
   const FAQ = [
     {
       q: "Is MoodMap a real period tracker — or only “relationship tips”?",
-      a: "MoodMap covers the cycle-tracking basics you’d expect (cycle overview and optional timing alerts). The difference is that it also adds a partner layer: daily, phase-aware context and practical guidance for men.",
+      a: "MoodMap covers the cycle-timing basics you’d expect (cycle overview and optional timing alerts). The difference is that it also adds a partner layer: daily, phase-aware context and practical guidance for men.",
     },
     {
       q: "Is MoodMap meant to replace my partner’s period tracker?",
       a: "Not necessarily. Many couples use MoodMap as the partner-facing layer while she uses any tracker she prefers for her own needs. MoodMap’s job is to translate timing into context for you.",
     },
     {
-      q: "Does MoodMap predict ovulation or the fertile window precisely?",
+      q: "Does MoodMap predict fertility or ovulation precisely?",
       a: "MoodMap can highlight timing windows as general context. It is not medical advice and should not be used for contraception or fertility planning.",
     },
     {
@@ -135,7 +135,7 @@ export default function WhyMoodMapPage() {
           </h1>
 
           <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            MoodMap covers the cycle-tracking basics you’d expect — and adds a partner layer:
+            MoodMap covers the cycle-timing basics you’d expect — and adds a partner layer:
             <strong className="text-white"> daily, phase-aware context and practical guidance for men</strong>.
             <span className="block mt-2 text-white/65">
               It’s built for better timing, calmer communication, and more respect — not stereotypes.
@@ -239,7 +239,7 @@ export default function WhyMoodMapPage() {
                 </span>
                 <div>
                   <h2 className="text-xl sm:text-2xl font-semibold">
-                    What MoodMap includes (the cycle-tracking basics)
+                    What MoodMap includes (the cycle-timing basics)
                   </h2>
                   <p className="mt-2 text-white/75 leading-relaxed">
                     MoodMap includes the timing foundation people expect from a tracker: cycle overview and a clear sense of
@@ -321,7 +321,7 @@ export default function WhyMoodMapPage() {
                   Timing alerts are optional — respect stays mandatory
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap can surface optional timing windows (like PMS or fertile-window context) so you can prepare.
+                  MoodMap can surface optional timing windows (like PMS or ovulation-phase context) so you can prepare.
                   The goal is <strong className="text-white">better support</strong>, not pressure, and never control.
                 </p>
 
@@ -335,7 +335,7 @@ export default function WhyMoodMapPage() {
                 <div className="mt-5 text-sm text-white/60">
                   Related reading:{" "}
                   <Link href="/learn/fertile-window-explained" className="mm-link">
-                    fertile window explained (respectfully)
+                    fertile-window awareness, explained respectfully
                   </Link>
                   .
                 </div>

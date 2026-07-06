@@ -70,7 +70,7 @@ const INCLUDED = [
 export const metadata = {
   title: "Premium+ – MoodMap",
   description:
-    "Unlock MoodMap Premium+: the full daily read, why layer, friction risk, and cleaner relationship timing.",
+    "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and menstrual-cycle relationship timing.",
 };
 
 export default async function ProPage({ searchParams }) {

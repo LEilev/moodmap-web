@@ -212,7 +212,7 @@ export default function PeriodTrackingForMenPage() {
                     window (not a stereotype—just a reminder to be extra steady).
                   </li>
                   <li>
-                    <strong className="text-white">Optional context windows:</strong> ovulation/fertile
+                    <strong className="text-white">Optional context windows:</strong> ovulation-phase
                     context if that’s useful for planning.
                   </li>
                 </ul>
@@ -300,7 +300,7 @@ export default function PeriodTrackingForMenPage() {
                       Timing alerts (optional)
                     </div>
                     <p className="mt-2 text-white/70 leading-relaxed">
-                      Heads-up for windows like PMS, ovulation, and fertile-window context — so you
+                      Heads-up for windows like PMS, ovulation-phase context, and high-impact cycle shifts — so you
                       can prepare instead of react.
                     </p>
                   </div>
@@ -361,7 +361,7 @@ export default function PeriodTrackingForMenPage() {
                     “because it’s ovulation.”
                   </li>
                   <li>
-                    <strong className="text-white">Don’t use this for contraception/fertility</strong>.
+                    <strong className="text-white">Don’t use this for fertility planning or contraception</strong>.
                     If that’s your goal, talk to a qualified clinician and use appropriate methods.
                   </li>
                 </ul>

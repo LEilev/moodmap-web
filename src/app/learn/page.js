@@ -12,7 +12,7 @@ import {
 export const metadata = {
   title: "Guides",
   description:
-    "Short, high-signal guides for men and partners: respectful cycle tracking, why MoodMap is different, PMS support, cycle phases, and fertile-window context. Relationship guidance, not medical advice.",
+    "Short, high-signal guides for men and partners: respectful cycle timing, why MoodMap is different, PMS support, cycle phases, and ovulation-phase context. Relationship guidance, not medical advice.",
   alternates: {
     canonical: "/learn",
   },
@@ -32,7 +32,7 @@ const GUIDES = [
     href: "/learn/why-moodmap",
     title: "Why MoodMap",
     description:
-      "MoodMap covers cycle-tracking basics — and adds a partner layer of daily context and practical guidance for men.",
+      "MoodMap covers cycle-timing basics — and adds a partner layer of daily context and practical guidance for men.",
     Icon: Layers,
   },
   {
@@ -53,7 +53,7 @@ const GUIDES = [
     href: "/learn/fertile-window-explained",
     title: "Fertile window explained for partners",
     description:
-      "A calm explanation of the fertile window and why it can matter for relationship timing.",
+      "A calm explanation of fertile-window awareness as relationship timing context.",
     Icon: Sparkles,
   },
 ];

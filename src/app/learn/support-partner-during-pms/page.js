@@ -260,7 +260,7 @@ export default function SupportPartnerDuringPMSPage() {
                 </h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
                   MoodMap is built for this exact problem: daily, phase-aware guidance for partners.
-                  It highlights timing moments like PMS, ovulation, and the fertile window so you’re
+                  It highlights timing moments like PMS, ovulation-phase context, and other cycle shifts so you’re
                   not guessing.
                 </p>
 

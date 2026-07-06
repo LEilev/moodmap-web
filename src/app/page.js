@@ -132,7 +132,7 @@ const TRUST_ITEMS = [
 const FAQ_ITEMS = [
   [
     "How does MoodMap read the day?",
-    "MoodMap reads cycle-aware context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
+    "MoodMap reads menstrual-cycle context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
   ],
   [
     "What kind of guidance is MoodMap?",
@@ -268,7 +268,7 @@ function WhyLayer() {
             <SectionLabel>Why layer</SectionLabel>
             <h2 id="why-layer-heading">The why behind the read.</h2>
             <p>
-              MoodMap turns cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
+              MoodMap turns menstrual-cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
             </p>
 
             <div className="mm-depth-points" aria-label="MoodMap why layer value">
@@ -293,7 +293,7 @@ function WhyLayer() {
             <div className="mm-depth-insight-card">
               <img
                 src="/screenshots/hormone-insight-depth.webp"
-                alt="MoodMap insight screen translating cycle context into biology, consequence, and interpretation."
+                alt="MoodMap insight screen translating menstrual-cycle context into biology, consequence, and interpretation."
                 loading="lazy"
                 decoding="async"
               />
@@ -470,11 +470,11 @@ export default function HomePage() {
               <SectionLabel>Private daily read for men in relationships</SectionLabel>
               <h1>Read the day before you react.</h1>
               <p className="mm-hero-subline">
-                MoodMap gives men one private read from their partner’s cycle context — phase, capacity, risk, and the cleaner move before timing costs more than it should.
+                MoodMap gives men one private read from their partner’s menstrual-cycle context — phase, capacity, risk, and the cleaner move before timing costs more than it should.
               </p>
               <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship timing with clear, non-medical boundaries.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Menstrual-cycle relationship timing with clear, non-medical boundaries.</p>
             </div>
 
             <HeroPhone />

@@ -271,7 +271,7 @@ export default function PartnerPage() {
           </p>
 
           <p className="mt-3 text-sm text-white/70">
-            Not therapy. Not fertility tracking. Context, not guarantees.
+            Not therapy. Not fertility planning. Context, not guarantees.
           </p>
 
           {/* Trust + positioning */}

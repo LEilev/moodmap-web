@@ -8,14 +8,14 @@ import MobileMenu from "../components/MobileMenu";
 const SITE_NAME = "MoodMap";
 const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
 
-const SITE_TITLE = `${SITE_NAME} — Read the Day Before You React`;
+const SITE_TITLE = `${SITE_NAME} — Relationship Timing for Men`;
 
 const APPSTORE_URL = "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 const META_DESCRIPTION =
-  "MoodMap gives men one private daily read from their partner’s cycle context: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
+  "MoodMap gives men one private daily read from their partner’s menstrual-cycle context: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
@@ -33,20 +33,18 @@ export const metadata = {
   description: META_DESCRIPTION,
 
   keywords: [
-    "period app for men",
-    "PMS guide for men",
+    "relationship timing for men",
+    "menstrual cycle read for men",
+    "partner menstrual cycle context",
+    "private daily read",
+    "PMS timing awareness",
+    "ovulation-phase context",
     "cycle app for couples",
-    "menstrual cycle guide for partners",
-    "partner period guide",
-    "daily relationship briefing",
-    "cycle-aware relationship guide",
-    "relationship timing",
-    "PMS timing",
-    "luteal phase",
+    "communication timing",
     "intimacy timing",
+    "luteal phase context",
     "practical relationship guidance",
   ],
-
   alternates: {
     canonical: "/",
   },
@@ -137,7 +135,7 @@ export default function RootLayout({ children }) {
     description: META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
-    applicationSubCategory: "Cycle-aware relationship timing",
+    applicationSubCategory: "Menstrual-cycle relationship timing",
     inLanguage: "en",
     audience: {
       "@type": "Audience",
@@ -148,7 +146,7 @@ export default function RootLayout({ children }) {
       "Room Read",
       "Friction Risk",
       "Move + Reason",
-      "Cycle-aware relationship timing",
+      "Menstrual-cycle relationship timing",
       "PMS timing awareness",
       "Luteal load context",
       "Intimacy timing context",
@@ -311,7 +309,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Cycle-aware relationship timing. Context for his response, not a verdict on her.
+                    Built in Norway. Private by design. Menstrual-cycle relationship timing. Context for his response, not a verdict on her.
                   </p>
                 </div>
 
