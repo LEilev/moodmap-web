@@ -1,0 +1,5 @@
+Contact: mailto:support@moodmap-app.com
+Preferred-Languages: en, no
+Canonical: https://moodmap-app.com/.well-known/security.txt
+Policy: https://moodmap-app.com/support
+Expires: 2027-07-07T00:00:00Z

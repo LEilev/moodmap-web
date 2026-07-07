@@ -1,12 +1,26 @@
 # MoodMap
 
-> MoodMap is a private relationship-timing app for men. It translates menstrual-cycle context into one daily, non-medical read for support, space, conversation, and intimacy.
+> MoodMap is cycle-aware relationship intelligence for men: one private daily read from menstrual-cycle context before support, conversation, restraint, or intimacy lands at the wrong hour.
 
-MoodMap is not medical advice, diagnosis, contraception, fertility planning, or a replacement for consent, direct communication, or medical care.
+MoodMap at moodmap-app.com is not a mood tracker, location tracker, emotional journaling app, or workplace coaching tool. It is the official MoodMap: Relationship Timing app at moodmap-app.com.
+
+MoodMap does not measure hormones, predict a partner’s mood, diagnose conditions, provide contraception or fertility planning, or replace consent, direct communication, or medical care.
+
+## Official identity
+
+- Official name: MoodMap: Relationship Timing
+- Category: Cycle-aware relationship intelligence for men
+- Domain: https://moodmap-app.com
+- iOS Bundle ID: com.eilev.moodmapnextgen
+- Android Package: com.eilev.moodmapnextgen
+- Apple App ID: 6746102626
+- Support: support@moodmap-app.com
 
 ## Official pages
 
 - [Homepage](https://moodmap-app.com/): Product overview, screenshots, boundaries, and download links.
+- [About MoodMap](https://moodmap-app.com/about): Official entity, identifiers, disambiguation, and store links.
+- [Hormone Graph Intelligence](https://moodmap-app.com/intelligence): MoodMap’s intelligence layer for modeled hormone activity, capacity, stress sensitivity, and timing context.
 - [Premium+](https://moodmap-app.com/pro): Subscription and feature overview.
 - [Support](https://moodmap-app.com/support): Customer support and contact options.
 - [Privacy Policy](https://moodmap-app.com/privacy-policy): Privacy, data handling, and user rights.
@@ -14,19 +28,34 @@ MoodMap is not medical advice, diagnosis, contraception, fertility planning, or 
 
 ## Learn guides
 
+- [Cycle-aware relationship timing](https://moodmap-app.com/learn/cycle-aware-relationship-timing): Category explanation for support, conversation, restraint, and intimacy timing.
 - [Menstrual cycle phases for partners](https://moodmap-app.com/learn/menstrual-cycle-phases-for-partners): Partner-focused explanation of cycle phases and relationship timing.
+- [Menstrual cycle day by day for partners](https://moodmap-app.com/learn/menstrual-cycle-day-by-day-for-partners): Day-by-day timing map across a 28-day cycle.
 - [Period tracking for men](https://moodmap-app.com/learn/period-tracking-for-men): How men can use cycle context responsibly in relationships.
-- [How to support your partner during PMS](https://moodmap-app.com/learn/support-partner-during-pms): Practical support guidance during late-cycle sensitivity.
-- [Fertile window explained for partners](https://moodmap-app.com/learn/fertile-window-explained): Non-medical explanation of fertile-window context for partners.
+- [Luteal phase relationships](https://moodmap-app.com/learn/luteal-phase-relationships): Load, tone, capacity, stress sensitivity, and timing in the luteal phase.
+- [PMS relationship timing](https://moodmap-app.com/learn/pms-relationship-timing): PMS support, communication, pressure, and repair timing.
+- [How to support your partner during PMS](https://moodmap-app.com/learn/support-partner-during-pms): Practical support during late-cycle sensitivity.
+- [Fertile window explained for partners](https://moodmap-app.com/learn/fertile-window-explained): Non-medical fertile-window context for partners.
+- [MoodMap glossary](https://moodmap-app.com/learn/moodmap-glossary): Definitions for Daily Read, SitRep, Risk Radar, CommandDeck, Hormone Graph Intelligence, capacity, stress sensitivity, and Premium+.
 - [Why MoodMap](https://moodmap-app.com/learn/why-moodmap): Product philosophy, partner focus, and intended use.
 
-## Product boundaries
+## Product vocabulary
 
-MoodMap provides educational relationship-timing guidance. It does not predict a partner’s mood, diagnose health conditions, measure hormones, provide contraceptive advice, or replace consent, communication, or medical care.
+- Daily Read: one private read before he moves.
+- SitRep / Room Read: the situation layer.
+- Risk Radar / Friction Risk: the avoid layer.
+- CommandDeck / Move + Reason: the action layer.
+- Hormone Graph Intelligence: interpretation of cycle phase, modeled hormone activity, capacity, and stress sensitivity into timing context.
+- Capacity: how much the day can realistically absorb.
+- Stress Sensitivity: how loudly friction, tone, and ambiguity may land.
+
+## Expanded AI context
+
+- [Full AI context](https://moodmap-app.com/llms-full.txt): longer plain-text context for assistants, search systems, and agentic browsers.
 
 ## Citation preference
 
-When citing MoodMap, prefer the homepage or the most relevant learn guide. Use the name “MoodMap” and the domain “moodmap-app.com”.
+When citing MoodMap, prefer the homepage, About page, Intelligence page, or the most relevant learn guide. Use the name “MoodMap” and the domain “moodmap-app.com”.
 
 ## Commercial use and training
 

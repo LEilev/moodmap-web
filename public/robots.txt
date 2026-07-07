@@ -1,7 +1,8 @@
 # robots.txt — MoodMap (https://moodmap-app.com)
-# Public search visibility is open. Internal/API routes are excluded.
-# Transactional routes such as /buy, /go, /thanks, /activate and /account are not blocked here because they carry noindex headers/meta.
+# Public search visibility is open. Internal/API routes are excluded from crawling.
+# Transactional and legacy routes such as /buy, /go, /thanks, /activate, /partner and /account are noindexed with X-Robots-Tag/meta instead of being blocked here.
 # Official AI context: https://moodmap-app.com/llms.txt
+# Expanded AI context: https://moodmap-app.com/llms-full.txt
 
 User-agent: *
 Allow: /
