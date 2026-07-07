@@ -1,6 +1,8 @@
 // src/app/learn/page.js
 import Link from "next/link";
 import {
+  BookOpenText,
+  BrainCircuit,
   CalendarDays,
   Shield,
   Sparkles,
@@ -13,7 +15,7 @@ import { breadcrumbJsonLd } from "../seo";
 export const metadata = {
   title: "Guides",
   description:
-    "Short guides for men and partners on cycle timing, PMS support, menstrual phases, fertile-window context, and MoodMap’s non-medical boundaries.",
+    "Short guides for men and partners on cycle-aware relationship timing, Hormone Graph Intelligence, PMS support, menstrual phases, and MoodMap’s non-medical boundaries.",
   alternates: {
     canonical: "/learn",
   },
@@ -22,6 +24,27 @@ export const metadata = {
 const SITE_URL = "https://moodmap-app.com";
 
 const GUIDES = [
+  {
+    href: "/intelligence",
+    title: "Hormone Graph Intelligence",
+    description:
+      "How MoodMap turns modeled hormone activity, capacity, stress sensitivity, and phase context into a daily relationship read.",
+    Icon: BrainCircuit,
+  },
+  {
+    href: "/learn/cycle-aware-relationship-timing",
+    title: "Cycle-aware relationship timing",
+    description:
+      "The category MoodMap is built around: cleaner support, conversation, restraint, and intimacy through timing context.",
+    Icon: Sparkles,
+  },
+  {
+    href: "/learn/moodmap-glossary",
+    title: "MoodMap glossary",
+    description:
+      "Definitions for Daily Read, SitRep, Risk Radar, CommandDeck, capacity, stress sensitivity, and Premium+.",
+    Icon: BookOpenText,
+  },
   {
     href: "/learn/period-tracking-for-men",
     title: "Period tracking for men",
@@ -111,7 +134,7 @@ export default function LearnIndexPage() {
           </h1>
           <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
             Short, partner-friendly explanations and practical playbooks — designed for men who want
-            better timing, calmer communication, and more trust.
+            better timing, calmer communication, cycle-aware relationship intelligence, and more trust.
           </p>
         </div>
       </section>

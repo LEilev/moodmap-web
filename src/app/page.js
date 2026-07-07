@@ -3,12 +3,13 @@ import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import ScrollReveal from "../components/ScrollReveal";
 import ProductShowcase from "../components/ProductShowcase";
-import { DEFAULT_META_DESCRIPTION, SITE_TITLE, mobileApplicationJsonLd } from "./seo";
-
-const APPSTORE_URL =
-  "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
-const PLAYSTORE_URL =
-  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
+import {
+  APPSTORE_URL,
+  DEFAULT_META_DESCRIPTION,
+  PLAYSTORE_URL,
+  SITE_TITLE,
+  mobileApplicationJsonLd,
+} from "./seo";
 
 export const metadata = {
   title: {
@@ -82,7 +83,7 @@ const APP_SURFACES = [
 
 const PROOF_STRIP_ITEMS = [
   ["Live on iOS + Android", "Direct App Store and Google Play links."],
-  ["Full-cycle context", "Menstrual, follicular, ovulation, luteal, and PMS."],
+  ["Cycle-aware intelligence", "Phase, capacity, stress sensitivity, and timing context."],
   ["Private by design", "Built for his timing, not her identity."],
   ["Clear boundaries", "Relationship timing, outside medical advice."],
 ];
@@ -115,16 +116,16 @@ const PREMIUM_LAYERS = [
 
 const WHY_LAYER_POINTS = [
   [
-    "Timing signals",
-    "Phase and hormone context is translated into timing signals — not medical readings.",
+    "Modeled background conditions",
+    "MoodMap reads phase, relative hormone activity, capacity, and stress sensitivity as timing context — not as medical measurement.",
   ],
   [
-    "Practical interpretation",
-    "Biology, consequence, and interpretation stay connected to the move he actually makes.",
+    "Biology → consequence → interpretation",
+    "The intelligence layer connects the body signal to what it can mean for load, friction, conversation, and pace.",
   ],
   [
     "Cleaner response",
-    "Use the context to choose tone, timing, support, restraint, or intimacy pace.",
+    "The output is practical: support, wait, simplify, repair lightly, or move closer with better timing.",
   ],
 ];
 
@@ -143,11 +144,11 @@ const TRUST_ITEMS = [
 const FAQ_ITEMS = [
   [
     "How does MoodMap read the day?",
-    "MoodMap reads menstrual cycle context — phase, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
+    "MoodMap reads menstrual cycle context — phase, modeled hormone activity, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
   ],
   [
     "What kind of guidance is MoodMap?",
-    "MoodMap is relationship timing guidance: practical context for support, conversation, intimacy, and restraint. Medical care, contraception, and fertility planning stay outside the product.",
+    "MoodMap is cycle-aware relationship intelligence: practical context for support, conversation, intimacy, and restraint. Medical care, contraception, fertility planning, and hormone measurement stay outside the product.",
   ],
   [
     "Why is the daily read worth paying for?",
@@ -272,17 +273,23 @@ function ProductProof() {
 
 function WhyLayer() {
   return (
-    <section id="why-layer" className="mm-section mm-depth-section" aria-labelledby="why-layer-heading">
+    <section id="intelligence-layer" className="mm-section mm-depth-section" aria-labelledby="intelligence-layer-heading">
       <div className="mm-container">
         <div className="mm-depth-panel" data-reveal>
           <div className="mm-depth-copy">
-            <SectionLabel>Why layer</SectionLabel>
-            <h2 id="why-layer-heading">The why behind the read.</h2>
+            <SectionLabel>Intelligence layer</SectionLabel>
+            <h2 id="intelligence-layer-heading">Cycle-aware relationship intelligence.</h2>
             <p>
-              MoodMap turns menstrual cycle context into practical timing: what changed, why it matters, and what to do with it. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
+              MoodMap does more than name the phase. It reads modeled background conditions — relative hormone activity, capacity, stress sensitivity, and timing context — then turns them into one cleaner move. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
             </p>
 
-            <div className="mm-depth-points" aria-label="MoodMap why layer value">
+            <div className="mt-5">
+              <Link href="/intelligence" className="mm-premium-link">
+                Explore the intelligence layer
+              </Link>
+            </div>
+
+            <div className="mm-depth-points" aria-label="MoodMap intelligence layer value">
               {WHY_LAYER_POINTS.map(([title, copy]) => (
                 <article key={title} className="mm-depth-point">
                   <h3>{title}</h3>
@@ -304,7 +311,7 @@ function WhyLayer() {
             <div className="mm-depth-insight-card">
               <img
                 src="/screenshots/hormone-insight-depth.webp"
-                alt="MoodMap insight screen translating menstrual cycle context into biology, consequence, and interpretation."
+                alt="MoodMap Hormone Graph Intelligence screen translating menstrual cycle context into biology, consequence, and interpretation."
                 loading="lazy"
                 decoding="async"
               />
@@ -353,7 +360,7 @@ function PremiumStack() {
             <SectionLabel>Premium+</SectionLabel>
             <h2>The full daily read before the moment gets expensive.</h2>
             <p>
-              Premium+ gives him the full daily read: phase, room read, friction risk, cleaner move, and the reason behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
+              Premium+ gives him the full daily read: phase, room read, friction risk, cleaner move, and the intelligence layer behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
             </p>
             <Link href="/pro" className="mm-premium-link">
               See Premium+
@@ -487,11 +494,11 @@ export default function HomePage() {
               <SectionLabel>Private daily read for men in relationships</SectionLabel>
               <h1>Read the day before you react.</h1>
               <p className="mm-hero-subline">
-                MoodMap gives men one private read from their partner’s menstrual cycle — phase, capacity, risk, and the cleaner move before timing costs more than it should.
+                MoodMap gives men one private daily read from their partner’s menstrual cycle — phase, capacity, stress sensitivity, friction risk, and the cleaner move before timing costs more than it should.
               </p>
               <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Relationship timing around the menstrual cycle with clear, non-medical boundaries.</p>
+              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship intelligence with clear, non-medical boundaries.</p>
             </div>
 
             <HeroPhone />

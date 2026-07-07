@@ -1,20 +1,19 @@
 export const SITE_NAME = "MoodMap";
 export const SITE_URL = "https://moodmap-app.com";
-export const SITE_TITLE = `${SITE_NAME} — Relationship Timing for Men`;
+export const SITE_TITLE = `${SITE_NAME} — Cycle-Aware Relationship Intelligence`;
 export const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 export const OG_IMAGE_SRC = "/og/moodmap-og.jpg";
 export const OG_IMAGE_ALT =
-  "MoodMap — relationship timing for men. One private daily read from her cycle.";
+  "MoodMap — cycle-aware relationship intelligence for men. One private daily read from her cycle.";
 export const UPDATED_ISO = "2026-07-07";
 export const UPDATED_DISPLAY = "July 7, 2026";
 
-export const APPSTORE_URL =
-  "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
+export const APPSTORE_URL = "https://apps.apple.com/app/id6746102626";
 export const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 
 export const DEFAULT_META_DESCRIPTION =
-  "MoodMap gives men one private daily read from their partner’s menstrual cycle: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
+  "MoodMap is cycle-aware relationship intelligence for men: one private daily read from menstrual-cycle context, capacity, stress sensitivity, and timing.";
 
 export const SOURCE_LINKS = [
   {
@@ -74,25 +73,49 @@ export function mobileApplicationJsonLd(path = "/") {
     "@type": "MobileApplication",
     "@id": `${SITE_URL}#mobile-application`,
     name: SITE_NAME,
+    alternateName: "MoodMap: Relationship Timing",
     url: absoluteUrl(path),
     description: DEFAULT_META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "LifestyleApplication",
-    applicationSubCategory: "Menstrual cycle relationship timing",
+    applicationSubCategory: "Cycle-aware relationship intelligence",
     inLanguage: "en",
     audience: {
       "@type": "Audience",
       audienceType: "Men in relationships",
     },
+    identifier: [
+      {
+        "@type": "PropertyValue",
+        propertyID: "iOS Bundle ID",
+        value: "com.eilev.moodmapnextgen",
+      },
+      {
+        "@type": "PropertyValue",
+        propertyID: "Android Package",
+        value: "com.eilev.moodmapnextgen",
+      },
+      {
+        "@type": "PropertyValue",
+        propertyID: "Apple App ID",
+        value: "6746102626",
+      },
+    ],
     featureList: [
+      "Cycle-aware relationship intelligence",
+      "Hormone Graph Intelligence",
+      "Modeled hormone activity context",
+      "Capacity and stress sensitivity signals",
       "Daily Briefing",
-      "Room Read",
-      "Friction Risk",
-      "Move + Reason",
+      "Room Read / SitRep",
+      "Friction Risk / Risk Radar",
+      "Move + Reason / CommandDeck",
       "Menstrual cycle relationship timing",
       "PMS timing awareness",
       "Luteal load context",
       "Intimacy timing context",
+      "Discreet Mode",
+      "Phase Alerts",
     ],
     offers: {
       "@type": "Offer",
@@ -103,10 +126,17 @@ export function mobileApplicationJsonLd(path = "/") {
     publisher: { "@id": `${SITE_URL}#organization` },
     downloadUrl: absoluteUrl("/#download"),
     installUrl: [APPSTORE_URL, PLAYSTORE_URL],
+    sameAs: [APPSTORE_URL, PLAYSTORE_URL],
   };
 }
 
-export function articleJsonLd({ path, headline, description, datePublished = UPDATED_ISO, dateModified = UPDATED_ISO }) {
+export function articleJsonLd({
+  path,
+  headline,
+  description,
+  datePublished = UPDATED_ISO,
+  dateModified = UPDATED_ISO,
+}) {
   const url = absoluteUrl(path);
   return {
     "@context": "https://schema.org",
@@ -161,6 +191,27 @@ export function faqJsonLd(items) {
       "@type": "Question",
       name: q,
       acceptedAnswer: { "@type": "Answer", text: a },
+    })),
+  };
+}
+
+export function definedTermSetJsonLd({ path, name, description, terms }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "@id": `${absoluteUrl(path)}#defined-term-set`,
+    name,
+    description,
+    url: absoluteUrl(path),
+    inLanguage: "en",
+    publisher: { "@id": `${SITE_URL}#organization` },
+    hasDefinedTerm: terms.map((term) => ({
+      "@type": "DefinedTerm",
+      name: term.name,
+      description: term.definition,
+      termCode: term.slug,
+      inDefinedTermSet: `${absoluteUrl(path)}#defined-term-set`,
+      url: `${absoluteUrl(path)}#${term.slug}`,
     })),
   };
 }

@@ -201,6 +201,9 @@ export default function RootLayout({ children }) {
                 <Link href="/#product" className="mm-nav-link">
                   Product
                 </Link>
+                <Link href="/intelligence" className="mm-nav-link">
+                  Intelligence
+                </Link>
                 <Link href="/#how-it-works" className="mm-nav-link">
                   How it works
                 </Link>
@@ -230,7 +233,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Relationship timing around the menstrual cycle. Context for his response, not a verdict on her.
+                    Built in Norway. Private by design. Cycle-aware relationship intelligence. Context for his response, not a verdict on her.
                   </p>
                 </div>
 
@@ -238,6 +241,9 @@ export default function RootLayout({ children }) {
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/68 md:justify-end">
                     <Link className="mm-link" href="/learn">
                       Guides
+                    </Link>
+                    <Link className="mm-link" href="/intelligence">
+                      Intelligence
                     </Link>
                     <Link className="mm-link" href="/support">
                       Support

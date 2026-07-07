@@ -24,12 +24,12 @@ export const metadata = {
 };
 
 const toc = [
-  { id: "section1", label: "1. Information We Collect" },
+  { id: "section1", label: "1. Information We Collect and Store" },
   { id: "section2", label: "2. How We Use Your Data" },
   { id: "section3", label: "3. Third-Party Services" },
   { id: "section4", label: "4. Data Security" },
   { id: "section5", label: "5. Data Deletion" },
-  { id: "section6", label: "6. No Health Data" },
+  { id: "section6", label: "6. No Medical Records or Diagnostic Data" },
   { id: "section7", label: "7. Email Notifications (Optional)" },
   { id: "section8", label: "8. Your Rights" },
   { id: "section9", label: "9. Changes to This Policy" },
@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
       <section className="px-6 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
         <div className="mx-auto max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-xs font-semibold text-blue-100">
-            <span>Last updated: April 24, 2025</span>
+            <span>Last updated: July 7, 2026</span>
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">
             Privacy Policy for MoodMap™
@@ -158,7 +158,7 @@ export default function PrivacyPolicyPage() {
           {/* Intro – juridisk tekst (ordrett) */}
           <GlassCard id="intro">
             <p className="text-sm mb-4">
-              <strong>Last updated:</strong> April 24, 2025
+              <strong>Last updated:</strong> July 7, 2026
             </p>
             <p className="text-sm leading-relaxed">
               MoodMap is committed to protecting your privacy. This Privacy Policy
@@ -174,11 +174,11 @@ export default function PrivacyPolicyPage() {
               <Database className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">
-              1. Information We Collect
+              1. Information We Collect and Store
             </h2>
             <p className="mt-2 text-sm leading-relaxed">
-              We collect the following types of data to provide and improve our
-              services:
+              We collect and store limited information to provide the app, validate purchases,
+              improve reliability, and respond to support requests:
             </p>
             <ul className="mt-2 list-disc list-inside text-sm text-blue-100 space-y-1.5">
               <li>
@@ -195,16 +195,29 @@ export default function PrivacyPolicyPage() {
                 used solely for analytics.
               </li>
               <li>
-                <strong>Device or Other IDs</strong>: We collect device
-                identifiers to validate purchases and track usage for analytics
-                purposes. This data is required for app functionality and
+                <strong>Device or Other IDs</strong>: We may collect device
+                identifiers to validate purchases and understand app reliability
+                and usage patterns. This data is used for app functionality and
                 analytics.
+              </li>
+              <li>
+                <strong>Cycle Settings Stored on Device</strong>: MoodMap may store
+                basic cycle settings locally on your device, such as cycle start
+                date and preferences, to calculate the daily read. MoodMap does
+                not require a partner profile, public account, symptom diary, or
+                medical record to provide the core experience.
+              </li>
+              <li>
+                <strong>Support Information</strong>: If you contact us, we may
+                process the email address and message content you choose to send
+                so we can respond to your request.
               </li>
             </ul>
             <p className="mt-3 text-sm leading-relaxed">
-              <strong>Note:</strong> We do not collect personally identifiable
-              information (such as names or email addresses) unless you choose to
-              provide it (e.g., for notifications or support requests).
+              <strong>Note:</strong> MoodMap is private by design: no public profile,
+              no partner feed, and no data selling. We do not collect personally
+              identifiable information such as names or email addresses unless you
+              choose to provide it, for example in a support request.
             </p>
           </GlassCard>
 
@@ -226,7 +239,12 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Analytics</strong>: To monitor app performance, understand
-                usage patterns, and improve the user experience.
+                usage patterns, improve reliability, and improve the user
+                experience.
+              </li>
+              <li>
+                <strong>Support</strong>: To answer support, billing, privacy, or
+                deletion requests you send to us.
               </li>
             </ul>
           </GlassCard>
@@ -260,8 +278,8 @@ export default function PrivacyPolicyPage() {
               </li>
               <li>
                 <strong>Expo</strong>: Used for app development and monitoring.
-                Expo collects crash logs and device identifiers for analytics
-                purposes. For more information, see{" "}
+                Expo may collect crash logs and device identifiers for reliability
+                and analytics purposes. For more information, see{" "}
                 <a
                   href="https://expo.dev/privacy-explained"
                   target="_blank"
@@ -271,6 +289,17 @@ export default function PrivacyPolicyPage() {
                   Expo&apos;s Privacy Policy
                 </a>
                 .
+              </li>
+              <li>
+                <strong>Firebase Analytics</strong>: May be used to understand app
+                usage and reliability patterns. Firebase Analytics data is used
+                for product improvement and diagnostics, not for selling personal
+                information.
+              </li>
+              <li>
+                <strong>PostHog</strong>: May be used for product analytics,
+                reliability, and feature improvement. Analytics are used to
+                improve MoodMap and understand aggregate behavior.
               </li>
             </ul>
           </GlassCard>
@@ -306,8 +335,8 @@ export default function PrivacyPolicyPage() {
               </a>
               . We will process your request in accordance with applicable privacy
               laws, such as GDPR, and delete your data from our systems and those
-              of our service providers (e.g., RevenueCat and Expo) within a
-              reasonable timeframe.
+              of our service providers where applicable, such as RevenueCat, Expo,
+              Firebase Analytics, and PostHog, within a reasonable timeframe.
             </p>
           </GlassCard>
 
@@ -316,11 +345,13 @@ export default function PrivacyPolicyPage() {
             <IconRing>
               <HeartOff className="h-6 w-6 text-white drop-shadow" aria-hidden />
             </IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">6. No Health Data</h2>
+            <h2 className="text-xl sm:text-2xl font-semibold">6. No Medical Records or Diagnostic Data</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              MoodMap does not collect, store, or process any personal health or
-              menstrual data. The app is designed to provide general cycle-based
-              tips and is not intended for medical or diagnostic purposes.
+              MoodMap does not ask for symptom diaries, diagnoses, medical records,
+              fertility treatment data, or hormone test results. The app uses basic
+              cycle timing context to provide relationship-timing guidance. MoodMap
+              is not intended for medical, diagnostic, contraception, fertility
+              planning, or treatment purposes.
             </p>
           </GlassCard>
 

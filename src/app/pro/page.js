@@ -12,7 +12,7 @@ import {
 import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
 
 const META_DESCRIPTION =
-  "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and relationship timing around the menstrual cycle.";
+  "Unlock MoodMap Premium+: the full private daily read, Hormone Graph Intelligence, friction risk, and relationship timing around the menstrual cycle.";
 
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({
@@ -42,7 +42,7 @@ const VALUE_STACK = [
   {
     icon: HeartHandshake,
     title: "Full daily read",
-    desc: "Phase, room read, friction risk, cleaner move, and the reason behind it — in one private read.",
+    desc: "Phase, room read, friction risk, cleaner move, and the intelligence behind it — in one private read.",
   },
   {
     icon: BellRing,
@@ -51,8 +51,8 @@ const VALUE_STACK = [
   },
   {
     icon: LineChart,
-    title: "Why layer",
-    desc: "Menstrual cycle context translated into timing signals, practical interpretation, and cleaner response.",
+    title: "Hormone Graph Intelligence",
+    desc: "Modeled cycle context translated into capacity, stress sensitivity, timing signals, and cleaner response.",
   },
   {
     icon: ShieldCheck,
@@ -67,8 +67,8 @@ const INCLUDED = [
   "Friction risk before the move makes the room heavier",
   "Move + Reason so he knows what to do and why",
   "Intimacy timing context without guessing",
-  "Why layer behind the read",
-  "Phase guides with practical boundaries",
+  "Hormone Graph Intelligence behind the read",
+  "Hormone Graph Intelligence with practical boundaries",
 ];
 
 export const metadata = {
@@ -115,11 +115,17 @@ export default async function ProPage({ searchParams }) {
             </h1>
             <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
               Premium+ gives him the complete daily read from his partner’s menstrual cycle: phase, room read, friction risk,
-              cleaner move, and the why behind it — before timing turns expensive.
+              cleaner move, and the intelligence behind it — before timing turns expensive.
             </p>
             <p className="mt-4 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/10 px-4 py-2 text-sm font-semibold text-emerald-100/90">
               Context for his timing. Not a verdict on her.
             </p>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/58">
+              Includes MoodMap’s intelligence layer: modeled hormone activity, capacity, stress sensitivity, and timing context translated into the cleaner move.
+            </p>
+            <Link href="/intelligence" className="mt-4 inline-flex text-sm font-semibold text-white/70 hover:text-white">
+              Explore Hormone Graph Intelligence →
+            </Link>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link

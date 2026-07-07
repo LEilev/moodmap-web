@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 const PLAY_LINK =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
 const APPSTORE_LINK =
-  "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
+  "https://apps.apple.com/app/id6746102626";
 
 function isAndroid() {
   const ua = typeof navigator !== "undefined" ? navigator.userAgent || "" : "";

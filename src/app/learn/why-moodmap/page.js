@@ -93,7 +93,7 @@ export default function WhyMoodMapPage() {
   const FAQ = [
     {
       q: "Is MoodMap a real period tracker — or only “relationship tips”?",
-      a: "MoodMap covers the cycle-timing basics you’d expect (cycle overview and optional timing alerts). The difference is that it also adds a partner layer: daily, phase-aware context and practical guidance for men.",
+      a: "MoodMap covers cycle-timing basics and adds a partner layer: cycle-aware relationship intelligence, daily context, friction awareness, and practical guidance for men.",
     },
     {
       q: "Is MoodMap meant to replace my partner’s period tracker?",
@@ -169,7 +169,7 @@ export default function WhyMoodMapPage() {
 
           <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
             MoodMap covers the cycle-timing basics you’d expect — and adds a partner layer:
-            <strong className="text-white"> daily, phase-aware context and practical guidance for men</strong>.
+            <strong className="text-white"> cycle-aware relationship intelligence and practical guidance for men</strong>.
             <span className="block mt-2 text-white/65">
               It’s built for better timing, calmer communication, and more respect — not stereotypes.
             </span>
@@ -178,6 +178,9 @@ export default function WhyMoodMapPage() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/#download" className="btn-primary">
               Download MoodMap
+            </Link>
+            <Link href="/intelligence" className="mm-link text-sm text-white/75">
+              Explore the intelligence layer →
             </Link>
             <Link href="/pro" className="mm-link text-sm text-white/75">
               See what Premium+ unlocks →
@@ -216,6 +219,10 @@ export default function WhyMoodMapPage() {
 
                 <div className="mt-5 text-sm text-white/60">
                   If you’re new to the concept, start here:{" "}
+                  <Link href="/learn/cycle-aware-relationship-timing" className="mm-link">
+                    cycle-aware relationship timing
+                  </Link>{" "}
+                  or here:{" "}
                   <Link href="/learn/period-tracking-for-men" className="mm-link">
                     period tracking for men
                   </Link>

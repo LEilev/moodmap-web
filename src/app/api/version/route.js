@@ -19,8 +19,8 @@ const ANDROID_STORE_URL = `market://details?id=${ANDROID_PACKAGE}`;
 const ANDROID_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 
 // P0 manual fallback (overstyr via env i Vercel)
-const FALLBACK_IOS_LATEST = process.env.MOODMAP_IOS_LATEST_VERSION || "5.0.0";
-const FALLBACK_ANDROID_LATEST = process.env.MOODMAP_ANDROID_LATEST_VERSION || "5.0.0";
+const FALLBACK_IOS_LATEST = process.env.MOODMAP_IOS_LATEST_VERSION || "5.0.8";
+const FALLBACK_ANDROID_LATEST = process.env.MOODMAP_ANDROID_LATEST_VERSION || "5.0.8";
 
 // iOS auto-fetch (Apple lookup) – default ON
 const AUTOFETCH_IOS =

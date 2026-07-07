@@ -73,7 +73,7 @@ export default function PeriodTrackingForMenPage() {
     },
     {
       q: "Is the data private?",
-      a: "MoodMap is designed to be private-by-design. You don’t need to keep a symptom diary, and Premium+ messaging emphasizes that no cycle details leave your device. Only share what you both agree to share.",
+      a: "MoodMap is designed to be private-by-design. You don’t need to keep a symptom diary, there is no public profile or partner feed, and limited analytics may be used for reliability and product improvement as described in the Privacy Policy. Only share what you both agree to share.",
     },
   ];
 
@@ -357,7 +357,7 @@ export default function PeriodTrackingForMenPage() {
                     Premium+ calibration: cycle length <strong className="text-white">21–35</strong>{" "}
                     days and menstruation <strong className="text-white">2–8</strong> days.
                   </li>
-                  <li>Private by design — and Premium+ messaging states no cycle details leave your device.</li>
+                  <li>Private by design — no public profile, no partner feed, and no data selling.</li>
                 </ul>
 
                 <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">

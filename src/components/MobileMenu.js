@@ -6,8 +6,8 @@ import { Download, Menu, X } from "lucide-react";
 
 const LINKS = [
   { href: "/#product", label: "Product" },
+  { href: "/intelligence", label: "Intelligence" },
   { href: "/#how-it-works", label: "How it works" },
-  { href: "/#trust", label: "Trust" },
   { href: "/learn", label: "Guides" },
   { href: "/support", label: "Support" },
   { href: "/pro", label: "Premium+" },
@@ -133,7 +133,7 @@ export default function MobileMenu() {
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Download MoodMap
               </Link>
-              <p>One daily read. Better timing. Context for his response, not a verdict on her.</p>
+              <p>One daily read. Cycle-aware intelligence. Context for his response, not a verdict on her.</p>
             </div>
           </aside>
         </div>
