@@ -11,13 +11,36 @@ import {
   ListChecks,
   ArrowRight,
 } from "lucide-react";
+import {
+  OG_IMAGE_SRC,
+  SourceTrustBlock,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "../../seo";
+
+const SLUG = "/learn/why-moodmap";
+const META_DESCRIPTION =
+  "Why MoodMap is a private relationship-timing app for men: cycle context, daily guidance, and practical non-medical boundaries.";
 
 export const metadata = {
   title: "Why MoodMap",
-  description:
-    "MoodMap covers the cycle-timing basics you’d expect — and adds a partner layer: daily, phase-aware context and practical guidance for men. Relationship guidance, not medical advice.",
+  description: META_DESCRIPTION,
   alternates: {
-    canonical: "/learn/why-moodmap",
+    canonical: SLUG,
+  },
+  openGraph: {
+    title: "Why MoodMap",
+    description: META_DESCRIPTION,
+    url: SLUG,
+    type: "article",
+    images: [OG_IMAGE_SRC],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_IMAGE_SRC],
+    title: "Why MoodMap",
+    description: META_DESCRIPTION,
   },
 };
 
@@ -94,22 +117,32 @@ export default function WhyMoodMapPage() {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQ);
+  const articleSchema = articleJsonLd({
+    path: SLUG,
+    headline: "Why MoodMap",
+    description: META_DESCRIPTION,
+  });
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Learn", href: "/learn" },
+    { name: "Why MoodMap", href: SLUG },
+  ]);
 
   return (
     <main className="relative isolate overflow-x-hidden bg-primary-blue text-white">
-      {/* FAQ JSON-LD */}
+      {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Subtle premium glows (consistent with site) */}
@@ -435,6 +468,8 @@ export default function WhyMoodMapPage() {
               Relationship guidance — not medical advice. Not for contraception or fertility planning.
             </p>
           </article>
+
+          <SourceTrustBlock />
 
           {/* Visible FAQs */}
           <section className="mt-2">

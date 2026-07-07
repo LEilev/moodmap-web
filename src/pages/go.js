@@ -81,9 +81,10 @@ function buildUrl(path, params) {
 export async function getServerSideProps(context) {
   const { req, res, query = {}, params = {} } = context;
 
-  // Prevent caching (affiliate redirects should never be cached/shared)
+  // Prevent caching and indexing (affiliate/payment redirectors should not be landing pages)
   try {
     res?.setHeader("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+    res?.setHeader("X-Robots-Tag", "noindex, nofollow");
   } catch {}
 
   // Normalized query from req.url (fixes malformed '?type=yearly?via=...')

@@ -9,6 +9,10 @@ import {
   LineChart,
   ShieldCheck,
 } from "lucide-react";
+import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
+
+const META_DESCRIPTION =
+  "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and relationship timing around the menstrual cycle.";
 
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({
@@ -68,18 +72,38 @@ const INCLUDED = [
 ];
 
 export const metadata = {
-  title: "Premium+ – MoodMap",
-  description:
-    "Unlock MoodMap Premium+: the full private daily read, why layer, friction risk, and relationship timing around the menstrual cycle.",
+  title: "Premium+",
+  description: META_DESCRIPTION,
+  alternates: {
+    canonical: "/pro",
+  },
+  openGraph: {
+    title: "MoodMap Premium+",
+    description: META_DESCRIPTION,
+    url: "/pro",
+    type: "website",
+    images: [OG_IMAGE_SRC],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MoodMap Premium+",
+    description: META_DESCRIPTION,
+    images: [OG_IMAGE_SRC],
+  },
 };
 
 export default async function ProPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
   const yearlyHref = buildPlanHref("yearly", resolvedSearchParams);
   const monthlyHref = buildPlanHref("monthly", resolvedSearchParams);
+  const appJsonLd = mobileApplicationJsonLd("/pro");
 
   return (
     <main className="mm-page relative isolate overflow-hidden text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <div aria-hidden="true" className="mm-background-field" />
 
       <section className="mm-container py-14 sm:py-[4.5rem] lg:py-20">

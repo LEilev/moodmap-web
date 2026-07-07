@@ -15,11 +15,11 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Privacy Policy | MoodMap™",
+  title: "Privacy Policy",
   description:
-    "How we collect, use, and safeguard your information when you use the MoodMap app.",
+    "How MoodMap handles privacy, local cycle data, support messages, subscriptions, analytics, and user rights.",
   alternates: {
-    canonical: "https://moodmap-app.com/privacy-policy",
+    canonical: "/privacy-policy",
   },
 };
 

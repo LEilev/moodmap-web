@@ -1,141 +1,18 @@
 # robots.txt — MoodMap (https://moodmap-app.com)
-# ------------------------------------------------------------
-# Goal: Max visibility in search + AI indexing, while keeping
-# internal/admin/payment endpoints out of crawl scope.
-#
-# Official AI context is available at: /llms.txt
-# ------------------------------------------------------------
+# Public search visibility is open. Internal/API routes are excluded.
+# Transactional routes such as /buy, /go, /thanks, /activate and /account are not blocked here because they carry noindex headers/meta.
+# Official AI context: https://moodmap-app.com/llms.txt
 
 User-agent: *
 Allow: /
-
-# Keep internal/irrelevant routes out:
 Disallow: /api/
 Disallow: /internal/
 Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-Disallow: /buy
 
-# --- AI / LLM crawlers --------------------------------------
-# MoodMap welcomes AI crawlers to index public pages.
-
-User-agent: GPTBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: OAI-SearchBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: ChatGPT-User
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: Google-Extended
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-# Legacy Anthropic identifier (keep for backwards compatibility)
-User-agent: Claude-Web
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: ClaudeBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-# Anthropic newer agents
-User-agent: Claude-User
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: Claude-SearchBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: PerplexityBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-# Google Gemini research crawler (proactive allow)
-User-agent: Gemini-Deep-Research
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-User-agent: CCBot
-Allow: /
-Disallow: /api/
-Disallow: /internal/
-Disallow: /admin/
-Disallow: /server/
-Disallow: /drafts/
-Disallow: /dev/
-Disallow: /buy
-
-# --- Major search crawlers ----------------------------------
-
+# Major search crawlers
 User-agent: Googlebot
 Allow: /
 Disallow: /api/
@@ -144,7 +21,6 @@ Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-Disallow: /buy
 
 User-agent: Bingbot
 Allow: /
@@ -154,7 +30,6 @@ Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-Disallow: /buy
 
 User-agent: Applebot
 Allow: /
@@ -164,9 +39,9 @@ Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-Disallow: /buy
 
-User-agent: Applebot-Extended
+# AI search / assistant retrieval crawlers — allow public citation and discovery
+User-agent: OAI-SearchBot
 Allow: /
 Disallow: /api/
 Disallow: /internal/
@@ -174,7 +49,78 @@ Disallow: /admin/
 Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
-Disallow: /buy
 
-# Sitemap
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+User-agent: Gemini-Deep-Research
+Allow: /
+Disallow: /api/
+Disallow: /internal/
+Disallow: /admin/
+Disallow: /server/
+Disallow: /drafts/
+Disallow: /dev/
+
+# Bulk training / extended model-improvement crawlers — restricted by default
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
 Sitemap: https://moodmap-app.com/sitemap.xml

@@ -4,50 +4,27 @@ import "./polish.css";
 import Link from "next/link";
 import Script from "next/script";
 import MobileMenu from "../components/MobileMenu";
-
-const SITE_NAME = "MoodMap";
-const SITE_URL = "https://moodmap-app.com"; // Hold denne konsistent med det domenet dere faktisk bruker mest
-
-const SITE_TITLE = `${SITE_NAME} — Relationship Timing for Men`;
-
-const APPSTORE_URL = "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
-const PLAYSTORE_URL =
-  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
-
-const META_DESCRIPTION =
-  "MoodMap gives men one private daily read from their partner’s menstrual cycle: phase, capacity, friction risk, and the cleaner move before timing costs more than it should.";
-
-const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
+import {
+  BRAND_MARK_SRC,
+  DEFAULT_META_DESCRIPTION,
+  OG_IMAGE_ALT,
+  OG_IMAGE_SRC,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_URL,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "./seo";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
 
   title: {
-    // Homepage <title>
     default: SITE_TITLE,
-
-    // Undersider: "Guides | MoodMap"
     template: `%s | ${SITE_NAME}`,
   },
 
-  description: META_DESCRIPTION,
-
-  keywords: [
-    "relationship timing for men",
-    "menstrual cycle read for men",
-    "partner menstrual cycle context",
-    "private daily read",
-    "PMS timing awareness",
-    "ovulation-phase context",
-    "cycle app for couples",
-    "communication timing",
-    "intimacy timing",
-    "luteal phase context",
-    "practical relationship guidance",
-  ],
-  alternates: {
-    canonical: "/",
-  },
+  description: DEFAULT_META_DESCRIPTION,
 
   robots: {
     index: true,
@@ -58,28 +35,25 @@ export const metadata = {
     type: "website",
     url: SITE_URL,
     title: SITE_TITLE,
-    description: META_DESCRIPTION,
+    description: DEFAULT_META_DESCRIPTION,
     siteName: SITE_NAME,
     images: [
       {
-        url: BRAND_MARK_SRC,
-        width: 512,
-        height: 512,
-        alt: SITE_NAME,
+        url: OG_IMAGE_SRC,
+        width: 1200,
+        height: 630,
+        alt: OG_IMAGE_ALT,
       },
     ],
   },
 
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: SITE_TITLE,
-    description: META_DESCRIPTION,
-    images: [BRAND_MARK_SRC],
+    description: DEFAULT_META_DESCRIPTION,
+    images: [OG_IMAGE_SRC],
   },
 
-  // FAVICONS (tab, SERP, iOS homescreen)
-  // Krever at disse filene ligger i /public:
-  // favicon-16x16.png, favicon-32x32.png, favicon-48x48.png, favicon-96x96.png, apple-touch-icon.png
   icons: {
     icon: [
       { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
@@ -105,74 +79,21 @@ function BrandLockup({ className = "", footer = false }) {
 export default function RootLayout({ children }) {
   const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // LIVE
 
-  // Structured Data (JSON-LD)
-  const orgJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "@id": `${SITE_URL}#organization`,
-    name: SITE_NAME,
-    url: SITE_URL,
-    logo: `${SITE_URL}${BRAND_MARK_SRC}`,
-    email: "support@moodmap-app.com",
-    availableLanguage: ["en"],
-    sameAs: [APPSTORE_URL, PLAYSTORE_URL],
-  };
-
-  const websiteJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "@id": `${SITE_URL}#website`,
-    url: SITE_URL,
-    name: SITE_NAME,
-    publisher: { "@id": `${SITE_URL}#organization` },
-    inLanguage: "en",
-  };
-
-  const appJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "MobileApplication",
-    name: SITE_NAME,
-    description: META_DESCRIPTION,
-    operatingSystem: "iOS, Android",
-    applicationCategory: "LifestyleApplication",
-    applicationSubCategory: "Menstrual cycle relationship timing",
-    inLanguage: "en",
-    audience: {
-      "@type": "Audience",
-      audienceType: "Men in relationships",
-    },
-    featureList: [
-      "Daily Briefing",
-      "Room Read",
-      "Friction Risk",
-      "Move + Reason",
-      "Menstrual cycle relationship timing",
-      "PMS timing awareness",
-      "Luteal load context",
-      "Intimacy timing context",
-    ],
-    publisher: { "@id": `${SITE_URL}#organization` },
-    downloadUrl: `${SITE_URL}/#download`,
-    installUrl: [APPSTORE_URL, PLAYSTORE_URL],
-  };
+  const orgJsonLd = organizationJsonLd();
+  const siteJsonLd = websiteJsonLd();
 
   return (
     <html lang="en" className="h-full scroll-smooth" suppressHydrationWarning>
       <head>
-        {/* JSON-LD: Organization / Website / App */}
+        {/* JSON-LD: Organization / Website */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
-        />
-
         {/* PromoteKit (Option 2: Stripe Payment Links) */}
         <Script
           id="promotekit-loader"

@@ -8,13 +8,36 @@ import {
   Shield,
   Sparkles,
 } from "lucide-react";
+import {
+  OG_IMAGE_SRC,
+  SourceTrustBlock,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "../../seo";
+
+const SLUG = "/learn/support-partner-during-pms";
+const META_DESCRIPTION =
+  "Practical PMS support for partners: what helps, what to avoid, and how timing can lower friction without making it weird.";
 
 export const metadata = {
-  title: "How to support your partner during PMS · MoodMap",
-  description:
-    "Practical, respectful tips for partners during PMS: what helps, what to avoid, and why timing matters. Relationship guidance, not medical advice.",
+  title: "How to support your partner during PMS",
+  description: META_DESCRIPTION,
   alternates: {
-    canonical: "/learn/support-partner-during-pms",
+    canonical: SLUG,
+  },
+  openGraph: {
+    title: "How to support your partner during PMS",
+    description: META_DESCRIPTION,
+    url: SLUG,
+    type: "article",
+    images: [OG_IMAGE_SRC],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_IMAGE_SRC],
+    title: "How to support your partner during PMS",
+    description: META_DESCRIPTION,
   },
 };
 
@@ -39,22 +62,32 @@ export default function SupportPartnerDuringPMSPage() {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQ);
+  const articleSchema = articleJsonLd({
+    path: SLUG,
+    headline: "How to support your partner during PMS",
+    description: META_DESCRIPTION,
+  });
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Learn", href: "/learn" },
+    { name: "How to support your partner during PMS", href: SLUG },
+  ]);
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD for AI / rich results */}
+      {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Subtle premium glows */}
@@ -308,6 +341,8 @@ export default function SupportPartnerDuringPMSPage() {
               </div>
             </div>
           </section>
+
+          <SourceTrustBlock />
 
           {/* NEW: Visible FAQs (matches JSON-LD) */}
           <section className="mt-2">

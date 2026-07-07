@@ -14,6 +14,15 @@ import { redirect } from "next/navigation";
 import ThanksClient from "./client";
 import { generateHmacSignature } from "@/lib/universal-link";
 
+export const metadata = {
+  title: "Thanks",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+};
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-06-20",
 });

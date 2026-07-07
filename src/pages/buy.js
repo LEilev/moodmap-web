@@ -38,6 +38,12 @@ function gaBeginCheckout(params) {
   } catch {}
 }
 
+export async function getServerSideProps({ res }) {
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  res.setHeader("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+  return { props: {} };
+}
+
 export default function BuyClient() {
   const router = useRouter();
   const inApp = isInAppBrowser();
@@ -182,7 +188,7 @@ export default function BuyClient() {
     <>
       <Head>
         <title>Buy Premium+ · MoodMap</title>
-        <meta name="robots" content="noindex" />
+        <meta name="robots" content="noindex,nofollow" />
         <link rel="preconnect" href="https://buy.stripe.com" />
       </Head>
 

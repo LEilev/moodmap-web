@@ -8,13 +8,36 @@ import {
   TriangleAlert,
   Clock,
 } from "lucide-react";
+import {
+  OG_IMAGE_SRC,
+  SourceTrustBlock,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "../../seo";
+
+const SLUG = "/learn/fertile-window-explained";
+const META_DESCRIPTION =
+  "A calm guide to fertile-window awareness for partners: ovulation context, timing, support, and non-medical relationship guidance.";
 
 export const metadata = {
-  title: "Fertile window explained for partners · MoodMap",
-  description:
-    "A calm, partner-friendly explanation of fertile-window awareness, ovulation-phase context, and relationship timing. Relationship guidance, not medical advice.",
+  title: "Fertile window explained for partners",
+  description: META_DESCRIPTION,
   alternates: {
-    canonical: "/learn/fertile-window-explained",
+    canonical: SLUG,
+  },
+  openGraph: {
+    title: "Fertile window explained for partners",
+    description: META_DESCRIPTION,
+    url: SLUG,
+    type: "article",
+    images: [OG_IMAGE_SRC],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_IMAGE_SRC],
+    title: "Fertile window explained for partners",
+    description: META_DESCRIPTION,
   },
 };
 
@@ -43,22 +66,32 @@ export default function FertileWindowExplainedPage() {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQ);
+  const articleSchema = articleJsonLd({
+    path: SLUG,
+    headline: "Fertile window explained for partners",
+    description: META_DESCRIPTION,
+  });
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Learn", href: "/learn" },
+    { name: "Fertile window explained for partners", href: SLUG },
+  ]);
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD for AI / rich results */}
+      {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Subtle premium glows */}
@@ -310,6 +343,8 @@ export default function FertileWindowExplainedPage() {
               </div>
             </div>
           </section>
+
+          <SourceTrustBlock />
 
           {/* NEW: Visible FAQs (matches JSON-LD) */}
           <section className="mt-2">

@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "MoodMap Support",
-  description: "Contact MoodMap Support for help with the MoodMap iOS app.",
+  title: "Support",
+  description: "Contact MoodMap Support for help with MoodMap on iOS and Android.",
   alternates: {
-    canonical: "https://moodmap-app.com/support.html",
+    canonical: "/support",
   },
 };
 
@@ -30,7 +30,7 @@ export default function SupportPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-white/75 leading-relaxed">
-            For help with MoodMap on iOS, contact us using the options below.
+            For help with MoodMap on iOS or Android, contact us using the options below.
           </p>
 
           <p className="mt-2 text-sm text-white/60">

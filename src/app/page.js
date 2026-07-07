@@ -3,11 +3,22 @@ import { FaApple, FaGooglePlay } from "react-icons/fa";
 
 import ScrollReveal from "../components/ScrollReveal";
 import ProductShowcase from "../components/ProductShowcase";
+import { DEFAULT_META_DESCRIPTION, SITE_TITLE, mobileApplicationJsonLd } from "./seo";
 
 const APPSTORE_URL =
   "https://apps.apple.com/no/app/moodmap-moodcoaster/id6746102626?l=nb";
 const PLAYSTORE_URL =
   "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
+
+export const metadata = {
+  title: {
+    absolute: SITE_TITLE,
+  },
+  description: DEFAULT_META_DESCRIPTION,
+  alternates: {
+    canonical: "/",
+  },
+};
 
 const CYCLE_SIGNALS = [
   ["Menstrual", "Reset support"],
@@ -457,8 +468,14 @@ function FinalCta() {
 }
 
 export default function HomePage() {
+  const appJsonLd = mobileApplicationJsonLd("/");
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
       <ScrollReveal />
 
       <div className="mm-page relative isolate overflow-x-hidden text-white">

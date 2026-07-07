@@ -8,30 +8,36 @@ import {
   Shield,
   Clock,
 } from "lucide-react";
+import {
+  OG_IMAGE_SRC,
+  SourceTrustBlock,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "../../seo";
 
 const SLUG = "/learn/menstrual-cycle-phases-for-partners";
-const SITE_URL = "https://www.moodmap-app.com";
-const CANONICAL_URL = `${SITE_URL}${SLUG}`;
+const META_DESCRIPTION =
+  "A practical guide to menstrual cycle phases for a boyfriend or partner: timing, support, conversations, and intimacy without making it weird.";
 
 export const metadata = {
-  title: "Menstrual cycle phases for partners: a practical relationship guide · MoodMap",
-  description:
-    "A partner-friendly guide to the four menstrual cycle phases—what may change, why timing matters, and how to support your partner well. Relationship guidance, not medical advice.",
+  title: "Menstrual cycle phases for partners",
+  description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Menstrual cycle phases for partners: a practical relationship guide",
-    description:
-      "Understand the four phases of the menstrual cycle and how timing can affect energy, stress tolerance, and communication—plus practical ways to support your partner.",
+    title: "Menstrual cycle phases for partners",
+    description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
+    images: [OG_IMAGE_SRC],
   },
   twitter: {
-    card: "summary",
-    title: "Menstrual cycle phases for partners: a practical relationship guide",
-    description:
-      "A partner-friendly guide to cycle phases, timing, and practical support—relationship guidance, not medical advice.",
+    card: "summary_large_image",
+    images: [OG_IMAGE_SRC],
+    title: "Menstrual cycle phases for partners",
+    description: META_DESCRIPTION,
   },
 };
 
@@ -68,51 +74,32 @@ export default function CyclePhasesForPartnersPage() {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
-  };
-
-  const articleJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: "Menstrual cycle phases, explained for partners",
-    description:
-      "A partner-friendly guide to the four menstrual cycle phases—what may change, why timing matters, and how to support your partner well.",
-    inLanguage: "en",
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": CANONICAL_URL,
-    },
-    url: CANONICAL_URL,
-    author: {
-      "@type": "Organization",
-      name: "MoodMap",
-      url: SITE_URL,
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "MoodMap",
-      url: SITE_URL,
-    },
-    isAccessibleForFree: true,
-  };
+  const faqSchema = faqJsonLd(FAQ);
+  const articleSchema = articleJsonLd({
+    path: SLUG,
+    headline: "Menstrual cycle phases for partners",
+    description: META_DESCRIPTION,
+  });
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Learn", href: "/learn" },
+    { name: "Menstrual cycle phases for partners", href: SLUG },
+  ]);
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD for rich results */}
+      {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Subtle premium glows */}
@@ -139,8 +126,8 @@ export default function CyclePhasesForPartnersPage() {
 
           <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
             If you’ve ever felt like your partner’s bandwidth changes week to week, you’re not
-            imagining it. Timing and context can matter. This guide breaks the cycle into simple
-            phases and shows what may change—so you can respond well, not late.
+            imagining it. For a boyfriend or partner, the goal is not prediction — it is timing and
+            context: what may change, and how to respond well instead of late.
           </p>
 
           <p className="mt-3 text-sm text-white/60">
@@ -441,6 +428,8 @@ export default function CyclePhasesForPartnersPage() {
               </div>
             </div>
           </section>
+
+          <SourceTrustBlock />
 
           {/* Visible FAQs (matches JSON-LD) */}
           <section className="mt-2">

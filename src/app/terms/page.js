@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Terms of Service | MoodMap™",
-  description: "Terms and conditions for using the MoodMap app and website.",
+  title: "Terms of Service",
+  description: "Terms for using the MoodMap app, website, subscriptions, and non-medical relationship-timing guidance.",
   alternates: {
-    canonical: "https://moodmap-app.com/terms",
+    canonical: "/terms",
   },
 };
 

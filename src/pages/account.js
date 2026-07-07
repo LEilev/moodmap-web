@@ -1,7 +1,20 @@
 // pages/account.js
+import Head from "next/head";
+
+export async function getServerSideProps({ res }) {
+  res.setHeader("X-Robots-Tag", "noindex, nofollow");
+  res.setHeader("Cache-Control", "private, no-store, max-age=0, must-revalidate");
+  return { props: {} };
+}
+
 export default function AccountConfirmation() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-primary-blue text-white font-geist-sans px-6">
+    <>
+      <Head>
+        <title>Account updated · MoodMap</title>
+        <meta name="robots" content="noindex,nofollow" />
+      </Head>
+      <main className="min-h-screen flex items-center justify-center bg-primary-blue text-white font-geist-sans px-6">
       <div className="w-full max-w-lg bg-white/10 rounded-2xl shadow-xl py-16 px-6 text-center">
         <h1 className="text-3xl md:text-4xl font-bold mb-6">
           ✅ Subscription updated!
@@ -21,14 +34,15 @@ export default function AccountConfirmation() {
         <p className="text-sm opacity-80 mt-10">
           Need help? E‑mail 
           <a
-            href="mailto:moodmap.tech@gmail.com"
+            href="mailto:support@moodmap-app.com"
             className="underline hover:text-white"
           >
-            moodmap.tech@gmail.com
+            support@moodmap-app.com
           </a>
           .
         </p>
       </div>
-    </main>
+      </main>
+    </>
   );
 }

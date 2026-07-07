@@ -14,7 +14,7 @@ const MONTHLY_EARNING = INTRO_MONTHLY_PRICE * REV_SHARE;
 const YEARLY_EARNING = INTRO_YEARLY_PRICE * REV_SHARE;
 
 export const metadata = {
-  title: "Partner Program — MoodMap",
+  title: "Partner Program",
   description:
     "Join the MoodMap Partner Program. Earn 50% lifetime recurring revenue share for every subscriber attributed to your link. Subscriptions via Stripe. Tracking & payouts via PromoteKit.",
   robots: {

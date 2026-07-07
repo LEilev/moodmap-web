@@ -11,13 +11,36 @@ import {
   TriangleAlert,
   Lock,
 } from "lucide-react";
+import {
+  OG_IMAGE_SRC,
+  SourceTrustBlock,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  faqJsonLd,
+} from "../../seo";
+
+const SLUG = "/learn/period-tracking-for-men";
+const META_DESCRIPTION =
+  "A respectful guide to period tracking for men: consent, timing, cycle context, partner support, and MoodMap’s non-medical daily read.";
 
 export const metadata = {
   title: "Period tracking for men",
-  description:
-    "A respectful guide to period tracking for men: what to track, why timing matters, how to ask for consent, and how MoodMap adds phase-aware context. Relationship guidance, not medical advice.",
+  description: META_DESCRIPTION,
   alternates: {
-    canonical: "/learn/period-tracking-for-men",
+    canonical: SLUG,
+  },
+  openGraph: {
+    title: "Period tracking for men",
+    description: META_DESCRIPTION,
+    url: SLUG,
+    type: "article",
+    images: [OG_IMAGE_SRC],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [OG_IMAGE_SRC],
+    title: "Period tracking for men",
+    description: META_DESCRIPTION,
   },
 };
 
@@ -54,22 +77,32 @@ export default function PeriodTrackingForMenPage() {
     },
   ];
 
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: FAQ.map(({ q, a }) => ({
-      "@type": "Question",
-      name: q,
-      acceptedAnswer: { "@type": "Answer", text: a },
-    })),
-  };
+  const faqSchema = faqJsonLd(FAQ);
+  const articleSchema = articleJsonLd({
+    path: SLUG,
+    headline: "Period tracking for men",
+    description: META_DESCRIPTION,
+  });
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Learn", href: "/learn" },
+    { name: "Period tracking for men", href: SLUG },
+  ]);
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD for AI / rich results */}
+      {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Subtle premium glows */}
@@ -407,6 +440,8 @@ export default function PeriodTrackingForMenPage() {
               </p>
             </div>
           </section>
+
+          <SourceTrustBlock />
 
           {/* Visible FAQs */}
           <section className="mt-2">

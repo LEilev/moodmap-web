@@ -8,11 +8,12 @@ import {
   HeartHandshake,
   Layers,
 } from "lucide-react";
+import { breadcrumbJsonLd } from "../seo";
 
 export const metadata = {
   title: "Guides",
   description:
-    "Short, high-signal guides for men and partners: respectful cycle timing, why MoodMap is different, PMS support, cycle phases, and ovulation-phase context. Relationship guidance, not medical advice.",
+    "Short guides for men and partners on cycle timing, PMS support, menstrual phases, fertile-window context, and MoodMap’s non-medical boundaries.",
   alternates: {
     canonical: "/learn",
   },
@@ -70,12 +71,21 @@ export default function LearnIndexPage() {
     })),
   };
 
+  const breadcrumbSchema = breadcrumbJsonLd([
+    { name: "Home", href: "/" },
+    { name: "Guides", href: "/learn" },
+  ]);
+
   return (
     <main className="relative isolate bg-primary-blue text-white">
       {/* JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       {/* Subtle premium glows */}
