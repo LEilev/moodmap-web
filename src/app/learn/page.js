@@ -15,7 +15,7 @@ import { breadcrumbJsonLd } from "../seo";
 export const metadata = {
   title: "Guides",
   description:
-    "Short guides for men and partners on cycle-aware relationship timing, Hormone Graph Intelligence, PMS support, menstrual phases, and MoodMap’s non-medical boundaries.",
+    "Short guides for men and partners on cycle-aware relationship timing, Hormone Graph Intelligence, PMS timing, luteal phase relationships, day-by-day cycle context, and MoodMap’s non-medical boundaries.",
   alternates: {
     canonical: "/learn",
   },
@@ -37,6 +37,27 @@ const GUIDES = [
     description:
       "The category MoodMap is built around: cleaner support, conversation, restraint, and intimacy through timing context.",
     Icon: Sparkles,
+  },
+  {
+    href: "/learn/menstrual-cycle-day-by-day-for-partners",
+    title: "Menstrual cycle day by day for partners",
+    description:
+      "A practical day-by-day timing map for support, conversation, restraint, and intimacy across the cycle.",
+    Icon: CalendarDays,
+  },
+  {
+    href: "/learn/luteal-phase-relationships",
+    title: "Luteal phase relationships",
+    description:
+      "How partners can read load, tone, capacity, and timing during the luteal phase without blaming hormones.",
+    Icon: HeartHandshake,
+  },
+  {
+    href: "/learn/pms-relationship-timing",
+    title: "PMS relationship timing",
+    description:
+      "Lower pressure, cleaner tone, practical support, and better repair timing during high-sensitivity PMS windows.",
+    Icon: Shield,
   },
   {
     href: "/learn/moodmap-glossary",

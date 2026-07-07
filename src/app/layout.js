@@ -213,6 +213,9 @@ export default function RootLayout({ children }) {
                 <Link href="/learn" className="mm-nav-link">
                   Guides
                 </Link>
+                <Link href="/about" className="mm-nav-link">
+                  About
+                </Link>
                 <Link href="/support" className="mm-nav-link">
                   Support
                 </Link>
@@ -244,6 +247,9 @@ export default function RootLayout({ children }) {
                     </Link>
                     <Link className="mm-link" href="/intelligence">
                       Intelligence
+                    </Link>
+                    <Link className="mm-link" href="/about">
+                      About
                     </Link>
                     <Link className="mm-link" href="/support">
                       Support

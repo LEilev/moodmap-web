@@ -8,6 +8,7 @@ import {
   DEFAULT_META_DESCRIPTION,
   PLAYSTORE_URL,
   SITE_TITLE,
+  faqJsonLd,
   mobileApplicationJsonLd,
 } from "./seo";
 
@@ -476,12 +477,17 @@ function FinalCta() {
 
 export default function HomePage() {
   const appJsonLd = mobileApplicationJsonLd("/");
+  const faqSchema = faqJsonLd(FAQ_ITEMS.map(([q, a]) => ({ q, a })));
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <ScrollReveal />
 
@@ -494,7 +500,7 @@ export default function HomePage() {
               <SectionLabel>Private daily read for men in relationships</SectionLabel>
               <h1>Read the day before you react.</h1>
               <p className="mm-hero-subline">
-                MoodMap gives men one private daily read from their partner’s menstrual cycle — phase, capacity, stress sensitivity, friction risk, and the cleaner move before timing costs more than it should.
+                MoodMap is cycle-aware relationship intelligence for men: one private daily read from their partner’s menstrual cycle — phase, capacity, stress sensitivity, friction risk, and the cleaner move before timing costs more than it should.
               </p>
               <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
               <StoreButtons />

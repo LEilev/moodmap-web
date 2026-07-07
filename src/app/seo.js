@@ -8,9 +8,24 @@ export const OG_IMAGE_ALT =
 export const UPDATED_ISO = "2026-07-07";
 export const UPDATED_DISPLAY = "July 7, 2026";
 
+export const OFFICIAL_APP_NAME = "MoodMap: Relationship Timing";
+export const APPLE_APP_ID = "6746102626";
+export const APP_BUNDLE_ID = "com.eilev.moodmapnextgen";
+export const ANDROID_PACKAGE_ID = "com.eilev.moodmapnextgen";
+export const SUPPORT_EMAIL = "support@moodmap-app.com";
+export const DISAMBIGUATION_DESCRIPTION =
+  "MoodMap at moodmap-app.com is a cycle-aware relationship intelligence app for men, not a mood tracker, location tracker, emotional journaling app, or workplace coaching tool.";
+export const ENTITY_ALTERNATE_NAMES = [
+  "MoodMap: Relationship Timing",
+  "MoodMap Relationship Timing",
+  "MoodMap menstrual cycle read for men",
+  "MoodMap cycle-aware relationship intelligence",
+  "MoodMap relationship timing for men",
+];
+
 export const APPSTORE_URL = "https://apps.apple.com/app/id6746102626";
 export const PLAYSTORE_URL =
-  "https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen";
+  `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_ID}`;
 
 export const DEFAULT_META_DESCRIPTION =
   "MoodMap is cycle-aware relationship intelligence for men: one private daily read from menstrual-cycle context, capacity, stress sensitivity, and timing.";
@@ -47,10 +62,21 @@ export function organizationJsonLd() {
     "@type": "Organization",
     "@id": `${SITE_URL}#organization`,
     name: SITE_NAME,
+    alternateName: ENTITY_ALTERNATE_NAMES,
+    disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
     url: SITE_URL,
     logo: absoluteUrl(BRAND_MARK_SRC),
-    email: "support@moodmap-app.com",
+    email: SUPPORT_EMAIL,
     availableLanguage: ["en"],
+    areaServed: "Worldwide",
+    knowsAbout: [
+      "Cycle-aware relationship intelligence",
+      "Relationship timing",
+      "Menstrual cycle context",
+      "PMS support for partners",
+      "Hormone Graph Intelligence",
+      "Capacity and stress sensitivity",
+    ],
     sameAs: [APPSTORE_URL, PLAYSTORE_URL],
   };
 }
@@ -73,7 +99,8 @@ export function mobileApplicationJsonLd(path = "/") {
     "@type": "MobileApplication",
     "@id": `${SITE_URL}#mobile-application`,
     name: SITE_NAME,
-    alternateName: "MoodMap: Relationship Timing",
+    alternateName: ENTITY_ALTERNATE_NAMES,
+    disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
     url: absoluteUrl(path),
     description: DEFAULT_META_DESCRIPTION,
     operatingSystem: "iOS, Android",
@@ -88,17 +115,17 @@ export function mobileApplicationJsonLd(path = "/") {
       {
         "@type": "PropertyValue",
         propertyID: "iOS Bundle ID",
-        value: "com.eilev.moodmapnextgen",
+        value: APP_BUNDLE_ID,
       },
       {
         "@type": "PropertyValue",
         propertyID: "Android Package",
-        value: "com.eilev.moodmapnextgen",
+        value: ANDROID_PACKAGE_ID,
       },
       {
         "@type": "PropertyValue",
         propertyID: "Apple App ID",
-        value: "6746102626",
+        value: APPLE_APP_ID,
       },
     ],
     featureList: [
@@ -213,6 +240,39 @@ export function definedTermSetJsonLd({ path, name, description, terms }) {
       inDefinedTermSet: `${absoluteUrl(path)}#defined-term-set`,
       url: `${absoluteUrl(path)}#${term.slug}`,
     })),
+  };
+}
+
+export function aboutPageJsonLd() {
+  const path = "/about";
+  return {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "@id": `${absoluteUrl(path)}#about-page`,
+    name: "About MoodMap",
+    description: DISAMBIGUATION_DESCRIPTION,
+    url: absoluteUrl(path),
+    inLanguage: "en",
+    isPartOf: { "@id": `${SITE_URL}#website` },
+    publisher: { "@id": `${SITE_URL}#organization` },
+    about: { "@id": `${SITE_URL}#mobile-application` },
+    mainEntity: {
+      "@type": "MobileApplication",
+      "@id": `${SITE_URL}#mobile-application`,
+      name: SITE_NAME,
+      alternateName: ENTITY_ALTERNATE_NAMES,
+      disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
+      operatingSystem: "iOS, Android",
+      applicationCategory: "LifestyleApplication",
+      applicationSubCategory: "Cycle-aware relationship intelligence",
+      identifier: [
+        { "@type": "PropertyValue", propertyID: "iOS Bundle ID", value: APP_BUNDLE_ID },
+        { "@type": "PropertyValue", propertyID: "Android Package", value: ANDROID_PACKAGE_ID },
+        { "@type": "PropertyValue", propertyID: "Apple App ID", value: APPLE_APP_ID },
+      ],
+      url: SITE_URL,
+      sameAs: [APPSTORE_URL, PLAYSTORE_URL],
+    },
   };
 }
 

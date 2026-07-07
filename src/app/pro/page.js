@@ -68,7 +68,7 @@ const INCLUDED = [
   "Move + Reason so he knows what to do and why",
   "Intimacy timing context without guessing",
   "Hormone Graph Intelligence behind the read",
-  "Hormone Graph Intelligence with practical boundaries",
+  "Clear non-medical boundaries around every read",
 ];
 
 export const metadata = {
