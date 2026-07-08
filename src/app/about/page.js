@@ -27,16 +27,16 @@ import {
 
 const SLUG = "/about";
 const META_DESCRIPTION =
-  "Official MoodMap entity page: relationship timing app, cycle-aware relationship intelligence for men, identifiers, store links, and product boundaries.";
+  "Official page for MoodMap: Relationship Timing, with verified app identity, store links, support contact, product boundaries, and non-medical use.";
 
 export const metadata = {
-  title: "About MoodMap",
+  title: "About the Official Relationship Timing App",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "About MoodMap",
+    title: "About MoodMap: Official Relationship Timing App",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "website",
@@ -44,7 +44,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About MoodMap",
+    title: "About MoodMap: Official Relationship Timing App",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },

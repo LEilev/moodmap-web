@@ -11,16 +11,16 @@ import {
 
 const SLUG = "/learn/moodmap-glossary";
 const META_DESCRIPTION =
-  "A glossary of MoodMap terms: Daily Read, SitRep, Risk Radar, CommandDeck, Hormone Graph Intelligence, capacity, stress sensitivity, and Premium+.";
+  "Definitions for MoodMap terms including Daily Read, Room Read, Friction Risk, Move + Reason, Hormone Graph Intelligence, capacity, and Premium+.";
 
 export const metadata = {
-  title: "MoodMap glossary",
+  title: "Relationship Timing Glossary and App Terms",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "MoodMap glossary",
+    title: "MoodMap Relationship Timing Glossary and App Terms",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -28,7 +28,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap glossary",
+    title: "MoodMap Relationship Timing Glossary and App Terms",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -143,7 +143,7 @@ const FAQ = [
 export default function MoodMapGlossaryPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "MoodMap glossary",
+    headline: "MoodMap Relationship Timing Glossary and App Terms",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

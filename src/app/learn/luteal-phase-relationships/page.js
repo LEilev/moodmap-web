@@ -10,14 +10,14 @@ import {
 
 const SLUG = "/learn/luteal-phase-relationships";
 const META_DESCRIPTION =
-  "A practical luteal phase relationship guide for partners: timing, communication, support, stress sensitivity, and intimacy context.";
+  "A practical guide to luteal phase relationship timing: capacity, communication, stress sensitivity, support, intimacy, and lower-pressure repair.";
 
 export const metadata = {
-  title: "Luteal phase relationships",
+  title: "Luteal Phase Relationship Timing Guide",
   description: META_DESCRIPTION,
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "Luteal phase relationships",
+    title: "MoodMap Luteal Phase Relationship Timing Guide",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Luteal phase relationships",
+    title: "MoodMap Luteal Phase Relationship Timing Guide",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -85,7 +85,7 @@ const FAQ = [
 export default function LutealPhaseRelationshipsPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Luteal phase relationships",
+    headline: "Luteal Phase Relationship Timing Guide",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

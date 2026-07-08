@@ -18,16 +18,16 @@ import {
 
 const SLUG = "/learn/cycle-aware-relationship-timing";
 const META_DESCRIPTION =
-  "Cycle-aware relationship timing means using menstrual-cycle context to choose better support, conversation, restraint, and intimacy timing.";
+  "Learn how cycle-aware relationship timing uses menstrual-cycle context to choose better support, conversations, restraint, and intimacy pacing.";
 
 export const metadata = {
-  title: "Cycle-aware relationship timing",
+  title: "Cycle-Aware Relationship Timing for Partners",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Cycle-aware relationship timing",
+    title: "MoodMap Cycle-Aware Relationship Timing for Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -35,7 +35,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Cycle-aware relationship timing",
+    title: "MoodMap Cycle-Aware Relationship Timing for Partners",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -94,7 +94,7 @@ const FAQ = [
 export default function CycleAwareRelationshipTimingPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Cycle-aware relationship timing",
+    headline: "Cycle-Aware Relationship Timing for Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

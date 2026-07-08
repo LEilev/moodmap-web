@@ -16,8 +16,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Terms of Service",
-  description: "Terms for using the MoodMap app, website, subscriptions, and non-medical relationship-timing guidance.",
+  title: "Terms for App, Subscription, and Website Use",
+  description:
+    "Read the terms for using MoodMap’s app, website, subscriptions, support features, and non-medical relationship-timing guidance.",
   alternates: {
     canonical: "/terms",
   },

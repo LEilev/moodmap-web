@@ -5,8 +5,8 @@ export const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 export const OG_IMAGE_SRC = "/og/moodmap-og.jpg";
 export const OG_IMAGE_ALT =
   "MoodMap — cycle-aware relationship intelligence for men. One private daily read from her cycle.";
-export const UPDATED_ISO = "2026-07-07";
-export const UPDATED_DISPLAY = "July 7, 2026";
+export const UPDATED_ISO = "2026-07-08";
+export const UPDATED_DISPLAY = "July 8, 2026";
 
 export const OFFICIAL_APP_NAME = "MoodMap: Relationship Timing";
 export const APPLE_APP_ID = "6746102626";
@@ -249,7 +249,7 @@ export function aboutPageJsonLd() {
     "@context": "https://schema.org",
     "@type": "AboutPage",
     "@id": `${absoluteUrl(path)}#about-page`,
-    name: "About MoodMap",
+    name: "About MoodMap: Official Relationship Timing App",
     description: DISAMBIGUATION_DESCRIPTION,
     url: absoluteUrl(path),
     inLanguage: "en",

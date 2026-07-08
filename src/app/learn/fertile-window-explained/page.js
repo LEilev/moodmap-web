@@ -18,16 +18,16 @@ import {
 
 const SLUG = "/learn/fertile-window-explained";
 const META_DESCRIPTION =
-  "A calm guide to fertile-window awareness for partners: ovulation context, timing, support, and non-medical relationship guidance.";
+  "Understand the fertile window as non-medical timing context for partners: ovulation awareness, consent, support, and relationship pacing.";
 
 export const metadata = {
-  title: "Fertile window explained for partners",
+  title: "Fertile Window Explained for Partners",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Fertile window explained for partners",
+    title: "MoodMap Fertile Window Explained for Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -36,7 +36,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [OG_IMAGE_SRC],
-    title: "Fertile window explained for partners",
+    title: "MoodMap Fertile Window Explained for Partners",
     description: META_DESCRIPTION,
   },
 };
@@ -69,7 +69,7 @@ export default function FertileWindowExplainedPage() {
   const faqSchema = faqJsonLd(FAQ);
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Fertile window explained for partners",
+    headline: "Fertile Window Explained for Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

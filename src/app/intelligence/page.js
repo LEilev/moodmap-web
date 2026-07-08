@@ -20,16 +20,16 @@ import {
 
 const SLUG = "/intelligence";
 const META_DESCRIPTION =
-  "MoodMap turns cycle phase, modeled hormone activity, capacity, and stress sensitivity into cycle-aware relationship intelligence for men.";
+  "See how MoodMap turns cycle phase, modeled hormone activity, capacity, and stress sensitivity into a private relationship-timing read for men.";
 
 export const metadata = {
-  title: "Hormone Graph Intelligence",
+  title: "Hormone Graph Intelligence for Relationship Timing",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "MoodMap Hormone Graph Intelligence",
+    title: "MoodMap Hormone Graph Intelligence for Relationship Timing",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "website",
@@ -37,7 +37,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap Hormone Graph Intelligence",
+    title: "MoodMap Hormone Graph Intelligence for Relationship Timing",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },

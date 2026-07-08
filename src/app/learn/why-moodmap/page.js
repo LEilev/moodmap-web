@@ -21,16 +21,16 @@ import {
 
 const SLUG = "/learn/why-moodmap";
 const META_DESCRIPTION =
-  "Why MoodMap is a private relationship-timing app for men: cycle context, daily guidance, and practical non-medical boundaries.";
+  "Why MoodMap exists: a private cycle-aware relationship timing app for men, built for cleaner support, conversations, intimacy, and non-medical boundaries.";
 
 export const metadata = {
-  title: "Why MoodMap",
+  title: "Why Cycle-Aware Relationship Timing Matters",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Why MoodMap",
+    title: "Why MoodMap: Cycle-Aware Relationship Timing Matters",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -39,7 +39,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [OG_IMAGE_SRC],
-    title: "Why MoodMap",
+    title: "Why MoodMap: Cycle-Aware Relationship Timing Matters",
     description: META_DESCRIPTION,
   },
 };
@@ -120,7 +120,7 @@ export default function WhyMoodMapPage() {
   const faqSchema = faqJsonLd(FAQ);
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Why MoodMap",
+    headline: "Why MoodMap: Cycle-Aware Relationship Timing Matters",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

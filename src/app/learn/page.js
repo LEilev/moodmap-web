@@ -13,9 +13,9 @@ import {
 import { breadcrumbJsonLd } from "../seo";
 
 export const metadata = {
-  title: "Guides",
+  title: "Guides for Cycle-Aware Relationship Timing",
   description:
-    "Short guides for men and partners on cycle-aware relationship timing, Hormone Graph Intelligence, PMS timing, luteal phase relationships, day-by-day cycle context, and MoodMap’s non-medical boundaries.",
+    "Guides on cycle-aware relationship timing, PMS support, luteal context, day-by-day cycle cues, Hormone Graph Intelligence, and MoodMap boundaries.",
   alternates: {
     canonical: "/learn",
   },

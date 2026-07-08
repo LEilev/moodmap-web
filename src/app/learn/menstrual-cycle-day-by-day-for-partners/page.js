@@ -10,14 +10,14 @@ import {
 
 const SLUG = "/learn/menstrual-cycle-day-by-day-for-partners";
 const META_DESCRIPTION =
-  "A day-by-day menstrual cycle guide for partners: timing context for support, conversation, restraint, and intimacy across a 28-day cycle.";
+  "A day-by-day menstrual cycle guide for partners, mapping support, conversation, restraint, and intimacy timing across a typical 28-day cycle.";
 
 export const metadata = {
-  title: "Menstrual cycle day by day for partners",
+  title: "Menstrual Cycle Day-by-Day Guide for Partners",
   description: META_DESCRIPTION,
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "Menstrual cycle day by day for partners",
+    title: "MoodMap Menstrual Cycle Day-by-Day Guide for Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Menstrual cycle day by day for partners",
+    title: "MoodMap Menstrual Cycle Day-by-Day Guide for Partners",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -92,7 +92,7 @@ const FAQ = [
 export default function MenstrualCycleDayByDayPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Menstrual cycle day by day for partners",
+    headline: "Menstrual Cycle Day-by-Day Guide for Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

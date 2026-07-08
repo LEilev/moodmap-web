@@ -21,16 +21,16 @@ import {
 
 const SLUG = "/learn/period-tracking-for-men";
 const META_DESCRIPTION =
-  "A respectful guide to period tracking for men: consent, timing, cycle context, partner support, and MoodMap’s non-medical daily read.";
+  "A respectful guide to period tracking for men: consent, cycle context, what to ask, what not to assume, and how to use timing without control.";
 
 export const metadata = {
-  title: "Period tracking for men",
+  title: "Period Tracking for Men and Partners",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Period tracking for men",
+    title: "MoodMap Period Tracking for Men and Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -39,7 +39,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [OG_IMAGE_SRC],
-    title: "Period tracking for men",
+    title: "MoodMap Period Tracking for Men and Partners",
     description: META_DESCRIPTION,
   },
 };
@@ -80,7 +80,7 @@ export default function PeriodTrackingForMenPage() {
   const faqSchema = faqJsonLd(FAQ);
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Period tracking for men",
+    headline: "Period Tracking for Men and Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

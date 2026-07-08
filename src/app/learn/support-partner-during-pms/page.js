@@ -18,16 +18,16 @@ import {
 
 const SLUG = "/learn/support-partner-during-pms";
 const META_DESCRIPTION =
-  "Practical PMS support for partners: what helps, what to avoid, and how timing can lower friction without making it weird.";
+  "Practical PMS support for partners: what helps, what to avoid, and how timing, tone, food, space, and repair can lower late-cycle friction.";
 
 export const metadata = {
-  title: "How to support your partner during PMS",
+  title: "How to Support Your Partner During PMS",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "How to support your partner during PMS",
+    title: "MoodMap Guide: How to Support Your Partner During PMS",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -36,7 +36,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [OG_IMAGE_SRC],
-    title: "How to support your partner during PMS",
+    title: "MoodMap Guide: How to Support Your Partner During PMS",
     description: META_DESCRIPTION,
   },
 };
@@ -65,7 +65,7 @@ export default function SupportPartnerDuringPMSPage() {
   const faqSchema = faqJsonLd(FAQ);
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "How to support your partner during PMS",
+    headline: "How to Support Your Partner During PMS",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

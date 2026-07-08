@@ -18,16 +18,16 @@ import {
 
 const SLUG = "/learn/menstrual-cycle-phases-for-partners";
 const META_DESCRIPTION =
-  "A practical guide to menstrual cycle phases for a boyfriend or partner: timing, support, conversations, and intimacy without making it weird.";
+  "A partner-focused guide to menstrual cycle phases, with timing cues for support, conversations, intimacy, PMS, and non-medical relationship context.";
 
 export const metadata = {
-  title: "Menstrual cycle phases for partners",
+  title: "Menstrual Cycle Phases Guide for Partners",
   description: META_DESCRIPTION,
   alternates: {
     canonical: SLUG,
   },
   openGraph: {
-    title: "Menstrual cycle phases for partners",
+    title: "MoodMap Menstrual Cycle Phases Guide for Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -36,7 +36,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     images: [OG_IMAGE_SRC],
-    title: "Menstrual cycle phases for partners",
+    title: "MoodMap Menstrual Cycle Phases Guide for Partners",
     description: META_DESCRIPTION,
   },
 };
@@ -77,7 +77,7 @@ export default function CyclePhasesForPartnersPage() {
   const faqSchema = faqJsonLd(FAQ);
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Menstrual cycle phases for partners",
+    headline: "Menstrual Cycle Phases Guide for Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([

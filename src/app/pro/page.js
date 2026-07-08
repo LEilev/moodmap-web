@@ -12,7 +12,7 @@ import {
 import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
 
 const META_DESCRIPTION =
-  "Unlock MoodMap Premium+: the full private daily read, Hormone Graph Intelligence, friction risk, and relationship timing around the menstrual cycle.";
+  "Unlock MoodMap Premium+: the full private daily read with phase, room read, friction risk, Move + Reason, and Hormone Graph Intelligence.";
 
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({
@@ -72,13 +72,13 @@ const INCLUDED = [
 ];
 
 export const metadata = {
-  title: "Premium+",
+  title: "Premium+: Full Daily Relationship Timing Read",
   description: META_DESCRIPTION,
   alternates: {
     canonical: "/pro",
   },
   openGraph: {
-    title: "MoodMap Premium+",
+    title: "MoodMap Premium+: Full Daily Relationship Timing Read",
     description: META_DESCRIPTION,
     url: "/pro",
     type: "website",
@@ -86,7 +86,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap Premium+",
+    title: "MoodMap Premium+: Full Daily Relationship Timing Read",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },

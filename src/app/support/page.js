@@ -2,8 +2,9 @@ import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "Support",
-  description: "Contact MoodMap Support for help with MoodMap on iOS and Android.",
+  title: "Support for App, Billing, and Account Help",
+  description:
+    "Get help with MoodMap on iOS and Android, including subscriptions, billing, privacy, app access, account questions, and support contact details.",
   alternates: {
     canonical: "/support",
   },

@@ -10,14 +10,14 @@ import {
 
 const SLUG = "/learn/pms-relationship-timing";
 const META_DESCRIPTION =
-  "PMS relationship timing for partners: support, communication, intimacy, pressure, and repair when stress sensitivity is higher.";
+  "PMS relationship timing for partners: reduce pressure, choose cleaner support, pace hard conversations, and repair without making the room heavier.";
 
 export const metadata = {
-  title: "PMS relationship timing",
+  title: "PMS Relationship Timing Guide for Partners",
   description: META_DESCRIPTION,
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "PMS relationship timing",
+    title: "MoodMap PMS Relationship Timing Guide for Partners",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "PMS relationship timing",
+    title: "MoodMap PMS Relationship Timing Guide for Partners",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -87,7 +87,7 @@ const FAQ = [
 export default function PmsRelationshipTimingPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "PMS relationship timing",
+    headline: "PMS Relationship Timing Guide for Partners",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([
