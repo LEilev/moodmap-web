@@ -64,9 +64,8 @@ export default function ProductShowcase({ surfaces = [] }) {
         role="tabpanel"
         aria-labelledby={`mm-product-tab-${generatedId}-${safeIndex}`}
       >
-        <div className="mm-v2-showcase__visual-head">
+        <div className="mm-v2-showcase__visual-head mm-v5-showcase__visual-head">
           <span>{activeSurface.systemLabel ?? activeSurface.kicker}</span>
-          <strong>{activeSurface.caption ?? activeSurface.title}</strong>
         </div>
         <div className="mm-v2-showcase__image-shell mm-v3-phone-stage">
           <div className="mm-v3-phone-frame mm-v3-phone-frame--showcase">

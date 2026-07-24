@@ -302,11 +302,9 @@ function ValuePremiumSection() {
   return (
     <section id="premium" className="mm-section mm-v4-value-premium">
       <div className="mm-container">
-        <div className="mm-v4-outcome-head" data-reveal>
-          <div>
-            <SectionLabel>What better timing changes</SectionLabel>
-            <h2>More understanding. Less guesswork.</h2>
-          </div>
+        <div className="mm-v4-outcome-head mm-v5-outcome-head" data-reveal>
+          <SectionLabel>What better timing changes</SectionLabel>
+          <h2>More understanding. Less guesswork.</h2>
           <p>MoodMap helps you notice where support, initiative, conversation, connection, or restraint can land better.</p>
         </div>
 
@@ -358,11 +356,12 @@ function TrustFaqCtaSection() {
           </div>
         </div>
 
-        <div className="mm-v4-close-grid">
-          <div id="questions" className="mm-v4-faq-card" data-reveal>
-            <div className="mm-v4-faq-heading">
+        <div className="mm-v5-close-stack">
+          <div id="questions" className="mm-v4-faq-card mm-v5-faq-card" data-reveal>
+            <div className="mm-v4-faq-heading mm-v5-faq-heading">
               <SectionLabel>Questions</SectionLabel>
-              <h2>What MoodMap does—and what it does not.</h2>
+              <h2>Questions before you start.</h2>
+              <p>Four direct answers about what MoodMap tracks, what Premium+ opens, and where the model stops.</p>
             </div>
             <div className="mm-v2-faq-list">
               {FAQ_ITEMS.map(([question, answer], index) => (
@@ -371,12 +370,18 @@ function TrustFaqCtaSection() {
             </div>
           </div>
 
-          <div className="mm-v4-download-card" data-reveal>
-            <span className="mm-v2-final-cta__icon"><Sparkles aria-hidden="true" /></span>
-            <h2>Read the day before you react.</h2>
-            <p>One private daily read based on cycle context. Available on iOS and Android.</p>
-            <StoreButtons compact />
-            <Link href="/learn" className="mm-v2-final-cta__secondary">Explore the guides <ChevronRight aria-hidden="true" /></Link>
+          <div className="mm-v4-download-card mm-v5-download-card" data-reveal>
+            <div className="mm-v5-download-copy">
+              <span className="mm-v2-final-cta__icon"><Sparkles aria-hidden="true" /></span>
+              <div>
+                <h2>Read the day before you react.</h2>
+                <p>One private daily read based on cycle context. Available on iOS and Android.</p>
+              </div>
+            </div>
+            <div className="mm-v5-download-actions">
+              <StoreButtons compact />
+              <Link href="/learn" className="mm-v2-final-cta__secondary">Explore the guides <ChevronRight aria-hidden="true" /></Link>
+            </div>
           </div>
         </div>
       </div>
@@ -394,7 +399,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ScrollReveal />
 
-      <div className="mm-page mm-v2-page mm-v3-page mm-v4-page relative isolate overflow-x-hidden text-white">
+      <div className="mm-page mm-v2-page mm-v3-page mm-v4-page mm-v5-page relative isolate overflow-x-hidden text-white">
         <div aria-hidden="true" className="mm-background-field" />
         <HeroSection />
         <ProductSection />

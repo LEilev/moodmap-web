@@ -7288,3 +7288,575 @@ html {
     padding: 28px 18px;
   }
 }
+
+/* ========================================================================== */
+/* MoodMap Web 2026 — Round 4: conversion polish + responsive close           */
+/* ========================================================================== */
+
+.mm-v5-page {
+  --mm5-body: rgba(220, 230, 245, 0.66);
+  --mm5-body-strong: rgba(229, 237, 248, 0.74);
+}
+
+/* Shared editorial hierarchy: keep the closing sections in the same visual
+   language as the hero, product switcher, and Intelligence headline. */
+.mm-v5-page .mm-v5-outcome-head h2,
+.mm-v5-page .mm-v5-faq-heading h2,
+.mm-v5-page .mm-v5-download-card h2 {
+  color: var(--mm2-text);
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+/* Hero: a slightly stronger product proof without changing the composition. */
+.mm-v5-page .mm-v4-hero .mm-v2-poster--hero {
+  width: min(100%, 348px) !important;
+}
+
+.mm-v5-page .mm-v4-proof-grid strong {
+  font-size: 13.5px;
+}
+
+.mm-v5-page .mm-v4-proof-grid p {
+  color: rgba(220, 230, 245, 0.6);
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+/* Product switcher: make the app view the focus and remove the unreadably
+   small explanatory sentence above the device. */
+.mm-v5-page .mm-v5-showcase__visual-head {
+  justify-content: flex-start;
+  min-height: 34px;
+  padding: 8px 10px 10px;
+}
+
+.mm-v5-page .mm-v5-showcase__visual-head span {
+  color: rgba(92, 216, 255, 0.9);
+  font-size: 10px;
+  letter-spacing: 0.17em;
+}
+
+.mm-v5-page .mm-v2-showcase-tab__copy > span {
+  font-size: 9.5px;
+}
+
+.mm-v5-page .mm-v2-showcase-tab__copy strong {
+  font-size: 15.75px;
+}
+
+.mm-v5-page .mm-v2-showcase-tab__copy small {
+  color: rgba(220, 230, 245, 0.62);
+  font-size: 13.25px;
+  line-height: 1.45;
+}
+
+.mm-v5-page .mm-v2-showcase__copy > p {
+  color: var(--mm5-body);
+  font-size: 15.5px;
+}
+
+.mm-v5-page .mm-v3-phone-frame--showcase {
+  width: min(100%, 264px);
+}
+
+/* Intelligence: give the differentiating product layer more visual weight. */
+.mm-v5-page .mm-v4-intelligence .mm-v2-feature-visual {
+  min-height: 580px;
+}
+
+.mm-v5-page .mm-v4-intelligence .mm-v3-intelligence-stack {
+  width: min(100%, 500px);
+  height: 580px;
+}
+
+.mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--rear {
+  top: 58px;
+  left: 4px;
+  width: 226px;
+}
+
+.mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--front {
+  right: 4px;
+  width: 274px;
+}
+
+.mm-v5-page .mm-v2-feature-lead {
+  color: var(--mm5-body-strong);
+}
+
+.mm-v5-page .mm-v2-feature-boundary {
+  color: rgba(235, 222, 184, 0.74);
+  font-size: 13.5px;
+}
+
+.mm-v5-page .mm-v2-feature-points h3 {
+  font-size: 14.75px;
+}
+
+.mm-v5-page .mm-v2-feature-points p {
+  color: rgba(220, 230, 245, 0.63);
+  font-size: 14px;
+  line-height: 1.52;
+}
+
+.mm-v5-page .mm-v2-text-link {
+  min-height: 40px;
+  margin-top: 20px;
+  border: 1px solid rgba(92, 216, 255, 0.14);
+  border-radius: 999px;
+  padding: 0 14px;
+  color: rgba(215, 244, 255, 0.92);
+  background: rgba(46, 200, 255, 0.045);
+  font-size: 14.5px;
+}
+
+.mm-v5-page .mm-v2-text-link:hover {
+  border-color: rgba(92, 216, 255, 0.28);
+  background: rgba(46, 200, 255, 0.08);
+}
+
+/* Setup + alerts: use more of each card and raise the reading floor. */
+.mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card__copy > p {
+  color: var(--mm5-body);
+  font-size: 15px;
+  line-height: 1.58;
+}
+
+.mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card .mm-v2-poster {
+  width: min(100%, 244px) !important;
+}
+
+.mm-v5-page .mm-v4-steps h3,
+.mm-v5-page .mm-v4-outcome-grid h3 {
+  font-size: 15.75px;
+}
+
+.mm-v5-page .mm-v4-steps p,
+.mm-v5-page .mm-v4-outcome-grid p {
+  color: rgba(220, 230, 245, 0.63);
+  font-size: 13.25px;
+  line-height: 1.55;
+}
+
+.mm-v5-page .mm-v4-steps article,
+.mm-v5-page .mm-v4-outcome-grid article {
+  padding: 16px;
+}
+
+/* Outcomes: one coherent reading column instead of a headline and paragraph
+   floating at opposite sides of the viewport. */
+.mm-v5-page .mm-v5-outcome-head {
+  display: block;
+  max-width: 790px;
+}
+
+.mm-v5-page .mm-v5-outcome-head h2 {
+  margin-top: 18px;
+  max-width: 720px;
+  font-size: clamp(42px, 4.6vw, 58px);
+}
+
+.mm-v5-page .mm-v5-outcome-head > p {
+  max-width: 720px;
+  margin-top: 16px;
+  color: var(--mm5-body-strong);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.mm-v5-page .mm-v4-outcome-grid {
+  margin-top: 20px;
+}
+
+.mm-v5-page .mm-v4-premium-panel .mm-v2-premium-copy > p {
+  color: rgba(230, 235, 244, 0.72);
+  font-size: 15.25px;
+}
+
+.mm-v5-page .mm-v4-plan-note strong {
+  font-size: 14.5px;
+}
+
+.mm-v5-page .mm-v4-plan-note span {
+  color: rgba(230, 231, 235, 0.62);
+  font-size: 13.25px;
+  line-height: 1.5;
+}
+
+.mm-v5-page .mm-v2-premium-list p {
+  color: rgba(245, 248, 252, 0.82);
+  font-size: 14.5px;
+}
+
+/* Trust: keep the boundary useful without making the small print disappear. */
+.mm-v5-page .mm-v4-trust-panel .mm-v2-trust-intro > p {
+  color: var(--mm5-body);
+  font-size: 15px;
+  line-height: 1.58;
+}
+
+.mm-v5-page .mm-v4-trust-panel .mm-v2-trust-grid h3 {
+  font-size: 14.5px;
+}
+
+.mm-v5-page .mm-v4-trust-panel .mm-v2-trust-grid p {
+  color: rgba(220, 230, 245, 0.63);
+  font-size: 13.25px;
+  line-height: 1.52;
+}
+
+/* Closing architecture: full-width FAQ, then a full-width horizontal download
+   CTA. This removes the narrow card that clipped both store buttons. */
+.mm-v5-close-stack {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.mm-v5-page .mm-v5-faq-card {
+  grid-template-columns: minmax(260px, 0.62fr) minmax(0, 1.38fr);
+  gap: clamp(26px, 4vw, 58px);
+  width: 100%;
+  padding: clamp(26px, 3.4vw, 40px);
+}
+
+.mm-v5-page .mm-v5-faq-heading h2 {
+  margin-top: 17px;
+  max-width: 460px;
+  font-size: clamp(38px, 4.2vw, 52px);
+}
+
+.mm-v5-page .mm-v5-faq-heading > p {
+  max-width: 450px;
+  margin-top: 15px;
+  color: var(--mm5-body);
+  font-size: 15px;
+  line-height: 1.58;
+}
+
+.mm-v5-page .mm-v5-faq-card .mm-v2-faq-list summary {
+  padding: 16px 50px 16px 17px;
+  font-size: 14.5px;
+  line-height: 1.4;
+}
+
+.mm-v5-page .mm-v5-faq-card .mm-v2-faq-list details p {
+  padding: 15px 17px 18px;
+  color: rgba(220, 230, 245, 0.66);
+  font-size: 14px;
+  line-height: 1.58;
+}
+
+.mm-v5-page .mm-v5-download-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(30px, 4.4vw, 64px);
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: clamp(28px, 3.4vw, 42px);
+  text-align: left;
+}
+
+.mm-v5-download-copy {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  align-items: start;
+  gap: 18px;
+  min-width: 0;
+}
+
+.mm-v5-page .mm-v5-download-copy .mm-v2-final-cta__icon {
+  margin: 0;
+}
+
+.mm-v5-page .mm-v5-download-card h2 {
+  margin: 0;
+  max-width: 640px;
+  font-size: clamp(40px, 4.4vw, 56px);
+}
+
+.mm-v5-page .mm-v5-download-card .mm-v5-download-copy p {
+  max-width: 620px;
+  margin-top: 13px;
+  color: var(--mm5-body);
+  font-size: 15px;
+  line-height: 1.58;
+}
+
+.mm-v5-download-actions {
+  display: grid;
+  justify-items: end;
+  gap: 12px;
+  min-width: min-content;
+}
+
+.mm-v5-page .mm-v5-download-actions .mm-store-row {
+  width: auto;
+  margin: 0;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+}
+
+.mm-v5-page .mm-v5-download-actions .store-btn {
+  width: auto;
+  min-width: 226px;
+}
+
+.mm-v5-page .mm-v5-download-actions .mm-v2-final-cta__secondary {
+  margin: 0 4px 0 0;
+  color: rgba(215, 230, 246, 0.68);
+  font-size: 13.5px;
+}
+
+/* Desktop and tablet tuning. */
+@media (max-width: 1099px) {
+  .mm-v5-page .mm-v5-download-card {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .mm-v5-download-copy {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .mm-v5-page .mm-v5-download-copy .mm-v2-final-cta__icon {
+    margin-inline: auto;
+  }
+
+  .mm-v5-page .mm-v5-download-card h2,
+  .mm-v5-page .mm-v5-download-card .mm-v5-download-copy p {
+    margin-inline: auto;
+  }
+
+  .mm-v5-download-actions {
+    justify-items: center;
+  }
+
+  .mm-v5-page .mm-v5-download-actions .mm-store-row {
+    justify-content: center;
+  }
+
+  .mm-v5-page .mm-v5-download-actions .mm-v2-final-cta__secondary {
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 959px) {
+  .mm-v5-page .mm-v5-faq-card {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .mm-v5-page .mm-v5-faq-heading h2,
+  .mm-v5-page .mm-v5-faq-heading > p {
+    max-width: 680px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v2-feature-visual {
+    min-height: 540px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-intelligence-stack {
+    height: 540px;
+  }
+}
+
+@media (max-width: 767px) {
+  .mm-v5-page .mm-v4-hero .mm-v2-poster--hero {
+    width: min(100%, 306px) !important;
+  }
+
+  .mm-v5-page .mm-v3-phone-frame--showcase {
+    width: min(100%, 242px);
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v2-feature-visual {
+    min-height: 492px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-intelligence-stack {
+    width: min(100%, 344px);
+    height: 492px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--rear {
+    top: 50px;
+    left: 0;
+    width: 168px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--front {
+    right: 0;
+    width: 224px;
+  }
+
+  .mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card .mm-v2-poster {
+    width: min(100%, 224px) !important;
+  }
+
+  .mm-v5-page .mm-v4-steps p,
+  .mm-v5-page .mm-v4-outcome-grid p,
+  .mm-v5-page .mm-v4-trust-panel .mm-v2-trust-grid p {
+    font-size: 13.5px;
+  }
+
+  .mm-v5-page .mm-v5-download-card {
+    padding: 28px 20px;
+  }
+
+  .mm-v5-page .mm-v5-download-actions,
+  .mm-v5-page .mm-v5-download-actions .mm-store-row {
+    width: 100%;
+  }
+
+  .mm-v5-page .mm-v5-download-actions .mm-store-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mm-v5-page .mm-v5-download-actions .store-btn {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .mm-v5-page .mm-container {
+    padding-inline: 16px;
+  }
+
+  .mm-v5-page .mm-v4-page .mm-section,
+  .mm-v5-page .mm-section {
+    padding-block: 40px;
+  }
+
+  .mm-v5-page .mm-v4-proof-grid,
+  .mm-v5-page .mm-v2-showcase,
+  .mm-v5-page .mm-v2-dual-card,
+  .mm-v5-page .mm-v4-premium-panel,
+  .mm-v5-page .mm-v4-trust-panel,
+  .mm-v5-page .mm-v5-faq-card,
+  .mm-v5-page .mm-v5-download-card {
+    border-radius: 22px;
+  }
+
+  .mm-v5-page .mm-v2-showcase {
+    padding: 18px;
+  }
+
+  .mm-v5-page .mm-v2-showcase__copy h2,
+  .mm-v5-page .mm-v4-intelligence .mm-v2-feature-copy h2,
+  .mm-v5-page .mm-v4-premium-panel .mm-v2-premium-copy h2,
+  .mm-v5-page .mm-v4-trust-panel .mm-v2-trust-intro h2,
+  .mm-v5-page .mm-v5-outcome-head h2,
+  .mm-v5-page .mm-v5-faq-heading h2,
+  .mm-v5-page .mm-v5-download-card h2 {
+    font-size: clamp(35px, 10.6vw, 44px);
+    letter-spacing: -0.055em;
+  }
+
+  .mm-v5-page .mm-v2-showcase-tab {
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .mm-v5-page .mm-v2-showcase-tab__index {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mm-v5-page .mm-v2-showcase-tab__copy small {
+    font-size: 13px;
+  }
+
+  .mm-v5-page .mm-v2-showcase__visual {
+    min-height: 500px;
+    padding: 10px;
+  }
+
+  .mm-v5-page .mm-v2-showcase__image-shell.mm-v3-phone-stage {
+    padding: 12px;
+  }
+
+  .mm-v5-page .mm-v3-phone-frame--showcase {
+    width: min(100%, 224px);
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v2-feature-visual {
+    min-height: 456px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-intelligence-stack {
+    width: min(100%, 316px);
+    height: 456px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--rear {
+    top: 46px;
+    width: 152px;
+  }
+
+  .mm-v5-page .mm-v4-intelligence .mm-v3-phone-frame--front {
+    width: 208px;
+  }
+
+  .mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card {
+    padding: 18px;
+  }
+
+  .mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card .mm-v2-poster {
+    width: min(100%, 210px) !important;
+  }
+
+  .mm-v5-page .mm-v4-steps article,
+  .mm-v5-page .mm-v4-outcome-grid article {
+    padding: 14px;
+  }
+
+  .mm-v5-page .mm-v4-premium-panel,
+  .mm-v5-page .mm-v4-trust-panel,
+  .mm-v5-page .mm-v5-faq-card,
+  .mm-v5-page .mm-v5-download-card {
+    padding: 22px 18px;
+  }
+
+  .mm-v5-page .mm-v5-faq-card .mm-v2-faq-list summary {
+    padding: 15px 46px 15px 15px;
+    font-size: 14px;
+  }
+
+  .mm-v5-page .mm-v5-faq-card .mm-v2-faq-list details p {
+    padding: 14px 15px 16px;
+    font-size: 13.5px;
+  }
+}
+
+@media (max-width: 390px) {
+  .mm-v5-page .mm-v2-hero__copy h1 {
+    font-size: clamp(44px, 13.5vw, 54px);
+  }
+
+  .mm-v5-page .mm-v2-hero__lead,
+  .mm-v5-page .mm-v2-showcase__copy > p,
+  .mm-v5-page .mm-v2-feature-lead,
+  .mm-v5-page .mm-v4-dual-grid .mm-v2-dual-card__copy > p,
+  .mm-v5-page .mm-v5-outcome-head > p,
+  .mm-v5-page .mm-v4-premium-panel .mm-v2-premium-copy > p,
+  .mm-v5-page .mm-v4-trust-panel .mm-v2-trust-intro > p,
+  .mm-v5-page .mm-v5-faq-heading > p,
+  .mm-v5-page .mm-v5-download-card .mm-v5-download-copy p {
+    font-size: 14.5px;
+  }
+
+  .mm-v5-page .mm-v4-proof-grid p,
+  .mm-v5-page .mm-v4-plan-note span {
+    font-size: 12.75px;
+  }
+}
