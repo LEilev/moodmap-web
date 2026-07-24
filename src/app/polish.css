@@ -6200,3 +6200,512 @@ html {
     border-radius: 28px;
   }
 }
+
+/* ========================================================================== */
+/* MoodMap Web 2026 — Round 2: raw-screen device system + tighter rhythm       */
+/* ========================================================================== */
+
+/* Use the original iPhone captures as the product source of truth. */
+.mm-v2-float-card {
+  display: none !important;
+}
+
+.mm-v2-page .mm-section {
+  padding-block: clamp(58px, 6.2vw, 82px);
+}
+
+.mm-v2-hero {
+  padding-block: clamp(54px, 5.7vw, 76px) clamp(34px, 4vw, 52px);
+}
+
+.mm-v2-hero__grid {
+  gap: clamp(42px, 5.5vw, 72px);
+}
+
+.mm-v2-hero__copy {
+  max-width: 630px;
+}
+
+.mm-v2-hero__copy h1 {
+  max-width: 650px;
+  font-size: clamp(52px, 6.3vw, 78px);
+  line-height: 0.94;
+  letter-spacing: -0.066em;
+}
+
+.mm-v2-hero__lead {
+  max-width: 610px;
+  font-size: clamp(17px, 1.55vw, 19.5px);
+}
+
+.mm-v2-hero__visual {
+  min-height: 0;
+}
+
+.mm-v2-hero__visual::before {
+  width: min(78vw, 520px);
+  height: min(78vw, 520px);
+  opacity: 0.72;
+}
+
+/* Shared raw-screen phone frame. */
+.mm-v2-poster,
+.mm-v3-phone-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(139, 178, 224, 0.25);
+  border-radius: 46px;
+  padding: 5px;
+  background: linear-gradient(180deg, #111a2b, #02060d);
+  box-shadow:
+    0 34px 96px rgba(0, 0, 0, 0.48),
+    0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  isolation: isolate;
+}
+
+.mm-v2-poster {
+  width: min(100%, 322px) !important;
+}
+
+.mm-v2-poster::before,
+.mm-v3-phone-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04),
+    inset 0 22px 42px rgba(255, 255, 255, 0.018);
+}
+
+.mm-v2-poster::after {
+  box-shadow: none;
+}
+
+.mm-v2-poster__glow {
+  display: none;
+}
+
+.mm-v2-poster img,
+.mm-v3-phone-frame img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 40px;
+}
+
+.mm-v2-poster--hero {
+  width: min(100%, 316px) !important;
+  transform: none;
+}
+
+.mm-v2-proof-section {
+  padding-block: 0 clamp(44px, 5.3vw, 66px);
+}
+
+.mm-v2-proof-grid {
+  border-radius: 24px;
+}
+
+/* Main four-surface product switcher. */
+.mm-v2-product-section {
+  padding-top: clamp(54px, 5.7vw, 76px) !important;
+}
+
+.mm-v2-showcase {
+  gap: clamp(34px, 4.8vw, 62px);
+  min-height: 0;
+  border-radius: 32px;
+  padding: clamp(26px, 3.4vw, 42px);
+}
+
+.mm-v2-showcase__copy h2 {
+  max-width: 570px;
+  font-size: clamp(39px, 4.25vw, 56px);
+  line-height: 0.99;
+}
+
+.mm-v2-showcase__copy > p {
+  max-width: 550px;
+  font-size: 15px;
+}
+
+.mm-v2-showcase__tabs {
+  gap: 8px;
+  margin-top: 25px;
+}
+
+.mm-v2-showcase-tab {
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 12px;
+  border-radius: 17px;
+  padding: 12px 13px;
+}
+
+.mm-v2-showcase-tab__index {
+  width: 35px;
+  height: 35px;
+  border-radius: 11px;
+}
+
+.mm-v2-showcase-tab__copy strong {
+  font-size: 15px;
+}
+
+.mm-v2-showcase-tab__copy small {
+  font-size: 12px;
+}
+
+.mm-v2-showcase__visual {
+  display: flex;
+  min-height: 650px;
+  flex-direction: column;
+  border-radius: 26px;
+  padding: 12px;
+}
+
+.mm-v2-showcase__visual-head {
+  flex: 0 0 auto;
+  padding: 7px 8px 12px;
+}
+
+.mm-v2-showcase__visual-head strong {
+  max-width: 70%;
+  font-size: 11.5px;
+}
+
+.mm-v2-showcase__image-shell.mm-v3-phone-stage {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  border-radius: 21px;
+  padding: 18px;
+  background:
+    radial-gradient(380px 300px at 50% 24%, rgba(46, 200, 255, 0.09), transparent 72%),
+    linear-gradient(180deg, rgba(7, 14, 27, 0.94), rgba(4, 9, 17, 0.98));
+}
+
+.mm-v3-phone-frame--showcase {
+  width: min(100%, 278px);
+  border-radius: 42px;
+  animation: mm-v2-image-in 260ms ease both;
+}
+
+.mm-v3-phone-frame--showcase img {
+  border-radius: 36px;
+}
+
+/* Intelligence uses two real screens rather than a precomposed App Store poster. */
+.mm-v2-feature-grid {
+  gap: clamp(42px, 5.6vw, 74px);
+}
+
+.mm-v2-feature-copy h2 {
+  max-width: 620px;
+  font-size: clamp(42px, 5vw, 62px);
+}
+
+.mm-v2-feature-visual {
+  min-height: 640px;
+}
+
+.mm-v3-intelligence-stack {
+  position: relative;
+  width: min(100%, 520px);
+  height: 640px;
+  margin-inline: auto;
+}
+
+.mm-v3-intelligence-stack::before {
+  content: "";
+  position: absolute;
+  inset: 12% 4% 4%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(246, 132, 58, 0.15), rgba(169, 114, 255, 0.06) 42%, transparent 72%);
+  filter: blur(24px);
+}
+
+.mm-v3-intelligence-stack .mm-v3-phone-frame {
+  position: absolute;
+}
+
+.mm-v3-phone-frame--rear {
+  top: 58px;
+  left: 4px;
+  width: 244px;
+  transform: rotate(-3.6deg);
+  opacity: 0.72;
+}
+
+.mm-v3-phone-frame--front {
+  top: 0;
+  right: 8px;
+  z-index: 2;
+  width: 286px;
+  border-color: rgba(246, 132, 58, 0.28);
+}
+
+/* Alerts and onboarding: full raw screens, contained and equalized. */
+.mm-v2-dual-section {
+  padding-top: clamp(34px, 4vw, 54px) !important;
+}
+
+.mm-v2-dual-grid {
+  gap: 18px;
+}
+
+.mm-v2-dual-card {
+  align-items: start;
+  gap: 22px;
+  min-height: 0;
+  border-radius: 30px;
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.mm-v2-dual-card h2 {
+  max-width: 520px;
+  font-size: clamp(34px, 3.7vw, 47px);
+  line-height: 1;
+}
+
+.mm-v2-dual-card__copy > p {
+  font-size: 14.5px;
+}
+
+.mm-v2-dual-card .mm-v2-poster {
+  width: min(100%, 246px) !important;
+  justify-self: center;
+  border-radius: 40px;
+}
+
+.mm-v2-dual-card .mm-v2-poster img {
+  border-radius: 34px;
+}
+
+/* Reduce the oversized editorial rhythm that made pages feel sparse. */
+.mm-v2-section-heading h2,
+.mm-v2-premium-copy h2,
+.mm-v2-trust-intro h2,
+.mm-v2-faq-intro h2 {
+  font-size: clamp(40px, 4.7vw, 60px);
+}
+
+.mm-v2-final-cta {
+  padding-block: clamp(68px, 7vw, 96px);
+}
+
+.mm-v2-final-cta h2 {
+  font-size: clamp(46px, 6vw, 72px);
+}
+
+/* Shared subpages: smaller hero imagery and less dead space. */
+.mm-v2-subhero {
+  padding-block: clamp(54px, 5.8vw, 78px) clamp(48px, 5.5vw, 72px);
+}
+
+.mm-v2-subhero__grid {
+  gap: clamp(40px, 5vw, 68px);
+}
+
+.mm-v2-subhero__copy h1 {
+  max-width: 700px;
+  font-size: clamp(50px, 6.1vw, 76px);
+  line-height: 0.94;
+}
+
+.mm-v2-subhero__lead {
+  font-size: clamp(17px, 1.55vw, 19px);
+}
+
+.mm-v2-poster--pro,
+.mm-v2-poster--intelligence,
+.mm-v2-poster--about {
+  width: min(100%, 316px) !important;
+}
+
+.mm-v2-subhero__badge {
+  top: -8px;
+  right: 0;
+}
+
+.mm-v3-intelligence-stack--hero {
+  width: min(100%, 530px);
+  height: 650px;
+}
+
+.mm-v3-intelligence-stack--hero .mm-v3-phone-frame--rear {
+  top: 62px;
+  left: 0;
+  width: 246px;
+}
+
+.mm-v3-intelligence-stack--hero .mm-v3-phone-frame--front {
+  right: 0;
+  width: 290px;
+}
+
+.mm-v2-value-section,
+.mm-v2-signal-section,
+.mm-v2-boundary-section,
+.mm-v2-faq--subpage {
+  padding-block: clamp(54px, 5.6vw, 76px) !important;
+}
+
+.mm-v2-comparison-intro h2,
+.mm-v2-signal-intro h2,
+.mm-v2-boundary-panel h2,
+.mm-v2-definition-panel h2,
+.mm-v2-about-card h2,
+.mm-v2-store-panel h2 {
+  font-size: clamp(38px, 4.5vw, 58px);
+}
+
+.mm-v2-value-grid {
+  margin-top: 28px;
+}
+
+.mm-v2-value-grid article,
+.mm-v2-signal-list article {
+  padding: 19px;
+}
+
+.mm-v2-boundary-panel,
+.mm-v2-comparison-panel,
+.mm-v2-definition-panel,
+.mm-v2-store-panel {
+  border-radius: 30px;
+}
+
+@media (min-width: 960px) {
+  .mm-v2-hero__grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.68fr);
+  }
+
+  .mm-v2-showcase {
+    grid-template-columns: minmax(0, 0.96fr) minmax(360px, 0.72fr);
+  }
+
+  .mm-v2-feature-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(440px, 0.8fr);
+  }
+
+  .mm-v2-dual-card {
+    grid-template-rows: auto 1fr;
+  }
+
+  .mm-v2-subhero__grid {
+    grid-template-columns: minmax(0, 1.04fr) minmax(420px, 0.78fr);
+  }
+}
+
+@media (max-width: 959px) {
+  .mm-v2-hero__visual {
+    margin-top: 4px;
+  }
+
+  .mm-v2-showcase__visual {
+    min-height: 620px;
+  }
+
+  .mm-v2-feature-visual {
+    min-height: 600px;
+  }
+
+  .mm-v3-intelligence-stack,
+  .mm-v3-intelligence-stack--hero {
+    height: 600px;
+  }
+}
+
+@media (max-width: 719px) {
+  .mm-v2-page .mm-section {
+    padding-block: 52px;
+  }
+
+  .mm-v2-hero {
+    padding-top: 42px;
+    padding-bottom: 28px;
+  }
+
+  .mm-v2-hero__copy h1,
+  .mm-v2-subhero__copy h1 {
+    font-size: clamp(46px, 13.5vw, 62px);
+    letter-spacing: -0.062em;
+  }
+
+  .mm-v2-poster--hero,
+  .mm-v2-poster--pro,
+  .mm-v2-poster--intelligence,
+  .mm-v2-poster--about {
+    width: min(100%, 286px) !important;
+  }
+
+  .mm-v2-proof-section {
+    padding-bottom: 46px;
+  }
+
+  .mm-v2-showcase {
+    padding: 18px;
+  }
+
+  .mm-v2-showcase__copy h2,
+  .mm-v2-feature-copy h2,
+  .mm-v2-dual-card h2,
+  .mm-v2-section-heading h2,
+  .mm-v2-premium-copy h2,
+  .mm-v2-trust-intro h2,
+  .mm-v2-faq-intro h2 {
+    font-size: clamp(38px, 11.5vw, 52px);
+  }
+
+  .mm-v2-showcase__visual {
+    min-height: 560px;
+    padding: 10px;
+  }
+
+  .mm-v2-showcase__image-shell.mm-v3-phone-stage {
+    padding: 14px;
+  }
+
+  .mm-v3-phone-frame--showcase {
+    width: min(100%, 246px);
+  }
+
+  .mm-v2-feature-visual {
+    min-height: 520px;
+  }
+
+  .mm-v3-intelligence-stack,
+  .mm-v3-intelligence-stack--hero {
+    width: min(100%, 350px);
+    height: 515px;
+  }
+
+  .mm-v3-phone-frame--rear,
+  .mm-v3-intelligence-stack--hero .mm-v3-phone-frame--rear {
+    top: 52px;
+    left: 0;
+    width: 178px;
+  }
+
+  .mm-v3-phone-frame--front,
+  .mm-v3-intelligence-stack--hero .mm-v3-phone-frame--front {
+    right: 0;
+    width: 228px;
+  }
+
+  .mm-v2-dual-card .mm-v2-poster {
+    width: min(100%, 230px) !important;
+  }
+
+  .mm-v2-subhero__badge {
+    display: none;
+  }
+}

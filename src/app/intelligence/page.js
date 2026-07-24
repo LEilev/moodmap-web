@@ -110,7 +110,7 @@ export default function IntelligencePage() {
   };
 
   return (
-    <main className="mm-page mm-v2-page mm-v2-subpage relative isolate overflow-hidden text-white">
+    <main className="mm-page mm-v2-page mm-v3-page mm-v2-subpage relative isolate overflow-hidden text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
@@ -135,15 +135,25 @@ export default function IntelligencePage() {
 
           <div className="mm-v2-subhero__visual" data-reveal>
             <div className="mm-v2-subhero__badge mm-v2-subhero__badge--orange"><Brain aria-hidden="true" /><span>Biology → possible effects</span></div>
-            <div className="mm-v2-poster mm-v2-poster--intelligence">
-              <div className="mm-v2-poster__glow" aria-hidden="true" />
-              <img
-                src="/screenshots/web-2026/intelligence.webp"
-                alt="MoodMap Intelligence screen showing Today’s Shift, Biology, Consequences, and a modeled hormone graph."
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
+            <div className="mm-v3-intelligence-stack mm-v3-intelligence-stack--hero" aria-label="MoodMap Cycle Intelligence screens">
+              <div className="mm-v3-phone-frame mm-v3-phone-frame--rear">
+                <img
+                  src="/screenshots/web-2026/intelligence-graph.webp"
+                  alt="MoodMap modeled hormone graph across the cycle."
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+              </div>
+              <div className="mm-v3-phone-frame mm-v3-phone-frame--front">
+                <img
+                  src="/screenshots/web-2026/intelligence.webp"
+                  alt="MoodMap Intelligence showing Today’s Shift, Biology, and possible effects."
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+              </div>
             </div>
           </div>
         </div>

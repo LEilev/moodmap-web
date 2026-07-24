@@ -54,12 +54,12 @@ const APP_SURFACES = [
     alt: "MoodMap Risk Radar showing a tripwire, what to notice, likely misread, countermove, and explanation.",
   },
   {
-    screenshotPath: "/screenshots/web-2026/protocol-why.webp",
+    screenshotPath: "/screenshots/web-2026/protocol-overview.webp",
     kicker: "Protocol + WHY",
     title: "Get the move—and the reason.",
     caption: "PLAN, READ, BOND, and SELF with deeper reasoning.",
     meta: "Practical guidance",
-    alt: "MoodMap Protocol WHY screen explaining reciprocity, signals, and how to use the guidance.",
+    alt: "MoodMap Protocol showing PLAN, READ, BOND, and SELF guidance with WHY and HOW layers.",
   },
 ];
 
@@ -172,7 +172,7 @@ function HeroSection() {
           <SectionLabel>Cycle-aware relationship intelligence for men</SectionLabel>
           <h1>Read the day before you react.</h1>
           <p className="mm-v2-hero__lead">
-            One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner move.
+            One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner response.
           </p>
           <p className="mm-v2-boundary">Context for your response. Not a verdict on her.</p>
           <StoreButtons />
@@ -190,14 +190,6 @@ function HeroSection() {
             className="mm-v2-poster--hero"
             priority
           />
-          <div className="mm-v2-float-card mm-v2-float-card--top">
-            <span>Today’s State</span>
-            <strong>Phase · Capacity · Risk · Direction</strong>
-          </div>
-          <div className="mm-v2-float-card mm-v2-float-card--bottom">
-            <span>One private read</span>
-            <strong>Open what you need. Keep the day in context.</strong>
-          </div>
         </div>
       </div>
     </section>
@@ -252,10 +244,24 @@ function IntelligenceSection() {
           <Link href="/intelligence" className="mm-v2-text-link">Explore Cycle Intelligence <ChevronRight aria-hidden="true" /></Link>
         </div>
         <div className="mm-v2-feature-visual" data-reveal>
-          <Poster
-            src="/screenshots/web-2026/intelligence.webp"
-            alt="MoodMap Intelligence screen showing Today’s Shift, Biology, and Consequences beside the modeled hormone graph."
-          />
+          <div className="mm-v3-intelligence-stack" aria-label="MoodMap Cycle Intelligence screens">
+            <div className="mm-v3-phone-frame mm-v3-phone-frame--rear">
+              <img
+                src="/screenshots/web-2026/intelligence-graph.webp"
+                alt="MoodMap modeled hormone graph across the cycle."
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div className="mm-v3-phone-frame mm-v3-phone-frame--front">
+              <img
+                src="/screenshots/web-2026/intelligence.webp"
+                alt="MoodMap Intelligence showing Today’s Shift, Biology, and possible effects."
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -423,7 +429,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ScrollReveal />
 
-      <div className="mm-page mm-v2-page relative isolate overflow-x-hidden text-white">
+      <div className="mm-page mm-v2-page mm-v3-page relative isolate overflow-x-hidden text-white">
         <div aria-hidden="true" className="mm-background-field" />
         <HeroSection />
         <ProofStrip />

@@ -17,15 +17,15 @@ export default function ProductShowcase({ surfaces = [] }) {
   const panelId = `mm-product-panel-${generatedId}`;
 
   return (
-    <div className="mm-v2-showcase" data-reveal>
+    <div className="mm-v2-showcase mm-v3-showcase" data-reveal>
       <div className="mm-v2-showcase__copy">
         <span id="product" className="mm-section-label mm-product-anchor">
           Inside MoodMap
         </span>
-        <h2 id="product-heading">One private read. Four levels of clarity.</h2>
+        <h2 id="product-heading">One daily read. Open the layer you need.</h2>
         <p>
-          Start with the day, then open the layer you need: the full brief, the cycle map,
-          the tripwire, or the practical move with its reasoning.
+          Start with Today’s State, then go deeper only when it helps: the full brief,
+          the cycle map, the tripwire, or the practical move with its reasoning.
         </p>
 
         <div className="mm-v2-showcase__tabs" role="tablist" aria-label="MoodMap product views">
@@ -68,14 +68,16 @@ export default function ProductShowcase({ surfaces = [] }) {
           <span>{activeSurface.systemLabel ?? activeSurface.kicker}</span>
           <strong>{activeSurface.caption ?? activeSurface.title}</strong>
         </div>
-        <div className="mm-v2-showcase__image-shell">
-          <img
-            key={activeSurface.screenshotPath}
-            src={activeSurface.screenshotPath}
-            alt={activeSurface.alt}
-            loading="lazy"
-            decoding="async"
-          />
+        <div className="mm-v2-showcase__image-shell mm-v3-phone-stage">
+          <div className="mm-v3-phone-frame mm-v3-phone-frame--showcase">
+            <img
+              key={activeSurface.screenshotPath}
+              src={activeSurface.screenshotPath}
+              alt={activeSurface.alt}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
     </div>
