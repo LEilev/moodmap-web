@@ -138,8 +138,8 @@ export default async function ProPage({ searchParams }) {
             <p className="mm-v2-boundary">Full context for your response. Still not a verdict on her.</p>
 
             <div className="mm-v2-plan-grid">
-              <PlanCard name="Annual" price="$24.99" cadence="per year" href={yearlyHref} primary />
-              <PlanCard name="Monthly" price="$2.99" cadence="per month" href={monthlyHref} />
+              <PlanCard name="Annual" price="$29.99" cadence="per year" href={yearlyHref} primary />
+              <PlanCard name="Monthly" price="$3.99" cadence="per month" href={monthlyHref} />
             </div>
 
             <p className="mm-v2-purchase-note">
@@ -219,8 +219,8 @@ export default async function ProPage({ searchParams }) {
           <h2>Open the full read.</h2>
           <p>Choose annual or monthly access, then return to MoodMap with the complete system unlocked.</p>
           <div className="mm-v2-final-plan-row">
-            <Link href={yearlyHref} prefetch={false} className="mm-v2-primary-link">Annual · $24.99 <ArrowRight aria-hidden="true" /></Link>
-            <Link href={monthlyHref} prefetch={false} className="mm-v2-secondary-link">Monthly · $2.99</Link>
+            <Link href={yearlyHref} prefetch={false} className="mm-v2-primary-link">Annual · $29.99 <ArrowRight aria-hidden="true" /></Link>
+            <Link href={monthlyHref} prefetch={false} className="mm-v2-secondary-link">Monthly · $3.99</Link>
           </div>
           <Link href="/" className="mm-v2-final-cta__secondary">← Back to Home</Link>
         </div>

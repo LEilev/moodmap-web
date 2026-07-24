@@ -6709,3 +6709,582 @@ html {
     display: none;
   }
 }
+
+/* ========================================================================== */
+/* MoodMap Web 2026 — Round 3: six-section conversion architecture            */
+/* ========================================================================== */
+
+.mm-v4-page .mm-section {
+  padding-block: clamp(48px, 5vw, 72px);
+}
+
+/* 1 — Hero: promise, product, proof in one section. */
+.mm-v4-hero {
+  padding-block: clamp(52px, 5.4vw, 76px) clamp(42px, 4.6vw, 64px);
+}
+
+.mm-v4-hero .mm-v2-hero__grid {
+  align-items: center;
+}
+
+.mm-v4-hero .mm-v2-poster--hero {
+  width: min(100%, 330px) !important;
+}
+
+.mm-v4-proof-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: clamp(38px, 4.6vw, 58px);
+  border: 1px solid rgba(151, 183, 224, 0.12);
+  border-radius: 24px;
+  padding: 10px;
+  background:
+    radial-gradient(560px 240px at 100% 0%, rgba(32, 214, 107, 0.055), transparent 70%),
+    rgba(7, 13, 24, 0.62);
+  box-shadow: 0 24px 82px rgba(0, 0, 0, 0.22);
+}
+
+.mm-v4-proof-grid article {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr);
+  gap: 11px;
+  min-width: 0;
+  border: 1px solid rgba(151, 183, 224, 0.075);
+  border-radius: 17px;
+  padding: 14px 15px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.mm-v4-proof-grid article > span {
+  width: 7px;
+  height: 7px;
+  margin-top: 5px;
+  border-radius: 999px;
+  background: var(--mm2-green);
+  box-shadow: 0 0 0 5px rgba(32, 214, 107, 0.065);
+}
+
+.mm-v4-proof-grid strong {
+  display: block;
+  color: rgba(245, 248, 252, 0.9);
+  font-size: 13px;
+  font-weight: 780;
+  letter-spacing: -0.02em;
+}
+
+.mm-v4-proof-grid p {
+  margin-top: 4px;
+  color: rgba(220, 230, 245, 0.52);
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+/* 2 — Product: keep the high-value switcher, remove presentation-slide scale. */
+.mm-v4-product-section {
+  padding-top: clamp(34px, 4vw, 54px) !important;
+}
+
+.mm-v4-page .mm-v2-showcase {
+  padding: clamp(24px, 3vw, 36px);
+}
+
+.mm-v4-page .mm-v2-showcase__copy h2 {
+  font-size: clamp(38px, 4vw, 52px);
+}
+
+.mm-v4-page .mm-v2-showcase__visual {
+  min-height: 584px;
+}
+
+.mm-v4-page .mm-v3-phone-frame--showcase {
+  width: min(100%, 252px);
+}
+
+/* 3 — Intelligence: preserve distinction, reduce empty stage area. */
+.mm-v4-intelligence .mm-v2-feature-grid {
+  align-items: center;
+}
+
+.mm-v4-intelligence .mm-v2-feature-copy h2 {
+  font-size: clamp(40px, 4.6vw, 58px);
+}
+
+.mm-v4-intelligence .mm-v2-feature-visual {
+  min-height: 548px;
+}
+
+.mm-v4-intelligence .mm-v3-intelligence-stack {
+  width: min(100%, 470px);
+  height: 548px;
+}
+
+.mm-v4-intelligence .mm-v3-phone-frame--rear {
+  top: 54px;
+  left: 8px;
+  width: 210px;
+}
+
+.mm-v4-intelligence .mm-v3-phone-frame--front {
+  right: 10px;
+  width: 254px;
+}
+
+/* 4 — Setup, alerts, and the three-step flow live together. */
+.mm-v4-journey {
+  padding-top: clamp(38px, 4.4vw, 62px) !important;
+}
+
+.mm-v4-dual-grid {
+  gap: 16px;
+}
+
+.mm-v4-dual-grid .mm-v2-dual-card {
+  grid-template-rows: auto 1fr;
+  gap: 18px;
+  border-radius: 28px;
+  padding: clamp(22px, 2.7vw, 32px);
+}
+
+.mm-v4-dual-grid .mm-v2-dual-card h2 {
+  margin-top: 15px;
+  font-size: clamp(31px, 3.2vw, 42px);
+}
+
+.mm-v4-dual-grid .mm-v2-dual-card__copy > p {
+  margin-top: 12px;
+  font-size: 13.5px;
+}
+
+.mm-v4-dual-grid .mm-v2-icon-chip {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+  border-radius: 14px;
+}
+
+.mm-v4-dual-grid .mm-v2-dual-card .mm-v2-poster {
+  width: min(100%, 220px) !important;
+}
+
+.mm-v4-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+  border: 1px solid rgba(151, 183, 224, 0.1);
+  border-radius: 24px;
+  padding: 10px;
+  background: rgba(7, 13, 24, 0.52);
+}
+
+.mm-v4-steps article {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid rgba(151, 183, 224, 0.08);
+  border-radius: 17px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.mm-v4-steps article > span,
+.mm-v4-outcome-grid article > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(46, 200, 255, 0.18);
+  border-radius: 11px;
+  color: rgba(203, 240, 255, 0.78);
+  background: rgba(46, 200, 255, 0.065);
+  font-size: 9px;
+  font-weight: 820;
+  letter-spacing: 0.1em;
+}
+
+.mm-v4-steps h3,
+.mm-v4-outcome-grid h3 {
+  color: rgba(245, 248, 252, 0.91);
+  font-size: 15px;
+  font-weight: 790;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+.mm-v4-steps p,
+.mm-v4-outcome-grid p {
+  margin-top: 5px;
+  color: rgba(220, 230, 245, 0.54);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 5 — Outcomes lead directly into the paid layer. */
+.mm-v4-value-premium {
+  padding-top: clamp(42px, 4.6vw, 64px) !important;
+}
+
+.mm-v4-outcome-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.7fr);
+  align-items: end;
+  gap: clamp(28px, 5vw, 70px);
+}
+
+.mm-v4-outcome-head h2 {
+  margin-top: 18px;
+  max-width: 680px;
+  font-size: clamp(40px, 4.8vw, 60px);
+}
+
+.mm-v4-outcome-head > p {
+  max-width: 560px;
+  color: var(--mm2-muted);
+  font-size: 15px;
+  line-height: 1.62;
+}
+
+.mm-v4-outcome-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.mm-v4-outcome-grid article {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid rgba(151, 183, 224, 0.11);
+  border-radius: 19px;
+  padding: 16px;
+  background:
+    radial-gradient(260px 140px at 100% 0%, rgba(46, 200, 255, 0.035), transparent 72%),
+    rgba(10, 18, 32, 0.54);
+}
+
+.mm-v4-premium-panel {
+  margin-top: 18px;
+  border-radius: 30px;
+  padding: clamp(28px, 3.8vw, 44px);
+}
+
+.mm-v4-premium-panel .mm-v2-premium-copy h2 {
+  font-size: clamp(40px, 4.7vw, 58px);
+}
+
+.mm-v4-premium-panel .mm-v2-premium-copy > p {
+  margin-top: 16px;
+  font-size: 14.5px;
+}
+
+.mm-v4-plan-note {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+  border: 1px solid rgba(246, 198, 79, 0.15);
+  border-radius: 18px;
+  padding: 15px 16px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.mm-v4-plan-note strong {
+  color: rgba(255, 248, 223, 0.9);
+  font-size: 14px;
+  font-weight: 790;
+}
+
+.mm-v4-plan-note span {
+  color: rgba(230, 231, 235, 0.54);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* 6 — Boundaries, objections, and download close the page once. */
+.mm-v4-trust-faq {
+  padding-block: clamp(42px, 4.8vw, 68px) clamp(48px, 5.2vw, 74px) !important;
+}
+
+.mm-v4-trust-panel {
+  gap: clamp(28px, 4vw, 54px);
+  border-radius: 30px;
+  padding: clamp(26px, 3.6vw, 42px);
+}
+
+.mm-v4-trust-panel .mm-v2-trust-intro h2 {
+  font-size: clamp(38px, 4.4vw, 54px);
+}
+
+.mm-v4-trust-panel .mm-v2-trust-intro > p {
+  margin-top: 15px;
+  font-size: 14.5px;
+}
+
+.mm-v4-trust-panel .mm-v2-trust-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mm-v4-trust-panel .mm-v2-trust-grid article,
+.mm-v4-trust-panel .mm-v2-trust-grid article:first-child {
+  border: 1px solid rgba(151, 183, 224, 0.1);
+  border-radius: 16px;
+  padding: 14px 15px;
+  background: rgba(255, 255, 255, 0.018);
+}
+
+.mm-v4-trust-panel .mm-v2-trust-grid h3 {
+  font-size: 14px;
+}
+
+.mm-v4-trust-panel .mm-v2-trust-grid p {
+  margin-top: 5px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.mm-v4-close-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.72fr);
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.mm-v4-faq-card,
+.mm-v4-download-card {
+  border: 1px solid rgba(151, 183, 224, 0.11);
+  border-radius: 28px;
+  background: rgba(7, 13, 24, 0.64);
+  box-shadow: 0 28px 96px rgba(0, 0, 0, 0.24);
+}
+
+.mm-v4-faq-card {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.64fr) minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+  padding: clamp(24px, 3vw, 34px);
+}
+
+.mm-v4-faq-heading h2 {
+  margin-top: 16px;
+  font-size: clamp(31px, 3.3vw, 42px);
+}
+
+.mm-v4-faq-card .mm-v2-faq-list details {
+  border-radius: 16px;
+}
+
+.mm-v4-faq-card .mm-v2-faq-list summary {
+  padding: 15px 48px 15px 16px;
+  font-size: 13.5px;
+}
+
+.mm-v4-faq-card .mm-v2-faq-list details p {
+  padding: 14px 16px 16px;
+  font-size: 12.5px;
+}
+
+.mm-v4-download-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(26px, 3.2vw, 38px);
+  background:
+    radial-gradient(420px 280px at 100% 100%, rgba(32, 214, 107, 0.11), transparent 72%),
+    linear-gradient(160deg, rgba(12, 25, 38, 0.84), rgba(7, 13, 24, 0.88));
+}
+
+.mm-v4-download-card h2 {
+  margin-top: 18px;
+  max-width: 520px;
+  font-size: clamp(36px, 4vw, 50px);
+}
+
+.mm-v4-download-card > p {
+  margin-top: 14px;
+  color: var(--mm2-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.mm-v4-download-card .mm-store-row {
+  width: 100%;
+  margin-top: 22px;
+}
+
+.mm-v4-download-card .store-btn {
+  min-width: 0;
+}
+
+.mm-v4-download-card .mm-v2-final-cta__secondary {
+  margin-top: 17px;
+}
+
+@media (min-width: 960px) {
+  .mm-v4-hero .mm-v2-hero__grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(330px, 0.64fr);
+  }
+
+  .mm-v4-page .mm-v2-showcase {
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.68fr);
+  }
+
+  .mm-v4-intelligence .mm-v2-feature-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(400px, 0.72fr);
+  }
+
+  .mm-v4-premium-panel {
+    grid-template-columns: minmax(0, 0.95fr) minmax(340px, 0.75fr);
+  }
+
+  .mm-v4-trust-panel {
+    grid-template-columns: minmax(0, 0.72fr) minmax(440px, 1fr);
+  }
+}
+
+@media (max-width: 959px) {
+  .mm-v4-proof-grid,
+  .mm-v4-steps,
+  .mm-v4-outcome-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-v4-outcome-head,
+  .mm-v4-close-grid,
+  .mm-v4-faq-card {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-v4-outcome-head {
+    align-items: start;
+    gap: 16px;
+  }
+
+  .mm-v4-intelligence .mm-v2-feature-visual {
+    min-height: 510px;
+  }
+
+  .mm-v4-intelligence .mm-v3-intelligence-stack {
+    height: 510px;
+  }
+
+  .mm-v4-trust-panel .mm-v2-trust-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mm-v4-download-card {
+    align-items: center;
+    text-align: center;
+  }
+
+  .mm-v4-download-card .mm-store-row {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 719px) {
+  .mm-v4-page .mm-section {
+    padding-block: 44px;
+  }
+
+  .mm-v4-hero {
+    padding-top: 40px;
+    padding-bottom: 38px;
+  }
+
+  .mm-v4-hero .mm-v2-poster--hero {
+    width: min(100%, 294px) !important;
+  }
+
+  .mm-v4-proof-grid {
+    margin-top: 32px;
+    border-radius: 20px;
+    padding: 8px;
+  }
+
+  .mm-v4-proof-grid article {
+    padding: 13px;
+  }
+
+  .mm-v4-page .mm-v2-showcase__visual {
+    min-height: 540px;
+  }
+
+  .mm-v4-page .mm-v3-phone-frame--showcase {
+    width: min(100%, 234px);
+  }
+
+  .mm-v4-intelligence .mm-v2-feature-visual {
+    min-height: 478px;
+  }
+
+  .mm-v4-intelligence .mm-v3-intelligence-stack {
+    width: min(100%, 326px);
+    height: 478px;
+  }
+
+  .mm-v4-intelligence .mm-v3-phone-frame--rear {
+    top: 48px;
+    left: 0;
+    width: 160px;
+  }
+
+  .mm-v4-intelligence .mm-v3-phone-frame--front {
+    right: 0;
+    width: 214px;
+  }
+
+  .mm-v4-dual-grid .mm-v2-dual-card {
+    padding: 20px;
+  }
+
+  .mm-v4-dual-grid .mm-v2-dual-card .mm-v2-poster {
+    width: min(100%, 212px) !important;
+  }
+
+  .mm-v4-steps,
+  .mm-v4-outcome-grid {
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .mm-v4-steps article,
+  .mm-v4-outcome-grid article {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .mm-v4-outcome-head h2,
+  .mm-v4-trust-panel .mm-v2-trust-intro h2,
+  .mm-v4-faq-heading h2,
+  .mm-v4-download-card h2 {
+    font-size: clamp(35px, 10.8vw, 48px);
+  }
+
+  .mm-v4-premium-panel {
+    padding: 24px 20px;
+  }
+
+  .mm-v4-trust-panel,
+  .mm-v4-faq-card,
+  .mm-v4-download-card {
+    border-radius: 24px;
+  }
+
+  .mm-v4-faq-card {
+    padding: 22px 18px;
+  }
+
+  .mm-v4-download-card {
+    padding: 28px 18px;
+  }
+}

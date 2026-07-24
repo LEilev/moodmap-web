@@ -5,7 +5,6 @@ import {
   CalendarDays,
   Check,
   ChevronRight,
-  Layers3,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -66,26 +65,21 @@ const APP_SURFACES = [
 const PROOF_ITEMS = [
   ["One date to start", "Use only a date she chose to share."],
   ["Read any cycle day", "Today or the full cycle, without losing your place."],
-  ["Four practical lanes", "PLAN, READ, BOND, and SELF."],
-  ["Private, bounded context", "No mood recording, diagnosis, or fertility planning."],
+  ["Private by design", "No mood recording, diagnosis, or fertility planning."],
 ];
 
-const BENEFITS = [
+const OUTCOMES = [
   {
-    title: "Support without overcorrecting",
-    body: "See whether comfort, space, practical help, conversation, or simple steadiness is the cleaner first layer.",
+    title: "Support with less guesswork",
+    body: "See whether comfort, space, practical help, conversation, or steadiness is the cleaner first layer.",
   },
   {
-    title: "Conversations at a better hour",
-    body: "Separate a valid topic from a poor window so the timing does not become the second problem.",
+    title: "Better-timed conversations",
+    body: "Separate a valid topic from a poor window so timing does not become the second problem.",
   },
   {
-    title: "Intimacy that follows reciprocity",
-    body: "Read pace, mutual energy, and response rather than forcing a moment because the calendar says it should work.",
-  },
-  {
-    title: "Restraint before friction compounds",
-    body: "Catch the joke, explanation, push, or repair attempt that would make a small issue larger than it needs to be.",
+    title: "Reciprocity over scripts",
+    body: "Read pace, mutual energy, and response instead of forcing a moment because the calendar says it should work.",
   },
 ];
 
@@ -100,7 +94,7 @@ const PREMIUM_FEATURES = [
   "Complete PLAN, READ, BOND, and SELF Protocol",
   "Deeper WHY explanations",
   "Full Cycle Calendar",
-  "Cycle Intelligence",
+  "Complete Cycle Intelligence",
   "Risk Radar and Timing Alerts",
 ];
 
@@ -138,7 +132,10 @@ const FAQ_ITEMS = [
 
 function StoreButtons({ compact = false }) {
   return (
-    <div id={compact ? undefined : "download"} className={["mm-store-row", compact ? "mm-store-row--center" : ""].filter(Boolean).join(" ")}>
+    <div
+      id={compact ? undefined : "download"}
+      className={["mm-store-row", compact ? "mm-store-row--center" : ""].filter(Boolean).join(" ")}
+    >
       <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap for iPhone on the App Store">
         <span className="store-btn__icon" aria-hidden="true"><FaApple /></span>
         <span className="store-btn__copy"><small>App Store</small><strong>Download for iPhone</strong></span>
@@ -166,41 +163,35 @@ function Poster({ src, alt, className = "", priority = false }) {
 
 function HeroSection() {
   return (
-    <section className="mm-v2-hero">
-      <div className="mm-container mm-v2-hero__grid">
-        <div className="mm-v2-hero__copy" data-reveal>
-          <SectionLabel>Cycle-aware relationship intelligence for men</SectionLabel>
-          <h1>Read the day before you react.</h1>
-          <p className="mm-v2-hero__lead">
-            One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner response.
-          </p>
-          <p className="mm-v2-boundary">Context for your response. Not a verdict on her.</p>
-          <StoreButtons />
-          <div className="mm-v2-hero__microproof" aria-label="MoodMap availability and boundaries">
-            <span><Check aria-hidden="true" /> Live on iOS and Android</span>
-            <span><Check aria-hidden="true" /> Private by design</span>
-            <span><Check aria-hidden="true" /> Non-medical guidance</span>
+    <section className="mm-v2-hero mm-v4-hero">
+      <div className="mm-container">
+        <div className="mm-v2-hero__grid">
+          <div className="mm-v2-hero__copy" data-reveal>
+            <SectionLabel>Cycle-aware relationship intelligence for men</SectionLabel>
+            <h1>Read the day before you react.</h1>
+            <p className="mm-v2-hero__lead">
+              One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner response.
+            </p>
+            <p className="mm-v2-boundary">Context for your response. Not a verdict on her.</p>
+            <StoreButtons />
+            <div className="mm-v2-hero__microproof" aria-label="MoodMap availability and boundaries">
+              <span><Check aria-hidden="true" /> Live on iOS and Android</span>
+              <span><Check aria-hidden="true" /> Private by design</span>
+              <span><Check aria-hidden="true" /> Non-medical guidance</span>
+            </div>
+          </div>
+
+          <div className="mm-v2-hero__visual" data-reveal>
+            <Poster
+              src="/screenshots/web-2026/read-day.webp"
+              alt="MoodMap Today’s State showing cycle day, luteal phase, capacity, intelligence, risk, and direction."
+              className="mm-v2-poster--hero"
+              priority
+            />
           </div>
         </div>
 
-        <div className="mm-v2-hero__visual" data-reveal>
-          <Poster
-            src="/screenshots/web-2026/read-day.webp"
-            alt="MoodMap Today’s State showing cycle day, luteal phase, capacity, intelligence, risk, and direction."
-            className="mm-v2-poster--hero"
-            priority
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function ProofStrip() {
-  return (
-    <section className="mm-v2-proof-section" aria-label="MoodMap product proof">
-      <div className="mm-container">
-        <div className="mm-v2-proof-grid" data-reveal>
+        <div className="mm-v4-proof-grid" data-reveal aria-label="MoodMap product proof">
           {PROOF_ITEMS.map(([title, body]) => (
             <article key={title}>
               <span aria-hidden="true" />
@@ -215,7 +206,7 @@ function ProofStrip() {
 
 function ProductSection() {
   return (
-    <section className="mm-section mm-v2-product-section" aria-labelledby="product-heading">
+    <section className="mm-section mm-v2-product-section mm-v4-product-section" aria-labelledby="product-heading">
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
       </div>
@@ -225,7 +216,7 @@ function ProductSection() {
 
 function IntelligenceSection() {
   return (
-    <section id="intelligence-layer" className="mm-section mm-v2-intelligence">
+    <section id="intelligence-layer" className="mm-section mm-v2-intelligence mm-v4-intelligence">
       <div className="mm-container mm-v2-feature-grid">
         <div className="mm-v2-feature-copy" data-reveal>
           <SectionLabel>Cycle Intelligence</SectionLabel>
@@ -268,11 +259,11 @@ function IntelligenceSection() {
   );
 }
 
-function AlertsOnboardingSection() {
+function JourneySection() {
   return (
-    <section className="mm-section mm-v2-dual-section">
+    <section id="how-it-works" className="mm-section mm-v4-journey">
       <div className="mm-container">
-        <div className="mm-v2-dual-grid">
+        <div className="mm-v2-dual-grid mm-v4-dual-grid">
           <article className="mm-v2-dual-card" data-reveal>
             <div className="mm-v2-dual-card__copy">
               <span className="mm-v2-icon-chip"><BellRing aria-hidden="true" /></span>
@@ -293,26 +284,12 @@ function AlertsOnboardingSection() {
             <Poster src="/screenshots/web-2026/onboarding.webp" alt="MoodMap onboarding showing one-date setup, cycle model, date choice, and Show today’s read button." />
           </article>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function BenefitsSection() {
-  return (
-    <section className="mm-section mm-v2-benefits">
-      <div className="mm-container">
-        <div className="mm-v2-section-heading" data-reveal>
-          <SectionLabel>What better timing changes</SectionLabel>
-          <h2>More understanding. Less guesswork.</h2>
-          <p>MoodMap is not only about avoiding conflict. It helps you notice where support, initiative, conversation, connection, or restraint can land better.</p>
-        </div>
-        <div className="mm-v2-benefit-grid">
-          {BENEFITS.map((item, index) => (
-            <article key={item.title} data-reveal>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <h3>{item.title}</h3>
-              <p>{item.body}</p>
+        <div className="mm-v4-steps" data-reveal aria-label="How MoodMap works">
+          {HOW_STEPS.map(([number, title, body]) => (
+            <article key={number}>
+              <span>{number}</span>
+              <div><h3>{title}</h3><p>{body}</p></div>
             </article>
           ))}
         </div>
@@ -321,18 +298,35 @@ function BenefitsSection() {
   );
 }
 
-function PremiumSection() {
+function ValuePremiumSection() {
   return (
-    <section id="premium" className="mm-section mm-v2-premium">
+    <section id="premium" className="mm-section mm-v4-value-premium">
       <div className="mm-container">
-        <div className="mm-v2-premium-panel" data-reveal>
+        <div className="mm-v4-outcome-head" data-reveal>
+          <div>
+            <SectionLabel>What better timing changes</SectionLabel>
+            <h2>More understanding. Less guesswork.</h2>
+          </div>
+          <p>MoodMap helps you notice where support, initiative, conversation, connection, or restraint can land better.</p>
+        </div>
+
+        <div className="mm-v4-outcome-grid">
+          {OUTCOMES.map((item, index) => (
+            <article key={item.title} data-reveal>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div><h3>{item.title}</h3><p>{item.body}</p></div>
+            </article>
+          ))}
+        </div>
+
+        <div className="mm-v2-premium-panel mm-v4-premium-panel" data-reveal>
           <div className="mm-v2-premium-copy">
             <SectionLabel>Premium+</SectionLabel>
             <h2>Unlock the full read.</h2>
-            <p>Go beyond the daily headline with the full Day Brief, complete Protocol, deeper WHY explanations, Cycle Intelligence, Risk Radar, and Timing Alerts.</p>
-            <div className="mm-v2-price-row" aria-label="MoodMap Premium Plus prices">
-              <div><span>Monthly</span><strong>$2.99</strong><small>per month</small></div>
-              <div><span>Annual</span><strong>$24.99</strong><small>per year</small></div>
+            <p>Go beyond the daily headline with the complete Day Brief, full Protocol, deeper WHY explanations, Cycle Intelligence, Risk Radar, and Timing Alerts.</p>
+            <div className="mm-v4-plan-note">
+              <strong>Monthly or annual access</strong>
+              <span>Current pricing is shown in your local App Store or Google Play.</span>
             </div>
             <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ChevronRight aria-hidden="true" /></Link>
           </div>
@@ -348,72 +342,43 @@ function PremiumSection() {
   );
 }
 
-function HowItWorks() {
+function TrustFaqCtaSection() {
   return (
-    <section id="how-it-works" className="mm-section mm-v2-how">
+    <section id="trust" className="mm-section mm-v4-trust-faq">
       <div className="mm-container">
-        <div className="mm-v2-section-heading mm-v2-section-heading--center" data-reveal>
-          <SectionLabel>How it works</SectionLabel>
-          <h2>One date. One read. A cleaner response.</h2>
-        </div>
-        <div className="mm-v2-step-grid">
-          {HOW_STEPS.map(([number, title, body]) => (
-            <article key={number} data-reveal><span>{number}</span><h3>{title}</h3><p>{body}</p></article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function TrustSection() {
-  return (
-    <section id="trust" className="mm-section mm-v2-trust">
-      <div className="mm-container">
-        <div className="mm-v2-trust-panel" data-reveal>
+        <div className="mm-v2-trust-panel mm-v4-trust-panel" data-reveal>
           <div className="mm-v2-trust-intro">
             <span className="mm-v2-icon-chip"><ShieldCheck aria-hidden="true" /></span>
             <SectionLabel>Clear boundaries</SectionLabel>
-            <h2>Private, careful, and narrower than certainty.</h2>
+            <h2>Useful context. Clear limits.</h2>
             <p>MoodMap gives you context for your own response. It does not turn your partner into a score, diagnosis, or dashboard.</p>
           </div>
           <div className="mm-v2-trust-grid">
             {TRUST_ITEMS.map(([title, body]) => <article key={title}><h3>{title}</h3><p>{body}</p></article>)}
           </div>
         </div>
-      </div>
-    </section>
-  );
-}
 
-function FaqSection() {
-  return (
-    <section id="questions" className="mm-section mm-v2-faq">
-      <div className="mm-container mm-v2-faq-grid">
-        <div className="mm-v2-faq-intro" data-reveal>
-          <SectionLabel>Questions</SectionLabel>
-          <h2>What MoodMap does—and what it does not.</h2>
-          <p>A precise product is easier to trust. These are the boundaries that keep the daily read useful.</p>
-        </div>
-        <div className="mm-v2-faq-list" data-reveal>
-          {FAQ_ITEMS.map(([question, answer], index) => (
-            <details key={question} open={index === 0}><summary>{question}</summary><p>{answer}</p></details>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+        <div className="mm-v4-close-grid">
+          <div id="questions" className="mm-v4-faq-card" data-reveal>
+            <div className="mm-v4-faq-heading">
+              <SectionLabel>Questions</SectionLabel>
+              <h2>What MoodMap does—and what it does not.</h2>
+            </div>
+            <div className="mm-v2-faq-list">
+              {FAQ_ITEMS.map(([question, answer], index) => (
+                <details key={question} open={index === 0}><summary>{question}</summary><p>{answer}</p></details>
+              ))}
+            </div>
+          </div>
 
-function FinalCta() {
-  return (
-    <section className="mm-v2-final-cta">
-      <div className="mm-container" data-reveal>
-        <span className="mm-v2-final-cta__icon"><Sparkles aria-hidden="true" /></span>
-        <h2>Read the day before you react.</h2>
-        <p>One private daily read based on cycle context. Available on iOS and Android.</p>
-        <StoreButtons compact />
-        <Link href="/learn" className="mm-v2-final-cta__secondary">Explore the guides <ChevronRight aria-hidden="true" /></Link>
+          <div className="mm-v4-download-card" data-reveal>
+            <span className="mm-v2-final-cta__icon"><Sparkles aria-hidden="true" /></span>
+            <h2>Read the day before you react.</h2>
+            <p>One private daily read based on cycle context. Available on iOS and Android.</p>
+            <StoreButtons compact />
+            <Link href="/learn" className="mm-v2-final-cta__secondary">Explore the guides <ChevronRight aria-hidden="true" /></Link>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -429,19 +394,14 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ScrollReveal />
 
-      <div className="mm-page mm-v2-page mm-v3-page relative isolate overflow-x-hidden text-white">
+      <div className="mm-page mm-v2-page mm-v3-page mm-v4-page relative isolate overflow-x-hidden text-white">
         <div aria-hidden="true" className="mm-background-field" />
         <HeroSection />
-        <ProofStrip />
         <ProductSection />
         <IntelligenceSection />
-        <AlertsOnboardingSection />
-        <BenefitsSection />
-        <PremiumSection />
-        <HowItWorks />
-        <TrustSection />
-        <FaqSection />
-        <FinalCta />
+        <JourneySection />
+        <ValuePremiumSection />
+        <TrustFaqCtaSection />
       </div>
     </>
   );
