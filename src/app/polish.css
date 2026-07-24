@@ -7860,3 +7860,220 @@ html {
     font-size: 12.75px;
   }
 }
+
+/* ========================================================================== */
+/* MoodMap Web 2026 — Round 5: final hierarchy + Intelligence conversion      */
+/* ========================================================================== */
+
+/* A slightly higher contrast floor for explanatory text. The hierarchy stays
+   quiet, but the body copy now survives weaker displays and 100% desktop zoom. */
+.mm-v5-page {
+  --mm5-body: rgba(224, 233, 247, 0.72);
+  --mm5-body-strong: rgba(233, 240, 250, 0.8);
+}
+
+.mm-v5-page .mm-v4-proof-grid p,
+.mm-v5-page .mm-v2-showcase-tab__copy small,
+.mm-v5-page .mm-v4-steps p,
+.mm-v5-page .mm-v4-outcome-grid p,
+.mm-v5-page .mm-v4-trust-panel .mm-v2-trust-grid p,
+.mm-v5-page .mm-v4-plan-note span {
+  color: rgba(224, 233, 247, 0.68);
+}
+
+.mm-v5-page .mm-v5-faq-card .mm-v2-faq-list details p {
+  color: rgba(226, 235, 248, 0.7);
+}
+
+/* Intelligence subpage: tighter editorial rhythm without flattening the page. */
+.mm-v6-intelligence-page {
+  --mm6-body: rgba(224, 233, 247, 0.7);
+  --mm6-body-strong: rgba(234, 240, 249, 0.79);
+}
+
+.mm-v6-intelligence-page #how-the-model-works {
+  scroll-margin-top: 92px;
+}
+
+.mm-v6-intelligence-page .mm-v2-subhero {
+  padding-block: clamp(48px, 5vw, 70px) clamp(42px, 4.6vw, 64px);
+}
+
+.mm-v6-intelligence-page .mm-v2-value-section,
+.mm-v6-intelligence-page .mm-v2-signal-section,
+.mm-v6-intelligence-page .mm-v2-boundary-section,
+.mm-v6-intelligence-page .mm-v2-faq--subpage {
+  padding-block: clamp(46px, 4.7vw, 64px) !important;
+}
+
+.mm-v6-intelligence-page .mm-v2-subhero__lead,
+.mm-v6-intelligence-page .mm-v2-section-heading > p,
+.mm-v6-intelligence-page .mm-v2-signal-intro > p,
+.mm-v6-intelligence-page .mm-v2-faq-intro > p {
+  color: var(--mm6-body-strong);
+}
+
+.mm-v6-intelligence-page .mm-v2-value-grid p,
+.mm-v6-intelligence-page .mm-v2-signal-list p,
+.mm-v6-intelligence-page .mm-v2-boundary-copy p,
+.mm-v6-intelligence-page .mm-v2-faq-list details p {
+  color: var(--mm6-body);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.mm-v6-intelligence-page .mm-v2-value-grid h3,
+.mm-v6-intelligence-page .mm-v2-signal-list h3 {
+  font-size: 15.5px;
+}
+
+.mm-v6-intelligence-page .mm-v2-boundary-panel {
+  padding: clamp(28px, 3.5vw, 42px);
+}
+
+.mm-v6-intelligence-page .mm-v2-faq-list summary {
+  font-size: 14.75px;
+}
+
+/* Sources now feel like part of the product page rather than a detached legal
+   appendix. The CTA below converts the high-intent reader without a lone button. */
+.mm-v6-intelligence-close {
+  padding-bottom: clamp(58px, 6vw, 82px);
+}
+
+.mm-v6-intelligence-source .glass-card {
+  border-color: rgba(151, 183, 224, 0.15);
+  border-radius: 28px;
+  background:
+    radial-gradient(620px 240px at 100% 0%, rgba(246, 132, 58, 0.055), transparent 72%),
+    rgba(13, 21, 35, 0.76);
+  box-shadow: 0 28px 86px rgba(0, 0, 0, 0.22);
+}
+
+.mm-v6-intelligence-source .glass-card > p:first-child {
+  color: rgba(220, 230, 245, 0.52);
+}
+
+.mm-v6-intelligence-source .glass-card > p,
+.mm-v6-intelligence-source .glass-card li {
+  color: rgba(225, 234, 246, 0.7);
+}
+
+.mm-v6-intelligence-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(28px, 4.5vw, 64px);
+  margin-top: 18px;
+  border: 1px solid rgba(246, 198, 79, 0.2);
+  border-radius: 28px;
+  padding: clamp(27px, 3.4vw, 40px);
+  background:
+    radial-gradient(520px 240px at 0% 0%, rgba(246, 198, 79, 0.1), transparent 72%),
+    radial-gradient(420px 220px at 100% 100%, rgba(32, 214, 107, 0.055), transparent 72%),
+    rgba(15, 21, 32, 0.78);
+  box-shadow: 0 30px 92px rgba(0, 0, 0, 0.24);
+}
+
+.mm-v6-intelligence-cta h2 {
+  max-width: 690px;
+  margin-top: 17px;
+  color: var(--mm2-text);
+  font-size: clamp(34px, 4vw, 49px);
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.mm-v6-intelligence-cta p {
+  max-width: 730px;
+  margin-top: 14px;
+  color: var(--mm6-body);
+  font-size: 15px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.mm-v6-intelligence-cta .mm-v2-primary-link {
+  min-width: 158px;
+  white-space: nowrap;
+}
+
+@media (max-width: 959px) {
+  .mm-v6-intelligence-page .mm-v2-subhero {
+    padding-top: 46px;
+  }
+
+  .mm-v6-intelligence-cta {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .mm-v6-intelligence-cta .mm-v2-primary-link {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 719px) {
+  .mm-v6-intelligence-page .mm-v2-subhero,
+  .mm-v6-intelligence-page .mm-v2-value-section,
+  .mm-v6-intelligence-page .mm-v2-signal-section,
+  .mm-v6-intelligence-page .mm-v2-boundary-section,
+  .mm-v6-intelligence-page .mm-v2-faq--subpage {
+    padding-block: 44px !important;
+  }
+
+  .mm-v6-intelligence-page .mm-v2-subhero__actions {
+    width: 100%;
+  }
+
+  .mm-v6-intelligence-page .mm-v2-subhero__actions .mm-v2-primary-link,
+  .mm-v6-intelligence-page .mm-v2-subhero__actions .mm-v2-secondary-link {
+    flex: 1 1 220px;
+  }
+
+  .mm-v6-intelligence-close {
+    padding-bottom: 56px;
+  }
+
+  .mm-v6-intelligence-cta {
+    border-radius: 24px;
+    padding: 24px 20px;
+  }
+
+  .mm-v6-intelligence-cta h2 {
+    font-size: clamp(34px, 10.5vw, 43px);
+  }
+
+  .mm-v6-intelligence-cta .mm-v2-primary-link {
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
+@media (max-width: 430px) {
+  .mm-v6-intelligence-page .mm-v2-subhero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mm-v6-intelligence-page .mm-v2-subhero__actions .mm-v2-primary-link,
+  .mm-v6-intelligence-page .mm-v2-subhero__actions .mm-v2-secondary-link {
+    width: 100%;
+    min-height: 50px;
+    flex-basis: auto;
+  }
+
+  .mm-v6-intelligence-source .glass-card {
+    border-radius: 22px;
+  }
+
+  .mm-v6-intelligence-page .mm-v2-value-grid p,
+  .mm-v6-intelligence-page .mm-v2-signal-list p,
+  .mm-v6-intelligence-page .mm-v2-boundary-copy p,
+  .mm-v6-intelligence-page .mm-v2-faq-list details p,
+  .mm-v6-intelligence-cta p {
+    font-size: 14px;
+  }
+}

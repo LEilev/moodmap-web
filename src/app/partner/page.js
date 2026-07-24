@@ -4,9 +4,9 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 
 const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 
-// NOTE: Current prices (subject to change as pricing is tested/optimized).
-const INTRO_MONTHLY_PRICE = 2.99;
-const INTRO_YEARLY_PRICE = 24.99;
+// NOTE: Current US App Store price points. Local storefront pricing may vary.
+const INTRO_MONTHLY_PRICE = 3.99;
+const INTRO_YEARLY_PRICE = 29.99;
 const REV_SHARE = 0.5;
 
 // Keep these as numbers so we can use them for illustrative examples.

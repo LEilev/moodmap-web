@@ -110,7 +110,7 @@ export default function IntelligencePage() {
   };
 
   return (
-    <main className="mm-page mm-v2-page mm-v3-page mm-v2-subpage relative isolate overflow-hidden text-white">
+    <main className="mm-page mm-v2-page mm-v3-page mm-v2-subpage mm-v6-intelligence-page relative isolate overflow-hidden text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
@@ -129,7 +129,7 @@ export default function IntelligencePage() {
             <p className="mm-v2-boundary">Context—not measurement, diagnosis, or certainty about an individual person.</p>
             <div className="mm-v2-subhero__actions">
               <Link href="/#download" className="mm-v2-primary-link">Download MoodMap <ArrowRight aria-hidden="true" /></Link>
-              <Link href="/learn/cycle-aware-relationship-timing" className="mm-v2-secondary-link">Learn the category</Link>
+              <Link href="#how-the-model-works" className="mm-v2-secondary-link">How the model works</Link>
             </div>
           </div>
 
@@ -159,7 +159,7 @@ export default function IntelligencePage() {
         </div>
       </section>
 
-      <section className="mm-section mm-v2-value-section">
+      <section id="how-the-model-works" className="mm-section mm-v2-value-section">
         <div className="mm-container">
           <div className="mm-v2-section-heading" data-reveal>
             <span className="mm-section-label">How the model is read</span>
@@ -233,11 +233,20 @@ export default function IntelligencePage() {
         </div>
       </section>
 
-      <section className="mm-container pb-16 sm:pb-20">
-        <div data-reveal>
+      <section className="mm-container mm-v6-intelligence-close">
+        <div className="mm-v6-intelligence-source" data-reveal>
           <SourceTrustBlock />
         </div>
-        <div className="mt-8 text-center" data-reveal>
+
+        <div className="mm-v6-intelligence-cta" data-reveal>
+          <div>
+            <span className="mm-section-label">Premium+</span>
+            <h2>Unlock the complete intelligence layer.</h2>
+            <p>
+              Get the full Cycle Intelligence view alongside the complete Day Brief,
+              Risk Radar, Protocol, and deeper WHY explanations.
+            </p>
+          </div>
           <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ArrowRight aria-hidden="true" /></Link>
         </div>
       </section>
