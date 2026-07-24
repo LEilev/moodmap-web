@@ -171,7 +171,7 @@ export default function LutealPhaseRelationshipsPage() {
               PMS relationship timing
             </Link>
             <Link href="/intelligence" className="mm-link text-sm text-white/76">
-              Explore Hormone Graph Intelligence →
+              Explore Cycle Intelligence →
             </Link>
           </div>
         </div>

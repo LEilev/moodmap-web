@@ -1,12 +1,12 @@
 export const SITE_NAME = "MoodMap";
 export const SITE_URL = "https://moodmap-app.com";
-export const SITE_TITLE = `${SITE_NAME} — Cycle-Aware Relationship Intelligence`;
+export const SITE_TITLE = `${SITE_NAME} — Cycle-Aware Relationship Timing for Men`;
 export const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 export const OG_IMAGE_SRC = "/og/moodmap-og.jpg";
 export const OG_IMAGE_ALT =
-  "MoodMap — cycle-aware relationship intelligence for men. One private daily read from her cycle.";
-export const UPDATED_ISO = "2026-07-08";
-export const UPDATED_DISPLAY = "July 8, 2026";
+  "MoodMap — one private daily read based on your partner’s cycle.";
+export const UPDATED_ISO = "2026-07-24";
+export const UPDATED_DISPLAY = "July 24, 2026";
 
 export const OFFICIAL_APP_NAME = "MoodMap: Relationship Timing";
 export const APPLE_APP_ID = "6746102626";
@@ -14,7 +14,7 @@ export const APP_BUNDLE_ID = "com.eilev.moodmapnextgen";
 export const ANDROID_PACKAGE_ID = "com.eilev.moodmapnextgen";
 export const SUPPORT_EMAIL = "support@moodmap-app.com";
 export const DISAMBIGUATION_DESCRIPTION =
-  "MoodMap at moodmap-app.com is a cycle-aware relationship intelligence app for men, not a mood tracker, location tracker, emotional journaling app, or workplace coaching tool.";
+  "MoodMap at moodmap-app.com is a cycle-aware relationship timing app for men. It models cycle-based context but does not record or monitor a partner’s actual mood.";
 export const ENTITY_ALTERNATE_NAMES = [
   "MoodMap: Relationship Timing",
   "MoodMap Relationship Timing",
@@ -28,7 +28,7 @@ export const PLAYSTORE_URL =
   `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_ID}`;
 
 export const DEFAULT_META_DESCRIPTION =
-  "MoodMap is cycle-aware relationship intelligence for men: one private daily read from menstrual-cycle context, capacity, stress sensitivity, and timing.";
+  "MoodMap gives men one private daily read based on their partner’s cycle: what changed, what matters, what to avoid, and the cleaner response.";
 
 export const SOURCE_LINKS = [
   {
@@ -74,7 +74,8 @@ export function organizationJsonLd() {
       "Relationship timing",
       "Menstrual cycle context",
       "PMS support for partners",
-      "Hormone Graph Intelligence",
+      "Cycle Intelligence",
+      "Risk Radar",
       "Capacity and stress sensitivity",
     ],
     sameAs: [APPSTORE_URL, PLAYSTORE_URL],
@@ -104,7 +105,7 @@ export function mobileApplicationJsonLd(path = "/") {
     url: absoluteUrl(path),
     description: DEFAULT_META_DESCRIPTION,
     operatingSystem: "iOS, Android",
-    applicationCategory: "LifestyleApplication",
+    applicationCategory: "HealthApplication",
     applicationSubCategory: "Cycle-aware relationship intelligence",
     inLanguage: "en",
     audience: {
@@ -129,20 +130,19 @@ export function mobileApplicationJsonLd(path = "/") {
       },
     ],
     featureList: [
-      "Cycle-aware relationship intelligence",
-      "Hormone Graph Intelligence",
-      "Modeled hormone activity context",
-      "Capacity and stress sensitivity signals",
-      "Daily Briefing",
-      "Room Read / SitRep",
-      "Friction Risk / Risk Radar",
-      "Move + Reason / CommandDeck",
-      "Menstrual cycle relationship timing",
+      "Today’s State",
+      "Day Brief",
+      "Full Cycle Calendar",
+      "Cycle Intelligence",
+      "Modeled hormone movement context",
+      "Cycle-based capacity",
+      "Risk Radar",
+      "PLAN, READ, BOND, and SELF Protocol",
+      "Deeper WHY explanations",
+      "Timing Alerts",
       "PMS timing awareness",
-      "Luteal load context",
-      "Intimacy timing context",
-      "Discreet Mode",
-      "Phase Alerts",
+      "Fertile-window and estimated ovulation timing",
+      "Relationship timing for support, conversation, restraint, and intimacy",
     ],
     offers: {
       "@type": "Offer",
@@ -263,7 +263,7 @@ export function aboutPageJsonLd() {
       alternateName: ENTITY_ALTERNATE_NAMES,
       disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
       operatingSystem: "iOS, Android",
-      applicationCategory: "LifestyleApplication",
+      applicationCategory: "HealthApplication",
       applicationSubCategory: "Cycle-aware relationship intelligence",
       identifier: [
         { "@type": "PropertyValue", propertyID: "iOS Bundle ID", value: APP_BUNDLE_ID },
@@ -281,15 +281,13 @@ export function SourceTrustBlock() {
     <section className="mt-2">
       <div className="glass-card p-6 sm:p-7 text-left">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
-          Updated: {UPDATED_DISPLAY} · Reviewed for product accuracy by MoodMap
+          Updated: {UPDATED_DISPLAY} · Reviewed for product consistency by MoodMap
         </p>
         <h2 className="mt-3 text-lg sm:text-xl font-semibold text-white">
           Sources and boundaries
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-white/65">
-          MoodMap keeps the product guidance non-medical. These references anchor the basic cycle
-          education; the app translates that context into relationship timing, not diagnosis,
-          contraception, fertility planning, or hormone measurement.
+          MoodMap keeps the product guidance non-medical. These references anchor the basic cycle education. MoodMap translates modeled cycle context into relationship timing—not diagnosis, contraception, fertility planning, or individual hormone measurement.
         </p>
         <ul className="mt-4 grid gap-2 text-sm text-white/70 leading-relaxed list-disc pl-5">
           {SOURCE_LINKS.map(({ label, href }) => (

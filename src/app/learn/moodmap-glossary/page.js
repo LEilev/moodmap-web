@@ -11,16 +11,14 @@ import {
 
 const SLUG = "/learn/moodmap-glossary";
 const META_DESCRIPTION =
-  "Definitions for MoodMap terms including Daily Read, Room Read, Friction Risk, Move + Reason, Hormone Graph Intelligence, capacity, and Premium+.";
+  "Definitions for MoodMap terms including Today’s State, Day Brief, Cycle Calendar, Risk Radar, Protocol, WHY, Cycle Intelligence, capacity, Timing Alerts, and Premium+.";
 
 export const metadata = {
-  title: "Relationship Timing Glossary and App Terms",
+  title: "MoodMap Glossary: Product Terms and Relationship Timing",
   description: META_DESCRIPTION,
-  alternates: {
-    canonical: SLUG,
-  },
+  alternates: { canonical: SLUG },
   openGraph: {
-    title: "MoodMap Relationship Timing Glossary and App Terms",
+    title: "MoodMap Glossary: Product Terms and Relationship Timing",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -28,7 +26,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap Relationship Timing Glossary and App Terms",
+    title: "MoodMap Glossary: Product Terms and Relationship Timing",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -38,112 +36,119 @@ const TERMS = [
   {
     slug: "moodmap",
     name: "MoodMap",
-    short: "Cycle-aware relationship intelligence for men.",
+    short: "One private daily relationship read based on cycle context.",
     definition:
-      "MoodMap is a private relationship-timing app for men. It translates menstrual-cycle context into one daily read for support, conversation, restraint, and intimacy.",
+      "MoodMap is a cycle-aware relationship timing app for men. It turns menstrual-cycle context into practical guidance around support, conversation, restraint, and intimacy.",
   },
   {
     slug: "cycle-aware-relationship-intelligence",
     name: "Cycle-aware relationship intelligence",
-    short: "The category MoodMap is built to own.",
+    short: "The category MoodMap is built around.",
     definition:
-      "Cycle-aware relationship intelligence uses menstrual-cycle phase, modeled hormone activity, capacity, stress sensitivity, and timing context to guide better relationship decisions.",
+      "Cycle-aware relationship intelligence uses cycle position, modeled biological context, capacity, risk, and timing to help a person make more informed relationship decisions without claiming certainty about a partner.",
   },
   {
-    slug: "daily-read",
-    name: "Daily Read",
-    short: "One private read before he moves.",
+    slug: "todays-state",
+    name: "Today’s State",
+    short: "The day-level headline and operating context.",
     definition:
-      "The Daily Read is MoodMap’s main daily output: phase context, capacity, friction risk, timing guidance, and the cleaner move for the day.",
+      "Today’s State is the main MoodMap view: cycle day, phase, cycle-based capacity, hormone context, risk, direction, and a concise Daily Brief entry point.",
   },
   {
-    slug: "sitrep-room-read",
-    name: "SitRep / Room Read",
-    short: "The situation layer.",
+    slug: "day-brief",
+    name: "Day Brief",
+    short: "The full practical synthesis for the day.",
     definition:
-      "SitRep, also presented as Room Read, is MoodMap’s daily situation read: what matters now, what the room can absorb, and what kind of pace is cleaner.",
+      "Day Brief integrates Current Picture, Best Approach, What Can Go Well, and Set It Up so the user can move from context to action without opening several disconnected modules.",
   },
   {
-    slug: "risk-radar-friction-risk",
-    name: "Risk Radar / Friction Risk",
-    short: "The avoid layer.",
+    slug: "cycle-calendar",
+    name: "Cycle Calendar",
+    short: "The full cycle, readable day by day.",
     definition:
-      "Risk Radar, also presented as Friction Risk, flags tripwires, accelerants, and containment moves before a poorly timed action makes the room heavier.",
+      "Cycle Calendar shows period days, fertile-window estimates, estimated ovulation timing, phase progression, cycle signals, capacity, and the daily read for any selected date.",
   },
   {
-    slug: "commanddeck-move-reason",
-    name: "CommandDeck / Move + Reason",
-    short: "The action layer.",
+    slug: "risk-radar",
+    name: "Risk Radar",
+    short: "Tripwire, signal, misread, and countermove.",
     definition:
-      "CommandDeck, also presented as Move + Reason, turns the read into practical action: what to do, what to avoid, and why that move fits today’s context.",
+      "Risk Radar identifies a likely tripwire, what the user may notice, the interpretation most likely to make it worse, the cleaner countermove, and why the situation can escalate.",
   },
   {
-    slug: "hormone-graph-intelligence",
-    name: "Hormone Graph Intelligence",
-    short: "The interpretation layer behind the chart.",
+    slug: "protocol",
+    name: "Protocol",
+    short: "PLAN, READ, BOND, and SELF guidance.",
     definition:
-      "Hormone Graph Intelligence translates cycle phase, modeled hormone activity, capacity, and stress sensitivity into practical timing context. It is not hormone measurement or diagnosis.",
+      "Protocol turns the day’s context into practical moves across planning, reading signals, connection, and self-regulation. Each lane has a distinct job rather than repeating the same advice in four forms.",
+  },
+  {
+    slug: "why-layer",
+    name: "WHY",
+    short: "The reasoning behind a Protocol move.",
+    definition:
+      "The WHY layer explains why a move fits, what signal to look for, how to use the guidance, what friction it may prevent, and what a well-handled outcome can look like.",
+  },
+  {
+    slug: "cycle-intelligence",
+    name: "Cycle Intelligence",
+    short: "Modeled biology translated into possible effects.",
+    definition:
+      "Cycle Intelligence models expected relative hormone movement from cycle timing, then separates Today’s Shift, Biology, and possible effects on energy, sensitivity, recovery demand, connection, and pace. It is not individual hormone measurement.",
+  },
+  {
+    slug: "cycle-signal",
+    name: "Cycle Signal",
+    short: "A compact description of where the cycle is moving.",
+    definition:
+      "Cycle Signal summarizes the current part of the phase progression in practical language, such as rising momentum, a steadier plateau, rain starting, or a heavier late-cycle window.",
   },
   {
     slug: "capacity",
     name: "Capacity",
-    short: "How much the day can realistically absorb.",
+    short: "A practical estimate of how much the day may absorb.",
     definition:
-      "Capacity is MoodMap’s practical read of bandwidth: how much load, complexity, noise, pressure, or emotional demand the day may absorb cleanly.",
+      "Capacity is MoodMap’s cycle-based estimate of bandwidth for complexity, pressure, recovery demand, noise, and emotional or logistical load. It is contextual, not a measurement of a person’s worth or competence.",
   },
   {
-    slug: "stress-sensitivity",
-    name: "Stress Sensitivity",
-    short: "How loudly friction may land.",
+    slug: "timing-alerts",
+    name: "Timing Alerts",
+    short: "Optional heads-ups before important windows and reads.",
     definition:
-      "Stress Sensitivity is MoodMap’s read of stress buffer and friction cost. Higher sensitivity means tone, ambiguity, and unresolved tension may require more care.",
+      "Timing Alerts can surface the Daily Brief, cycle-window changes, and Risk Radar guidance around a preferred time, with delivery rules and quiet-hour controls.",
   },
   {
     slug: "premium-plus",
     name: "Premium+",
-    short: "The full MoodMap daily stack.",
+    short: "The complete MoodMap system.",
     definition:
-      "Premium+ unlocks MoodMap’s full private daily read, including the complete situation layer, friction layer, action layer, intimacy context, and the intelligence behind the read.",
-  },
-  {
-    slug: "discreet-mode",
-    name: "Discreet Mode",
-    short: "A privacy-first presentation mode.",
-    definition:
-      "Discreet Mode is a privacy-oriented way to make MoodMap feel less exposed in everyday use, keeping the product focused on his private timing read.",
-  },
-  {
-    slug: "phase-alerts",
-    name: "Phase Alerts",
-    short: "Low-noise timing signals.",
-    definition:
-      "Phase Alerts are optional timing signals around important cycle windows, built to help him prepare without turning the relationship into a dashboard.",
+      "Premium+ unlocks the full Day Brief, complete Protocol, deeper WHY explanations, full Cycle Calendar, Cycle Intelligence, Risk Radar, Timing Alerts, and expanded preferences.",
   },
 ];
 
 const FAQ = [
   {
     q: "Is MoodMap a period tracker?",
-    a: "MoodMap is not a traditional period tracker. It is a relationship-timing app for men that uses cycle context to guide support, conversation, restraint, and intimacy timing.",
+    a: "MoodMap includes cycle tracking and a full calendar, but its primary job is relationship timing: translating cycle context into a daily read for support, conversation, restraint, and intimacy.",
   },
   {
-    q: "Why does MoodMap use terms like SitRep and CommandDeck?",
-    a: "The product language is designed to make the guidance practical. SitRep reads the room, Risk Radar flags friction, and CommandDeck turns context into a cleaner move.",
+    q: "Is MoodMap a mood tracker?",
+    a: "MoodMap can show mood-relevant cycle context, but it does not record or monitor a partner’s actual mood. It tracks cycle position and models possible effects rather than creating a personal mood journal.",
   },
   {
     q: "What is the main product category?",
-    a: "The clearest category is cycle-aware relationship intelligence: menstrual-cycle context translated into practical relationship timing.",
+    a: "The clearest category is cycle-aware relationship intelligence: menstrual-cycle context translated into practical relationship timing for men.",
   },
   {
     q: "Does MoodMap judge or score a partner?",
-    a: "MoodMap guides his timing and response. It is not a verdict on her mood, intent, identity, or worth.",
+    a: "No. MoodMap guides the user’s own timing and response. It is not a verdict on a partner’s mood, intent, identity, or worth.",
   },
 ];
 
 export default function MoodMapGlossaryPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "MoodMap Relationship Timing Glossary and App Terms",
+    headline: "MoodMap Glossary: Product Terms and Relationship Timing",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([
@@ -161,46 +166,23 @@ export default function MoodMapGlossaryPage() {
 
   return (
     <main className="relative isolate bg-primary-blue text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
+      <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10" />
 
       <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
         <div className="mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
             <BookOpen className="h-4 w-4 opacity-90" aria-hidden />
-            MoodMap product dictionary
+            Current MoodMap product language
           </div>
-
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            MoodMap glossary
-          </h1>
-
-          <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            Clear definitions for MoodMap’s product language: Daily Read, SitRep, Risk Radar,
-            CommandDeck, Hormone Graph Intelligence, capacity, stress sensitivity, and Premium+.
+          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">MoodMap glossary</h1>
+          <p className="mt-4 mx-auto max-w-3xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
+            Clear definitions for Today’s State, Day Brief, Cycle Calendar, Risk Radar, Protocol, WHY, Cycle Intelligence, capacity, Timing Alerts, and Premium+.
           </p>
         </div>
       </section>
@@ -209,16 +191,11 @@ export default function MoodMapGlossaryPage() {
         <div className="mx-auto max-w-5xl grid gap-6">
           <article className="glass-card p-6 sm:p-7 text-left">
             <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Brain className="h-6 w-6 text-white" aria-hidden />
-              </span>
+              <span className="glass-icon"><Brain className="h-6 w-6 text-white" aria-hidden /></span>
               <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  The core definition
-                </h2>
+                <h2 className="text-xl sm:text-2xl font-semibold">The core definition</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap is cycle-aware relationship intelligence for men. It translates menstrual-cycle
-                  context into one private daily read for support, conversation, restraint, and intimacy.
+                  MoodMap is cycle-aware relationship intelligence for men: one private daily read based on a partner’s cycle, designed to improve timing around support, conversation, restraint, and intimacy.
                 </p>
               </div>
             </div>
@@ -228,15 +205,11 @@ export default function MoodMapGlossaryPage() {
             {TERMS.map((term) => (
               <article key={term.slug} id={term.slug} className="glass-card p-5 sm:p-6 text-left scroll-mt-28">
                 <div className="flex items-start gap-4">
-                  <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-emerald-100">
-                    <Sparkles className="h-4 w-4" aria-hidden />
-                  </span>
+                  <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-emerald-100"><Sparkles className="h-4 w-4" aria-hidden /></span>
                   <div>
                     <h2 className="text-lg sm:text-xl font-semibold text-white">{term.name}</h2>
                     <p className="mt-1 text-sm font-semibold text-emerald-100/80">{term.short}</p>
-                    <p className="mt-2 text-sm sm:text-base leading-relaxed text-white/70">
-                      {term.definition}
-                    </p>
+                    <p className="mt-2 text-sm sm:text-base leading-relaxed text-white/70">{term.definition}</p>
                   </div>
                 </div>
               </article>
@@ -245,15 +218,11 @@ export default function MoodMapGlossaryPage() {
 
           <article className="glass-card p-6 sm:p-7 text-left">
             <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Shield className="h-6 w-6 text-white" aria-hidden />
-              </span>
+              <span className="glass-icon"><Shield className="h-6 w-6 text-white" aria-hidden /></span>
               <div>
                 <h2 className="text-xl sm:text-2xl font-semibold">Boundary language</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap does not predict emotions, measure hormones, diagnose conditions, provide
-                  contraception, or replace consent and communication. Its job is narrower and more
-                  useful: context for his timing before he acts.
+                  MoodMap does not record actual mood, measure individual hormones, diagnose conditions, provide contraception, plan fertility, or replace consent and communication. Its narrower job is context for the user’s timing before he acts.
                 </p>
               </div>
             </div>
@@ -271,14 +240,8 @@ export default function MoodMapGlossaryPage() {
           <SourceTrustBlock />
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/intelligence" className="btn-primary inline-flex items-center gap-2">
-              <Layers3 className="h-4 w-4" aria-hidden />
-              Explore Intelligence
-            </Link>
-            <Link href="/learn/cycle-aware-relationship-timing" className="mm-link inline-flex items-center gap-2 text-sm text-white/76">
-              <Compass className="h-4 w-4" aria-hidden />
-              Learn cycle-aware timing →
-            </Link>
+            <Link href="/intelligence" className="btn-primary inline-flex items-center gap-2"><Layers3 className="h-4 w-4" aria-hidden />Explore Intelligence</Link>
+            <Link href="/learn/cycle-aware-relationship-timing" className="mm-link inline-flex items-center gap-2 text-sm text-white/76"><Compass className="h-4 w-4" aria-hidden />Learn cycle-aware timing →</Link>
           </div>
         </div>
       </section>

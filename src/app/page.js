@@ -1,5 +1,14 @@
 import Link from "next/link";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
+import {
+  BellRing,
+  CalendarDays,
+  Check,
+  ChevronRight,
+  Layers3,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 
 import ScrollReveal from "../components/ScrollReveal";
 import ProductShowcase from "../components/ProductShowcase";
@@ -13,184 +22,130 @@ import {
 } from "./seo";
 
 export const metadata = {
-  title: {
-    absolute: SITE_TITLE,
-  },
+  title: { absolute: SITE_TITLE },
   description: DEFAULT_META_DESCRIPTION,
-  alternates: {
-    canonical: "/",
-  },
+  alternates: { canonical: "/" },
 };
-
-const CYCLE_SIGNALS = [
-  ["Menstrual", "Reset support"],
-  ["Follicular", "Talk window"],
-  ["Ovulation", "High connection"],
-  ["Luteal", "Load shift"],
-  ["PMS", "Soft landing"],
-];
 
 const APP_SURFACES = [
   {
-    screenshotPath: "/screenshots/daily-briefing.webp",
-    shotClass: "mm-device-shot--daily-briefing",
-    kicker: "Daily Briefing",
-    title: "What changed today.",
-    quote: "Land it soft. Warmth, easy food, short support.",
-    meta: "Phase + capacity",
-    alt: "MoodMap Daily Briefing screen showing PMS day 28, capacity, hormones, risk, and brief.",
-  },
-  {
-    screenshotPath: "/screenshots/sitrep.webp",
-    shotClass: "mm-device-shot--sitrep",
-    kicker: "Room Read",
-    title: "What matters now.",
-    quote: "Close it softly. Warmth, simple food, low light, short support.",
-    meta: "Context layer",
-    alt: "MoodMap Room Read screen showing guidance for a low-capacity day.",
-  },
-  {
-    screenshotPath: "/screenshots/risk-radar.webp",
-    shotClass: "mm-device-shot--risk-radar",
-    kicker: "Friction Risk",
-    title: "What not to step on.",
-    quote: "Your need for closure is the fresh war.",
-    meta: "Avoid layer",
-    alt: "MoodMap Friction Risk screen showing tripwire and containment guidance.",
-  },
-  {
-    screenshotPath: "/screenshots/commanddeck-main.webp",
-    secondaryScreenshotPath: "/screenshots/commanddeck.webp",
-    shotClass: "mm-device-shot--commanddeck-main",
-    kicker: "Move + Reason",
-    systemLabel: "Move + Reason",
-    title: "What to do — and why.",
-    quote: "A real issue can still be opened at the wrong hour.",
-    meta: "Action layer",
-    alt: "MoodMap Move and Reason screen showing key insight cards and why prompts.",
-    secondaryAlt: "MoodMap WHY layer explaining the reasoning behind a move.",
-    secondaryLabel: "WHY layer",
-    secondaryCaption: "Tap WHY. See the reason before you move.",
-    reasonTitle: "See the reason before you move.",
-    reasonBody: "A real issue can still be valid and still land badly at the wrong hour.",
-    reasonBullets: [
-      "Check the hour before the topic becomes the fight.",
-      "Separate the real issue from the timing problem.",
-      "Make one cleaner move before repair work starts.",
-    ],
+    screenshotPath: "/screenshots/web-2026/day-brief.webp",
+    kicker: "Day Brief",
+    title: "See what changed. Choose a cleaner response.",
+    caption: "Current picture, best approach, upside, and setup.",
+    meta: "Full daily synthesis",
+    alt: "MoodMap Day Brief showing Current Picture, Best Approach, What Can Go Well, and Set It Up.",
     defaultActive: true,
   },
+  {
+    screenshotPath: "/screenshots/web-2026/cycle-calendar.webp",
+    kicker: "Cycle Calendar",
+    title: "See the full cycle. Read any day.",
+    caption: "Phase, capacity, timing windows, and day-level context.",
+    meta: "Full-cycle view",
+    alt: "MoodMap Cycle Calendar showing period, fertile, ovulation, possible edge, capacity, and cycle signal.",
+  },
+  {
+    screenshotPath: "/screenshots/web-2026/risk-radar.webp",
+    kicker: "Risk Radar",
+    title: "Catch the tripwire before it escalates.",
+    caption: "Signal, likely misread, countermove, and why it escalates.",
+    meta: "Friction prevention",
+    alt: "MoodMap Risk Radar showing a tripwire, what to notice, likely misread, countermove, and explanation.",
+  },
+  {
+    screenshotPath: "/screenshots/web-2026/protocol-why.webp",
+    kicker: "Protocol + WHY",
+    title: "Get the move—and the reason.",
+    caption: "PLAN, READ, BOND, and SELF with deeper reasoning.",
+    meta: "Practical guidance",
+    alt: "MoodMap Protocol WHY screen explaining reciprocity, signals, and how to use the guidance.",
+  },
 ];
 
-const PROOF_STRIP_ITEMS = [
-  ["Live on iOS + Android", "Direct App Store and Google Play links."],
-  ["Cycle-aware intelligence", "Phase, capacity, stress sensitivity, and timing context."],
-  ["Private by design", "Built for his timing, not her identity."],
-  ["Clear boundaries", "Relationship timing, outside medical advice."],
+const PROOF_ITEMS = [
+  ["One date to start", "Use only a date she chose to share."],
+  ["Read any cycle day", "Today or the full cycle, without losing your place."],
+  ["Four practical lanes", "PLAN, READ, BOND, and SELF."],
+  ["Private, bounded context", "No mood recording, diagnosis, or fertility planning."],
 ];
 
-const CONSEQUENCE_ITEMS = [
-  [
-    "Wrong-hour talks",
-    "A serious topic opened at the wrong hour can become the second fight.",
-  ],
-  [
-    "Closure pressure",
-    "Low capacity does not reward pressure. It turns clarity into resistance.",
-  ],
-  [
-    "Missed reset windows",
-    "Food, warmth, silence, or one clean support move can save hours of repair.",
-  ],
-  [
-    "Autopilot moves",
-    "The joke, fix, push, or explanation that feels natural can make the room heavier.",
-  ],
+const BENEFITS = [
+  {
+    title: "Support without overcorrecting",
+    body: "See whether comfort, space, practical help, conversation, or simple steadiness is the cleaner first layer.",
+  },
+  {
+    title: "Conversations at a better hour",
+    body: "Separate a valid topic from a poor window so the timing does not become the second problem.",
+  },
+  {
+    title: "Intimacy that follows reciprocity",
+    body: "Read pace, mutual energy, and response rather than forcing a moment because the calendar says it should work.",
+  },
+  {
+    title: "Restraint before friction compounds",
+    body: "Catch the joke, explanation, push, or repair attempt that would make a small issue larger than it needs to be.",
+  },
 ];
 
-const PREMIUM_LAYERS = [
-  ["Fewer wrong-hour talks", "Know when a real issue needs better timing."],
-  ["Less repair work", "Catch pressure before it becomes the second fight."],
-  ["Cleaner support", "Choose warmth, space, talk, or restraint with context."],
-  ["Better intimacy timing", "Read connection, capacity, and pace before he initiates."],
+const INTELLIGENCE_POINTS = [
+  ["Today’s shift", "What the modeled cycle pattern is doing now."],
+  ["Biology", "The cycle mechanics behind the day, stated as context rather than measurement."],
+  ["Possible effects", "How energy, sensitivity, recovery demand, connection, and pace may be affected."],
 ];
 
-const WHY_LAYER_POINTS = [
-  [
-    "Modeled background conditions",
-    "MoodMap reads phase, relative hormone activity, capacity, and stress sensitivity as timing context — not as medical measurement.",
-  ],
-  [
-    "Biology → consequence → interpretation",
-    "The intelligence layer connects the body signal to what it can mean for load, friction, conversation, and pace.",
-  ],
-  [
-    "Cleaner response",
-    "The output is practical: support, wait, simplify, repair lightly, or move closer with better timing.",
-  ],
+const PREMIUM_FEATURES = [
+  "Full Day Brief",
+  "Complete PLAN, READ, BOND, and SELF Protocol",
+  "Deeper WHY explanations",
+  "Full Cycle Calendar",
+  "Cycle Intelligence",
+  "Risk Radar and Timing Alerts",
 ];
 
 const HOW_STEPS = [
-  ["01", "Set the cycle once", "Save the basics. MoodMap handles the daily read."],
-  ["02", "Check today’s signal", "See phase, capacity, risk, and timing before the room gets expensive."],
-  ["03", "Move cleaner", "Support, talk, initiate, or hold steady with the right pace."],
+  ["01", "Set one date", "Start with the first day of her last period—or her best estimate of the next one."],
+  ["02", "Read the day", "See phase, capacity, intelligence, risk, direction, and the full brief."],
+  ["03", "Choose the cleaner response", "Support, speak, initiate, simplify, or hold steady with better timing."],
 ];
 
 const TRUST_ITEMS = [
-  ["Private by design", "Built for a private daily read. Not a public scorecard."],
-  ["Cycle-aware, not medical", "Context for timing, outside diagnosis, contraception, and fertility planning."],
-  ["Built for his response", "The product guides his timing, not her identity, mood, or worth."],
+  ["Does not record her actual mood", "MoodMap models cycle-based context. It does not monitor, journal, judge, or score how your partner feels."],
+  ["Does not measure hormones", "Hormone movement is modeled from cycle timing, not read from a wearable, lab result, or her body."],
+  ["Does not replace communication", "Cycle context never explains the whole person. Consent, direct communication, and what you know still lead."],
+  ["Not medical or fertility guidance", "MoodMap is not diagnosis, contraception, fertility planning, or a substitute for professional care."],
 ];
 
 const FAQ_ITEMS = [
   [
-    "How does MoodMap read the day?",
-    "MoodMap reads menstrual cycle context — phase, modeled hormone activity, capacity, risk, and timing — so he can respond with more care. It gives context for his timing, not a verdict on her.",
+    "What does MoodMap actually track?",
+    "MoodMap tracks cycle position from the date and cycle settings you enter. It does not record or monitor your partner’s actual mood. It uses cycle timing to model context that may matter for energy, sensitivity, capacity, friction, and connection.",
   ],
   [
-    "What kind of guidance is MoodMap?",
-    "MoodMap is cycle-aware relationship intelligence: practical context for support, conversation, intimacy, and restraint. Medical care, contraception, fertility planning, and hormone measurement stay outside the product.",
+    "What appears in the daily read?",
+    "Today’s State combines cycle day, phase, cycle-based capacity, hormone context, risk, and direction. You can then open the full Day Brief, Risk Radar, Protocol, Calendar, and Intelligence layers.",
   ],
   [
-    "Why is the daily read worth paying for?",
-    "The value sits before the mistake: fewer wrong-hour conversations, less repair work, and fewer avoidable friction loops from a cleaner move.",
+    "What is included with Premium+?",
+    "Premium+ unlocks the full Day Brief, complete Protocol access, deeper WHY explanations, full Cycle Calendar, Intelligence, Risk Radar, and Timing Alerts. The app remains free to download.",
   ],
   [
-    "How does this keep the relationship human?",
-    "MoodMap reduces guesswork so he can be less reactive, more careful, and better timed. The point is steadier presence, not mechanical behavior.",
+    "Can MoodMap tell me exactly how she feels?",
+    "No. MoodMap provides modeled cycle-based context, not certainty about an individual person. The point is to make your response more careful—not to replace her words with an app.",
   ],
 ];
 
-function StoreButtons({ compact = false, official = false }) {
+function StoreButtons({ compact = false }) {
   return (
-    <div
-      id={compact ? undefined : "download"}
-      className={[
-        "mm-store-row",
-        compact ? "mm-store-row--center" : null,
-        official ? "mm-store-row--official" : null,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
+    <div id={compact ? undefined : "download"} className={["mm-store-row", compact ? "mm-store-row--center" : ""].filter(Boolean).join(" ")}>
       <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap for iPhone on the App Store">
-        <span className="store-btn__icon" aria-hidden="true">
-          <FaApple />
-        </span>
-        <span className="store-btn__copy">
-          <small>App Store</small>
-          <strong>Download for iPhone</strong>
-        </span>
+        <span className="store-btn__icon" aria-hidden="true"><FaApple /></span>
+        <span className="store-btn__copy"><small>App Store</small><strong>Download for iPhone</strong></span>
       </a>
-
       <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Google Play">
-        <span className="store-btn__icon" aria-hidden="true">
-          <FaGooglePlay />
-        </span>
-        <span className="store-btn__copy">
-          <small>Google Play</small>
-          <strong>Get on Google Play</strong>
-        </span>
+        <span className="store-btn__icon" aria-hidden="true"><FaGooglePlay /></span>
+        <span className="store-btn__copy"><small>Google Play</small><strong>Get on Google Play</strong></span>
       </a>
     </div>
   );
@@ -200,60 +155,64 @@ function SectionLabel({ children }) {
   return <span className="mm-section-label">{children}</span>;
 }
 
-function DeviceShot({ src, alt, className = "", priority = false }) {
+function Poster({ src, alt, className = "", priority = false }) {
   return (
-    <div className={["mm-device-shot", className].filter(Boolean).join(" ")}> 
-      <div className="mm-device-shot__rail" aria-hidden="true" />
-      <div className="mm-device-shot__frame">
-        <div className="mm-device-shot__notch" aria-hidden="true" />
-        <div className="mm-device-shot__screen">
-          <img
-            src={src}
-            alt={alt}
-            loading={priority ? "eager" : "lazy"}
-            decoding="async"
-            fetchPriority={priority ? "high" : "auto"}
-          />
-        </div>
-      </div>
+    <div className={["mm-v2-poster", className].filter(Boolean).join(" ")}>
+      <div className="mm-v2-poster__glow" aria-hidden="true" />
+      <img src={src} alt={alt} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : "auto"} />
     </div>
   );
 }
 
-function HeroPhone() {
+function HeroSection() {
   return (
-    <div className="mm-phone-stage" aria-label="MoodMap daily read preview" data-reveal>
-      <DeviceShot
-        src="/screenshots/daily-briefing-hero.webp"
-        alt="MoodMap app showing the Daily Briefing for PMS day 28."
-        className="mm-device-shot--hero"
-        priority
-      />
+    <section className="mm-v2-hero">
+      <div className="mm-container mm-v2-hero__grid">
+        <div className="mm-v2-hero__copy" data-reveal>
+          <SectionLabel>Cycle-aware relationship intelligence for men</SectionLabel>
+          <h1>Read the day before you react.</h1>
+          <p className="mm-v2-hero__lead">
+            One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner move.
+          </p>
+          <p className="mm-v2-boundary">Context for your response. Not a verdict on her.</p>
+          <StoreButtons />
+          <div className="mm-v2-hero__microproof" aria-label="MoodMap availability and boundaries">
+            <span><Check aria-hidden="true" /> Live on iOS and Android</span>
+            <span><Check aria-hidden="true" /> Private by design</span>
+            <span><Check aria-hidden="true" /> Non-medical guidance</span>
+          </div>
+        </div>
 
-      <div className="mm-cycle-strip" aria-label="MoodMap adapts across the full cycle">
-        <span className="mm-cycle-strip__eyebrow">Full-cycle read</span>
-        <div className="mm-cycle-strip__track">
-          {CYCLE_SIGNALS.map(([phase, signal]) => (
-            <span key={phase} className="mm-cycle-strip__item">
-              <strong>{phase}</strong>
-              <small>{signal}</small>
-            </span>
-          ))}
+        <div className="mm-v2-hero__visual" data-reveal>
+          <Poster
+            src="/screenshots/web-2026/read-day.webp"
+            alt="MoodMap Today’s State showing cycle day, luteal phase, capacity, intelligence, risk, and direction."
+            className="mm-v2-poster--hero"
+            priority
+          />
+          <div className="mm-v2-float-card mm-v2-float-card--top">
+            <span>Today’s State</span>
+            <strong>Phase · Capacity · Risk · Direction</strong>
+          </div>
+          <div className="mm-v2-float-card mm-v2-float-card--bottom">
+            <span>One private read</span>
+            <strong>Open what you need. Keep the day in context.</strong>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 function ProofStrip() {
   return (
-    <section className="mm-proof-strip-section" aria-label="MoodMap trust proof">
+    <section className="mm-v2-proof-section" aria-label="MoodMap product proof">
       <div className="mm-container">
-        <div className="mm-proof-strip" data-reveal>
-          {PROOF_STRIP_ITEMS.map(([title, copy]) => (
-            <article key={title} className="mm-proof-strip__item">
-              <strong>{title}</strong>
-              <span>{copy}</span>
+        <div className="mm-v2-proof-grid" data-reveal>
+          {PROOF_ITEMS.map(([title, body]) => (
+            <article key={title}>
+              <span aria-hidden="true" />
+              <div><strong>{title}</strong><p>{body}</p></div>
             </article>
           ))}
         </div>
@@ -262,9 +221,9 @@ function ProofStrip() {
   );
 }
 
-function ProductProof() {
+function ProductSection() {
   return (
-    <section className="mm-section mm-product-proof" aria-labelledby="product-heading">
+    <section className="mm-section mm-v2-product-section" aria-labelledby="product-heading">
       <div className="mm-container">
         <ProductShowcase surfaces={APP_SURFACES} />
       </div>
@@ -272,111 +231,109 @@ function ProductProof() {
   );
 }
 
-function WhyLayer() {
+function IntelligenceSection() {
   return (
-    <section id="intelligence-layer" className="mm-section mm-depth-section" aria-labelledby="intelligence-layer-heading">
-      <div className="mm-container">
-        <div className="mm-depth-panel" data-reveal>
-          <div className="mm-depth-copy">
-            <SectionLabel>Intelligence layer</SectionLabel>
-            <h2 id="intelligence-layer-heading">Cycle-aware relationship intelligence.</h2>
-            <p>
-              MoodMap does more than name the phase. It reads modeled background conditions — relative hormone activity, capacity, stress sensitivity, and timing context — then turns them into one cleaner move. Context, not diagnosis. Timing guidance, not prediction. Not a verdict on her.
-            </p>
-
-            <div className="mt-5">
-              <Link href="/intelligence" className="mm-premium-link">
-                Explore the intelligence layer
-              </Link>
-            </div>
-
-            <div className="mm-depth-points" aria-label="MoodMap intelligence layer value">
-              {WHY_LAYER_POINTS.map(([title, copy]) => (
-                <article key={title} className="mm-depth-point">
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="mm-depth-visual" aria-label="MoodMap hormone chart and insight preview">
-            <div className="mm-depth-chart-card" aria-hidden="true">
-              <img
-                src="/screenshots/hormone-chart-depth.webp"
-                alt=""
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="mm-depth-insight-card">
-              <img
-                src="/screenshots/hormone-insight-depth.webp"
-                alt="MoodMap Hormone Graph Intelligence screen translating menstrual cycle context into biology, consequence, and interpretation."
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function CostSection() {
-  return (
-    <section id="cost" className="mm-section mm-cost-section">
-      <div className="mm-container">
-        <div className="mm-cost-panel" data-reveal>
-          <div className="mm-cost-intro">
-            <SectionLabel>Why it matters</SectionLabel>
-            <h2>Bad timing is expensive.</h2>
-            <p>
-              The cost is not the read. The cost is the wrong-hour talk, the pressure fix, the reflex joke, and the repair work that did not need to happen.
-            </p>
-          </div>
-
-          <div className="mm-cost-grid">
-            {CONSEQUENCE_ITEMS.map(([title, copy], index) => (
-              <article key={title} className="mm-cost-card">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </article>
+    <section id="intelligence-layer" className="mm-section mm-v2-intelligence">
+      <div className="mm-container mm-v2-feature-grid">
+        <div className="mm-v2-feature-copy" data-reveal>
+          <SectionLabel>Cycle Intelligence</SectionLabel>
+          <h2>Understand the signal behind the day.</h2>
+          <p className="mm-v2-feature-lead">
+            MoodMap models expected hormone movement from cycle timing, then translates it into possible effects on energy, sensitivity, recovery demand, connection, and pace.
+          </p>
+          <p className="mm-v2-feature-boundary">
+            Modeled context—not an individual hormone measurement, diagnosis, or prediction of how she must feel.
+          </p>
+          <div className="mm-v2-feature-points">
+            {INTELLIGENCE_POINTS.map(([title, body]) => (
+              <article key={title}><span aria-hidden="true" /><div><h3>{title}</h3><p>{body}</p></div></article>
             ))}
           </div>
+          <Link href="/intelligence" className="mm-v2-text-link">Explore Cycle Intelligence <ChevronRight aria-hidden="true" /></Link>
+        </div>
+        <div className="mm-v2-feature-visual" data-reveal>
+          <Poster
+            src="/screenshots/web-2026/intelligence.webp"
+            alt="MoodMap Intelligence screen showing Today’s Shift, Biology, and Consequences beside the modeled hormone graph."
+          />
         </div>
       </div>
     </section>
   );
 }
 
-function PremiumStack() {
+function AlertsOnboardingSection() {
   return (
-    <section id="premium" className="mm-section mm-premium-section">
+    <section className="mm-section mm-v2-dual-section">
       <div className="mm-container">
-        <div className="mm-premium-panel" data-reveal>
-          <div className="mm-premium-copy">
+        <div className="mm-v2-dual-grid">
+          <article className="mm-v2-dual-card" data-reveal>
+            <div className="mm-v2-dual-card__copy">
+              <span className="mm-v2-icon-chip"><BellRing aria-hidden="true" /></span>
+              <SectionLabel>Timing Alerts</SectionLabel>
+              <h2>Know before key windows shift.</h2>
+              <p>Optional Daily Brief, cycle-window, and Risk Radar alerts—scheduled around your preferred time and delivery rules.</p>
+            </div>
+            <Poster src="/screenshots/web-2026/timing-alerts.webp" alt="MoodMap alert settings showing Daily Brief, cycle alerts, Risk Radar, preferred time, and quiet-hour controls." />
+          </article>
+
+          <article className="mm-v2-dual-card mm-v2-dual-card--gold" data-reveal>
+            <div className="mm-v2-dual-card__copy">
+              <span className="mm-v2-icon-chip"><CalendarDays aria-hidden="true" /></span>
+              <SectionLabel>Simple setup</SectionLabel>
+              <h2>Set one date. Get a daily read.</h2>
+              <p>Start with the first day of her last period—or her best estimate of the next one. Use only a date she chose to share. Refine the cycle later.</p>
+            </div>
+            <Poster src="/screenshots/web-2026/onboarding.webp" alt="MoodMap onboarding showing one-date setup, cycle model, date choice, and Show today’s read button." />
+          </article>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BenefitsSection() {
+  return (
+    <section className="mm-section mm-v2-benefits">
+      <div className="mm-container">
+        <div className="mm-v2-section-heading" data-reveal>
+          <SectionLabel>What better timing changes</SectionLabel>
+          <h2>More understanding. Less guesswork.</h2>
+          <p>MoodMap is not only about avoiding conflict. It helps you notice where support, initiative, conversation, connection, or restraint can land better.</p>
+        </div>
+        <div className="mm-v2-benefit-grid">
+          {BENEFITS.map((item, index) => (
+            <article key={item.title} data-reveal>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PremiumSection() {
+  return (
+    <section id="premium" className="mm-section mm-v2-premium">
+      <div className="mm-container">
+        <div className="mm-v2-premium-panel" data-reveal>
+          <div className="mm-v2-premium-copy">
             <SectionLabel>Premium+</SectionLabel>
-            <h2>The full daily read before the moment gets expensive.</h2>
-            <p>
-              Premium+ gives him the full daily read: phase, room read, friction risk, cleaner move, and the intelligence layer behind it — built to reduce wrong-hour talks, pressure moves, and avoidable repair.
-            </p>
-            <Link href="/pro" className="mm-premium-link">
-              See Premium+
-            </Link>
+            <h2>Unlock the full read.</h2>
+            <p>Go beyond the daily headline with the full Day Brief, complete Protocol, deeper WHY explanations, Cycle Intelligence, Risk Radar, and Timing Alerts.</p>
+            <div className="mm-v2-price-row" aria-label="MoodMap Premium Plus prices">
+              <div><span>Monthly</span><strong>$2.99</strong><small>per month</small></div>
+              <div><span>Annual</span><strong>$24.99</strong><small>per year</small></div>
+            </div>
+            <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ChevronRight aria-hidden="true" /></Link>
           </div>
 
-          <div className="mm-premium-stack" aria-label="Premium+ daily value">
-            {PREMIUM_LAYERS.map(([title, copy], index) => (
-              <article key={title} className="mm-premium-layer">
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3>{title}</h3>
-                  <p>{copy}</p>
-                </div>
-              </article>
+          <div className="mm-v2-premium-list" aria-label="Premium Plus features">
+            {PREMIUM_FEATURES.map((feature) => (
+              <div key={feature}><span><Check aria-hidden="true" /></span><p>{feature}</p></div>
             ))}
           </div>
         </div>
@@ -387,20 +344,15 @@ function PremiumStack() {
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="mm-section mm-how-section">
+    <section id="how-it-works" className="mm-section mm-v2-how">
       <div className="mm-container">
-        <div className="mm-section-heading mm-section-heading--center" data-reveal>
+        <div className="mm-v2-section-heading mm-v2-section-heading--center" data-reveal>
           <SectionLabel>How it works</SectionLabel>
-          <h2>Open. Read. Move cleaner.</h2>
+          <h2>One date. One read. A cleaner response.</h2>
         </div>
-
-        <div className="mm-steps">
-          {HOW_STEPS.map(([number, title, copy]) => (
-            <article key={title} className="mm-step" data-reveal>
-              <span>{number}</span>
-              <h3>{title}</h3>
-              <p>{copy}</p>
-            </article>
+        <div className="mm-v2-step-grid">
+          {HOW_STEPS.map(([number, title, body]) => (
+            <article key={number} data-reveal><span>{number}</span><h3>{title}</h3><p>{body}</p></article>
           ))}
         </div>
       </div>
@@ -410,22 +362,17 @@ function HowItWorks() {
 
 function TrustSection() {
   return (
-    <section id="trust" className="mm-section mm-trust-section">
+    <section id="trust" className="mm-section mm-v2-trust">
       <div className="mm-container">
-        <div className="mm-trust-panel" data-reveal>
-          <div className="mm-trust-intro">
-            <SectionLabel>Trust</SectionLabel>
-            <h2>Private, careful, practical.</h2>
-            <p>Context for his timing. Not a verdict on her. Practical guidance with clear boundaries.</p>
+        <div className="mm-v2-trust-panel" data-reveal>
+          <div className="mm-v2-trust-intro">
+            <span className="mm-v2-icon-chip"><ShieldCheck aria-hidden="true" /></span>
+            <SectionLabel>Clear boundaries</SectionLabel>
+            <h2>Private, careful, and narrower than certainty.</h2>
+            <p>MoodMap gives you context for your own response. It does not turn your partner into a score, diagnosis, or dashboard.</p>
           </div>
-
-          <div className="mm-trust-list">
-            {TRUST_ITEMS.map(([title, copy]) => (
-              <article key={title} className="mm-trust-item">
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </article>
-            ))}
+          <div className="mm-v2-trust-grid">
+            {TRUST_ITEMS.map(([title, body]) => <article key={title}><h3>{title}</h3><p>{body}</p></article>)}
           </div>
         </div>
       </div>
@@ -435,27 +382,17 @@ function TrustSection() {
 
 function FaqSection() {
   return (
-    <section id="questions" className="mm-section mm-faq-section">
-      <div className="mm-container">
-        <div className="mm-faq-panel" data-reveal>
-          <div className="mm-faq-intro">
-            <SectionLabel>Questions</SectionLabel>
-            <h2 className="mm-faq-headline">
-              <span>Private context.</span>
-              <span>Careful guidance.</span>
-              <span>Better timing.</span>
-            </h2>
-            <p>Built to make him steadier before he moves.</p>
-          </div>
-
-          <div className="mm-faq-list">
-            {FAQ_ITEMS.map(([question, answer], index) => (
-              <details key={question} className="mm-faq-item" open={index === 0}>
-                <summary>{question}</summary>
-                <p>{answer}</p>
-              </details>
-            ))}
-          </div>
+    <section id="questions" className="mm-section mm-v2-faq">
+      <div className="mm-container mm-v2-faq-grid">
+        <div className="mm-v2-faq-intro" data-reveal>
+          <SectionLabel>Questions</SectionLabel>
+          <h2>What MoodMap does—and what it does not.</h2>
+          <p>A precise product is easier to trust. These are the boundaries that keep the daily read useful.</p>
+        </div>
+        <div className="mm-v2-faq-list" data-reveal>
+          {FAQ_ITEMS.map(([question, answer], index) => (
+            <details key={question} open={index === 0}><summary>{question}</summary><p>{answer}</p></details>
+          ))}
         </div>
       </div>
     </section>
@@ -464,12 +401,13 @@ function FaqSection() {
 
 function FinalCta() {
   return (
-    <section className="mm-final-cta">
+    <section className="mm-v2-final-cta">
       <div className="mm-container" data-reveal>
-        <span className="mm-cta-dot" aria-hidden="true" />
-        <h2>Read the room before you enter it.</h2>
-        <p>Thirty seconds now. Less repair later.</p>
-        <StoreButtons compact official />
+        <span className="mm-v2-final-cta__icon"><Sparkles aria-hidden="true" /></span>
+        <h2>Read the day before you react.</h2>
+        <p>One private daily read based on cycle context. Available on iOS and Android.</p>
+        <StoreButtons compact />
+        <Link href="/learn" className="mm-v2-final-cta__secondary">Explore the guides <ChevronRight aria-hidden="true" /></Link>
       </div>
     </section>
   );
@@ -481,41 +419,19 @@ export default function HomePage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ScrollReveal />
 
-      <div className="mm-page relative isolate overflow-x-hidden text-white">
+      <div className="mm-page mm-v2-page relative isolate overflow-x-hidden text-white">
         <div aria-hidden="true" className="mm-background-field" />
-
-        <section className="mm-hero-section">
-          <div className="mm-container mm-hero-grid">
-            <div className="mm-hero-copy" data-reveal>
-              <SectionLabel>Private daily read for men in relationships</SectionLabel>
-              <h1>Read the day before you react.</h1>
-              <p className="mm-hero-subline">
-                MoodMap is cycle-aware relationship intelligence for men: one private daily read from their partner’s menstrual cycle — phase, capacity, stress sensitivity, friction risk, and the cleaner move before timing costs more than it should.
-              </p>
-              <p className="mm-hero-boundary">Context for his timing. Not a verdict on her.</p>
-              <StoreButtons />
-              <p className="mm-hero-trust">Live on iOS and Android. Cycle-aware relationship intelligence with clear, non-medical boundaries.</p>
-            </div>
-
-            <HeroPhone />
-          </div>
-        </section>
-
+        <HeroSection />
         <ProofStrip />
-        <ProductProof />
-        <WhyLayer />
-        <CostSection />
-        <PremiumStack />
+        <ProductSection />
+        <IntelligenceSection />
+        <AlertsOnboardingSection />
+        <BenefitsSection />
+        <PremiumSection />
         <HowItWorks />
         <TrustSection />
         <FaqSection />

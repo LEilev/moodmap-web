@@ -251,7 +251,7 @@ export default function CycleAwareRelationshipTimingPage() {
 
           <div className="text-center">
             <Link href="/intelligence" className="btn-primary">
-              Explore Hormone Graph Intelligence
+              Explore Cycle Intelligence
             </Link>
           </div>
         </div>

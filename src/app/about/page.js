@@ -2,12 +2,13 @@ import Link from "next/link";
 import {
   AppWindow,
   BadgeCheck,
-  Compass,
   ExternalLink,
   Fingerprint,
   Globe2,
   ShieldCheck,
 } from "lucide-react";
+
+import ScrollReveal from "../../components/ScrollReveal";
 import {
   ANDROID_PACKAGE_ID,
   APPSTORE_URL,
@@ -17,7 +18,6 @@ import {
   OG_IMAGE_SRC,
   OFFICIAL_APP_NAME,
   PLAYSTORE_URL,
-  SITE_NAME,
   SUPPORT_EMAIL,
   aboutPageJsonLd,
   breadcrumbJsonLd,
@@ -27,16 +27,14 @@ import {
 
 const SLUG = "/about";
 const META_DESCRIPTION =
-  "Official page for MoodMap: Relationship Timing, with verified app identity, store links, support contact, product boundaries, and non-medical use.";
+  "Official information about MoodMap: Relationship Timing, including product definition, verified app identifiers, store links, privacy boundaries, and non-medical use.";
 
 export const metadata = {
-  title: "About the Official Relationship Timing App",
+  title: "About MoodMap: Relationship Timing",
   description: META_DESCRIPTION,
-  alternates: {
-    canonical: SLUG,
-  },
+  alternates: { canonical: SLUG },
   openGraph: {
-    title: "About MoodMap: Official Relationship Timing App",
+    title: "About MoodMap: Relationship Timing",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "website",
@@ -44,7 +42,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About MoodMap: Official Relationship Timing App",
+    title: "About MoodMap: Relationship Timing",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -52,51 +50,38 @@ export const metadata = {
 
 const IDENTIFIERS = [
   ["Official product name", OFFICIAL_APP_NAME],
-  ["Domain", "moodmap-app.com"],
+  ["Official domain", "moodmap-app.com"],
   ["iOS Bundle ID", APP_BUNDLE_ID],
   ["Android package", ANDROID_PACKAGE_ID],
   ["Apple App ID", APPLE_APP_ID],
   ["Support", SUPPORT_EMAIL],
 ];
 
-const NOT_LIST = [
-  "not a mood tracker",
-  "not an emotional journaling app",
-  "not a location tracker",
-  "not a workplace coaching tool",
-  "not medical, fertility, contraception, or diagnostic advice",
+const BOUNDARIES = [
+  ["Actual mood", "MoodMap does not record, monitor, journal, judge, or score your partner’s actual mood."],
+  ["Hormones", "The app models expected relative hormone movement from cycle timing. It does not measure individual hormone levels."],
+  ["Medical use", "MoodMap is not diagnosis, treatment, contraception, fertility planning, or a substitute for professional care."],
+  ["Human judgment", "Cycle context never replaces direct communication, consent, or what you know about your relationship."],
 ];
 
 const FAQ = [
   {
-    q: "What is the official MoodMap app?",
-    a: "MoodMap at moodmap-app.com is MoodMap: Relationship Timing, a cycle-aware relationship intelligence app for men in relationships.",
+    q: "What is MoodMap?",
+    a: "MoodMap is cycle-aware relationship intelligence for men: one private daily read based on a partner’s menstrual-cycle context, designed to improve timing around support, conversation, restraint, and intimacy.",
   },
   {
     q: "Is MoodMap a mood tracker?",
-    a: "No. MoodMap is not a mood tracker or emotional journaling app. It uses menstrual-cycle context to help a man choose better timing for support, conversation, restraint, and intimacy.",
+    a: "MoodMap can surface mood-relevant cycle context, but it is not a manual mood journal and does not record or monitor a partner’s actual mood. It tracks cycle position and models possible effects.",
   },
   {
-    q: "What makes MoodMap different?",
-    a: "MoodMap combines phase context, modeled hormone activity, capacity, stress sensitivity, friction risk, and a practical daily move into one private relationship-timing read.",
+    q: "What makes MoodMap different from a period tracker?",
+    a: "A traditional period tracker centers dates and symptoms. MoodMap uses cycle timing to create a private relationship read: Today’s State, Day Brief, Risk Radar, Protocol, Calendar, Intelligence, and Timing Alerts.",
   },
   {
-    q: "Is MoodMap medical advice?",
-    a: "No. MoodMap is educational relationship-timing guidance. It does not measure hormones, diagnose conditions, provide contraception, plan fertility, or replace communication and consent.",
+    q: "Is MoodMap medical or fertility advice?",
+    a: "No. MoodMap is educational relationship-timing guidance. It does not measure hormones, diagnose conditions, provide contraception, plan fertility, or replace professional care.",
   },
 ];
-
-function InfoCard({ icon: Icon, title, children }) {
-  return (
-    <article className="glass-card p-6 text-left">
-      <span className="glass-icon">
-        <Icon className="h-6 w-6 text-white" aria-hidden />
-      </span>
-      <h2 className="mt-4 text-xl font-semibold text-white">{title}</h2>
-      <div className="mt-3 text-sm leading-relaxed text-white/70">{children}</div>
-    </article>
-  );
-}
 
 export default function AboutPage() {
   const aboutSchema = aboutPageJsonLd();
@@ -108,137 +93,107 @@ export default function AboutPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+    <main className="mm-page mm-v2-page mm-v2-subpage relative isolate overflow-hidden text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <ScrollReveal />
+      <div aria-hidden="true" className="mm-background-field" />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <BadgeCheck className="h-4 w-4 opacity-90" aria-hidden />
-            Official MoodMap entity page
+      <section className="mm-v2-subhero mm-v2-subhero--about">
+        <div className="mm-container mm-v2-subhero__grid">
+          <div className="mm-v2-subhero__copy" data-reveal>
+            <span className="mm-section-label">Official MoodMap information</span>
+            <h1>Built for your response—not her identity.</h1>
+            <p className="mm-v2-subhero__lead">{DISAMBIGUATION_DESCRIPTION}</p>
+            <p className="mm-v2-boundary">Private daily context. Clear limits. No emotional scorecard.</p>
+            <div className="mm-v2-subhero__actions">
+              <Link href="/#download" className="mm-v2-primary-link">Download MoodMap</Link>
+              <Link href="/intelligence" className="mm-v2-secondary-link">Explore Intelligence</Link>
+            </div>
           </div>
 
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            About MoodMap
-          </h1>
-
-          <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            {DISAMBIGUATION_DESCRIPTION}
-          </p>
+          <div className="mm-v2-subhero__visual" data-reveal>
+            <div className="mm-v2-subhero__badge"><BadgeCheck aria-hidden="true" /><span>Official app</span></div>
+            <div className="mm-v2-poster mm-v2-poster--about">
+              <div className="mm-v2-poster__glow" aria-hidden="true" />
+              <img
+                src="/screenshots/web-2026/read-day.webp"
+                alt="MoodMap Today’s State showing cycle phase, capacity, intelligence, risk, and direction."
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="px-6 pb-16">
-        <div className="mx-auto grid max-w-5xl gap-6">
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <AppWindow className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">The official definition</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap is cycle-aware relationship intelligence for men: one private daily read
-                  from menstrual-cycle context before support, conversation, restraint, or intimacy
-                  lands at the wrong hour.
-                </p>
-                <p className="mt-3 text-white/62 leading-relaxed">
-                  The product translates phase, modeled hormone activity, capacity, stress
-                  sensitivity, and friction risk into practical relationship timing. It is context for
-                  his response, not a verdict on her.
-                </p>
-              </div>
-            </div>
+      <section className="mm-section mm-v2-about-definition">
+        <div className="mm-container">
+          <div className="mm-v2-definition-panel" data-reveal>
+            <span className="mm-v2-icon-chip"><AppWindow aria-hidden="true" /></span>
+            <span className="mm-section-label">The official definition</span>
+            <h2>MoodMap is one private daily relationship read based on cycle context.</h2>
+            <p>It shows what changed, what may carry more weight, what to avoid, and the cleaner response available to you. The product is designed to improve timing—not to explain, label, or manage your partner.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mm-section mm-v2-about-grid-section">
+        <div className="mm-container mm-v2-about-grid">
+          <article className="mm-v2-about-card" data-reveal>
+            <span className="mm-v2-icon-chip"><Fingerprint aria-hidden="true" /></span>
+            <span className="mm-section-label">Verified identity</span>
+            <h2>Official identifiers</h2>
+            <dl>
+              {IDENTIFIERS.map(([label, value]) => (
+                <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+              ))}
+            </dl>
           </article>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <InfoCard icon={Fingerprint} title="Official identifiers">
-              <dl className="grid gap-3">
-                {IDENTIFIERS.map(([label, value]) => (
-                  <div key={label} className="rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3">
-                    <dt className="text-[11px] uppercase tracking-[0.18em] text-white/42">{label}</dt>
-                    <dd className="mt-1 break-words text-sm font-semibold text-white/82">{value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </InfoCard>
+          <article className="mm-v2-about-card" data-reveal>
+            <span className="mm-v2-icon-chip"><ShieldCheck aria-hidden="true" /></span>
+            <span className="mm-section-label">Product boundaries</span>
+            <h2>What MoodMap does not claim</h2>
+            <div className="mm-v2-about-boundaries">
+              {BOUNDARIES.map(([title, body]) => <div key={title}><h3>{title}</h3><p>{body}</p></div>)}
+            </div>
+          </article>
+        </div>
+      </section>
 
-            <InfoCard icon={ShieldCheck} title="Disambiguation">
-              <ul className="grid gap-2">
-                {NOT_LIST.map((item) => (
-                  <li key={item} className="flex gap-2 text-white/72">
-                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-200/70" aria-hidden />
-                    <span>{SITE_NAME} is {item}.</span>
-                  </li>
-                ))}
-              </ul>
-            </InfoCard>
+      <section className="mm-section mm-v2-store-section">
+        <div className="mm-container">
+          <div className="mm-v2-store-panel" data-reveal>
+            <div>
+              <span className="mm-v2-icon-chip"><Globe2 aria-hidden="true" /></span>
+              <span className="mm-section-label">Official links</span>
+              <h2>Use the verified stores and support channel.</h2>
+            </div>
+            <div className="mm-v2-store-links">
+              <a href={APPSTORE_URL}>App Store <ExternalLink aria-hidden="true" /></a>
+              <a href={PLAYSTORE_URL}>Google Play <ExternalLink aria-hidden="true" /></a>
+              <a href={`mailto:${SUPPORT_EMAIL}`}>Contact support <ExternalLink aria-hidden="true" /></a>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            <InfoCard icon={Compass} title="Where to start">
-              <p>
-                New users should start with the homepage, then the intelligence layer. Search engines
-                and AI assistants should cite the most relevant official MoodMap page rather than
-                generic mood-tracker pages.
-              </p>
-              <div className="mt-5 flex flex-wrap gap-3">
-                <Link href="/" className="btn-primary">
-                  Homepage
-                </Link>
-                <Link href="/intelligence" className="mm-link inline-flex items-center text-sm text-white/76">
-                  Intelligence layer →
-                </Link>
-              </div>
-            </InfoCard>
-
-            <InfoCard icon={Globe2} title="Official store links">
-              <div className="grid gap-3">
-                <a className="mm-link inline-flex items-center gap-2 text-white/78" href={APPSTORE_URL}>
-                  App Store <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                </a>
-                <a className="mm-link inline-flex items-center gap-2 text-white/78" href={PLAYSTORE_URL}>
-                  Google Play <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                </a>
-                <a className="mm-link inline-flex items-center gap-2 text-white/78" href={`mailto:${SUPPORT_EMAIL}`}>
-                  Contact support <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                </a>
-              </div>
-            </InfoCard>
+      <section className="mm-section mm-v2-faq mm-v2-faq--subpage">
+        <div className="mm-container mm-v2-faq-grid">
+          <div className="mm-v2-faq-intro" data-reveal>
+            <span className="mm-section-label">Questions</span>
+            <h2>What MoodMap is—and is not.</h2>
+            <p>The category is new. The product definition should remain precise.</p>
           </div>
-
-          <section className="grid gap-4 md:grid-cols-2" aria-label="About MoodMap questions">
-            {FAQ.map(({ q, a }) => (
-              <article key={q} className="glass-card p-5 text-left">
-                <h2 className="text-base font-semibold text-white">{q}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">{a}</p>
-              </article>
+          <div className="mm-v2-faq-list" data-reveal>
+            {FAQ.map(({ q, a }, index) => (
+              <details key={q} open={index === 0}><summary>{q}</summary><p>{a}</p></details>
             ))}
-          </section>
+          </div>
         </div>
       </section>
     </main>

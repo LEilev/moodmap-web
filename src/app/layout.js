@@ -201,23 +201,14 @@ export default function RootLayout({ children }) {
                 <Link href="/#product" className="mm-nav-link">
                   Product
                 </Link>
-                <Link href="/intelligence" className="mm-nav-link">
-                  Intelligence
-                </Link>
                 <Link href="/#how-it-works" className="mm-nav-link">
                   How it works
                 </Link>
-                <Link href="/#trust" className="mm-nav-link">
-                  Trust
+                <Link href="/intelligence" className="mm-nav-link">
+                  Intelligence
                 </Link>
                 <Link href="/learn" className="mm-nav-link">
                   Guides
-                </Link>
-                <Link href="/about" className="mm-nav-link">
-                  About
-                </Link>
-                <Link href="/support" className="mm-nav-link">
-                  Support
                 </Link>
                 <Link href="/pro" className="mm-nav-link mm-nav-link--strong">
                   Premium+
@@ -236,7 +227,7 @@ export default function RootLayout({ children }) {
                 <div className="max-w-xl">
                   <BrandLockup footer />
                   <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Cycle-aware relationship intelligence. Context for his response, not a verdict on her.
+                    Built in Norway. Private by design. Cycle-aware relationship intelligence. Context for your response—not a verdict on her.
                   </p>
                 </div>
 

@@ -7,8 +7,9 @@ import {
   Layers3,
   LineChart,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
+
+import ScrollReveal from "../../components/ScrollReveal";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -20,16 +21,14 @@ import {
 
 const SLUG = "/intelligence";
 const META_DESCRIPTION =
-  "See how MoodMap turns cycle phase, modeled hormone activity, capacity, and stress sensitivity into a private relationship-timing read for men.";
+  "See how MoodMap models cycle timing and relative hormone movement, then translates that context into possible effects on capacity, sensitivity, connection, and pace.";
 
 export const metadata = {
-  title: "Hormone Graph Intelligence for Relationship Timing",
+  title: "Cycle Intelligence: Biology, Timing, and Possible Effects",
   description: META_DESCRIPTION,
-  alternates: {
-    canonical: SLUG,
-  },
+  alternates: { canonical: SLUG },
   openGraph: {
-    title: "MoodMap Hormone Graph Intelligence for Relationship Timing",
+    title: "MoodMap Cycle Intelligence",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "website",
@@ -37,7 +36,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap Hormone Graph Intelligence for Relationship Timing",
+    title: "MoodMap Cycle Intelligence",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -46,234 +45,190 @@ export const metadata = {
 const MODEL_LAYERS = [
   {
     icon: LineChart,
-    title: "Modeled hormone activity",
-    body: "MoodMap reads relative shifts across the cycle — estrogen, progesterone, testosterone, LH, and FSH — as timing context, not lab values.",
+    title: "Modeled hormone movement",
+    body: "MoodMap estimates relative movement in estradiol, progesterone, testosterone, LH, and FSH from cycle timing. These are modeled patterns—not lab values.",
   },
   {
     icon: Gauge,
-    title: "Capacity + stress sensitivity",
-    body: "The graph is interpreted through bandwidth, stress buffer, recovery demand, and how much friction the day can realistically absorb.",
+    title: "Cycle-based capacity",
+    body: "The app translates the day into a practical estimate of bandwidth, recovery demand, and how much complexity or pressure may land cleanly.",
   },
   {
     icon: Layers3,
-    title: "Biology → consequence → interpretation",
-    body: "The intelligence layer connects the biological background to practical guidance: what may cost more, what may land cleaner, and when restraint is the move.",
+    title: "Biology → possible effects",
+    body: "The intelligence layer connects the biological shift to possible effects on energy, sensitivity, connection, stress tolerance, and pace.",
   },
 ];
 
 const SIGNALS = [
-  ["Menstruation", "Lower reserve and repair load can make pressure, noise, and heavy asks cost more."],
-  ["Follicular rise", "Rising estrogen can make planning, initiative, and outward rhythm easier for some."],
-  ["Ovulation window", "High estrogen and LH timing can coincide with stronger outward momentum and responsiveness."],
-  ["Luteal rise", "Progesterone-driven pacing can make complexity, clutter, and emotional load feel denser."],
-  ["PMS withdrawal", "Falling progesterone and lower stress buffer can make tone, ambiguity, and unresolved tension land harder."],
+  ["Menstruation", "Bleeding, pain, fatigue, sleep disruption, and lower reserve may make practical comfort and recovery more relevant for some people."],
+  ["Follicular rise", "Rising estradiol may coincide with more outward energy, easier initiation, and greater tolerance for plans or novelty for some people."],
+  ["Ovulatory window", "The cycle may reach a stronger combined window for social energy, reward sensitivity, physical responsiveness, and sexual motivation—without determining any individual response."],
+  ["Luteal phase", "Progesterone-led pacing and accumulating physical symptoms may make recovery, steadier rhythm, and lower logistical load more useful."],
+  ["Late luteal / PMS", "Falling ovarian hormones, symptoms, and reduced stress buffer may make tone, ambiguity, noise, or unresolved friction carry more weight."],
 ];
 
 const FAQ = [
   {
-    q: "What is MoodMap’s intelligence layer?",
-    a: "MoodMap’s intelligence layer translates menstrual-cycle phase, modeled hormone activity, capacity, and stress sensitivity into cycle-aware relationship intelligence for men.",
-  },
-  {
     q: "Does MoodMap measure hormones?",
-    a: "MoodMap does not measure hormones or provide lab values. It uses modeled relative hormone activity as non-medical timing context.",
+    a: "No. MoodMap models expected relative hormone movement from cycle timing. It does not read lab values, wearables, or an individual person’s hormone levels.",
   },
   {
-    q: "Does MoodMap predict her mood?",
-    a: "MoodMap does not predict emotions or judge intent. It gives context around timing, capacity, stress sensitivity, and friction risk so a man can respond more carefully.",
+    q: "Does Cycle Intelligence predict how she feels?",
+    a: "No. It shows modeled context that may be relevant to energy, sensitivity, capacity, and pace. It cannot determine an individual person’s mood, intent, or behavior.",
   },
   {
-    q: "Is this medical or fertility advice?",
-    a: "MoodMap is cycle-aware relationship intelligence for relationship timing. It is not diagnosis, contraception, fertility planning, hormone measurement, or medical treatment.",
+    q: "Why show biology and possible effects separately?",
+    a: "The separation prevents the app from collapsing a biological pattern into a claim about a person. Biology describes the modeled cycle shift; possible effects describe what may become more or less likely for some people.",
+  },
+  {
+    q: "Is this medical or fertility guidance?",
+    a: "No. MoodMap is educational relationship-timing guidance. It is not diagnosis, contraception, fertility planning, hormone testing, or medical treatment.",
   },
 ];
 
 export default function IntelligencePage() {
   const breadcrumbSchema = breadcrumbJsonLd([
     { name: "Home", href: "/" },
-    { name: "Hormone Graph Intelligence", href: SLUG },
+    { name: "Cycle Intelligence", href: SLUG },
   ]);
   const faqSchema = faqJsonLd(FAQ);
   const appSchema = mobileApplicationJsonLd(SLUG);
   const pageSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "MoodMap Hormone Graph Intelligence",
+    name: "MoodMap Cycle Intelligence",
     description: META_DESCRIPTION,
     url: absoluteUrl(SLUG),
     inLanguage: "en",
     about: [
-      { "@type": "Thing", name: "Cycle-aware relationship intelligence" },
+      { "@type": "Thing", name: "Cycle Intelligence" },
       { "@type": "Thing", name: "Relationship timing" },
       { "@type": "Thing", name: "Menstrual cycle context" },
-      { "@type": "Thing", name: "Hormone graph" },
+      { "@type": "Thing", name: "Modeled hormone movement" },
     ],
   };
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
+    <main className="mm-page mm-v2-page mm-v2-subpage relative isolate overflow-hidden text-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(pageSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <ScrollReveal />
+      <div aria-hidden="true" className="mm-background-field" />
 
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Brain className="h-4 w-4 opacity-90" aria-hidden />
-            Cycle-aware relationship intelligence
+      <section className="mm-v2-subhero mm-v2-subhero--orange">
+        <div className="mm-container mm-v2-subhero__grid">
+          <div className="mm-v2-subhero__copy" data-reveal>
+            <span className="mm-section-label">Cycle Intelligence</span>
+            <h1>Understand the signal behind the day.</h1>
+            <p className="mm-v2-subhero__lead">
+              Modeled hormone movement, translated into possible effects on energy, sensitivity, recovery demand, connection, and pace.
+            </p>
+            <p className="mm-v2-boundary">Context—not measurement, diagnosis, or certainty about an individual person.</p>
+            <div className="mm-v2-subhero__actions">
+              <Link href="/#download" className="mm-v2-primary-link">Download MoodMap <ArrowRight aria-hidden="true" /></Link>
+              <Link href="/learn/cycle-aware-relationship-timing" className="mm-v2-secondary-link">Learn the category</Link>
+            </div>
           </div>
 
-          <h1 className="mt-6 text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
-            Hormone Graph Intelligence
-          </h1>
-
-          <p className="mt-5 mx-auto max-w-3xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            MoodMap does not predict her mood. It reads the background conditions: cycle phase,
-            modeled hormone activity, capacity, stress sensitivity, and timing context — then turns
-            that into one private daily read for support, conversation, restraint, and intimacy.
-          </p>
-
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/#download" className="btn-primary">
-              Download MoodMap
-            </Link>
-            <Link href="/learn/cycle-aware-relationship-timing" className="mm-link text-sm text-white/78">
-              Learn the category →
-            </Link>
+          <div className="mm-v2-subhero__visual" data-reveal>
+            <div className="mm-v2-subhero__badge mm-v2-subhero__badge--orange"><Brain aria-hidden="true" /><span>Biology → possible effects</span></div>
+            <div className="mm-v2-poster mm-v2-poster--intelligence">
+              <div className="mm-v2-poster__glow" aria-hidden="true" />
+              <img
+                src="/screenshots/web-2026/intelligence.webp"
+                alt="MoodMap Intelligence screen showing Today’s Shift, Biology, Consequences, and a modeled hormone graph."
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-5xl grid gap-6">
-          <article className="glass-card p-6 sm:p-8 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-                  What the intelligence layer does
-                </h2>
-                <p className="mt-3 text-white/75 leading-relaxed">
-                  MoodMap turns a cycle chart into a relationship read. It looks at where she is in
-                  the cycle, how the modeled hormone pattern is shifting, what that can mean for
-                  capacity and stress buffer, and which move is cleaner today.
-                </p>
-                <p className="mt-3 text-white/68 leading-relaxed">
-                  The output is not a medical interpretation. It is a timing interpretation: what may
-                  cost more, what may land better, where pressure is risky, and when support or space
-                  is the stronger move.
-                </p>
-              </div>
-            </div>
-          </article>
+      <section className="mm-section mm-v2-value-section">
+        <div className="mm-container">
+          <div className="mm-v2-section-heading" data-reveal>
+            <span className="mm-section-label">How the model is read</span>
+            <h2>Three layers. Kept deliberately separate.</h2>
+            <p>The graph is useful only when the model, the practical estimate, and the human boundary remain distinct.</p>
+          </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="mm-v2-value-grid mm-v2-value-grid--three">
             {MODEL_LAYERS.map(({ icon: Icon, title, body }) => (
-              <article key={title} className="glass-card glass-card-hover p-6 text-left">
-                <span className="glass-icon">
-                  <Icon className="h-6 w-6 text-white" aria-hidden />
-                </span>
-                <h2 className="mt-4 text-lg font-semibold text-white">{title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
-                <div aria-hidden="true" className="glass-gloss" />
+              <article key={title} data-reveal>
+                <span><Icon aria-hidden="true" /></span>
+                <h3>{title}</h3>
+                <p>{body}</p>
               </article>
             ))}
           </div>
+        </div>
+      </section>
 
-          <article className="glass-card p-6 sm:p-8 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Activity className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-                  The timing map underneath the daily read
-                </h2>
-                <p className="mt-3 text-white/72 leading-relaxed">
-                  The same conversation, joke, request, repair attempt, or bid for intimacy can land
-                  differently depending on the cycle window. MoodMap makes that context visible
-                  before the move happens.
-                </p>
-                <div className="mt-6 grid gap-3">
-                  {SIGNALS.map(([phase, copy]) => (
-                    <div
-                      key={phase}
-                      className="rounded-2xl border border-white/10 bg-white/[0.035] p-4"
-                    >
-                      <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-emerald-100/85">
-                        {phase}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-white/68">{copy}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </article>
+      <section className="mm-section mm-v2-signal-section">
+        <div className="mm-container mm-v2-signal-grid">
+          <div className="mm-v2-signal-intro" data-reveal>
+            <span className="mm-v2-icon-chip"><Activity aria-hidden="true" /></span>
+            <span className="mm-section-label">Across the cycle</span>
+            <h2>The same move can carry different weight.</h2>
+            <p>These windows are broad model contexts, not scripts for how any woman must feel or behave.</p>
+          </div>
 
-          <article className="glass-card p-6 sm:p-8 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <ShieldCheck className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-                  Context, not prediction
-                </h2>
-                <p className="mt-3 text-white/75 leading-relaxed">
-                  MoodMap does not tell him what she feels. It tells him what the background
-                  conditions may make more expensive: pressure, ambiguity, noise, heavy asks,
-                  closure-chasing, or poorly timed intimacy.
-                </p>
-                <p className="mt-3 text-white/68 leading-relaxed">
-                  The point is not control. The point is a cleaner response: more support when the
-                  margin is narrow, better timing when the topic matters, and more restraint when his
-                  instinct would make the room heavier.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <section className="grid gap-4 md:grid-cols-2" aria-label="Hormone Graph Intelligence questions">
-            {FAQ.map(({ q, a }) => (
-              <article key={q} className="glass-card p-5 text-left">
-                <h2 className="text-base font-semibold text-white">{q}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">{a}</p>
+          <div className="mm-v2-signal-list" data-reveal>
+            {SIGNALS.map(([phase, copy], index) => (
+              <article key={phase}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div><h3>{phase}</h3><p>{copy}</p></div>
               </article>
             ))}
-          </section>
+          </div>
+        </div>
+      </section>
 
+      <section className="mm-section mm-v2-boundary-section">
+        <div className="mm-container">
+          <div className="mm-v2-boundary-panel" data-reveal>
+            <div>
+              <span className="mm-v2-icon-chip"><ShieldCheck aria-hidden="true" /></span>
+              <span className="mm-section-label">The human boundary</span>
+              <h2>Cycle context never explains the whole person.</h2>
+            </div>
+            <div className="mm-v2-boundary-copy">
+              <p>MoodMap does not record or monitor your partner’s actual mood. It does not tell you what she thinks, whether an issue is valid, or what consent looks like in the moment.</p>
+              <p>Its narrower job is to help you notice background conditions that may change the cost of pressure, ambiguity, complexity, recovery, or pace—then respond more carefully.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mm-section mm-v2-faq mm-v2-faq--subpage">
+        <div className="mm-container mm-v2-faq-grid">
+          <div className="mm-v2-faq-intro" data-reveal>
+            <span className="mm-section-label">Questions</span>
+            <h2>Precise claims. Clear limits.</h2>
+            <p>Cycle Intelligence is designed to add context without turning a model into certainty about a person.</p>
+          </div>
+          <div className="mm-v2-faq-list" data-reveal>
+            {FAQ.map(({ q, a }, index) => (
+              <details key={q} open={index === 0}>
+                <summary>{q}</summary>
+                <p>{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mm-container pb-16 sm:pb-20">
+        <div data-reveal>
           <SourceTrustBlock />
-
-          <div className="text-center">
-            <Link href="/pro" className="btn-primary inline-flex items-center gap-2">
-              See Premium+ <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-          </div>
+        </div>
+        <div className="mt-8 text-center" data-reveal>
+          <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ArrowRight aria-hidden="true" /></Link>
         </div>
       </section>
     </main>

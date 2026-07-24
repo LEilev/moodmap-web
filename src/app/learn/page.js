@@ -15,7 +15,7 @@ import { breadcrumbJsonLd } from "../seo";
 export const metadata = {
   title: "Guides for Cycle-Aware Relationship Timing",
   description:
-    "Guides on cycle-aware relationship timing, PMS support, luteal context, day-by-day cycle cues, Hormone Graph Intelligence, and MoodMap boundaries.",
+    "Guides on cycle-aware relationship timing, PMS support, luteal context, day-by-day cycle cues, Cycle Intelligence, and MoodMap boundaries.",
   alternates: {
     canonical: "/learn",
   },
@@ -26,9 +26,9 @@ const SITE_URL = "https://moodmap-app.com";
 const GUIDES = [
   {
     href: "/intelligence",
-    title: "Hormone Graph Intelligence",
+    title: "Cycle Intelligence",
     description:
-      "How MoodMap turns modeled hormone activity, capacity, stress sensitivity, and phase context into a daily relationship read.",
+      "How MoodMap models cycle timing and relative hormone movement, then translates that context into possible effects and a daily relationship read.",
     Icon: BrainCircuit,
   },
   {
@@ -63,7 +63,7 @@ const GUIDES = [
     href: "/learn/moodmap-glossary",
     title: "MoodMap glossary",
     description:
-      "Definitions for Daily Read, SitRep, Risk Radar, CommandDeck, capacity, stress sensitivity, and Premium+.",
+      "Definitions for Today’s State, Day Brief, Cycle Calendar, Risk Radar, Protocol, WHY, Intelligence, capacity, and Premium+.",
     Icon: BookOpenText,
   },
   {
@@ -154,8 +154,7 @@ export default function LearnIndexPage() {
             MoodMap Guides
           </h1>
           <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            Short, partner-friendly explanations and practical playbooks — designed for men who want
-            better timing, calmer communication, cycle-aware relationship intelligence, and more trust.
+            Short, partner-friendly explanations designed for men who want better timing, clearer support, calmer communication, and more trust—without turning cycle context into certainty about a person.
           </p>
         </div>
       </section>

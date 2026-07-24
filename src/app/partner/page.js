@@ -4,9 +4,9 @@ const PAGE_URL = `${SITE_URL}${PAGE_PATH}`;
 
 const PARTNER_PORTAL_URL = "https://moodmap.promotekit.com";
 
-// NOTE: Current intro prices (subject to change as pricing is tested/optimized).
-const INTRO_MONTHLY_PRICE = 7.99;
-const INTRO_YEARLY_PRICE = 49.99;
+// NOTE: Current prices (subject to change as pricing is tested/optimized).
+const INTRO_MONTHLY_PRICE = 2.99;
+const INTRO_YEARLY_PRICE = 24.99;
 const REV_SHARE = 0.5;
 
 // Keep these as numbers so we can use them for illustrative examples.
@@ -158,7 +158,7 @@ function EarningsExamplesCard() {
         <p className="mt-3 text-[11px] leading-relaxed text-white/60">
           Illustrative examples only — your actual earnings depend on referrals,
           pricing, and subscriber retention. Annual plan share is ~$
-          {YEARLY_EARNING.toFixed(0)} per subscriber per year at current intro
+          {YEARLY_EARNING.toFixed(0)} per subscriber per year at current
           pricing.
         </p>
       </div>
@@ -265,19 +265,18 @@ export default function PartnerPage() {
 
           <p className="mx-auto mt-4 max-w-3xl text-pretty text-base leading-relaxed text-white/85 md:text-lg">
             MoodMap is{" "}
-            <span className="font-semibold">relationship‑intelligence</span>{" "}
-            delivered daily — it turns her cycle cues into clear, practical
-            timing signals for him (better for both partners).
+            <span className="font-semibold">cycle-aware relationship intelligence</span>{" "}
+            for men — one private daily read based on a partner’s cycle, built to improve timing around support, conversation, restraint, and intimacy.
           </p>
 
           <p className="mt-3 text-sm text-white/70">
-            Not therapy. Not fertility planning. Context, not guarantees.
+            Not medical advice. Not fertility planning. Cycle-based context, not certainty.
           </p>
 
           {/* Trust + positioning */}
           <div className="mt-5 flex flex-col items-center gap-3">
             <p className="text-sm text-white/75">
-              Private by design. Made in Norway.
+              Private by design. Built in Norway.
             </p>
 
             <div className="flex flex-wrap items-center justify-center gap-2">
