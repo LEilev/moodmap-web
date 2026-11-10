@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
+import { PRODUCT } from "../../lib/product";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -62,10 +63,10 @@ const MODEL_LAYERS = [
 
 const SIGNALS = [
   ["Menstruation", "Bleeding, pain, fatigue, sleep disruption, and lower reserve may make practical comfort and recovery more relevant for some people."],
-  ["Follicular rise", "Rising estradiol may coincide with more outward energy, easier initiation, and greater tolerance for plans or novelty for some people."],
-  ["Ovulatory window", "The cycle may reach a stronger combined window for social energy, reward sensitivity, physical responsiveness, and sexual motivation—without determining any individual response."],
-  ["Luteal phase", "Progesterone-led pacing and accumulating physical symptoms may make recovery, steadier rhythm, and lower logistical load more useful."],
-  ["Late luteal / PMS", "Falling ovarian hormones, symptoms, and reduced stress buffer may make tone, ambiguity, noise, or unresolved friction carry more weight."],
+  ["Follicular rise", "After period symptoms ease, some people notice more energy or interest in plans. The timing and strength of any change vary."],
+  ["Ovulatory window", "Some people notice a change in sexual desire or energy around ovulation; others do not. Neither a date nor an estimate tells you whether intimacy is wanted."],
+  ["Luteal phase", "Some people develop physical or emotional symptoms before their next period. Ask what would help and adjust practical demands together."],
+  ["Late luteal / PMS", "PMS can include fatigue, irritability, sleep changes, and other symptoms. These vary between people and cycles; an estimate cannot explain a particular disagreement."],
 ];
 
 const FAQ = [
@@ -80,6 +81,10 @@ const FAQ = [
   {
     q: "Why show biology and possible effects separately?",
     a: "The separation prevents the app from collapsing a biological pattern into a claim about a person. Biology describes the modeled cycle shift; possible effects describe what may become more or less likely for some people.",
+  },
+  {
+    q: "When might the cycle model be a poor fit?",
+    a: PRODUCT.modelScope,
   },
   {
     q: "Is this medical or fertility guidance?",
@@ -138,7 +143,8 @@ export default function IntelligencePage() {
             <div className="mm-v3-intelligence-stack mm-v3-intelligence-stack--hero" aria-label="MoodMap Cycle Intelligence screens">
               <div className="mm-v3-phone-frame mm-v3-phone-frame--rear">
                 <img
-                  src="/screenshots/web-2026/intelligence-graph.webp"
+                  width={828} height={1792}
+                src="/screenshots/web-2026/intelligence-graph.webp"
                   alt="MoodMap modeled hormone graph across the cycle."
                   loading="eager"
                   decoding="async"
@@ -147,7 +153,8 @@ export default function IntelligencePage() {
               </div>
               <div className="mm-v3-phone-frame mm-v3-phone-frame--front">
                 <img
-                  src="/screenshots/web-2026/intelligence.webp"
+                  width={828} height={1792}
+                src="/screenshots/web-2026/intelligence.webp"
                   alt="MoodMap Intelligence showing Today’s Shift, Biology, and possible effects."
                   loading="eager"
                   decoding="async"
@@ -199,6 +206,19 @@ export default function IntelligencePage() {
         </div>
       </section>
 
+      <section id="model-fit" className="mm-section mm-v2-boundary-section">
+        <div className="mm-container">
+          <div className="mm-v2-boundary-panel" data-reveal>
+            <div><span className="mm-section-label">Where the model fits</span><h2>A cycle estimate has limits.</h2></div>
+            <div className="mm-v2-boundary-copy">
+              <p>{PRODUCT.modelScope}</p>
+              <p>{PRODUCT.settingsSummary}</p>
+              <p>The graph and capacity percentage describe MoodMap’s model. They are not validated measurements of your partner’s hormones, mood, stress tolerance, or readiness for sex. For the background physiology, see the <a className="mm-link" href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/" target="_blank" rel="noopener noreferrer">NHS menstrual-cycle guide</a> and the <a className="mm-link" href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome" target="_blank" rel="noopener noreferrer">Office on Women’s Health guide to PMS</a>.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="mm-section mm-v2-boundary-section">
         <div className="mm-container">
           <div className="mm-v2-boundary-panel" data-reveal>
@@ -235,16 +255,15 @@ export default function IntelligencePage() {
 
       <section className="mm-container mm-v6-intelligence-close">
         <div className="mm-v6-intelligence-source" data-reveal>
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
         </div>
 
-        <div className="mm-v6-intelligence-cta" data-reveal>
+        <div className="mm-v6-intelligence-cta" data-reveal data-mm-placement="intelligence-end" data-mm-context="/intelligence">
           <div>
             <span className="mm-section-label">Premium+</span>
             <h2>Unlock the complete intelligence layer.</h2>
             <p>
-              Get the full Cycle Intelligence view alongside the complete Day Brief,
-              Risk Radar, Protocol, and deeper WHY explanations.
+              {PRODUCT.premiumSummary}
             </p>
           </div>
           <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ArrowRight aria-hidden="true" /></Link>

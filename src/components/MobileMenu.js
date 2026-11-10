@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Download, Menu, X } from "lucide-react";
+import { lockPageScroll } from "../lib/menu-lifecycle.mjs";
 
 const LINKS = [
   { href: "/#product", label: "Product" },
@@ -20,20 +22,39 @@ export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef(null);
   const panelRef = useRef(null);
+  const triggerRef = useRef(null);
+
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener("change", closeOnDesktop);
+    closeOnDesktop();
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
 
   useEffect(() => {
     if (!open) return undefined;
 
-    const prevOverflow = document.body.style.overflow;
     const previouslyFocused = document.activeElement;
-    document.body.style.overflow = "hidden";
+    const trigger = triggerRef.current;
+    const unlock = lockPageScroll(window);
+    const siteShell = document.getElementById("site-shell");
+    const wasInert = siteShell?.inert ?? false;
+    if (siteShell) siteShell.inert = true;
 
     const focusTimer = window.setTimeout(() => closeButtonRef.current?.focus(), 40);
 
     return () => {
       window.clearTimeout(focusTimer);
-      document.body.style.overflow = prevOverflow;
-      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
+      if (siteShell) siteShell.inert = wasInert;
+      unlock();
+      const onDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      const focusTarget = onDesktop
+        ? document.getElementById("main-content")
+        : previouslyFocused?.isConnected ? previouslyFocused : trigger;
+      focusTarget?.focus({ preventScroll: true });
     };
   }, [open]);
 
@@ -42,6 +63,7 @@ export default function MobileMenu() {
 
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
+        event.preventDefault();
         setOpen(false);
         return;
       }
@@ -56,7 +78,10 @@ export default function MobileMenu() {
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
 
-      if (event.shiftKey && document.activeElement === first) {
+      if (!panelRef.current.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && document.activeElement === last) {
@@ -72,6 +97,7 @@ export default function MobileMenu() {
   return (
     <>
       <button
+        ref={triggerRef}
         type="button"
         className="mm-mobile-menu-button"
         aria-label={open ? "Close menu" : "Open menu"}
@@ -82,7 +108,7 @@ export default function MobileMenu() {
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
-      {open && (
+      {open && createPortal(
         <div
           className="mm-mobile-menu-shell"
           role="dialog"
@@ -91,6 +117,7 @@ export default function MobileMenu() {
         >
           <button
             type="button"
+            tabIndex={-1}
             className="mm-mobile-menu-overlay"
             aria-label="Close navigation menu"
             onClick={() => setOpen(false)}
@@ -137,7 +164,8 @@ export default function MobileMenu() {
               <p>One private daily read. Cycle-aware context. Built for your response—not a verdict on her.</p>
             </div>
           </aside>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );

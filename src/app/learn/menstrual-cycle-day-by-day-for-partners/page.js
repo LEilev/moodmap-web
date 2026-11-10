@@ -10,14 +10,14 @@ import {
 
 const SLUG = "/learn/menstrual-cycle-day-by-day-for-partners";
 const META_DESCRIPTION =
-  "A day-by-day menstrual cycle guide for partners, mapping support, conversation, restraint, and intimacy timing across a typical 28-day cycle.";
+  "An illustrative 28-day menstrual cycle grouped into six windows, with practical support ideas for partners and clear limits on calendar predictions.";
 
 export const metadata = {
-  title: "Menstrual Cycle Day-by-Day Guide for Partners",
+  title: "Menstrual Cycle Day-by-Day: An Illustrative Overview",
   description: META_DESCRIPTION,
   alternates: { canonical: SLUG },
   openGraph: {
-    title: "MoodMap Menstrual Cycle Day-by-Day Guide for Partners",
+    title: "MoodMap Menstrual Cycle Day-by-Day: An Illustrative Overview",
     description: META_DESCRIPTION,
     url: SLUG,
     type: "article",
@@ -25,7 +25,7 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MoodMap Menstrual Cycle Day-by-Day Guide for Partners",
+    title: "MoodMap Menstrual Cycle Day-by-Day: An Illustrative Overview",
     description: META_DESCRIPTION,
     images: [OG_IMAGE_SRC],
   },
@@ -34,38 +34,38 @@ export const metadata = {
 const WINDOWS = [
   {
     range: "Days 1–5",
-    title: "Menstruation reset",
-    body: "Lower reserve, bleeding, cramps, fatigue, and repair demand can make pressure cost more. Practical support usually beats analysis.",
+    title: "Menstruation",
+    body: "Bleeding, cramps, or fatigue may make practical comfort useful. Symptoms and period length vary; ask how she is feeling.",
     moves: ["Make food, warmth, and logistics easier.", "Keep talks short unless she opens them.", "Do not confuse quiet with rejection."],
   },
   {
     range: "Days 6–12",
-    title: "Follicular rise",
-    body: "Energy and outward momentum may lift as the body moves out of reset. This can be a cleaner window for plans, light repair, and forward movement.",
+    title: "After bleeding: follicular phase",
+    body: "The follicular phase starts on day 1 and continues until ovulation. After bleeding ends, some people feel more energetic. Use the energy she actually has when making plans.",
     moves: ["Bring simple plans and options.", "Use the easier window for practical conversations.", "Match momentum without flooding the room."],
   },
   {
     range: "Days 13–15",
-    title: "Ovulation window",
-    body: "For some, connection, confidence, social energy, and responsiveness can be stronger. It still does not create permission or certainty.",
+    title: "Illustrative ovulation window",
+    body: "Ovulation does not reliably fall on day 14. Some people notice changes in desire or energy around this time, but a calendar cannot confirm ovulation or tell you whether intimacy is wanted.",
     moves: ["Read consent and pace, not just energy.", "Use warmth and presence, not assumptions.", "Keep intimacy responsive, not entitled."],
   },
   {
     range: "Days 16–18",
-    title: "High connection / transition",
-    body: "The post-ovulation shift can still carry connection, but the system may start moving toward more internal pacing and recovery demand.",
-    moves: ["Do not overharvest a good window.", "Keep follow-through clean.", "Notice when the room starts asking for less noise."],
+    title: "Early luteal transition",
+    body: "After ovulation, the luteal phase begins. There is no universal change in mood or connection on these particular days. Keep plans flexible and follow through on what you agreed.",
+    moves: ["Ask what pace works today.", "Keep follow-through clean.", "Notice when either of you wants more quiet."],
   },
   {
     range: "Days 19–25",
-    title: "Luteal load",
-    body: "Progesterone-led pacing can make complexity, clutter, unresolved tasks, and emotional demand feel denser. Reliability matters more than performance.",
+    title: "Later luteal phase",
+    body: "For some people, premenstrual symptoms begin in the days or weeks before the next period. Practical help can be useful when symptoms are present, regardless of the date.",
     moves: ["Reduce open loops and practical load.", "Do the thing without announcing it as help.", "Do not chase closure when capacity is tight."],
   },
   {
     range: "Days 26–28",
-    title: "PMS soft landing",
-    body: "Falling hormones and lower stress buffer can make tone, ambiguity, and pressure land harder. The cleaner move is often less intensity, not more explaining.",
+    title: "Before the next period",
+    body: "PMS is not confined to these three days and is not experienced by everyone. If she is uncomfortable, ask what would help; keep valid concerns separate from assumptions about hormones.",
     moves: ["Lower noise, lower pressure, lower stakes.", "Repair lightly and return later if needed.", "Choose warmth, food, space, and clean follow-through."],
   },
 ];
@@ -73,7 +73,7 @@ const WINDOWS = [
 const FAQ = [
   {
     q: "Is every menstrual cycle exactly 28 days?",
-    a: "No. The 28-day structure is a simple map, not a rule. Real cycles vary. Use the day-by-day guide as timing context, not a script.",
+    a: "No. The 28-day structure is a simple map, not a rule. Real cycles vary. This page groups an illustrative cycle into six windows; it does not give 28 individual predictions.",
   },
   {
     q: "Can a boyfriend use a day-by-day cycle guide respectfully?",
@@ -92,7 +92,7 @@ const FAQ = [
 export default function MenstrualCycleDayByDayPage() {
   const articleSchema = articleJsonLd({
     path: SLUG,
-    headline: "Menstrual Cycle Day-by-Day Guide for Partners",
+    headline: "Menstrual Cycle Day-by-Day: An Illustrative Overview",
     description: META_DESCRIPTION,
   });
   const breadcrumbSchema = breadcrumbJsonLd([
@@ -103,7 +103,7 @@ export default function MenstrualCycleDayByDayPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
+    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -115,13 +115,13 @@ export default function MenstrualCycleDayByDayPage() {
         <div className="mx-auto max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
             <CalendarDays className="h-4 w-4 opacity-90" aria-hidden />
-            Day-by-day cycle context
+            Six windows in an illustrative 28-day cycle
           </div>
           <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            Menstrual cycle day by day for partners
+            Menstrual cycle day by day: an overview for partners
           </h1>
           <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            A practical timing map for partners: what may cost more, what may land cleaner, and how support, conversation, restraint, and intimacy can shift across the cycle.
+            A 28-day example grouped into six broad windows, with ways to offer support and make plans together. These dates illustrate one cycle; they are not a schedule of how your partner will feel.
           </p>
         </div>
       </section>
@@ -134,7 +134,7 @@ export default function MenstrualCycleDayByDayPage() {
               <div>
                 <h2 className="text-xl sm:text-2xl font-semibold">Use this as context, not a script</h2>
                 <p className="mt-2 text-white/75 leading-relaxed">
-                  Not every cycle is 28 days. Not every woman feels the same pattern. The value is not prediction — it is helping a partner choose a cleaner hour, lower pressure, and better support.
+                  Cycle length, bleeding, ovulation timing, and symptoms vary. The windows below do not adapt to a specific person and cannot confirm ovulation. Start with the four-phase guide for the biology, then use this overview for practical ideas.
                 </p>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function MenstrualCycleDayByDayPage() {
             ))}
           </section>
 
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/intelligence" className="btn-primary inline-flex items-center gap-2">

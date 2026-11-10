@@ -11,17 +11,18 @@ import {
   Layers,
 } from "lucide-react";
 import { breadcrumbJsonLd } from "../seo";
+import { PRODUCT } from "../../lib/product";
 
 export const metadata = {
   title: "Guides for Cycle-Aware Relationship Timing",
   description:
-    "Guides on cycle-aware relationship timing, PMS support, luteal context, day-by-day cycle cues, Cycle Intelligence, and MoodMap boundaries.",
+    "Guides on cycle-aware relationship timing, PMS support, luteal context, an illustrative cycle overview, Cycle Intelligence, and MoodMap boundaries.",
   alternates: {
     canonical: "/learn",
   },
 };
 
-const SITE_URL = "https://moodmap-app.com";
+const SITE_URL = PRODUCT.siteUrl;
 
 const GUIDES = [
   {
@@ -40,9 +41,9 @@ const GUIDES = [
   },
   {
     href: "/learn/menstrual-cycle-day-by-day-for-partners",
-    title: "Menstrual cycle day by day for partners",
+    title: "Menstrual cycle: a 28-day overview",
     description:
-      "A practical day-by-day timing map for support, conversation, restraint, and intimacy across the cycle.",
+      "Six windows in an illustrative cycle, with practical ideas and clear limits on date-based predictions.",
     Icon: CalendarDays,
   },
   {
@@ -63,7 +64,7 @@ const GUIDES = [
     href: "/learn/moodmap-glossary",
     title: "MoodMap glossary",
     description:
-      "Definitions for Today’s State, Day Brief, Cycle Calendar, Risk Radar, Protocol, WHY, Intelligence, capacity, and Premium+.",
+      "Definitions for Today’s State, Day Brief, Cycle Calendar, Risk Radar, Command Deck, WHY, Intelligence, capacity, and Premium+.",
     Icon: BookOpenText,
   },
   {
@@ -102,6 +103,13 @@ const GUIDES = [
     Icon: Sparkles,
   },
 ];
+
+// Put the broad introductions first; their paths remain stable for returning readers.
+const FIRST_GUIDES = ["/learn/menstrual-cycle-phases-for-partners", "/learn/period-tracking-for-men"];
+GUIDES.sort((a, b) => {
+  const rank = (path) => FIRST_GUIDES.includes(path) ? FIRST_GUIDES.indexOf(path) : FIRST_GUIDES.length;
+  return rank(a.href) - rank(b.href);
+});
 
 export default function LearnIndexPage() {
   const jsonLd = {

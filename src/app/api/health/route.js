@@ -39,13 +39,16 @@ export async function GET(req) {
   const url = new URL(req.url);
   if (!cronAuthorized(req, url)) return new Response('Forbidden', { status: 403 });
 
-  let queueLen = 0;
-  let deadCount = 0;
-  let paused = false;
-
-  try { queueLen = await redis.llen(INF_QUEUE); } catch {}
-  try { deadCount = await redis.scard(INF_DEAD); } catch {}
-  try { paused = Boolean(await redis.get(INF_PAUSE)); } catch {}
-
-  return json({ ok: true, paused, queueLen, deadCount }, 200);
+  if (!redis) return json({ ok: false, error: 'outreach_unavailable' }, 503);
+  try {
+    const [queueLen, deadCount, paused] = await Promise.all([
+      redis.llen(INF_QUEUE),
+      redis.scard(INF_DEAD),
+      redis.get(INF_PAUSE),
+    ]);
+    return json({ ok: true, paused: Boolean(paused), queueLen, deadCount }, 200);
+  } catch {
+    // Missing/failed Redis is unhealthy, not an empty healthy queue.
+    return json({ ok: false, error: 'outreach_unavailable' }, 503);
+  }
 }

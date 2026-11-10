@@ -96,7 +96,7 @@ export default function LutealPhaseRelationshipsPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
+    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
@@ -164,7 +164,7 @@ export default function LutealPhaseRelationshipsPage() {
             ))}
           </section>
 
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
 
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/learn/pms-relationship-timing" className="btn-primary">

@@ -1,118 +1,25 @@
-// src/app/thanks/page.js
-// -----------------------------------------------------------------------------
-// Thanks (server) – bygger ferdig deep link til /activate og sørger for at
-//   1) u = sha256(lowercase(email))     ← unik, stabil app_user_id
-//   2) HMAC-signert UL (u, s, exp, sig)
-//   3) ?ce=email appendes én gang via redirect, slik at klienten kan sende mail
-// -----------------------------------------------------------------------------
-// Avh.: STRIPE_SECRET_KEY, UNIVERSAL_LINK_SECRET
-// -----------------------------------------------------------------------------
-
-import Stripe from "stripe";
-import crypto from "crypto";
-import { redirect } from "next/navigation";
 import ThanksClient from "./client";
-import { generateHmacSignature } from "@/lib/universal-link";
+import { CheckoutError, validSessionId, verifyCheckout, createReceiptToken, maskCheckoutEmail } from "@/lib/checkout-access.js";
+import { buildActivationLink } from "@/lib/universal-link.js";
 
-export const metadata = {
-  title: "Thanks",
-  robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
-  },
-};
+export const dynamic = "force-dynamic";
+export const metadata = { title: "Your MoodMap access", referrer: "no-referrer", robots: { index: false, follow: false, googleBot: { index: false, follow: false } } };
+const first = (value) => typeof value === "string" ? value : "";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2024-06-20",
-});
-
-// Helper: sha256(email)
-function hashEmail(e) {
-  return crypto.createHash("sha256").update(e.trim().toLowerCase()).digest("hex");
-}
-
-// Helper: bygg full UL til /activate
-function buildDeepLink(u, s, exp, sig) {
-  const base = "https://moodmap-app.com/activate";
-  const q = new URLSearchParams({ u, s, exp: String(exp), sig });
-  return `${base}?${q.toString()}`;
-}
-
-// Server component
 export default async function ThanksPage({ searchParams }) {
-  // Klient kan allerede ha komplette parametere (f.eks. fra e-postlenke)
-  let u = searchParams?.u || "";
-  // Nå støtter vi s, cs og session_id
-  let s =
-    searchParams?.s ||
-    searchParams?.cs ||
-    searchParams?.session_id ||
-    "";
-  let exp = searchParams?.exp || "";
-  let sig = searchParams?.sig || "";
-  let ce = searchParams?.ce || ""; // e-post, om allerede injectet
-  let deepLink = "";
-  let email = "";
-
-  if (!s) {
-    console.warn("[thanks] missing session id (s/cs/session_id). Cannot build deep link.");
-  }
-
-  // Hvis vi ikke har komplett UL-sett, men har en Checkout Session-id (s/cs/session_id),
-  // henter vi session for å bygge u/s/exp/sig + ce.
-  const missingUL = !(u && s && exp && sig);
-  if (missingUL && s) {
+  const params = await searchParams || {};
+  const sessionId = first(params.s) || first(params.cs) || first(params.session_id);
+  let props = { state: "invalid", sessionId: "", deepLink: "", receiptToken: "", maskedEmail: "" };
+  if (validSessionId(sessionId)) {
     try {
-      const session = await stripe.checkout.sessions.retrieve(s, {
-        expand: ["customer_details"],
-      });
-
-      // e-post er obligatorisk i Payment Link-oppsettet ditt; fallback er likevel med
-      const email0 = session.customer_details?.email || "";
-      const uHash = email0 ? hashEmail(email0) : (session.metadata?.app_user_id || "");
-
-      // Sett nøkler
-      u = uHash || "";
-      exp = Math.floor(Date.now() / 1000) + 600; // 10 minutter gyldighet
-      sig = generateHmacSignature(u, s, exp);
-      email = email0;
-
-      // Første gang: legg på ?ce=<email> slik at klienten kan sende mail ved klikk
-      if (email && !searchParams?.ce) {
-        const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://moodmap-app.com";
-        const url = new URL(`${base}/thanks`);
-        url.searchParams.set("u", u);
-        url.searchParams.set("s", s);
-        url.searchParams.set("exp", String(exp));
-        url.searchParams.set("sig", sig);
-        url.searchParams.set("ce", email);
-
-        // Bevar ev. opprinnelig alias-param
-        if (searchParams?.cs) url.searchParams.set("cs", searchParams.cs);
-        if (searchParams?.session_id) url.searchParams.set("session_id", searchParams.session_id);
-
-        redirect(url.toString());
-      }
-    } catch (err) {
-      console.error("[thanks] Failed to retrieve Checkout Session", err?.message || err);
-      // Fortsetter til render av feilmelding under hvis vi ikke kan bygge link
+      // Never trust URL-supplied email, identity, signatures, or a claimed success.
+      const checkout = await verifyCheckout(sessionId);
+      props = { state: "ready", sessionId, deepLink: buildActivationLink(checkout.userId, sessionId), receiptToken: createReceiptToken(sessionId), maskedEmail: maskCheckoutEmail(checkout.email) };
+    } catch (error) {
+      props.state = error instanceof CheckoutError && error.code === "payment_pending" ? "pending"
+        : error instanceof CheckoutError ? "invalid" : "unavailable";
+      if (!(error instanceof CheckoutError)) console.error("[thanks] checkout verification temporarily unavailable");
     }
-  } else if (!missingUL) {
-    // Parametre er allerede komplette – hvis ce ikke finnes men email ligger i URL,
-    // lar vi klienten håndtere fallback-form (manuelt input).
-    email = ce || "";
   }
-
-  // Bygg deepLink hvis vi har alt
-  if (u && s && exp && sig) {
-    deepLink = buildDeepLink(u, s, exp, sig);
-  }
-
-  // Server-render: send ferdig deepLink som prop.
-  // Klienten vil:
-  //  - vise "Open MoodMap"-knapp
-  //  - QR + copy
-  //  - sende e-post ved klikk hvis ?ce= er i URL (dedupe pr sessionId) – se client.js
-  return <ThanksClient deepLink={deepLink} />;
+  return <ThanksClient {...props} />;
 }

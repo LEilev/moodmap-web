@@ -2,7 +2,8 @@
 import "./globals.css";
 import "./polish.css";
 import Link from "next/link";
-import Script from "next/script";
+import AppSiteClient from "../components/AppSiteClient";
+import { PrivacyPreferencesButton } from "../components/SitePrivacy";
 import MobileMenu from "../components/MobileMenu";
 import {
   BRAND_MARK_SRC,
@@ -77,8 +78,6 @@ function BrandLockup({ className = "", footer = false }) {
 }
 
 export default function RootLayout({ children }) {
-  const PK_SITE_ID = "88e4dc38-2a9b-412b-905d-5b91bb454187"; // LIVE
-
   const orgJsonLd = organizationJsonLd();
   const siteJsonLd = websiteJsonLd();
 
@@ -94,110 +93,18 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
         />
-        {/* PromoteKit (Option 2: Stripe Payment Links) */}
-        <Script
-          id="promotekit-loader"
-          src="https://cdn.promotekit.com/promotekit.js"
-          strategy="afterInteractive"
-          data-promotekit={PK_SITE_ID}
-        />
-
-        {/* Helper: inject client_reference_id on Stripe links/embeds without overwriting existing values */}
-        <Script id="promotekit-helper" strategy="afterInteractive">
-          {`
-(function () {
-  if (window.__promotekitHelperInstalled) return;
-  window.__promotekitHelperInstalled = true;
-
-  function safeSearchParams() {
-    try { return new URL(window.location.href).searchParams; } catch (_) { return null; }
-  }
-
-  function hrefParam(name) {
-    try {
-      var m = window.location.href.match(new RegExp('[?&]'+name+'=([^&#]+)','i'));
-      return m ? decodeURIComponent(m[1]) : '';
-    } catch (_) { return ''; }
-  }
-
-  function isValidSlug(s) {
-    return /^[A-Za-z0-9_-]{1,32}$/.test(s || '');
-  }
-
-  function pickReferral() {
-    try {
-      if (window.promotekit_referral) return String(window.promotekit_referral);
-
-      var via = '';
-      var sp = safeSearchParams();
-      if (sp) via = sp.get('via') || sp.get('ref') || '';
-      if (!via) via = hrefParam('via') || hrefParam('ref');
-
-      if (!via || via === 'default' || !isValidSlug(via)) return '';
-      return via;
-    } catch (_) { return ''; }
-  }
-
-  function addClientRefToBuyLinks(ref) {
-    if (!ref) return;
-    var links = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
-    links.forEach(function (link) {
-      try {
-        var href = link.getAttribute("href");
-        if (!href) return;
-        var url = new URL(href);
-        if (!url.searchParams.has("client_reference_id")) {
-          url.searchParams.set("client_reference_id", ref);
-          link.setAttribute("href", url.toString());
-        }
-      } catch (_) {}
-    });
-  }
-
-  function setClientRefOnEmbeds(ref) {
-    if (!ref) return;
-    document.querySelectorAll("[pricing-table-id]").forEach(function (el) {
-      if (!el.getAttribute("client-reference-id")) {
-        el.setAttribute("client-reference-id", ref);
-      }
-    });
-    document.querySelectorAll("[buy-button-id]").forEach(function (el) {
-      if (!el.getAttribute("client-reference-id")) {
-        el.setAttribute("client-reference-id", ref);
-      }
-    });
-  }
-
-  function applyRef() {
-    var ref = pickReferral();
-    if (!ref) return;
-    addClientRefToBuyLinks(ref);
-    setClientRefOnEmbeds(ref);
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(applyRef, 1500);
-  });
-
-  var retries = 0;
-  var t = setInterval(function () {
-    retries++;
-    applyRef();
-    if (retries >= 3) clearInterval(t);
-  }, 1200);
-})();
-          `}
-        </Script>
       </head>
 
       <body className="min-h-full bg-primary-blue text-white">
-        <div className="flex min-h-full flex-col">
+        <div id="site-shell" className="flex min-h-full flex-col">
+          <AppSiteClient />
+          <a href="#main-content" className="mm-skip-link">Skip to content</a>
           <header className="mm-site-header sticky top-0 z-40">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
               <BrandLockup />
 
               {/* Desktop nav */}
-              <nav className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl lg:flex">
+              <nav aria-label="Primary navigation" className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl lg:flex">
                 <Link href="/#product" className="mm-nav-link">
                   Product
                 </Link>
@@ -219,7 +126,7 @@ export default function RootLayout({ children }) {
             </div>
           </header>
 
-          <main className="flex-1">{children}</main>
+          <div id="main-content" tabIndex={-1} className="flex-1">{children}</div>
 
           <footer className="mm-site-footer">
             <div className="mx-auto max-w-7xl px-6 py-10">
@@ -254,6 +161,7 @@ export default function RootLayout({ children }) {
                     <Link className="mm-link" href="/terms">
                       Terms
                     </Link>
+                    <PrivacyPreferencesButton />
                   </div>
 
                   <p className="mt-4 text-sm text-white/62">
@@ -263,7 +171,7 @@ export default function RootLayout({ children }) {
                     </a>
                   </p>
 
-                  <p className="mt-5 text-xs text-white/40">
+                  <p className="mt-5 text-xs text-white/60">
                     © 2026 {SITE_NAME}. All rights reserved.
                   </p>
                 </div>

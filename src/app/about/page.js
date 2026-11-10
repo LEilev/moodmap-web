@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
+import { PRODUCT, displayDate } from "../../lib/product";
 import {
   ANDROID_PACKAGE_ID,
   APPSTORE_URL,
@@ -55,6 +56,7 @@ const IDENTIFIERS = [
   ["Android package", ANDROID_PACKAGE_ID],
   ["Apple App ID", APPLE_APP_ID],
   ["Support", SUPPORT_EMAIL],
+  ["App languages", PRODUCT.languages.map((language) => language.name).join(", ")],
 ];
 
 const BOUNDARIES = [
@@ -67,7 +69,7 @@ const BOUNDARIES = [
 const FAQ = [
   {
     q: "What is MoodMap?",
-    a: "MoodMap is cycle-aware relationship intelligence for men: one private daily read based on a partner’s menstrual-cycle context, designed to improve timing around support, conversation, restraint, and intimacy.",
+    a: "MoodMap gives men a quick daily read of what a partner’s cycle may mean for mood, energy and connection, with practical guidance for their own response.",
   },
   {
     q: "Is MoodMap a mood tracker?",
@@ -75,7 +77,7 @@ const FAQ = [
   },
   {
     q: "What makes MoodMap different from a period tracker?",
-    a: "A traditional period tracker centers dates and symptoms. MoodMap uses cycle timing to create a private relationship read: Today’s State, Day Brief, Risk Radar, Protocol, Calendar, Intelligence, and Timing Alerts.",
+    a: "MoodMap uses cycle timing to create a daily relationship read: Today’s State, Day Brief, Risk Radar, Command Deck, Calendar, Intelligence, and optional Timing Alerts. The emphasis is on what the user can do with that context.",
   },
   {
     q: "Is MoodMap medical or fertility advice?",
@@ -105,7 +107,7 @@ export default function AboutPage() {
         <div className="mm-container mm-v2-subhero__grid">
           <div className="mm-v2-subhero__copy" data-reveal>
             <span className="mm-section-label">Official MoodMap information</span>
-            <h1>Built for your response—not her identity.</h1>
+            <h1>Built for better relationship timing.</h1>
             <p className="mm-v2-subhero__lead">{DISAMBIGUATION_DESCRIPTION}</p>
             <p className="mm-v2-boundary">Private daily context. Clear limits. No emotional scorecard.</p>
             <div className="mm-v2-subhero__actions">
@@ -119,6 +121,7 @@ export default function AboutPage() {
             <div className="mm-v2-poster mm-v2-poster--about">
               <div className="mm-v2-poster__glow" aria-hidden="true" />
               <img
+                width={828} height={1792}
                 src="/screenshots/web-2026/read-day.webp"
                 alt="MoodMap Today’s State showing cycle phase, capacity, intelligence, risk, and direction."
                 loading="eager"
@@ -136,8 +139,26 @@ export default function AboutPage() {
             <span className="mm-v2-icon-chip"><AppWindow aria-hidden="true" /></span>
             <span className="mm-section-label">The official definition</span>
             <h2>MoodMap is one private daily relationship read based on cycle context.</h2>
-            <p>It shows what changed, what may carry more weight, what to avoid, and the cleaner response available to you. The product is designed to improve timing—not to explain, label, or manage your partner.</p>
+            <p>{PRODUCT.summary}</p>
+            <p>The Command Deck gives that context a practical shape: PLAN for the day, READ for HOW TO SURVIVE, BOND for sex, flirting, and intimacy, and SELF for your own reactions.</p>
           </div>
+        </div>
+      </section>
+
+      <section id="maker" className="mm-section mm-v2-about-grid-section">
+        <div className="mm-container mm-v2-about-grid">
+          <article className="mm-v2-about-card" data-reveal>
+            <span className="mm-section-label">Maker and publisher</span>
+            <h2>An independent app by {PRODUCT.founder}.</h2>
+            <p>MoodMap is developed independently in Norway. {PRODUCT.founder} is responsible for the product and for the information published on this site.</p>
+            <p>Questions, corrections, and product feedback can be sent to <a className="mm-link" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.</p>
+          </article>
+          <article className="mm-v2-about-card" data-reveal>
+            <span className="mm-section-label">How the guides are prepared</span>
+            <h2>Clear sources. Practical suggestions.</h2>
+            <p>Our guides link to public health references for general menstrual-cycle background. Relationship examples are MoodMap’s practical suggestions; they are not clinical findings or individualized predictions.</p>
+            <p>These are product and educational guides, with no claim of medical authorship or clinical review. Each revised guide shows its actual update date. Product facts were checked on <time dateTime={PRODUCT.factsReviewedOn}>{displayDate(PRODUCT.factsReviewedOn)}</time>.</p>
+          </article>
         </div>
       </section>
 
@@ -173,7 +194,7 @@ export default function AboutPage() {
               <span className="mm-section-label">Official links</span>
               <h2>Use the verified stores and support channel.</h2>
             </div>
-            <div className="mm-v2-store-links">
+            <div className="mm-v2-store-links" data-mm-placement="about-stores" data-mm-context="/about">
               <a href={APPSTORE_URL}>App Store <ExternalLink aria-hidden="true" /></a>
               <a href={PLAYSTORE_URL}>Google Play <ExternalLink aria-hidden="true" /></a>
               <a href={`mailto:${SUPPORT_EMAIL}`}>Contact support <ExternalLink aria-hidden="true" /></a>

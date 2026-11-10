@@ -1,5 +1,6 @@
 // src/app/learn/support-partner-during-pms/page.js
 import Link from "next/link";
+import { PRODUCT } from "../../../lib/product";
 import {
   HeartHandshake,
   MessageCircle,
@@ -58,7 +59,7 @@ export default function SupportPartnerDuringPMSPage() {
     },
     {
       q: "What if her cycle isn’t 28 days?",
-      a: "That’s common. MoodMap Premium+ supports cycle calibration (21–35 days) and menstruation length (2–8 days) so phase timing and daily cues stay aligned with her rhythm.",
+      a: `Cycles vary. ${PRODUCT.settingsSummary} Calendar estimates still cannot confirm ovulation or predict symptoms.`,
     },
   ];
 
@@ -75,7 +76,7 @@ export default function SupportPartnerDuringPMSPage() {
   ]);
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
+    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
       {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
@@ -301,15 +302,14 @@ export default function SupportPartnerDuringPMSPage() {
                   <li>Daily “what to expect” + practical do/don’t tips.</li>
                   <li>Heads-ups before high-impact days.</li>
                   <li>
-                    Premium+ calibration: cycle length <strong>21–35</strong> days and menstruation{" "}
-                    <strong>2–8</strong> days.
+                    {PRODUCT.settingsSummary}
                   </li>
                   <li>Private by design (no symptom diary required).</li>
                 </ul>
 
                 {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
                 <div className="mt-6 text-sm text-white/70">
-                  Want calibration and deeper timing cues?{" "}
+                  Want the fuller Brief, Command Deck, and deeper insights?{" "}
                   <Link href="/pro" className="mm-link text-white/80">
                     See what Premium+ unlocks →
                   </Link>
@@ -328,7 +328,7 @@ export default function SupportPartnerDuringPMSPage() {
 
               <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
                 MoodMap gives day-by-day cues synced to her cycle — so you can lead with timing,
-                steadiness, and respect (without tracking her).
+                steadiness, and respect for her preferences.
               </p>
 
               <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -342,7 +342,7 @@ export default function SupportPartnerDuringPMSPage() {
             </div>
           </section>
 
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
 
           {/* NEW: Visible FAQs (matches JSON-LD) */}
           <section className="mt-2">

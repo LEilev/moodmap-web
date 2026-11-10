@@ -105,7 +105,7 @@ export default function CycleAwareRelationshipTimingPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="relative isolate bg-primary-blue text-white">
+    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
@@ -247,7 +247,7 @@ export default function CycleAwareRelationshipTimingPage() {
             ))}
           </section>
 
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
 
           <div className="text-center">
             <Link href="/intelligence" className="btn-primary">

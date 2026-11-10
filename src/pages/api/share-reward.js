@@ -141,7 +141,7 @@ export default async function handler(req, res) {
     console.log(`[share-reward]#${reqId} Incoming: userId=${userId || 'null'} sig_present=${!!sig}`);
 
     // Basic validation + signature
-    if (!userId || typeof userId !== 'string') {
+    if (typeof userId !== 'string' || !/^[A-Za-z0-9_$:.-]{1,128}$/.test(userId)) {
       return send(res, 400, { ok: false, code: 'bad_request', error: 'Missing userId' });
     }
     if (HMAC_SECRET) {
@@ -153,7 +153,7 @@ export default async function handler(req, res) {
         return send(res, 401, { ok: false, code: 'bad_sig', error: 'Invalid signature' });
       }
     } else {
-      console.warn(`[share-reward]#${reqId} HMAC_SECRET not set — signature check disabled`);
+      return send(res, 503, { ok: false, code: 'server_config', error: 'Reward service is unavailable' });
     }
     if (!RC_SECRET_API_KEY) {
       console.error(`[share-reward]#${reqId} Missing RC_SECRET_API_KEY`);

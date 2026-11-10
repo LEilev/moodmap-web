@@ -12,6 +12,7 @@ import {
   nowISO
 } from '@/lib/inf-keys';
 import { initialTemplate, followupTemplate } from '@/lib/email-templates';
+import { createUnsubscribeUrl, unsubscribeSigningConfigured } from '@/lib/influencer-unsubscribe';
 import { tryAcquire, release } from '@/lib/ratelimit';
 
 const RESEND_API = 'https://api.resend.com/emails';
@@ -187,7 +188,20 @@ export async function GET(req) {
     return json({ error: 'missing_env', need: ['BASE_URL', 'EMAIL_FROM', 'RESEND_API_KEY'] }, 500);
   }
 
-  const paused = await redis.get(INF_PAUSE);
+  if (!redis || !unsubscribeSigningConfigured()) {
+    return json({ error: 'outreach_not_configured' }, 503);
+  }
+  try {
+    const parsedBaseUrl = new URL(baseUrl);
+    if (parsedBaseUrl.protocol !== 'https:' || parsedBaseUrl.username || parsedBaseUrl.password) {
+      return json({ error: 'invalid_base_url' }, 503);
+    }
+  } catch {
+    return json({ error: 'invalid_base_url' }, 503);
+  }
+
+  let paused;
+  try { paused = await redis.get(INF_PAUSE); } catch { return json({ error: 'outreach_unavailable' }, 503); }
   if (paused) {
     return json({ ok: true, paused: true, didWork: false }, 200);
   }
@@ -208,6 +222,7 @@ export async function GET(req) {
     minDelayMs,
 
     sent: 0,
+    attempted: 0,
     requeued: 0,
     failed: 0,
     skipped: 0,
@@ -359,14 +374,14 @@ export async function GET(req) {
 
         await redis.hset(key, { status: 'processing', processingAt: nowISO() });
 
-        const { subject, html, listUnsub } = initialTemplate({
-          baseUrl,
-          email,
-          name: inf?.name,
-          handle: inf?.handle,
-        });
-
         try {
+          const unsubscribeUrl = await createUnsubscribeUrl({ baseUrl, email, redis });
+          const { subject, html, listUnsub } = initialTemplate({
+            baseUrl,
+            email,
+            unsubscribeUrl,
+          });
+          result.attempted++;
           await sendEmail({
             to: email,
             subject,
@@ -445,6 +460,7 @@ export async function GET(req) {
       const cutoffMs = Date.now() - FOLLOWUP_AGE_DAYS * 24 * 60 * 60 * 1000;
 
       let sentThisRun = 0;
+      let attemptedThisRun = 0;
       let cursor = '0';
       let guard = 0;
 
@@ -462,7 +478,7 @@ export async function GET(req) {
         }
 
         for (const key of keys) {
-          if (sentThisRun >= max) break;
+          if (sentThisRun >= max || attemptedThisRun >= max) break;
           if (!key || key === INF_QUEUE || key === INF_UNSUB || key === INF_DEAD) continue;
 
           let inf;
@@ -474,6 +490,8 @@ export async function GET(req) {
 
           const fuSent = parseInt(inf.followupsSent || '0', 10);
           if (fuSent > 0) continue;
+          const fuAttempts = parseInt(inf.followupAttempts || '0', 10);
+          if (inf.followupStatus === 'failed' || fuAttempts >= maxAttempts) continue;
 
           const lastSentMs = inf.lastSent ? Date.parse(inf.lastSent) : NaN;
           if (!Number.isFinite(lastSentMs) || lastSentMs > cutoffMs) continue;
@@ -486,13 +504,6 @@ export async function GET(req) {
 
           const masked = maskEmail(email);
 
-          const { subject, html, listUnsub } = followupTemplate({
-            baseUrl,
-            email,
-            name: inf?.name,
-            handle: inf?.handle,
-          });
-
           if (dry) {
             result.sent++;
             if (result.sentSample.length < 15) result.sentSample.push({ email: masked, note: 'would_send_followup' });
@@ -503,7 +514,15 @@ export async function GET(req) {
           const pauseNow = await redis.get(INF_PAUSE);
           if (pauseNow) break;
 
+          attemptedThisRun++;
           try {
+            const unsubscribeUrl = await createUnsubscribeUrl({ baseUrl, email, redis });
+            const { subject, html, listUnsub } = followupTemplate({
+              baseUrl,
+              email,
+              unsubscribeUrl,
+            });
+            result.attempted++;
             await sendEmail({
               to: email,
               subject,
@@ -517,6 +536,8 @@ export async function GET(req) {
             await redis.hset(key, {
               lastSent: nowISO(),
               followupsSent: 1,
+              followupStatus: 'sent',
+              followupLastError: '',
               lastError: '',
             });
 
@@ -534,10 +555,19 @@ export async function GET(req) {
               result.errorSample.push({ email: masked, error: msg, status: statusCode ?? undefined });
             }
 
-            try {
-              await redis.hincrby(key, 'followupAttempts', 1);
-              await redis.hset(key, { followupLastError: msg });
-            } catch {}
+            await redis.hset(key, { followupLastError: msg });
+            if (statusCode === 401 || statusCode === 403) {
+              attemptedThisRun = max;
+              break;
+            }
+
+            const attemptsNow = await redis.hincrby(key, 'followupAttempts', 1);
+            const giveUp = statusCode === 400 || statusCode === 422 || attemptsNow >= maxAttempts;
+            if (giveUp) {
+              await redis.hset(key, { followupStatus: 'failed' });
+              await redis.sadd(INF_DEAD, email);
+              result.failed++;
+            }
 
             if (statusCode === 429 || msg.includes('Resend 429')) {
               result.backoff429 = true;
@@ -552,7 +582,7 @@ export async function GET(req) {
         cursor = nextCursor;
         guard++;
         if (guard > 50) break;
-        if (sentThisRun >= max) break;
+        if (sentThisRun >= max || attemptedThisRun >= max) break;
       } while (cursor !== '0');
     }
 

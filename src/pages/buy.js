@@ -1,227 +1,105 @@
-// pages/buy.js
-// v3.6.1 • Client-side redirect to Stripe (Monthly & Yearly)
-// - Always shows: "Redirecting to Stripe…"
-// - Shows affiliate note only when ref/via/PromoteKit is actually used for attribution
-// - GA4 begin_checkout fired right before redirect (no PII)
-// - Preserves pk_* params + adds lightweight type= param for Stripe logs
-
 import { useEffect, useMemo, useRef, useState } from "react";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
+import { checkoutHref } from "../lib/checkout-links.mjs";
+import { checkoutReferral } from "../lib/referral-attribution.mjs";
+import { hasConsent, PRIVACY_CHANGE_EVENT } from "../lib/site-consent.mjs";
+import { trackWebEvent } from "../lib/site-analytics.mjs";
 
-// LIVE Payment Links (allow_promotion_codes=true)
-// Update these only when you create new Stripe Payment Links.
-const PLAN_LINKS = {
-  monthly: "https://buy.stripe.com/9B69AU4nN3rogkebjz3ks05",
-  yearly: "https://buy.stripe.com/6oUcN66vVaTQgke87n3ks06",
-};
+const first = (value) => Array.isArray(value) ? value[0] : value;
+const knownEntry = (value) => ["web", "homepage", "guide", "article", "pro", "paywall"].includes(value) ? value : "web";
+const isInAppBrowser = () => typeof navigator !== "undefined" &&
+  /Instagram|FBAN|FBAV|TikTok|Twitter|Snapchat|Pinterest|Line\/|KAKAOTALK/i.test(navigator.userAgent || "");
 
-function isInAppBrowser() {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || navigator.vendor || "";
-  return /Instagram|FBAN|FBAV|TikTok|Twitter|Snapchat|Pinterest|Line\/|KAKAOTALK/i.test(ua);
-}
-
-const first = (val) => (Array.isArray(val) ? (val[0] ?? "") : (val ?? ""));
-const validSlug = (s) => typeof s === "string" && /^[\w-]{1,32}$/.test(s);
-
-// Safe GA helper (no PII)
-function gaBeginCheckout(params) {
-  try {
-    const fn =
-      (typeof window !== "undefined" && window.mmGaEvent) ||
-      (typeof window !== "undefined" &&
-        typeof window.gtag === "function" &&
-        ((n, p) => window.gtag("event", n, p)));
-    if (fn) fn("begin_checkout", params || {});
-    if (process.env.NODE_ENV !== "production") console.log("[GA4] begin_checkout", params);
-  } catch {}
-}
-
-export async function getServerSideProps({ res }) {
+export async function getServerSideProps({ res, query }) {
   res.setHeader("X-Robots-Tag", "noindex, nofollow");
   res.setHeader("Cache-Control", "private, no-store, max-age=0, must-revalidate");
-  return { props: {} };
+  return { props: { initialType: first(query?.type) === "yearly" ? "yearly" : "monthly" } };
 }
 
-export default function BuyClient() {
+export default function BuyClient({ initialType = "monthly" }) {
   const router = useRouter();
-  const inApp = isInAppBrowser();
-
-  const [baseHref, setBaseHref] = useState("");
+  const [inApp, setInApp] = useState(false);
+  const [referralEnabled, setReferralEnabled] = useState(false);
   const [finalHref, setFinalHref] = useState("");
-  const [affiliateNote, setAffiliateNote] = useState(""); // shown only when attribution is actually used
-
-  const visibleLinkRef = useRef(null);
-  const hiddenLinkRef = useRef(null);
-
-  // Build a base Stripe URL early (without client_reference_id). Preserve pk_* + type + optional entry.
+  const [affiliateNote, setAffiliateNote] = useState("");
+  const automaticLink = useRef(null);
+  const checkoutTracked = useRef(false);
   const ctx = useMemo(() => {
-    if (!router.isReady) return { type: "monthly", slug: "", pkParams: {}, entry: "paywall" };
-    const q = router.query || {};
-    const type = first(q.type) === "yearly" ? "yearly" : "monthly";
-    const rawSlug = first(q.ref) || first(q.via) || "";
-    const slug = validSlug(rawSlug) ? rawSlug : "";
-    const entry = first(q.entry) || "paywall";
-    const pkParams = {};
-    Object.entries(q).forEach(([k, v]) => {
-      if (k.startsWith("pk_")) pkParams[k] = String(first(v));
-    });
-    return { type, slug, entry, pkParams };
-  }, [router.isReady, router.query]);
+    const query = router.isReady ? router.query : {};
+    return {
+      type: router.isReady ? first(query.type) === "yearly" ? "yearly" : "monthly" : initialType,
+      entry: knownEntry(first(query.entry)),
+      pkParams: Object.fromEntries(Object.entries(query).filter(([key]) => key.startsWith("pk_"))),
+    };
+  }, [router.isReady, router.query, initialType]);
+  const baseHref = useMemo(() => checkoutHref({ plan: ctx.type, pkParams: ctx.pkParams, referralEnabled }), [ctx, referralEnabled]);
 
-  // Compute the base href (without client_reference_id).
   useEffect(() => {
-    const base = PLAN_LINKS[ctx.type];
-    if (!base) return;
+    setInApp(isInAppBrowser());
+    const sync = () => {
+      setReferralEnabled(hasConsent(window, "referral"));
+      setFinalHref("");
+    };
+    sync();
+    window.addEventListener(PRIVACY_CHANGE_EVENT, sync);
+    return () => window.removeEventListener(PRIVACY_CHANGE_EVENT, sync);
+  }, []);
 
-    const url = new URL(base);
+  const trackCheckout = () => {
+    if (checkoutTracked.current) return;
+    checkoutTracked.current = true;
+    trackWebEvent("begin_checkout", { plan: ctx.type, entry: ctx.entry });
+  };
 
-    // Lightweight telemetry param for Stripe logs (optional)
-    url.searchParams.set("type", ctx.type);
-
-    // Preserve pk_* params
-    Object.entries(ctx.pkParams).forEach(([k, v]) => url.searchParams.set(k, v));
-
-    const baseUrl = url.toString();
-    setBaseHref(baseUrl);
-
-    // Keep visible fallback valid early
-    setFinalHref(baseUrl);
-
-    // Only show affiliate note early if ref/via slug is present.
-    // (PromoteKit referral may still be detected later just-in-time.)
-    setAffiliateNote(ctx.slug ? "Applying referral…" : "");
-  }, [ctx.type, ctx.pkParams, ctx.slug]);
-
-  // Decide final client_reference_id right before redirect; update links; then click.
   useEffect(() => {
-    if (!baseHref) return;
+    if (!router.isReady) return;
+    const timer = window.setTimeout(() => {
+      const enabled = hasConsent(window, "referral");
+      const referral = checkoutReferral(window);
+      const href = checkoutHref({ plan: ctx.type, pkParams: ctx.pkParams, referralEnabled: enabled, referral });
+      setFinalHref(href);
+      setAffiliateNote(referral ? "Applying referral…" : "");
 
-    // Keep the original timings (ensures PromoteKit has time to load in many cases)
-    const delay = inApp ? 1500 : 1200;
-
-    const timer = setTimeout(async () => {
-      try {
-        const url = new URL(baseHref);
-
-        // 1) Respect preexisting client_reference_id
-        let clientRef = url.searchParams.get("client_reference_id");
-        let source = "preexisting";
-
-        if (!clientRef) {
-          // 2) PromoteKit unique ID from window.promotekit_referral (read just-in-time)
-          const pkRef =
-            typeof window !== "undefined" && window.promotekit_referral
-              ? String(window.promotekit_referral)
-              : "";
-
-          if (pkRef) {
-            clientRef = pkRef;
-            source = "promotekit_referral";
-          } else {
-            // 3) Fallback: human slug from ?via/ref
-            if (ctx.slug) {
-              clientRef = ctx.slug;
-              source = "fallback:slug";
-            } else {
-              // 4) Final fallback
-              clientRef = "default";
-              source = "fallback:default";
-            }
-          }
-        }
-
-        // Optional: stash {uniqueId, slug} for webhook if both present and differ
-        if (clientRef && clientRef !== "default" && ctx.slug && clientRef !== ctx.slug) {
-          try {
-            const qs = new URLSearchParams({ uid: clientRef, slug: ctx.slug });
-            fetch(`/api/pk-stash?${qs}`, { method: "GET", keepalive: true }).catch(() => {});
-          } catch {}
-        }
-
-        // Mutate URL only if it doesn't already have client_reference_id
-        if (!url.searchParams.get("client_reference_id")) {
-          url.searchParams.set("client_reference_id", clientRef);
-        }
-
-        // Show affiliate note ONLY when attribution is actually used (slug or PromoteKit or preexisting)
-        const attributionUsed =
-          (source === "promotekit_referral" || source === "fallback:slug" || source === "preexisting") &&
-          clientRef &&
-          clientRef !== "default";
-
-        setAffiliateNote(attributionUsed ? "Applying referral…" : "");
-
-        const href = url.toString();
-        setFinalHref(href);
-
-        // Update both visible + hidden links just-in-time
-        const aHidden = hiddenLinkRef.current || document.getElementById("stripeLink");
-        const aVisible = visibleLinkRef.current || document.getElementById("stripeVisibleLink");
-        if (aHidden) aHidden.setAttribute("href", href);
-        if (aVisible) aVisible.setAttribute("href", href);
-
-        // ---- GA4: fire begin_checkout right BEFORE we click (no PII) ----
-        gaBeginCheckout({
-          plan: ctx.type,
-          ref_code: ctx.slug || "(none)",
-          entry: ctx.entry || "paywall",
-          client_reference_hint: clientRef || "(none)",
-        });
-
-        // Log once for debugging
-        const short = clientRef ? String(clientRef).slice(0, 6) + "…" : "(none)";
-        console.info("[buy] client_ref", short, { source, type: ctx.type });
-
-        // Kick off the redirect click
-        aHidden?.click();
-      } catch (e) {
-        console.error("[buy] failed to build redirect URL", e?.message || e);
+      if (enabled && referral?.slug && referral.id !== referral.slug) {
+        const query = new URLSearchParams({ uid: referral.id, slug: referral.slug });
+        fetch(`/api/pk-stash?${query}`, { method: "GET", keepalive: true }).catch(() => {});
       }
-    }, delay);
-
-    return () => clearTimeout(timer);
-  }, [baseHref, ctx.type, ctx.slug, ctx.entry, inApp]);
+      if (!checkoutTracked.current) {
+        checkoutTracked.current = true;
+        trackWebEvent("begin_checkout", { plan: ctx.type, entry: ctx.entry });
+      }
+      if (automaticLink.current) {
+        automaticLink.current.href = href;
+        automaticLink.current.click();
+      }
+    }, inApp ? 1500 : 1200);
+    return () => window.clearTimeout(timer);
+  }, [router.isReady, ctx, inApp, referralEnabled]);
 
   return (
     <>
       <Head>
-        <title>Buy Premium+ · MoodMap</title>
+        <title>Secure checkout · MoodMap</title>
         <meta name="robots" content="noindex,nofollow" />
-        <link rel="preconnect" href="https://buy.stripe.com" />
       </Head>
-
-      <main className="min-h-screen flex flex-col items-center justify-center px-6 text-center">
-        <p className="text-base">Redirecting to Stripe…</p>
-
-        {affiliateNote ? (
-          <p className="mt-1 text-sm opacity-75">{affiliateNote}</p>
-        ) : null}
-
-        {baseHref ? (
-          <>
-            {/* Hidden auto-redirect anchor */}
-            <a id="stripeLink" ref={hiddenLinkRef} href={finalHref || baseHref} style={{ display: "none" }}>
-              Continue
-            </a>
-
-            {/* Visible fallback (in case the in-app browser blocks auto-nav) */}
-            <a id="stripeVisibleLink" ref={visibleLinkRef} className="underline mt-4 text-lg" href={finalHref || baseHref}>
-              Continue to Stripe
-            </a>
-
-            {inApp && (
-              <p className="mt-3 text-sm opacity-80">
-                If nothing happens: open the menu (•••) and choose <b>Open in Browser</b>, then tap the button again.
-              </p>
-            )}
-          </>
-        ) : (
-          <a className="underline mt-4" href="/pro">
-            Go back
-          </a>
-        )}
+      <main className="mm-handoff-main">
+        <div className="mm-handoff-card">
+          <Link href="/" className="mm-handoff-brand">MoodMap</Link>
+          <h1>Continue to secure checkout</h1>
+          <p>You’re choosing Premium+ {ctx.type === "yearly" ? "annual" : "monthly"} access. Stripe will show the final price before you pay.</p>
+          <p role="status" aria-live="polite" className="mm-handoff-status">{affiliateNote || "Opening Stripe…"}</p>
+          <a ref={automaticLink} href={finalHref || baseHref} tabIndex={-1} aria-hidden="true" hidden>Continue</a>
+          <a className="mm-handoff-primary" href={finalHref || baseHref} onClick={(event) => {
+            const enabled = hasConsent(window, "referral");
+            event.currentTarget.href = checkoutHref({ plan: ctx.type, pkParams: ctx.pkParams, referralEnabled: enabled, referral: checkoutReferral(window) });
+            trackCheckout();
+          }}>Continue to Stripe</a>
+          {inApp && <p className="mm-handoff-help">If checkout does not open, choose “Open in Browser” from this browser’s menu, then try the button.</p>}
+          <noscript><p>Use the button above to continue. Optional referral tracking is off.</p></noscript>
+          <Link href="/pro" className="mm-link mm-handoff-back">Back to plans</Link>
+        </div>
       </main>
     </>
   );

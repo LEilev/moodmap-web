@@ -1,34 +1,32 @@
-export const SITE_NAME = "MoodMap";
-export const SITE_URL = "https://moodmap-app.com";
-export const SITE_TITLE = `${SITE_NAME} — Cycle-Aware Relationship Timing for Men`;
+import {
+  CONTENT_UPDATES,
+  PRODUCT,
+  PRODUCT_FEATURES,
+  displayDate,
+} from "../lib/product";
+
+export const SITE_NAME = PRODUCT.brand;
+export const SITE_URL = PRODUCT.siteUrl;
+export const SITE_TITLE = `${PRODUCT.name} for Men`;
 export const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 export const OG_IMAGE_SRC = "/og/moodmap-og.jpg";
-export const OG_IMAGE_ALT =
-  "MoodMap — one private daily read based on your partner’s cycle.";
-export const UPDATED_ISO = "2026-07-24";
-export const UPDATED_DISPLAY = "July 24, 2026";
-
-export const OFFICIAL_APP_NAME = "MoodMap: Relationship Timing";
-export const APPLE_APP_ID = "6746102626";
-export const APP_BUNDLE_ID = "com.eilev.moodmapnextgen";
-export const ANDROID_PACKAGE_ID = "com.eilev.moodmapnextgen";
-export const SUPPORT_EMAIL = "support@moodmap-app.com";
+export const OG_IMAGE_ALT = "MoodMap — a daily read of cycle context for your response.";
+export const OFFICIAL_APP_NAME = PRODUCT.name;
+export const APPLE_APP_ID = PRODUCT.appleAppId;
+export const APP_BUNDLE_ID = PRODUCT.bundleId;
+export const ANDROID_PACKAGE_ID = PRODUCT.androidPackage;
+export const SUPPORT_EMAIL = PRODUCT.supportEmail;
 export const DISAMBIGUATION_DESCRIPTION =
-  "MoodMap at moodmap-app.com is a cycle-aware relationship timing app for men. It models cycle-based context but does not record or monitor a partner’s actual mood.";
+  "MoodMap at moodmap-app.com is a cycle-aware relationship timing app for men. It models possible cycle context without recording a partner’s actual mood.";
 export const ENTITY_ALTERNATE_NAMES = [
-  "MoodMap: Relationship Timing",
+  PRODUCT.name,
   "MoodMap Relationship Timing",
-  "MoodMap menstrual cycle read for men",
+  "MoodMap menstrual cycle guidance for men",
   "MoodMap cycle-aware relationship intelligence",
-  "MoodMap relationship timing for men",
 ];
-
-export const APPSTORE_URL = "https://apps.apple.com/app/id6746102626";
-export const PLAYSTORE_URL =
-  `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE_ID}`;
-
-export const DEFAULT_META_DESCRIPTION =
-  "MoodMap gives men one private daily read based on their partner’s cycle: what changed, what matters, what to avoid, and the cleaner response.";
+export const APPSTORE_URL = PRODUCT.appStoreUrl;
+export const PLAYSTORE_URL = PRODUCT.playStoreUrl;
+export const DEFAULT_META_DESCRIPTION = PRODUCT.summary;
 
 export const SOURCE_LINKS = [
   {
@@ -67,6 +65,7 @@ export function organizationJsonLd() {
     url: SITE_URL,
     logo: absoluteUrl(BRAND_MARK_SRC),
     email: SUPPORT_EMAIL,
+    founder: { "@type": "Person", name: PRODUCT.founder, url: absoluteUrl("/about#maker") },
     availableLanguage: ["en"],
     areaServed: "Worldwide",
     knowsAbout: [
@@ -99,15 +98,16 @@ export function mobileApplicationJsonLd(path = "/") {
     "@context": "https://schema.org",
     "@type": "MobileApplication",
     "@id": `${SITE_URL}#mobile-application`,
-    name: SITE_NAME,
+    name: OFFICIAL_APP_NAME,
     alternateName: ENTITY_ALTERNATE_NAMES,
     disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
-    url: absoluteUrl(path),
+    url: absoluteUrl("/"),
+    mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(path) },
     description: DEFAULT_META_DESCRIPTION,
     operatingSystem: "iOS, Android",
     applicationCategory: "HealthApplication",
     applicationSubCategory: "Cycle-aware relationship intelligence",
-    inLanguage: "en",
+    inLanguage: PRODUCT.languages.map(({ code }) => code),
     audience: {
       "@type": "Audience",
       audienceType: "Men in relationships",
@@ -129,21 +129,7 @@ export function mobileApplicationJsonLd(path = "/") {
         value: APPLE_APP_ID,
       },
     ],
-    featureList: [
-      "Today’s State",
-      "Day Brief",
-      "Full Cycle Calendar",
-      "Cycle Intelligence",
-      "Modeled hormone movement context",
-      "Cycle-based capacity",
-      "Risk Radar",
-      "PLAN, READ, BOND, and SELF Protocol",
-      "Deeper WHY explanations",
-      "Timing Alerts",
-      "PMS timing awareness",
-      "Fertile-window and estimated ovulation timing",
-      "Relationship timing for support, conversation, restraint, and intimacy",
-    ],
+    featureList: PRODUCT_FEATURES,
     offers: {
       "@type": "Offer",
       price: "0",
@@ -161,8 +147,8 @@ export function articleJsonLd({
   path,
   headline,
   description,
-  datePublished = UPDATED_ISO,
-  dateModified = UPDATED_ISO,
+  datePublished,
+  dateModified = CONTENT_UPDATES[path],
 }) {
   const url = absoluteUrl(path);
   return {
@@ -171,8 +157,8 @@ export function articleJsonLd({
     headline,
     description,
     inLanguage: "en",
-    datePublished,
-    dateModified,
+    ...(datePublished ? { datePublished } : {}),
+    ...(dateModified ? { dateModified } : {}),
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": url,
@@ -182,7 +168,7 @@ export function articleJsonLd({
     author: {
       "@type": "Organization",
       name: SITE_NAME,
-      url: SITE_URL,
+      url: absoluteUrl("/about#maker"),
     },
     publisher: {
       "@type": "Organization",
@@ -259,7 +245,7 @@ export function aboutPageJsonLd() {
     mainEntity: {
       "@type": "MobileApplication",
       "@id": `${SITE_URL}#mobile-application`,
-      name: SITE_NAME,
+      name: OFFICIAL_APP_NAME,
       alternateName: ENTITY_ALTERNATE_NAMES,
       disambiguatingDescription: DISAMBIGUATION_DESCRIPTION,
       operatingSystem: "iOS, Android",
@@ -276,20 +262,22 @@ export function aboutPageJsonLd() {
   };
 }
 
-export function SourceTrustBlock() {
+export function SourceTrustBlock({ path }) {
+  const updated = CONTENT_UPDATES[path];
   return (
     <section className="mt-2">
       <div className="glass-card p-6 sm:p-7 text-left">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/45">
-          Updated: {UPDATED_DISPLAY} · Reviewed for product consistency by MoodMap
+        <p className="text-sm text-white/75">
+          Published by MoodMap · <a className="mm-link" href="/about#maker">About the maker and editorial responsibility</a>
+          {updated && <> · Updated <time dateTime={updated}>{displayDate(updated)}</time></>}
         </p>
         <h2 className="mt-3 text-lg sm:text-xl font-semibold text-white">
-          Sources and boundaries
+          Sources and editorial notes
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-white/65">
-          MoodMap keeps the product guidance non-medical. These references anchor the basic cycle education. MoodMap translates modeled cycle context into relationship timing—not diagnosis, contraception, fertility planning, or individual hormone measurement.
+        <p className="mt-2 text-sm leading-relaxed text-white/75">
+          These sources support the cycle and symptom information. The relationship examples are MoodMap’s practical suggestions, not clinically validated predictions about an individual person. Product information was checked against the public app listings on {displayDate(PRODUCT.factsReviewedOn)}. <a className="mm-link" href="/intelligence#model-fit">Read how the model works and who it fits.</a>
         </p>
-        <ul className="mt-4 grid gap-2 text-sm text-white/70 leading-relaxed list-disc pl-5">
+        <ul className="mt-4 grid gap-2 text-sm text-white/75 leading-relaxed list-disc pl-5">
           {SOURCE_LINKS.map(({ label, href }) => (
             <li key={href}>
               <a className="mm-link" href={href} target="_blank" rel="noopener noreferrer">

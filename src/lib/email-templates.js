@@ -20,13 +20,13 @@ const esc = (s = "") => {
 const unsubUrl = (baseUrl, email) =>
   `${baseUrl}/api/influencer/unsubscribe?email=${encodeURIComponent(email)}`;
 
-const footer = (baseUrl, email) => {
+const footer = (baseUrl, email, unsubscribeUrl) => {
   const addr = COMPANY_POSTAL_ADDRESS ? `<br/>${esc(COMPANY_POSTAL_ADDRESS)}` : "";
   return `
   <hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
   <p style="font-size:12px;color:#666;margin:0;line-height:1.4">
     You're receiving this because your contact email is listed publicly for collaborations.
-    Not interested? <a href="${unsubUrl(baseUrl, email)}">Unsubscribe</a>.
+    Not interested? <a href="${esc(unsubscribeUrl || unsubUrl(baseUrl, email))}">Unsubscribe</a>.
     ${addr}
   </p>
 `;
@@ -35,7 +35,7 @@ const footer = (baseUrl, email) => {
 /**
  * initialTemplate
  */
-export function initialTemplate({ baseUrl, email, name, handle }) {
+export function initialTemplate({ baseUrl, email, unsubscribeUrl }) {
   const subject = "MoodMap partner invite - 50% lifetime recurring";
 
   const html = `
@@ -68,17 +68,17 @@ export function initialTemplate({ baseUrl, email, name, handle }) {
     <p style="margin:0 0 2px 0">Eilev</p>
     <p style="margin:0 0 0 0">Founder, MoodMap</p>
 
-    ${footer(baseUrl, email)}
+    ${footer(baseUrl, email, unsubscribeUrl)}
   </div>`;
 
-  const listUnsub = `<${unsubUrl(baseUrl, email)}>`;
+  const listUnsub = `<${unsubscribeUrl || unsubUrl(baseUrl, email)}>`;
   return { subject, html, listUnsub };
 }
 
 /**
  * followupTemplate
  */
-export function followupTemplate({ baseUrl, email, name, handle }) {
+export function followupTemplate({ baseUrl, email, unsubscribeUrl }) {
   const subject = "Quick follow-up - MoodMap partner invite";
 
   const html = `
@@ -101,9 +101,9 @@ export function followupTemplate({ baseUrl, email, name, handle }) {
 
     <p style="margin:0 0 12px 0">Best,<br/>Eilev</p>
 
-    ${footer(baseUrl, email)}
+    ${footer(baseUrl, email, unsubscribeUrl)}
   </div>`;
 
-  const listUnsub = `<${unsubUrl(baseUrl, email)}>`;
+  const listUnsub = `<${unsubscribeUrl || unsubUrl(baseUrl, email)}>`;
   return { subject, html, listUnsub };
 }

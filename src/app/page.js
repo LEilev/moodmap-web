@@ -11,6 +11,7 @@ import {
 
 import ScrollReveal from "../components/ScrollReveal";
 import ProductShowcase from "../components/ProductShowcase";
+import { PRODUCT, PREMIUM_FEATURES } from "../lib/product";
 import {
   APPSTORE_URL,
   DEFAULT_META_DESCRIPTION,
@@ -54,11 +55,11 @@ const APP_SURFACES = [
   },
   {
     screenshotPath: "/screenshots/web-2026/protocol-overview.webp",
-    kicker: "Protocol + WHY",
+    kicker: "Command Deck + WHY",
     title: "Get the move—and the reason.",
-    caption: "PLAN, READ, BOND, and SELF with deeper reasoning.",
+    caption: "PLAN the day. READ the situation. BOND through intimacy. Manage SELF.",
     meta: "Practical guidance",
-    alt: "MoodMap Protocol showing PLAN, READ, BOND, and SELF guidance with WHY and HOW layers.",
+    alt: "MoodMap Command Deck showing PLAN, READ, BOND, and SELF guidance with WHY and HOW layers.",
   },
 ];
 
@@ -78,8 +79,8 @@ const OUTCOMES = [
     body: "Separate a valid topic from a poor window so timing does not become the second problem.",
   },
   {
-    title: "Reciprocity over scripts",
-    body: "Read pace, mutual energy, and response instead of forcing a moment because the calendar says it should work.",
+    title: "Better-timed intimacy",
+    body: "BOND covers sex, flirting, and intimacy, with attention to mutual interest, consent, and pace.",
   },
 ];
 
@@ -89,18 +90,9 @@ const INTELLIGENCE_POINTS = [
   ["Possible effects", "How energy, sensitivity, recovery demand, connection, and pace may be affected."],
 ];
 
-const PREMIUM_FEATURES = [
-  "Full Day Brief",
-  "Complete PLAN, READ, BOND, and SELF Protocol",
-  "Deeper WHY explanations",
-  "Full Cycle Calendar",
-  "Complete Cycle Intelligence",
-  "Risk Radar and Timing Alerts",
-];
-
 const HOW_STEPS = [
   ["01", "Set one date", "Start with the first day of her last period—or her best estimate of the next one."],
-  ["02", "Read the day", "See phase, capacity, intelligence, risk, direction, and the full brief."],
+  ["02", "Read the day", "Get a quick feel for possible mood, energy, and attitude, then open the detail you need."],
   ["03", "Choose the cleaner response", "Support, speak, initiate, simplify, or hold steady with better timing."],
 ];
 
@@ -118,11 +110,11 @@ const FAQ_ITEMS = [
   ],
   [
     "What appears in the daily read?",
-    "Today’s State combines cycle day, phase, cycle-based capacity, hormone context, risk, and direction. You can then open the full Day Brief, Risk Radar, Protocol, Calendar, and Intelligence layers.",
+    "Today’s State gives a quick daily read from cycle day, phase, estimated capacity, risk, and direction. Explore Day Brief, Risk Radar, the Command Deck, Calendar, and Intelligence for more context. READ is HOW TO SURVIVE; BOND covers sex, flirting, and intimacy.",
   ],
   [
     "What is included with Premium+?",
-    "Premium+ unlocks the full Day Brief, complete Protocol access, deeper WHY explanations, full Cycle Calendar, Intelligence, Risk Radar, and Timing Alerts. The app remains free to download.",
+    PRODUCT.premiumSummary,
   ],
   [
     "Can MoodMap tell me exactly how she feels?",
@@ -134,6 +126,8 @@ function StoreButtons({ compact = false }) {
   return (
     <div
       id={compact ? undefined : "download"}
+      data-mm-placement={compact ? "home-end" : "home-hero"}
+      data-mm-context="/"
       className={["mm-store-row", compact ? "mm-store-row--center" : ""].filter(Boolean).join(" ")}
     >
       <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap for iPhone on the App Store">
@@ -156,7 +150,7 @@ function Poster({ src, alt, className = "", priority = false }) {
   return (
     <div className={["mm-v2-poster", className].filter(Boolean).join(" ")}>
       <div className="mm-v2-poster__glow" aria-hidden="true" />
-      <img src={src} alt={alt} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : "auto"} />
+      <img src={src} alt={alt} width={828} height={1792} loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : "auto"} />
     </div>
   );
 }
@@ -170,7 +164,7 @@ function HeroSection() {
             <SectionLabel>Cycle-aware relationship intelligence for men</SectionLabel>
             <h1>Read the day before you react.</h1>
             <p className="mm-v2-hero__lead">
-              One private daily read based on your partner’s cycle—what changed, what matters, what to avoid, and the cleaner response.
+              A quick daily feel for her possible mood, energy, and attitude, based on cycle context. See what may matter today and choose your response with more care.
             </p>
             <p className="mm-v2-boundary">Context for your response. Not a verdict on her.</p>
             <StoreButtons />
@@ -238,6 +232,7 @@ function IntelligenceSection() {
           <div className="mm-v3-intelligence-stack" aria-label="MoodMap Cycle Intelligence screens">
             <div className="mm-v3-phone-frame mm-v3-phone-frame--rear">
               <img
+                width={828} height={1792}
                 src="/screenshots/web-2026/intelligence-graph.webp"
                 alt="MoodMap modeled hormone graph across the cycle."
                 loading="lazy"
@@ -246,6 +241,7 @@ function IntelligenceSection() {
             </div>
             <div className="mm-v3-phone-frame mm-v3-phone-frame--front">
               <img
+                width={828} height={1792}
                 src="/screenshots/web-2026/intelligence.webp"
                 alt="MoodMap Intelligence showing Today’s Shift, Biology, and possible effects."
                 loading="lazy"
@@ -317,14 +313,14 @@ function ValuePremiumSection() {
           ))}
         </div>
 
-        <div className="mm-v2-premium-panel mm-v4-premium-panel" data-reveal>
+        <div className="mm-v2-premium-panel mm-v4-premium-panel" data-reveal data-mm-placement="home-premium" data-mm-context="/">
           <div className="mm-v2-premium-copy">
             <SectionLabel>Premium+</SectionLabel>
             <h2>Unlock the full read.</h2>
-            <p>Go beyond the daily headline with the complete Day Brief, full Protocol, deeper WHY explanations, Cycle Intelligence, Risk Radar, and Timing Alerts.</p>
+            <p>{PRODUCT.premiumSummary}</p>
             <div className="mm-v4-plan-note">
               <strong>Monthly or annual access</strong>
-              <span>Current pricing is shown in your local App Store or Google Play.</span>
+              <span>Compare web plans here, or see local pricing in the App Store or Google Play.</span>
             </div>
             <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ChevronRight aria-hidden="true" /></Link>
           </div>
@@ -399,7 +395,7 @@ export default function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <ScrollReveal />
 
-      <div className="mm-page mm-v2-page mm-v3-page mm-v4-page mm-v5-page relative isolate overflow-x-hidden text-white">
+      <main className="mm-page mm-v2-page mm-v3-page mm-v4-page mm-v5-page relative isolate overflow-x-hidden text-white">
         <div aria-hidden="true" className="mm-background-field" />
         <HeroSection />
         <ProductSection />
@@ -407,7 +403,7 @@ export default function HomePage() {
         <JourneySection />
         <ValuePremiumSection />
         <TrustFaqCtaSection />
-      </div>
+      </main>
     </>
   );
 }

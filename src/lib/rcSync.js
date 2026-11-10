@@ -48,12 +48,11 @@ export async function rcSync({ appUserId, fetchToken }) {
       return true;
     }
 
-    console.error("[rcSync] non-2xx", { status: res.status, data: res.data });
+    console.error("[rcSync] non-2xx", { status: res.status });
     return false;
   } catch (e) {
     const status = e?.response?.status;
-    const dataResp = e?.response?.data;
-    console.error("[rcSync] fail", { status, data: dataResp, message: e?.message });
+    console.error("[rcSync] request failed", { status, code: e?.code || "network_error" });
     return false;
   }
 }

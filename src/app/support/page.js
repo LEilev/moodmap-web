@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PRODUCT } from "../../lib/product";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export const metadata = {
@@ -31,7 +32,7 @@ export default function SupportPage() {
           </h1>
 
           <p className="text-base sm:text-lg text-white/75 leading-relaxed">
-            For help with MoodMap on iOS or Android, contact us using the options below.
+            For help with {PRODUCT.name} on iOS or Android, contact {PRODUCT.founder}, the independent developer, using the options below.
           </p>
 
           <p className="mt-2 text-sm text-white/60">
@@ -41,8 +42,8 @@ export default function SupportPage() {
           {/* At-a-glance (helps reviewers/users immediately) */}
           <p className="mt-4 text-sm text-white/70">
             Email:{" "}
-            <a className="mm-link" href="mailto:support@moodmap-app.com">
-              support@moodmap-app.com
+            <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>
+              {PRODUCT.supportEmail}
             </a>{" "}
             · Phone:{" "}
             <a className="mm-link" href="tel:+4792997273">
@@ -60,8 +61,8 @@ export default function SupportPage() {
             </span>
             <h2 className="text-xl font-semibold">Email</h2>
             <p className="mt-1">
-              <a className="mm-link" href="mailto:support@moodmap-app.com">
-                support@moodmap-app.com
+              <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>
+                {PRODUCT.supportEmail}
               </a>
             </p>
             <div aria-hidden="true" className="glass-gloss" />
@@ -126,6 +127,12 @@ export default function SupportPage() {
             </address>
             <div aria-hidden="true" className="glass-gloss" />
           </article>
+        </section>
+
+        <section className="mt-8 glass-card p-6 sm:p-7" aria-labelledby="support-billing">
+          <h2 id="support-billing" className="text-xl font-semibold">Subscriptions and app access</h2>
+          <p className="mt-3 text-white/75 leading-relaxed">For a purchase made in the App Store or Google Play, manage the subscription through that store account. For a web purchase, include the email used at checkout when you contact support. Prices and billing are tied to the channel where you subscribed.</p>
+          <p className="mt-3 text-white/75 leading-relaxed">For an app problem, tell us your device, app version, what you expected, and what happened. Remove personal cycle information from screenshots before sharing them. For privacy requests, see the <Link href="/privacy-policy" className="mm-link">Privacy Policy</Link>.</p>
         </section>
 
         {/* Back button */}

@@ -11,31 +11,30 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
+import { PRODUCT, FREE_FEATURES, PREMIUM_FEATURES, WEB_PLANS } from "../../lib/product";
 import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
 
 const META_DESCRIPTION =
-  "Unlock MoodMap Premium+: the full Day Brief, complete PLAN, READ, BOND, and SELF Protocol, deeper WHY explanations, Cycle Intelligence, Risk Radar, Calendar, and Timing Alerts.";
+  "Explore MoodMap Premium+: fuller Brief and Risk content, the complete PLAN, READ, BOND, and SELF Command Deck, deeper insights, and additional optional alerts.";
 
+// Only bounded attribution fields reach checkout; arbitrary URL values never pass through.
 function buildPlanHref(planType, searchParams) {
   const qs = new URLSearchParams({ type: planType === "yearly" ? "yearly" : "monthly" });
-
+  const attributionKeys = new Set(["via", "ref", "ref_code", "pk_campaign", "pk_source", "pk_medium", "pk_content", "pk_keyword"]);
   const append = (key, value) => {
-    if (value == null || value === "") return;
-    if (key.toLowerCase() === "type") return;
-    qs.append(key, String(value));
-  };
-
-  if (searchParams) {
-    if (typeof searchParams.forEach === "function") {
-      searchParams.forEach((value, key) => append(key, value));
-    } else {
-      Object.entries(searchParams).forEach(([key, value]) => {
-        if (Array.isArray(value)) value.forEach((item) => append(key, item));
-        else append(key, value);
-      });
+    if (typeof value !== "string" || !value || value.length > 100) return;
+    if (key === "entry") {
+      if (["pro", "article", "paywall"].includes(value)) qs.set(key, value);
+      return;
     }
+    if (attributionKeys.has(key) && /^[a-zA-Z0-9._~-]+$/.test(value)) qs.set(key, value);
+  };
+  if (searchParams && typeof searchParams.forEach === "function") {
+    searchParams.forEach((value, key) => append(key, value));
+  } else if (searchParams) {
+    Object.entries(searchParams).forEach(([key, value]) => append(key, Array.isArray(value) ? value[0] : value));
   }
-
+  if (!qs.has("entry")) qs.set("entry", "pro");
   return `/buy?${qs.toString()}`;
 }
 
@@ -47,37 +46,19 @@ const VALUE_STACK = [
   },
   {
     icon: Layers3,
-    title: "Complete Protocol + WHY",
-    body: "Unlock every PLAN, READ, BOND, and SELF card, plus the deeper reasoning behind each move.",
+    title: "Complete Command Deck + WHY",
+    body: "Open the full PLAN, READ, BOND, and SELF guidance. READ is HOW TO SURVIVE; BOND covers sex, flirting, and intimacy.",
   },
   {
     icon: CalendarDays,
-    title: "Calendar + Intelligence",
-    body: "Read any cycle day, follow the modeled biological shift, and connect it to possible effects on capacity and pace.",
+    title: "Deeper cycle insights",
+    body: "Explore more of the reasoning behind the daily read and how modeled cycle changes may matter for energy and pace.",
   },
   {
     icon: BellRing,
     title: "Risk Radar + Timing Alerts",
-    body: "See likely tripwires and receive optional heads-ups before key cycle windows and daily reads.",
+    body: "Open fuller Risk content and additional optional heads-ups around the daily read and cycle windows.",
   },
-];
-
-const PREMIUM_FEATURES = [
-  "Full Day Brief",
-  "All PLAN, READ, BOND, and SELF guidance",
-  "Deeper WHY explanations",
-  "Full Cycle Calendar",
-  "Cycle Intelligence",
-  "Complete Risk Radar",
-  "Daily Brief, cycle-window, and Risk Radar alerts",
-  "Adjustable cycle and notification preferences",
-];
-
-const FREE_FEATURES = [
-  "Today’s State",
-  "Core cycle-day and phase context",
-  "A limited daily Protocol sample",
-  "Basic app personalization",
 ];
 
 export const metadata = {
@@ -133,17 +114,17 @@ export default async function ProPage({ searchParams }) {
             <span className="mm-section-label">MoodMap Premium+</span>
             <h1>Unlock the full read.</h1>
             <p className="mm-v2-subhero__lead">
-              Go beyond the daily headline with the complete Day Brief, full Protocol access, deeper WHY explanations, Cycle Intelligence, Risk Radar, Calendar, and Timing Alerts.
+              {PRODUCT.premiumSummary}
             </p>
             <p className="mm-v2-boundary">Full context for your response. Still not a verdict on her.</p>
 
-            <div className="mm-v2-plan-grid">
-              <PlanCard name="Annual" price="$29.99" cadence="per year" href={yearlyHref} primary />
-              <PlanCard name="Monthly" price="$3.99" cadence="per month" href={monthlyHref} />
+            <div className="mm-v2-plan-grid" data-mm-placement="pro-plans" data-mm-context="/pro">
+              <PlanCard name="Annual" price={WEB_PLANS.yearly.displayPrice} cadence={WEB_PLANS.yearly.cadence} href={yearlyHref} primary />
+              <PlanCard name="Monthly" price={WEB_PLANS.monthly.displayPrice} cadence={WEB_PLANS.monthly.cadence} href={monthlyHref} />
             </div>
 
             <p className="mm-v2-purchase-note">
-              Full access. Renews automatically until canceled. Prices shown in USD; local store pricing may vary.
+              Web subscription prices in USD. Renews automatically until canceled. App Store and Google Play prices may differ by country and purchase channel. Check the final amount at checkout.
             </p>
           </div>
 
@@ -152,8 +133,9 @@ export default async function ProPage({ searchParams }) {
             <div className="mm-v2-poster mm-v2-poster--pro">
               <div className="mm-v2-poster__glow" aria-hidden="true" />
               <img
+                width={828} height={1792}
                 src="/screenshots/web-2026/protocol-why.webp"
-                alt="MoodMap Protocol WHY screen showing reciprocity, signal, and how to use the guidance."
+                alt="MoodMap Command Deck WHY screen showing reciprocity, signal, and how to use the guidance."
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -190,7 +172,7 @@ export default async function ProPage({ searchParams }) {
               <span className="mm-v2-icon-chip"><ShieldCheck aria-hidden="true" /></span>
               <span className="mm-section-label">Free to download</span>
               <h2>Start with the signal. Upgrade for the full system.</h2>
-              <p>MoodMap is usable before you subscribe. Premium+ opens the complete practical and intelligence layers.</p>
+              <p>{PRODUCT.freeSummary}</p>
             </div>
 
             <div className="mm-v2-comparison-columns">
@@ -217,10 +199,10 @@ export default async function ProPage({ searchParams }) {
         <div className="mm-container" data-reveal>
           <span className="mm-v2-final-cta__icon"><ShieldCheck aria-hidden="true" /></span>
           <h2>Open the full read.</h2>
-          <p>Choose annual or monthly access, then return to MoodMap with the complete system unlocked.</p>
-          <div className="mm-v2-final-plan-row">
-            <Link href={yearlyHref} prefetch={false} className="mm-v2-primary-link">Annual · $29.99 <ArrowRight aria-hidden="true" /></Link>
-            <Link href={monthlyHref} prefetch={false} className="mm-v2-secondary-link">Monthly · $3.99</Link>
+          <p>Choose an annual or monthly web subscription, then follow the activation steps to open Premium+ in MoodMap.</p>
+          <div className="mm-v2-final-plan-row" data-mm-placement="pro-end" data-mm-context="/pro">
+            <Link href={yearlyHref} prefetch={false} className="mm-v2-primary-link">Annual · {WEB_PLANS.yearly.displayPrice} <ArrowRight aria-hidden="true" /></Link>
+            <Link href={monthlyHref} prefetch={false} className="mm-v2-secondary-link">Monthly · {WEB_PLANS.monthly.displayPrice}</Link>
           </div>
           <Link href="/" className="mm-v2-final-cta__secondary">← Back to Home</Link>
         </div>

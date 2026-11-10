@@ -18,25 +18,38 @@ const IOS_WEB_URL = `https://apps.apple.com/app/id${IOS_APP_STORE_ID}`;
 const ANDROID_STORE_URL = `market://details?id=${ANDROID_PACKAGE}`;
 const ANDROID_WEB_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 
-// P0 manual fallback (overstyr via env i Vercel)
-const FALLBACK_IOS_LATEST = process.env.MOODMAP_IOS_LATEST_VERSION || "5.0.8";
-const FALLBACK_ANDROID_LATEST = process.env.MOODMAP_ANDROID_LATEST_VERSION || "5.0.8";
+function validVersion(value) {
+  return typeof value === "string" && /^\d{1,5}\.\d{1,5}\.\d{1,5}$/.test(value.trim())
+    ? value.trim()
+    : null;
+}
+
+// iOS 5.0.10 was verified against the public App Store on 2026-11-10.
+// Android remains explicitly managed through its production environment value.
+const FALLBACK_IOS_LATEST = validVersion(process.env.MOODMAP_IOS_LATEST_VERSION) || "5.0.10";
+const FALLBACK_ANDROID_LATEST = validVersion(process.env.MOODMAP_ANDROID_LATEST_VERSION) || "5.0.8";
 
 // iOS auto-fetch (Apple lookup) – default ON
 const AUTOFETCH_IOS =
   (process.env.MOODMAP_AUTOFETCH_IOS ?? "true").toLowerCase() === "true";
 
-const FETCH_TIMEOUT_MS = Number(process.env.MOODMAP_VERSION_FETCH_TIMEOUT_MS || "2500");
+const configuredTimeout = Number(process.env.MOODMAP_VERSION_FETCH_TIMEOUT_MS || "2500");
+const FETCH_TIMEOUT_MS = Number.isFinite(configuredTimeout)
+  ? Math.max(250, Math.min(5000, configuredTimeout))
+  : 2500;
 
-async function fetchWithTimeout(url, timeoutMs) {
+async function fetchJsonWithTimeout(url, timeoutMs) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, {
+    const response = await fetch(url, {
       headers: { Accept: "application/json" },
       signal: controller.signal,
       // Important: do not force cache/no-store here; route-level revalidate controls caching.
     });
+    if (!response.ok) return null;
+    // Keep the abort timer active until the body has also finished downloading.
+    return await response.json();
   } finally {
     clearTimeout(t);
   }
@@ -45,16 +58,14 @@ async function fetchWithTimeout(url, timeoutMs) {
 async function fetchAppleIOSLatest() {
   const url = `https://itunes.apple.com/lookup?id=${encodeURIComponent(IOS_APP_STORE_ID)}`;
   try {
-    const res = await fetchWithTimeout(url, FETCH_TIMEOUT_MS);
-    if (!res.ok) return null;
-
-    const data = await res.json().catch(() => null);
+    const data = await fetchJsonWithTimeout(url, FETCH_TIMEOUT_MS);
     const app = data?.results?.[0];
-    if (!app?.version) return null;
+    const latestVersion = validVersion(app?.version);
+    if (Number(app?.trackId) !== Number(IOS_APP_STORE_ID) || !latestVersion) return null;
 
     return {
-      latestVersion: String(app.version),
-      webUrl: app.trackViewUrl ? String(app.trackViewUrl) : null,
+      latestVersion,
+      webUrl: IOS_WEB_URL,
     };
   } catch {
     return null;

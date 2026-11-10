@@ -1,98 +1,53 @@
-export const runtime = 'edge';
-
 import { redis } from '@/lib/redis';
-import { INF_UNSUB, infKey, nowISO } from '@/lib/inf-keys';
+import { readLimitedText } from '@/lib/influencer-crypto';
+import {
+  applyInfluencerEvent,
+  importResendWebhookKey,
+  parseInfluencerEvent,
+  verifyResendWebhook,
+} from '@/lib/influencer-webhook';
 
-function norm(v) {
-  return String(v || '').trim().toLowerCase();
-}
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
 
-function unique(arr) {
-  return [...new Set(arr)];
-}
-
-/**
- * Resend-format (viktig):
- * - type: "email.bounced" / "email.delivered" / "email.opened" / "email.clicked" ...
- * - recipient(er): ev.data.to (ofte array)
- */
-function recipients(ev) {
-  const data = ev?.data ?? {};
-
-  const tos = Array.isArray(data.to)
-    ? data.to
-    : (data.to ? [data.to] : []);
-
-  const out = [
-    ...tos,
-    ev?.to,
-    ev?.email,
-    ev?.recipient,
-    data?.email,
-    data?.recipient,
-  ]
-    .filter(Boolean)
-    .map(norm);
-
-  return unique(out).filter(Boolean);
-}
-
-function classify(type) {
-  const t = norm(type);
-
-  // Resend canonical-ish
-  if (t === 'email.bounced' || t.includes('bounce') || t.includes('suppressed')) return 'bounce';
-  if (t === 'email.complained' || t.includes('complaint') || t.includes('spam') || t.includes('unsubscribe')) return 'unsub';
-  if (t === 'email.opened' || t.includes('open')) return 'open';
-  if (t === 'email.clicked' || t.includes('click')) return 'click';
-
-  return 'ignore';
+function reply(body, status = 200) {
+  return new Response(body, {
+    status,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
 }
 
 export async function POST(req) {
-  const url = new URL(req.url);
-  const token = url.searchParams.get('token');
-
-  // Webhook token må URL-enkodes i Resend dashboard ( @ → %40, # → %23 )
-  if (token !== process.env.WEBHOOK_TOKEN) {
-    return new Response('Forbidden', { status: 403 });
-  }
-
-  let payload;
+  let key;
   try {
-    payload = await req.json();
+    // Copy this signing secret from the Resend webhook dashboard. A shared
+    // query-string token cannot authenticate the payload and is never a fallback.
+    key = await importResendWebhookKey((process.env.RESEND_WEBHOOK_SECRET || '').trim());
   } catch {
-    return new Response('Bad JSON', { status: 400 });
+    return reply('Service temporarily unavailable', 503);
   }
+  if (!redis) return reply('Service temporarily unavailable', 503);
 
-  const events = Array.isArray(payload) ? payload : [payload];
-
-  for (const ev of events) {
-    const type = ev?.type || ev?.event || '';
-    const kind = classify(type);
-    if (kind === 'ignore') continue;
-
-    const emails = recipients(ev);
-    if (emails.length === 0) continue;
-
-    for (const email of emails) {
-      const key = infKey(email);
-
-      if (kind === 'bounce') {
-        await redis.hset(key, { status: 'bounced', bouncedAt: nowISO() });
-        await redis.sadd(INF_UNSUB, email);
-      } else if (kind === 'unsub') {
-        await redis.hset(key, { status: 'unsubscribed', unsubscribedAt: nowISO() });
-        await redis.sadd(INF_UNSUB, email);
-      } else if (kind === 'open') {
-        await redis.hset(key, { openedAt: nowISO() });
-        await redis.hincrby(key, 'opens', 1);
-      } else if (kind === 'click') {
-        await redis.hset(key, { clickedAt: nowISO() });
-        await redis.hincrby(key, 'clicks', 1);
-      }
-    }
+  let id;
+  let event;
+  try {
+    const body = await readLimitedText(req, 128 * 1024);
+    id = await verifyResendWebhook({ key, headers: req.headers, body });
+    event = parseInfluencerEvent(JSON.parse(body));
+  } catch (error) {
+    return reply('Invalid webhook', error?.status || 400);
   }
+  if (!event) return reply('Ignored');
 
-  return new Response('OK', { status: 200 });
+  try {
+    await applyInfluencerEvent(redis, { id, ...event });
+    return reply('OK');
+  } catch {
+    // Non-2xx lets the provider retry; failed business work is never acknowledged.
+    return reply('Service temporarily unavailable', 503);
+  }
 }

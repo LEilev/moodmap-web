@@ -1,476 +1,100 @@
-// src/app/learn/menstrual-cycle-phases-for-partners/page.js
 import Link from "next/link";
-import {
-  Map,
-  CalendarDays,
-  Sparkles,
-  HeartHandshake,
-  Shield,
-  Clock,
-} from "lucide-react";
-import {
-  OG_IMAGE_SRC,
-  SourceTrustBlock,
-  articleJsonLd,
-  breadcrumbJsonLd,
-  faqJsonLd,
-} from "../../seo";
+import GuideArticle, {
+  GuideFAQ,
+  GuideProductExample,
+  GuideRelated,
+  GuideSection,
+  GuideStoreLinks,
+  guideStyles as styles,
+} from "../../../components/GuideArticle";
+import { PRODUCT } from "../../../lib/product";
+import { OG_IMAGE_SRC, SourceTrustBlock, articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "../../seo";
 
 const SLUG = "/learn/menstrual-cycle-phases-for-partners";
-const META_DESCRIPTION =
-  "A partner-focused guide to menstrual cycle phases, with timing cues for support, conversations, intimacy, PMS, and non-medical relationship context.";
+const TITLE = "Menstrual cycle phases, explained for partners";
+const DESCRIPTION = "Understand the four menstrual cycle phases, what your partner may notice, and practical ways to respond to changes in energy, comfort and connection.";
 
 export const metadata = {
   title: "Menstrual Cycle Phases Guide for Partners",
-  description: META_DESCRIPTION,
-  alternates: {
-    canonical: SLUG,
-  },
-  openGraph: {
-    title: "MoodMap Menstrual Cycle Phases Guide for Partners",
-    description: META_DESCRIPTION,
-    url: SLUG,
-    type: "article",
-    images: [OG_IMAGE_SRC],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: [OG_IMAGE_SRC],
-    title: "MoodMap Menstrual Cycle Phases Guide for Partners",
-    description: META_DESCRIPTION,
-  },
+  description: DESCRIPTION,
+  alternates: { canonical: SLUG },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: SLUG, type: "article", images: [OG_IMAGE_SRC] },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [OG_IMAGE_SRC] },
 };
 
+const PHASES = [
+  { name: "Menstruation", timing: "The period begins", context: "Cramps, bleeding, fatigue or disrupted sleep may make comfort and a simpler day more welcome. Some people feel little change.", response: "Offer something specific: food, a heat pad, a handled task or quiet company. Ask which would help." },
+  { name: "Follicular phase", timing: "From the start of the cycle toward ovulation", context: "As period symptoms ease, she may have more energy for plans or conversation. The timing and size of that change vary.", response: "Offer a plan you would both enjoy, then match the energy she actually has. More room in the day need not mean filling all of it." },
+  { name: "Ovulation", timing: "An egg is released; the date varies", context: "Some people notice changes in energy, desire or physical sensations around this time. Others do not notice a distinct shift.", response: "If the interest is mutual, make room for flirting and connection. Let her response set the pace." },
+  { name: "Luteal phase", timing: "After ovulation until the next period", context: "Before a period, some people experience tender breasts, bloating, tiredness, irritability or sleep changes. PMS is not the same for everyone.", response: "Take discomfort and tiredness seriously. Reduce a practical burden, keep your tone clear and agree when a longer conversation would work." },
+];
+
+const FAQ = [
+  { q: "What are the four phases of the menstrual cycle?", a: "A common overview uses menstruation, the follicular phase, ovulation and the luteal phase. Menstruation overlaps the beginning of the follicular phase; the four-part view is a useful teaching framework. PMS can occur before a period and is not a separate phase experienced by everyone." },
+  { q: "Why isn’t every cycle exactly 28 days?", a: "Cycle length varies between people and from one cycle to the next. A 28-day example cannot tell you an individual person’s ovulation date or how she will feel. Keep the dates current and use her own experience alongside any estimate." },
+  { q: "Does ovulation affect mood or desire?", a: "Some people notice changes in energy or desire around ovulation; others notice little change. A calendar cannot tell you whether your partner wants sex, a conversation or a particular plan. Use any cycle context together with her words and response." },
+  { q: "What is the difference between PMS and PMDD?", a: "PMS describes recurring physical and emotional symptoms before a period. PMDD is a more severe condition that can substantially disrupt daily life. Symptoms that interfere with work, relationships or wellbeing deserve professional assessment, rather than being explained away as a phase." },
+  { q: "Should I track my partner’s cycle?", a: "Only use information she chooses to share, with a clear agreement about what would be helpful. She may prefer practical support without any tracking. A cycle estimate should never be used to dismiss her point or decide what she must be feeling." },
+  { q: "Does this model work with hormonal contraception or irregular cycles?", a: PRODUCT.modelScope },
+  { q: "Is this medical or fertility advice?", a: "No. This guide offers general cycle education and practical relationship suggestions. MoodMap is not a diagnostic, contraception or fertility-planning tool." },
+];
+
 export default function CyclePhasesForPartnersPage() {
-  /**
-   * One source of truth:
-   * - Used for JSON-LD (FAQ rich results)
-   * - Used for visible FAQs (consistency)
-   */
-  const FAQ = [
-    {
-      q: "What are the four phases of the menstrual cycle?",
-      a: "A common model includes Menstruation, Follicular, Ovulation, and Luteal (often including PMS near the end). Not everyone experiences these phases the same way—use it as context, not a stereotype.",
-    },
-    {
-      q: "Why isn’t every cycle exactly 28 days?",
-      a: "Cycle length varies naturally from person to person and sometimes month to month. Stress, sleep, travel, illness, and life changes can also shift timing. Flexible expectations matter more than a fixed calendar.",
-    },
-    {
-      q: "Does ovulation affect mood or behavior?",
-      a: "For some people, ovulation can coincide with higher energy or confidence, while others notice little change. Timing awareness is about context—never assumptions.",
-    },
-    {
-      q: "What’s the difference between PMS and PMDD?",
-      a: "PMS is common and usually mild-to-moderate. PMDD is less common and can be severe, with symptoms that significantly disrupt daily life. If symptoms are intense or scary, encourage professional support.",
-    },
-    {
-      q: "Should I track my partner’s cycle?",
-      a: "Only with explicit consent. Cycle awareness should support communication and planning—not control. Agree together on what to track and what’s off limits.",
-    },
-    {
-      q: "Is this medical advice?",
-      a: "No. This page provides relationship guidance informed by general physiology. It is not medical advice and should not be used for contraception or fertility planning.",
-    },
+  const schemas = [
+    articleJsonLd({ path: SLUG, headline: TITLE, description: DESCRIPTION }),
+    breadcrumbJsonLd([{ name: "Home", href: "/" }, { name: "Guides", href: "/learn" }, { name: "Menstrual cycle phases for partners", href: SLUG }]),
+    faqJsonLd(FAQ),
   ];
-
-  const faqSchema = faqJsonLd(FAQ);
-  const articleSchema = articleJsonLd({
-    path: SLUG,
-    headline: "Menstrual Cycle Phases Guide for Partners",
-    description: META_DESCRIPTION,
-  });
-  const breadcrumbSchema = breadcrumbJsonLd([
-    { name: "Home", href: "/" },
-    { name: "Learn", href: "/learn" },
-    { name: "Menstrual cycle phases for partners", href: SLUG },
-  ]);
-
   return (
-    <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD: Article / Breadcrumb / FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* Subtle premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      {/* Hero */}
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Shield className="h-4 w-4 opacity-90" aria-hidden />
-            Relationship guidance — not medical advice
+    <>
+      {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
+      <GuideArticle path={SLUG} title={TITLE}
+        lead="The cycle can be useful background for changes in mood, energy, comfort and connection. Start with the phase, then pay attention to the person in front of you. Here is a practical overview for partners."
+        contents={[{ href: "#phase-overview", label: "The four phases" }, { href: "#everyday-examples", label: "Everyday examples" }, { href: "#cycle-variation", label: "When timing varies" }, { href: "#questions", label: "Common questions" }]}>
+        <GuideSection id="phase-overview" title="The cycle at a glance">
+          <div className={styles.summary}><p><strong>A useful sequence:</strong> notice the possible background, check what is happening today, then choose a helpful response. You do not need to predict her mood to be better prepared.</p></div>
+          <p>A common four-part overview is menstruation, follicular phase, ovulation and luteal phase. Menstruation sits within the start of the follicular phase. The <a href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/" target="_blank" rel="noopener noreferrer">NHS explains the underlying cycle and why dates vary</a>.</p>
+          <div className={styles.phaseGrid}>
+            {PHASES.map(({ name, timing, context, response }) => <article key={name} className={styles.phase}><span className={styles.phaseLabel}>{timing}</span><h3>{name}</h3><p>{context}</p><p><strong>A useful response:</strong> {response}</p></article>)}
           </div>
+          <p className={styles.finePrint}>These are possible patterns, not a timetable for her personality. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome" target="_blank" rel="noopener noreferrer">Office on Women’s Health describes how PMS symptoms vary</a>, including cycles with few or no symptoms.</p>
+        </GuideSection>
 
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            Menstrual cycle phases, explained for partners
-          </h1>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/read-day.webp" alt="MoodMap daily screen with luteal phase context, an estimated capacity indicator, Intelligence, Risk and Direction." title="See what the phase may mean today">
+          <p>{PRODUCT.summary}</p>
+          <p>In this example, the daily screen puts possible luteal context alongside a practical direction: keep warmth and clarity together. It gives you a starting point for the day, while her actual mood and preferences still lead.</p>
+          <p>Open the Brief for more context, or the <strong>Command Deck</strong> for PLAN, READ, BOND and SELF guidance.</p>
+        </GuideProductExample>
 
-          <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            If you’ve ever felt like your partner’s bandwidth changes week to week, you’re not
-            imagining it. For a boyfriend or partner, the goal is not prediction — it is timing and
-            context: what may change, and how to respond well instead of late.
-          </p>
-
-          <p className="mt-3 text-sm text-white/60">
-            Everyone is different. Use this as a calm baseline, not a script.
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-4xl grid gap-6">
-          {/* NEW: Citation-ready summary */}
-          <article id="citation-summary" className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Citation-ready summary (for writers & educators)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  The menstrual cycle is often described in four phases—{" "}
-                  <strong className="text-white">
-                    menstruation, follicular, ovulation, and luteal
-                  </strong>
-                  . Some people experience fairly predictable shifts in{" "}
-                  <strong className="text-white">
-                    energy, stress tolerance, sleep, and emotional sensitivity
-                  </strong>{" "}
-                  across those phases. Partners can use this framework to improve timing,
-                  communication, and support—without blame.
-                </p>
-
-                <p className="mt-4 text-white/70">
-                  If you’re referencing this page elsewhere, a descriptive link text helps readers
-                  (and search engines) understand what they’ll get.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card: quick overview */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Map className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  The short version (the 4-phase model)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  A common, partner-friendly model is four phases: Menstruation → Follicular →
-                  Ovulation → Luteal (often including PMS near the end). Hormone levels shift across
-                  the cycle, which can influence energy, sensitivity, and desire for connection.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    <strong className="text-white">Menstruation:</strong> lower energy and more
-                    physical discomfort for some; more inward days.
-                  </li>
-                  <li>
-                    <strong className="text-white">Follicular:</strong> energy often rises; planning
-                    and initiative can feel easier.
-                  </li>
-                  <li>
-                    <strong className="text-white">Ovulation:</strong> some people feel more social,
-                    confident, or playful—others feel no change.
-                  </li>
-                  <li>
-                    <strong className="text-white">Luteal / PMS:</strong> sensitivity and stress
-                    tolerance can shift; recovery and calm matter more.
-                  </li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  The point isn’t to stereotype. It’s to stop being surprised by predictable timing
-                  windows.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card: why cycles vary */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <CalendarDays className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">Why not every cycle is 28 days</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  The “28-day cycle” is a teaching average—not a rule. Real cycles vary naturally.
-                  Stress, sleep, travel, and illness can shift timing too.
-                </p>
-                <p className="mt-3 text-white/75 leading-relaxed">
-                  That’s why rigid calendar expectations often fail partners: if timing is off, your
-                  “big talk” day can land at the worst possible moment.
-                </p>
-
-                <p className="mt-4 text-white/70">
-                  MoodMap Premium+ supports calibrating cycle length (21–35 days) and menstruation
-                  length (2–8 days), so guidance aligns better with her rhythm.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card: what changes practically */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Clock className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What “phase-aware” means in a relationship
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Phase-aware support isn’t about guessing her emotions. It’s about adjusting timing
-                  and approach:
-                </p>
-
-                <div className="mt-5 grid gap-5">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      1) Timing big conversations
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      If you want a productive talk, choose a day with more bandwidth—not a day when
-                      patience and sensitivity are already stretched.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      2) Matching “energy level”
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      Some days call for action and plans. Other days call for softness, fewer
-                      demands, and calmer logistics.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      3) Reducing friction (a simple “pause protocol”)
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      When sensitivity is higher, small things land bigger. Agree on a phrase like{" "}
-                      <strong className="text-white">“Let’s pause and revisit this tomorrow.”</strong>{" "}
-                      Cleaner tone, fewer interruptions, and less pressure can prevent conflict
-                      before it starts.
-                    </p>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-white/70">
-                  This is why timing awareness helps: you’re not “tiptoeing”—you’re operating with
-                  context.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card: practical next steps */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Shield className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">Practical rules that keep you safe</h2>
-
-                <ul className="mt-3 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    Don’t weaponize timing:{" "}
-                    <strong className="text-white">“You’re just hormonal”</strong> is never helpful.
-                  </li>
-                  <li>
-                    Don’t overfit patterns: one bad day ≠ a phase.
-                  </li>
-                  <li>
-                    Always use consent: cycle awareness should support—not control.
-                  </li>
-                  <li>
-                    If symptoms are severe or disruptive, encourage professional support.
-                  </li>
-                </ul>
-
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  <Link
-                    href="/learn/support-partner-during-pms"
-                    className="mm-link text-sm text-white/80"
-                  >
-                    Read: Support your partner during PMS →
-                  </Link>
-                  <Link
-                    href="/learn/fertile-window-explained"
-                    className="mm-link text-sm text-white/80"
-                  >
-                    Read: Fertile window explained →
-                  </Link>
-                  <Link
-                    href="/learn/period-tracking-for-men"
-                    className="mm-link text-sm text-white/80"
-                  >
-                    Read: Period tracking for men →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Card: soft plug */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  How MoodMap uses this (without being creepy)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap turns general phase timing into a daily briefing: what phase it is, what
-                  may be harder or easier today, and practical do/don’t cues. It’s designed to help
-                  partners show up well—without turning the relationship into a tracking project.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>Consent-first: cycle awareness is meant to be shared and respectful.</li>
-                  <li>No symptom diary required.</li>
-                  <li>Premium+ calibration keeps timing aligned to her rhythm.</li>
-                </ul>
-
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  <Link href="/pro" className="mm-link text-sm text-white/80">
-                    See what Premium+ unlocks →
-                  </Link>
-                  <Link href="/learn/why-moodmap" className="mm-link text-sm text-white/80">
-                    Read: Why MoodMap →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* NEW: Link-text guidance (citation nudge) */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="text-left">
-              <h2 className="text-xl sm:text-2xl font-semibold">If you’re writing about this topic</h2>
-              <p className="mt-2 text-white/75 leading-relaxed">
-                If you reference this guide, consider using descriptive link text so readers know
-                what they’re clicking:
-              </p>
-              <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                <li>
-                  <strong className="text-white">
-                    “menstrual cycle phases and how they affect relationships”
-                  </strong>
-                </li>
-                <li>
-                  <strong className="text-white">
-                    “overview of menstrual cycle phases for partners”
-                  </strong>
-                </li>
-              </ul>
-              <p className="mt-4 text-white/70">
-                That kind of language is more useful than generic anchors like “website” or “click
-                here”.
-              </p>
-            </div>
-          </article>
-
-          {/* End-of-guide CTA */}
-          <section className="mt-2 text-center">
-            <div className="glass-card p-6 sm:p-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-                Next step: Put this into practice
-              </div>
-
-              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
-                MoodMap gives day-by-day cues synced to her cycle — so you can act with timing,
-                steadiness, and respect (without tracking her).
-              </p>
-
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/#download" className="btn-primary">
-                  Download MoodMap
-                </Link>
-                <Link href="/learn" className="mm-link text-sm text-white/70">
-                  Explore more Guides →
-                </Link>
-              </div>
-            </div>
-          </section>
-
-          <SourceTrustBlock />
-
-          {/* Visible FAQs (matches JSON-LD) */}
-          <section className="mt-2">
-            <div className="glass-card p-6 sm:p-7">
-              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
-              <p className="mt-2 text-sm text-white/60">
-                Short answers to common questions. Relationship guidance — not medical advice.
-              </p>
-
-              <div className="mt-5 space-y-3">
-                {FAQ.map(({ q, a }) => (
-                  <details
-                    key={q}
-                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
-                  >
-                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
-                      <span className="pr-3">{q}</span>
-                      <span className="text-white/50 group-open:rotate-180 transition-transform">
-                        ▾
-                      </span>
-                    </summary>
-                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom nav */}
-          <div className="pt-2 text-center">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/learn" className="mm-link text-sm text-white/70">
-                ← Back to Learn hub
-              </Link>
-              <Link href="/" className="mm-link text-sm text-white/70">
-                Back to Home →
-              </Link>
-            </div>
+        <GuideSection id="everyday-examples" title="What this can look like in everyday life">
+          <div className={styles.stepGrid}>
+            <article className={styles.step}><h3>She is tired and uncomfortable</h3><p>If cramps or a poor night’s sleep are part of the day, handle a concrete task before adding another decision. Ask whether she wants company, help or space.</p><p><strong>Try:</strong> “I can sort dinner. Would you rather have some company or a quiet hour?”</p></article>
+            <article className={styles.step}><h3>There is more energy between you</h3><p>When she seems interested and has room for it, suggest something enjoyable. A positive response is more useful information than a predicted high-energy date.</p><p><strong>Try:</strong> “Fancy going out, or shall we make a good evening here?”</p></article>
+            <article className={styles.step}><h3>A small exchange is getting sharper</h3><p>Notice your own volume and defensiveness. Her point can be valid even when either of you is tired. If you pause a discussion, agree when to return.</p><p><strong>Try:</strong> “I want to hear this properly. Can we take ten minutes and come back to it?”</p></article>
           </div>
-        </div>
-      </section>
-    </main>
+          <p>These are practical relationship suggestions, not rules attached to a phase. Do not postpone an urgent decision or a necessary boundary while waiting for an “ideal” cycle day.</p>
+        </GuideSection>
+
+        <GuideSection id="cycle-variation" title="Why a 28-day chart is only an example">
+          <p>Cycles vary, and an expected period date can move. A calendar model cannot establish when ovulation happened. If the dates are uncertain, the estimated phase is uncertain too.</p>
+          <p>{PRODUCT.settingsSummary} Changing a setting keeps the estimate relevant to the information you have; it does not turn the model into a hormone measurement.</p>
+          <p>{PRODUCT.modelScope} <Link href="/intelligence#model-fit">See MoodMap’s model and its limits.</Link></p>
+        </GuideSection>
+
+        <GuideSection id="support" title="Keep the information useful between you">
+          <ul>
+            <li><strong>Agree on what to share.</strong> A reminder should serve something she finds helpful.</li>
+            <li><strong>Keep the actual issue in view.</strong> “You’re hormonal” does not answer a complaint or settle a disagreement.</li>
+            <li><strong>Use intimacy as an invitation.</strong> A phase never provides permission or an obligation.</li>
+            <li><strong>Take disruptive symptoms seriously.</strong> Encourage professional help if pain, mood changes or other symptoms interfere with daily life.</li>
+          </ul>
+          <p>For more detail, read <Link href="/learn/support-partner-during-pms">how to support a partner during PMS</Link> or the <Link href="/learn/luteal-phase-relationships">luteal-phase relationship guide</Link>.</p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <div className={styles.sources}><SourceTrustBlock path={SLUG} /></div>
+        <GuideStoreLinks path={SLUG} />
+        <GuideRelated items={[{ href: "/learn/period-tracking-for-men", label: "Period tracking for men" }, { href: "/learn/menstrual-cycle-day-by-day-for-partners", label: "A 28-day cycle overview" }, { href: "/learn/fertile-window-explained", label: "Fertile-window context and its limits" }]} />
+      </GuideArticle>
+    </>
   );
 }

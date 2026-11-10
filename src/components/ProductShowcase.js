@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 
 export default function ProductShowcase({ surfaces = [] }) {
   const generatedId = useId().replace(/:/g, "");
@@ -9,6 +9,7 @@ export default function ProductShowcase({ surfaces = [] }) {
     surfaces.findIndex((surface) => surface.defaultActive)
   );
   const [activeIndex, setActiveIndex] = useState(preferredIndex);
+  const tabRefs = useRef([]);
   const safeIndex = activeIndex >= 0 && activeIndex < surfaces.length ? activeIndex : 0;
   const activeSurface = surfaces[safeIndex];
 
@@ -28,7 +29,7 @@ export default function ProductShowcase({ surfaces = [] }) {
           the cycle map, the tripwire, or the practical move with its reasoning.
         </p>
 
-        <div className="mm-v2-showcase__tabs" role="tablist" aria-label="MoodMap product views">
+        <div className="mm-v2-showcase__tabs" role="tablist" aria-orientation="vertical" aria-label="MoodMap product views">
           {surfaces.map((surface, index) => {
             const isActive = index === safeIndex;
             const tabId = `mm-product-tab-${generatedId}-${index}`;
@@ -41,10 +42,23 @@ export default function ProductShowcase({ surfaces = [] }) {
                 role="tab"
                 aria-selected={isActive}
                 aria-controls={panelId}
+                tabIndex={isActive ? 0 : -1}
+                ref={(node) => { tabRefs.current[index] = node; }}
                 className={["mm-v2-showcase-tab", isActive ? "is-active" : ""]
                   .filter(Boolean)
                   .join(" ")}
                 onClick={() => setActiveIndex(index)}
+                onKeyDown={(event) => {
+                  let nextIndex;
+                  if (event.key === "ArrowDown") nextIndex = (index + 1) % surfaces.length;
+                  if (event.key === "ArrowUp") nextIndex = (index - 1 + surfaces.length) % surfaces.length;
+                  if (event.key === "Home") nextIndex = 0;
+                  if (event.key === "End") nextIndex = surfaces.length - 1;
+                  if (nextIndex === undefined) return;
+                  event.preventDefault();
+                  setActiveIndex(nextIndex);
+                  tabRefs.current[nextIndex]?.focus();
+                }}
               >
                 <span className="mm-v2-showcase-tab__index">{String(index + 1).padStart(2, "0")}</span>
                 <span className="mm-v2-showcase-tab__copy">
@@ -62,6 +76,7 @@ export default function ProductShowcase({ surfaces = [] }) {
         id={panelId}
         className="mm-v2-showcase__visual"
         role="tabpanel"
+        tabIndex={0}
         aria-labelledby={`mm-product-tab-${generatedId}-${safeIndex}`}
       >
         <div className="mm-v2-showcase__visual-head mm-v5-showcase__visual-head">
@@ -73,6 +88,8 @@ export default function ProductShowcase({ surfaces = [] }) {
               key={activeSurface.screenshotPath}
               src={activeSurface.screenshotPath}
               alt={activeSurface.alt}
+              width={828}
+              height={1792}
               loading="lazy"
               decoding="async"
             />

@@ -1,483 +1,105 @@
-// src/app/learn/period-tracking-for-men/page.js
 import Link from "next/link";
-import {
-  CalendarDays,
-  HeartHandshake,
-  Map,
-  MessageCircle,
-  Shield,
-  Sparkles,
-  BellRing,
-  TriangleAlert,
-  Lock,
-} from "lucide-react";
-import {
-  OG_IMAGE_SRC,
-  SourceTrustBlock,
-  articleJsonLd,
-  breadcrumbJsonLd,
-  faqJsonLd,
-} from "../../seo";
+import GuideArticle, {
+  GuideFAQ,
+  GuideProductExample,
+  GuideRelated,
+  GuideSection,
+  GuideStoreLinks,
+  guideStyles as styles,
+} from "../../../components/GuideArticle";
+import { COMMAND_DECK_LANES, PRODUCT } from "../../../lib/product";
+import { OG_IMAGE_SRC, SourceTrustBlock, articleJsonLd, breadcrumbJsonLd, faqJsonLd } from "../../seo";
 
 const SLUG = "/learn/period-tracking-for-men";
-const META_DESCRIPTION =
-  "A respectful guide to period tracking for men: consent, cycle context, what to ask, what not to assume, and how to use timing without control.";
+const TITLE = "Period tracking for men";
+const DESCRIPTION = "A practical guide to period tracking for men: what to enter, how cycle context can help, and how MoodMap turns a daily read into useful partner guidance.";
 
 export const metadata = {
   title: "Period Tracking for Men and Partners",
-  description: META_DESCRIPTION,
-  alternates: {
-    canonical: SLUG,
-  },
-  openGraph: {
-    title: "MoodMap Period Tracking for Men and Partners",
-    description: META_DESCRIPTION,
-    url: SLUG,
-    type: "article",
-    images: [OG_IMAGE_SRC],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: [OG_IMAGE_SRC],
-    title: "MoodMap Period Tracking for Men and Partners",
-    description: META_DESCRIPTION,
-  },
+  description: DESCRIPTION,
+  alternates: { canonical: SLUG },
+  openGraph: { title: "Period Tracking for Men and Partners", description: DESCRIPTION, url: SLUG, type: "article", images: [OG_IMAGE_SRC] },
+  twitter: { card: "summary_large_image", title: "Period Tracking for Men and Partners", description: DESCRIPTION, images: [OG_IMAGE_SRC] },
 };
 
+const FAQ = [
+  { q: "What does period tracking for men mean?", a: "It means using cycle timing that a partner has agreed to share as context for practical support, conversations and connection. MoodMap adds a daily read and actionable guidance for the man, without recording his partner’s actual mood." },
+  { q: "What is the minimum information I need?", a: "Start with an agreed period-start date and the cycle information she is comfortable sharing. Keep the estimate current when a new period begins. You do not need to keep a diary of her feelings or symptoms to use MoodMap." },
+  { q: "How do I ask her about it?", a: "Explain what you hope it will help you do: for example, plan better or remember when practical support may be useful. Ask whether she wants that, what she is comfortable sharing and what she would prefer to keep private. Respect a no." },
+  { q: "What if her cycle is not 28 days?", a: "A 28-day cycle is only an example. MoodMap has cycle, menstruation and PMS-window settings. Use the options shown in the current app, and treat the result as an estimate. If cycles are irregular, a calendar model may not fit well." },
+  { q: "What is free and what does Premium+ add?", a: `${PRODUCT.freeSummary} ${PRODUCT.premiumSummary}` },
+  { q: "Does cycle tracking tell me when she wants sex?", a: "No. Cycle context may be relevant to comfort or desire for some people, but it cannot tell you whether your partner wants sex. BOND offers guidance for flirting and intimacy; her actual interest and consent set the pace." },
+  { q: "Does she need a linked account or mood diary?", a: "MoodMap’s daily guidance does not require a partner mood diary or a shared feed. You enter agreed cycle context and use the guidance on your own phone. Check the Privacy Policy for how analytics, purchases and support information are handled." },
+  { q: "Can I use MoodMap for contraception or fertility planning?", a: "No. It uses cycle estimates for educational relationship guidance. It cannot confirm ovulation, measure hormones or replace appropriate medical and fertility advice." },
+];
+
 export default function PeriodTrackingForMenPage() {
-  // One source of truth: used for BOTH JSON-LD and visible FAQs
-  const FAQ = [
-    {
-      q: "Is it okay for a man to track his partner’s period?",
-      a: "Yes — if it’s done with consent, respect, and clear intent (support, not control). The goal is timing awareness and better communication, not monitoring.",
-    },
-    {
-      q: "What should I track (minimum effective tracking)?",
-      a: "Keep it simple: Day 1 (first day of bleeding), her typical cycle length (if she wants to share), and any agreed ‘heads-up’ windows (like a PMS watch window). Use it as context, not certainty.",
-    },
-    {
-      q: "How do I bring it up respectfully?",
-      a: "Be direct and supportive: ‘Would it help if I had a reminder so I can plan better and show up well — or would you rather I don’t track anything?’ Let her set the boundary.",
-    },
-    {
-      q: "Does this replace medical advice or fertility planning?",
-      a: "No. This is relationship guidance informed by general menstrual cycle context. It’s not medical advice and should not be used for contraception or fertility planning.",
-    },
-    {
-      q: "What if her cycle isn’t 28 days (or varies)?",
-      a: "That’s normal. Avoid rigid calendars. Use flexible expectations, and if you use an app, prefer calibration over a fixed 28‑day template. MoodMap Premium+ supports cycle calibration (21–35 days) and menstruation length (2–8 days).",
-    },
-    {
-      q: "How is MoodMap different from a typical period tracker?",
-      a: "MoodMap includes the core timing basics (cycle overview and optional alerts for key windows) and adds a partner layer: daily phase-aware cues, practical do/don’t guidance, and self-regulation prompts — designed for men.",
-    },
-    {
-      q: "Is the data private?",
-      a: "MoodMap is designed to be private-by-design. You don’t need to keep a symptom diary, there is no public profile or partner feed, and limited analytics may be used for reliability and product improvement as described in the Privacy Policy. Only share what you both agree to share.",
-    },
+  const schemas = [
+    articleJsonLd({ path: SLUG, headline: "Period Tracking for Men and Partners", description: DESCRIPTION }),
+    breadcrumbJsonLd([{ name: "Home", href: "/" }, { name: "Guides", href: "/learn" }, { name: TITLE, href: SLUG }]),
+    faqJsonLd(FAQ),
   ];
-
-  const faqSchema = faqJsonLd(FAQ);
-  const articleSchema = articleJsonLd({
-    path: SLUG,
-    headline: "Period Tracking for Men and Partners",
-    description: META_DESCRIPTION,
-  });
-  const breadcrumbSchema = breadcrumbJsonLd([
-    { name: "Home", href: "/" },
-    { name: "Learn", href: "/learn" },
-    { name: "Period tracking for men", href: SLUG },
-  ]);
-
   return (
-    <main className="relative isolate bg-primary-blue text-white">
-      {/* JSON-LD: Article / Breadcrumb / FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* Subtle premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      {/* Hero */}
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Shield className="h-4 w-4 opacity-90" aria-hidden />
-            Relationship guidance — not medical advice
+    <>
+      {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
+      <GuideArticle path={SLUG} title={TITLE}
+        lead="A period tracker for men can help you keep agreed cycle timing in mind. The useful next step is knowing what that context may mean today: her possible energy, comfort and mood, and a better way for you to respond."
+        contents={[{ href: "#get-started", label: "Get started" }, { href: "#daily-guidance", label: "What you get each day" }, { href: "#free-premium", label: "Free and Premium+" }, { href: "#privacy", label: "Privacy and agreement" }, { href: "#questions", label: "Common questions" }]}>
+        <GuideSection id="get-started" title="Start with a little information and a clear purpose">
+          <div className={styles.summary}><p><strong>The goal:</strong> get a quick feel for the possible cycle context, then act on what is actually happening between you. A date can be useful background; it cannot tell you what she thinks.</p></div>
+          <div className={styles.stepGrid}>
+            <article className={styles.step}><span className={styles.stepNumber}>1</span><h3>Ask what would help</h3><p>Explain why you want a reminder or cycle overview. Agree on what she wants to share and what support she finds useful.</p></article>
+            <article className={styles.step}><span className={styles.stepNumber}>2</span><h3>Set the cycle context</h3><p>Enter an agreed period-start date and check the cycle settings. Keep the date current when a new period starts. An estimate is only as useful as its starting information.</p></article>
+            <article className={styles.step}><span className={styles.stepNumber}>3</span><h3>Read, then respond</h3><p>Use the daily context to consider a practical move: simplify a plan, change your tone, offer support or make room for mutual connection.</p></article>
           </div>
+          <p>The <a href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/" target="_blank" rel="noopener noreferrer">first day of bleeding is cycle day one</a>. Real cycles vary; if you need the overview first, read <Link href="/learn/menstrual-cycle-phases-for-partners">the four phases explained for partners</Link>.</p>
+        </GuideSection>
 
-          <h1 className="mt-5 text-balance text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
-            Period tracking for men
-          </h1>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/day-brief.webp" alt="MoodMap Day Brief with Current Picture, Best Approach, What Can Go Well and Set It Up sections." title="One daily read you can put to use">
+          <p>{PRODUCT.summary}</p>
+          <p>The Brief connects the possible background to the day ahead. This example starts with comfort and practical setup before a bigger conversation or a bid for closeness.</p>
+          <p>Get the gist quickly, then open the explanation when you want more context.</p>
+        </GuideProductExample>
 
-          <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            A respectful, practical approach: how to track timing as <em>context</em> (not control),
-            how to ask for consent, and how to use what you learn to show up better.
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="px-6 pb-14 sm:pb-16">
-        <div className="mx-auto max-w-4xl grid gap-6">
-          {/* Card 1 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <CalendarDays className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What “period tracking for men” actually means
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  In practice, it means having a basic sense of{" "}
-                  <strong className="text-white">where she is in her cycle</strong> so you can plan
-                  support, communication, and logistics with better timing. It’s not about
-                  surveillance — it’s about being less reactive and more considerate.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    You track <strong className="text-white">timing windows</strong>, not “moods.”
-                  </li>
-                  <li>
-                    You use it for <strong className="text-white">planning and care</strong>, not
-                    arguments.
-                  </li>
-                  <li>
-                    You do it with <strong className="text-white">consent</strong>, every time.
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 2 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Why it helps (when it’s done right)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Timing awareness is a relationship skill. It helps you match the day — without
-                  guessing, tiptoeing, or taking things personally.
-                </p>
-
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Fewer misunderstandings
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      When sensitivity is higher, small things land bigger. Cleaner tone and less
-                      pressure prevents friction.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Better support timing
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      You can prepare before high-impact days instead of “finding out” mid-conflict.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      Calmer logistics
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      You plan dates, workload, travel, and conversations with more empathy and
-                      realism.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 3 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Map className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  The minimalist framework (track less, do more)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Most men overcomplicate this. You don’t need to “track everything.” You need a
-                  shared, simple model you both agree on.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    <strong className="text-white">Day 1:</strong> first day of bleeding.
-                  </li>
-                  <li>
-                    <strong className="text-white">Cycle length:</strong> her usual range (if she
-                    wants to share).
-                  </li>
-                  <li>
-                    <strong className="text-white">A heads-up window:</strong> an agreed “PMS watch”
-                    window (not a stereotype—just a reminder to be extra steady).
-                  </li>
-                  <li>
-                    <strong className="text-white">Optional context windows:</strong> ovulation-phase
-                    context if that’s useful for planning.
-                  </li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  If her cycle varies month-to-month, treat timing as probabilities—not promises.
-                </p>
-
-                <div className="mt-6 text-sm text-white/60">
-                  Related reading:{" "}
-                  <Link href="/learn/menstrual-cycle-phases-for-partners" className="mm-link">
-                    cycle phases for partners
-                  </Link>
-                  {" · "}
-                  <Link href="/learn/fertile-window-explained" className="mm-link">
-                    fertile window explained
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 4 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <MessageCircle className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">Consent and communication</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  The line between supportive and intrusive is simple:{" "}
-                  <strong className="text-white">consent + transparency</strong>.
-                </p>
-
-                <div className="mt-4 rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-                  <p className="text-white/80 leading-relaxed">
-                    <strong className="text-white">Try this:</strong> “Would it help if I had a
-                    reminder so I can plan better and show up well — or would you rather I don’t
-                    track anything?”
-                  </p>
-                </div>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    Ask what she wants you to know (and what she doesn’t).
-                  </li>
-                  <li>
-                    Agree on what “helpful” looks like (space, reassurance, fewer demands, etc.).
-                  </li>
-                  <li>
-                    Never use tracking to win arguments or diagnose her feelings.
-                  </li>
-                </ul>
-
-                <p className="mt-4 inline-flex items-center gap-2 text-white/70">
-                  <Lock className="h-4 w-4" aria-hidden />
-                  Respect and autonomy first. Always.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 5 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Where MoodMap fits: the basics — plus context for men
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap covers the core timing basics you’d expect (cycle overview + optional
-                  alerts for key windows) and adds what most trackers don’t:{" "}
-                  <strong className="text-white">daily phase-aware guidance for men</strong> —
-                  practical do/don’t cues, steadiness prompts, and connection timing.
-                </p>
-
-                <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                  <div className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-                    <div className="flex items-center gap-2 text-white/80 font-semibold">
-                      <BellRing className="h-4 w-4" aria-hidden />
-                      Timing alerts (optional)
-                    </div>
-                    <p className="mt-2 text-white/70 leading-relaxed">
-                      Heads-up for windows like PMS, ovulation-phase context, and high-impact cycle shifts — so you
-                      can prepare instead of react.
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl bg-white/5 ring-1 ring-white/10 p-4">
-                    <div className="flex items-center gap-2 text-white/80 font-semibold">
-                      <Sparkles className="h-4 w-4" aria-hidden />
-                      Daily cues for men
-                    </div>
-                    <p className="mt-2 text-white/70 leading-relaxed">
-                      Short, practical guidance to match the day: tone, pacing, support, and
-                      connection — without stereotypes.
-                    </p>
-                  </div>
-                </div>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>No symptom diary required.</li>
-                  <li>Guidance is general, respectful, and relationship-first.</li>
-                  <li>
-                    Premium+ calibration: cycle length <strong className="text-white">21–35</strong>{" "}
-                    days and menstruation <strong className="text-white">2–8</strong> days.
-                  </li>
-                  <li>Private by design — no public profile, no partner feed, and no data selling.</li>
-                </ul>
-
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
-                  <Link href="/pro" className="mm-link text-sm text-white/80">
-                    See what Premium+ unlocks →
-                  </Link>
-                  <Link href="/#download" className="mm-link text-sm text-white/80">
-                    Download MoodMap →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 6 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <TriangleAlert className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">Common mistakes to avoid</h2>
-                <ul className="mt-3 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    <strong className="text-white">Don’t weaponize timing</strong> (“You’re only
-                    saying that because…”).
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t pressure</strong> intimacy or plans based on
-                    a date on a calendar.
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t assume</strong> she will feel a certain way
-                    “because it’s ovulation.”
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t use this for fertility planning or contraception</strong>.
-                    If that’s your goal, talk to a qualified clinician and use appropriate methods.
-                  </li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  Timing awareness should increase respect — not reduce autonomy.
-                </p>
-
-                <div className="mt-6 text-sm text-white/60">
-                  Related reading:{" "}
-                  <Link href="/learn/support-partner-during-pms" className="mm-link">
-                    support your partner during PMS
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* End-of-guide CTA */}
-          <section className="mt-2 text-center">
-            <div className="glass-card p-6 sm:p-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-                Next step: keep it simple for two cycles
-              </div>
-
-              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
-                The goal isn’t “perfect prediction.” It’s calmer communication, better timing, and a
-                more supportive baseline — with consent.
-              </p>
-
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/#download" className="btn-primary">
-                  Download MoodMap
-                </Link>
-                <Link href="/learn" className="mm-link text-sm text-white/70">
-                  Explore more Guides →
-                </Link>
-              </div>
-
-              <p className="mt-4 text-xs sm:text-sm text-white/55">
-                Relationship guidance — not medical advice. Not for contraception or fertility planning.
-              </p>
-            </div>
-          </section>
-
-          <SourceTrustBlock />
-
-          {/* Visible FAQs */}
-          <section className="mt-2">
-            <div className="glass-card p-6 sm:p-7">
-              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
-              <p className="mt-2 text-sm text-white/60">
-                Short answers to common questions. Relationship guidance — not medical advice.
-              </p>
-
-              <div className="mt-5 space-y-3">
-                {FAQ.map(({ q, a }) => (
-                  <details
-                    key={q}
-                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
-                  >
-                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
-                      <span className="pr-3">{q}</span>
-                      <span className="text-white/50 group-open:rotate-180 transition-transform">
-                        ▾
-                      </span>
-                    </summary>
-                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom nav */}
-          <div className="pt-2 text-center">
-            <Link href="/learn" className="mm-link text-sm text-white/70">
-              ← Back to Guides
-            </Link>
+        <GuideSection id="daily-guidance" title="Four different jobs in the Command Deck">
+          <p>PLAN, READ, BOND and SELF all change with the cycle context. Each helps with a different part of your response, so four categories do not become four versions of the same advice.</p>
+          <div className={styles.laneGrid}>
+            {COMMAND_DECK_LANES.map(({ name, title, description }) => <article key={name} className={styles.lane}><span className={styles.phaseLabel}>{name}</span><h3>{title}</h3><p>{description}</p></article>)}
           </div>
-        </div>
-      </section>
-    </main>
+          <p>The WHY explanations add reasoning behind a move. The <Link href="/intelligence">Cycle Intelligence view</Link> explains the modeled biology and possible effects separately.</p>
+        </GuideSection>
+
+        <GuideSection id="calendar-guidance" title="From calendar dates to partner guidance">
+          <div className={styles.compare}>
+            <div><h3>Dates and symptom records</h3><p>A calendar helps someone record periods and see expected timing. Symptom tracking can help them notice their own patterns.</p></div>
+            <div><h3>MoodMap’s emphasis</h3><p>MoodMap uses agreed cycle timing to create a daily read for the partner: possible context, likely misunderstandings to avoid and practical moves for support, intimacy and self-regulation.</p></div>
+          </div>
+          <p>Apps can combine several of these functions. Choose based on the job you want done. MoodMap’s primary job is helping you respond with more context.</p>
+        </GuideSection>
+
+        <GuideSection id="free-premium" title="Start free. Open more depth with Premium+.">
+          <p>{PRODUCT.freeSummary}</p>
+          <p>{PRODUCT.premiumSummary}</p>
+          <p>{PRODUCT.settingsSummary}</p>
+          <p>Current subscription options appear in the app and your local store. You can also view the <Link href="/pro">web subscription options</Link>; web and store prices may differ.</p>
+          <p>Available in {PRODUCT.languages.map(({ name }) => name).join(", ")}.</p>
+        </GuideSection>
+
+        <GuideSection id="privacy" title="Keep the agreement as clear as the dates">
+          <p>A useful starting question is: “Would a reminder help me plan better and show up well, or would you rather I do not track anything?” Agree what support means to her. It may be practical help, company, less noise or simply remembering that a difficult day is possible.</p>
+          <p>{PRODUCT.privacySummary} <Link href="/privacy-policy">Read the Privacy Policy</Link> for the actual data handling and choices.</p>
+          <p>Never use a calendar to win an argument or decide that a concern is invalid. For sex, flirting and intimacy, respond to the interest you receive. A phase is not a green light.</p>
+        </GuideSection>
+
+        <GuideSection id="model-fit" title="Know what the estimate can and cannot do">
+          <p>{PRODUCT.modelScope}</p>
+          <p>PMS experiences also vary. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome" target="_blank" rel="noopener noreferrer">Office on Women’s Health describes possible symptoms and when they deserve professional attention</a>. MoodMap supplies context for your response, not a diagnosis of your partner.</p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <div className={styles.sources}><SourceTrustBlock path={SLUG} /></div>
+        <GuideStoreLinks path={SLUG} title="Get a daily starting point for your next move" />
+        <GuideRelated items={[{ href: "/learn/menstrual-cycle-phases-for-partners", label: "Cycle phases explained for partners" }, { href: "/learn/support-partner-during-pms", label: "Practical support during PMS" }, { href: "/learn/moodmap-glossary", label: "The MoodMap feature guide" }]} />
+      </GuideArticle>
+    </>
   );
 }

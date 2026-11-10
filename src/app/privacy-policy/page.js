@@ -1,5 +1,6 @@
 // src/app/privacy-policy/page.js
 import Link from "next/link";
+import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
 import Script from "next/script";
 import {
   Database,
@@ -27,6 +28,7 @@ const toc = [
   { id: "section1", label: "1. Information We Collect and Store" },
   { id: "section2", label: "2. How We Use Your Data" },
   { id: "section3", label: "3. Third-Party Services" },
+  { id: "website", label: "Website privacy choices and billing" },
   { id: "section4", label: "4. Data Security" },
   { id: "section5", label: "5. Data Deletion" },
   { id: "section6", label: "6. No Medical Records or Diagnostic Data" },
@@ -77,7 +79,7 @@ export default function PrivacyPolicyPage() {
       <section className="px-6 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
         <div className="mx-auto max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-xs font-semibold text-blue-100">
-            <span>Last updated: July 7, 2026</span>
+            <span>Updated: {displayDate(CONTENT_UPDATES["/privacy-policy"])}</span>
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">
             Privacy Policy for MoodMap™
@@ -158,13 +160,13 @@ export default function PrivacyPolicyPage() {
           {/* Intro – juridisk tekst (ordrett) */}
           <GlassCard id="intro">
             <p className="text-sm mb-4">
-              <strong>Last updated:</strong> July 7, 2026
+              <strong>Last updated:</strong> <time dateTime={CONTENT_UPDATES["/privacy-policy"]}>{displayDate(CONTENT_UPDATES["/privacy-policy"])}</time>
             </p>
             <p className="text-sm leading-relaxed">
               MoodMap is committed to protecting your privacy. This Privacy Policy
-              explains how we collect, use, and safeguard your information when you
-              use the MoodMap app. By using the app, you agree to the terms of this
-              Privacy Policy.
+              explains how we collect, use, and safeguard information when you
+              use the MoodMap app, website, support, or web checkout. The website
+              choices described below are separate from settings in the mobile app.
             </p>
           </GlassCard>
 
@@ -217,7 +219,7 @@ export default function PrivacyPolicyPage() {
               <strong>Note:</strong> MoodMap is private by design: no public profile,
               no partner feed, and no data selling. We do not collect personally
               identifiable information such as names or email addresses unless you
-              choose to provide it, for example in a support request.
+              choose to provide it, for example in a support request or web checkout.
             </p>
           </GlassCard>
 
@@ -302,6 +304,20 @@ export default function PrivacyPolicyPage() {
                 improve MoodMap and understand aggregate behavior.
               </li>
             </ul>
+          </GlassCard>
+
+          <GlassCard id="website">
+            <IconRing><BarChart3 className="h-6 w-6 text-white drop-shadow" aria-hidden /></IconRing>
+            <h2 className="text-xl sm:text-2xl font-semibold">Website privacy choices and billing</h2>
+            <p className="mt-2 text-sm leading-relaxed">The website offers separate choices for optional analytics and referral attribution. Both start off and are enabled only when you choose the relevant category. You can use the site and open checkout with essential storage only.</p>
+            <ul className="mt-3 list-disc list-inside text-sm text-blue-100 space-y-2">
+              <li><strong>Essential preference storage:</strong> your choice is remembered in this browser for up to 180 days. This preference contains your selected categories and the time of the choice, without creating a visitor identifier. If browser storage is unavailable, the preference lasts for the current page session.</li>
+              <li><strong>Optional website analytics:</strong> when enabled and configured, Google Analytics 4 helps us understand page visits and actions such as store-link, Premium+, and checkout clicks. Our event collection excludes URL query strings, fragments, email addresses, payment identifiers, and cycle information. Our browser analytics events are disabled on purchase confirmation, activation, and account pages.</li>
+              <li><strong>Optional referral attribution:</strong> PromoteKit can record a referral identifier and use cookies or browser storage to credit the creator who referred you. The referral script and referral storage are enabled only after you choose this category.</li>
+              <li><strong>Browser privacy signals:</strong> Global Privacy Control and Do Not Track keep these optional website categories off. Choose <strong>Privacy choices</strong> in the footer to review or withdraw your choices at any time. Withdrawing consent stops future optional collection; it does not automatically delete information already received by a service.</li>
+              <li><strong>Web subscriptions:</strong> Stripe processes web payments and subscription billing. Checkout and purchase fulfillment use the information needed to complete and validate your purchase, including your checkout email and payment or subscription identifiers. These operations are separate from optional website analytics and referral attribution.</li>
+            </ul>
+            <p className="mt-3 text-sm leading-relaxed">For service-provider details, see <a className="mm-link" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google’s Privacy Policy</a> and <a className="mm-link" href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe’s Privacy Policy</a>. For access or deletion questions, contact <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>{PRODUCT.supportEmail}</a>.</p>
           </GlassCard>
 
           {/* 4 */}

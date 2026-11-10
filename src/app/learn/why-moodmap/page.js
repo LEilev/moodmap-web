@@ -1,5 +1,6 @@
 // src/app/learn/why-moodmap/page.js
 import Link from "next/link";
+import { PRODUCT, COMMAND_DECK_LANES } from "../../../lib/product";
 import {
   Shield,
   Sparkles,
@@ -65,12 +66,12 @@ export default function WhyMoodMapPage() {
       typical:
         "Calendars, cycle charts, logs, and raw phase labels (often requiring interpretation).",
       moodmap:
-        "Short daily briefings that translate timing into practical cues (without stereotypes).",
+        "A quick daily read plus the PLAN, READ, BOND and SELF Command Deck: practical context for the user’s own response.",
     },
     {
       label: "Input burden",
       typical:
-        "Often expects ongoing symptom logging (mood, flow, pain, etc.).",
+        "May offer ongoing symptom logging for mood, flow, pain, and other personal records.",
       moodmap:
         "Optimized for minimal input and partner usability — the goal is context, not a detailed symptom diary.",
     },
@@ -97,7 +98,7 @@ export default function WhyMoodMapPage() {
     },
     {
       q: "Is MoodMap meant to replace my partner’s period tracker?",
-      a: "Not necessarily. Many couples use MoodMap as the partner-facing layer while she uses any tracker she prefers for her own needs. MoodMap’s job is to translate timing into context for you.",
+      a: "No. A partner can keep whichever tracker she prefers. MoodMap is a separate tool for the man’s daily context and response, using only information she chooses to share.",
     },
     {
       q: "Does MoodMap predict fertility or ovulation precisely?",
@@ -105,7 +106,7 @@ export default function WhyMoodMapPage() {
     },
     {
       q: "What makes MoodMap different from a typical period tracking app?",
-      a: "Typical trackers focus on the individual user and often rely on ongoing logs. MoodMap is written for men: it focuses on timing, self-regulation, and practical cues — helping you show up better in real life.",
+      a: PRODUCT.summary,
     },
     {
       q: "Is this intrusive or invasive?",
@@ -130,7 +131,7 @@ export default function WhyMoodMapPage() {
   ]);
 
   return (
-    <main className="relative isolate overflow-x-hidden bg-primary-blue text-white">
+    <main className="mm-guide-article relative isolate overflow-x-hidden bg-primary-blue text-white">
       {/* JSON-LD: Article / Breadcrumb / FAQ */}
       <script
         type="application/ld+json"
@@ -320,20 +321,13 @@ export default function WhyMoodMapPage() {
                     What MoodMap adds (the partner layer for men)
                   </h2>
                   <p className="mt-2 text-white/75 leading-relaxed">
-                    This is the difference: MoodMap translates timing into practical cues — small guardrails that help you
-                    choose a better tone, pace, and plan for the day.
+                    {PRODUCT.summary}
                   </p>
 
                   <ul className="mt-4 list-disc pl-5 grid gap-2 text-white/75 leading-relaxed">
-                    <li>
-                      <strong className="text-white">Daily phase-aware briefings</strong> (short and usable).
-                    </li>
-                    <li>
-                      <strong className="text-white">Practical do/don’t guidance</strong> (without stereotypes).
-                    </li>
-                    <li>
-                      <strong className="text-white">Self-regulation prompts</strong> (stay steady when timing is sensitive).
-                    </li>
+                    {COMMAND_DECK_LANES.map((lane) => (
+                      <li key={lane.name}><strong className="text-white">{lane.name}: {lane.title}.</strong> {lane.description}</li>
+                    ))}
                   </ul>
 
                   <div className="mt-5 text-sm text-white/60">
@@ -476,7 +470,7 @@ export default function WhyMoodMapPage() {
             </p>
           </article>
 
-          <SourceTrustBlock />
+          <SourceTrustBlock path={SLUG} />
 
           {/* Visible FAQs */}
           <section className="mt-2">
