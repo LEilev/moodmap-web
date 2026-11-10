@@ -71,10 +71,8 @@ const nextConfig = {
   async rewrites() {
     return [
       // ---------------------------------------------------------------------
-      // Clean support URL:
-      // Serve the static Apple-approved support.html at /support (URL stays /support).
+      // /support is served by its App Router page. Legacy .html redirects above.
       // ---------------------------------------------------------------------
-      { source: "/support", destination: "/support.html" },
 
       // Support both endpoints: /api/version and /api/version.json
       { source: "/api/version.json", destination: "/api/version" },
@@ -83,6 +81,25 @@ const nextConfig = {
 
   async headers() {
     return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          // Compatible with Next hydration and consented vendor scripts. A
+          // nonce-based script policy needs a separate rollout, not unsafe guesses.
+          { key: "Content-Security-Policy", value: "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://*.stripe.com" },
+        ],
+      },
+      ...["/thanks", "/activate", "/activate/:path*", "/account", "/api/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "Referrer-Policy", value: "no-referrer" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow" },
+        ],
+      })),
       // ---------------------------------------------------------------------
       // Version endpoint caching (CDN)
       // Prevent hammering any upstream lookup; keep response fast.

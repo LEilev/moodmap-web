@@ -1,24 +1,27 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>MoodMap • Activate</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
-  <meta http-equiv="refresh" content="0;url=moodmap-app://activate" />
-  <style>
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #1E3A8A;
-      color: #fff;
-      font-family: sans-serif;
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Open MoodMap</title>
+  <style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#08111f;color:#f4f8ff;font:1rem/1.6 system-ui,sans-serif}main{max-width:34rem;padding:2rem;text-align:center}a{color:#a8e5d5}</style>
 </head>
 <body>
-  <p>Opening MoodMap…</p>
+  <main><h1>Open MoodMap</h1><p><a id="continue" href="/activate">Continue to your activation page</a></p></main>
+  <script>
+    (() => {
+      const source = new URLSearchParams(window.location.search);
+      const query = new URLSearchParams();
+      for (const name of ['u', 's', 'exp', 'sig']) {
+        const value = source.get(name);
+        if (value && value.length <= 256) query.set(name, value);
+      }
+      const destination = '/activate' + (query.size ? '?' + query.toString() : '');
+      document.getElementById('continue').href = destination;
+      window.location.replace(destination);
+    })();
+  </script>
 </body>
 </html>

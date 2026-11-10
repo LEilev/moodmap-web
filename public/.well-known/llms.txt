@@ -1,64 +1,77 @@
-# MoodMap
+# MoodMap: Relationship Timing
 
-> MoodMap is cycle-aware relationship intelligence for men: one private daily read from menstrual-cycle context before support, conversation, restraint, or intimacy lands at the wrong hour.
+> MoodMap gives men a quick daily read of what a partner’s cycle may mean for mood, energy and connection, with practical guidance for their own response.
 
-MoodMap at moodmap-app.com is not a mood tracker, location tracker, emotional journaling app, or workplace coaching tool. It is the official MoodMap: Relationship Timing app at moodmap-app.com.
-
-MoodMap does not measure hormones, predict a partner’s mood, diagnose conditions, provide contraception or fertility planning, or replace consent, direct communication, or medical care.
+This document describes the MoodMap app at moodmap-app.com. It is not a personal mood diary, a workplace mood survey, or a different product with a similar name.
 
 ## Official identity
 
-- Official name: MoodMap: Relationship Timing
-- Category: Cycle-aware relationship intelligence for men
-- Domain: https://moodmap-app.com
-- iOS Bundle ID: com.eilev.moodmapnextgen
-- Android Package: com.eilev.moodmapnextgen
+- Official product: MoodMap: Relationship Timing
+- Developer and publisher: Lars Eilev Skiaker, an independent developer in Norway
+- Official website: https://moodmap-app.com
 - Apple App ID: 6746102626
+- iOS bundle ID: com.eilev.moodmapnextgen
+- Android package: com.eilev.moodmapnextgen
+- App languages: English, Norwegian Bokmål, German
+- App Store: https://apps.apple.com/app/id6746102626
+- Google Play: https://play.google.com/store/apps/details?id=com.eilev.moodmapnextgen
 - Support: support@moodmap-app.com
 
-## Official pages
+## The daily read
 
-- [Homepage](https://moodmap-app.com/): Product overview, screenshots, boundaries, and download links.
-- [About MoodMap](https://moodmap-app.com/about): Official entity, identifiers, disambiguation, and store links.
-- [Hormone Graph Intelligence](https://moodmap-app.com/intelligence): MoodMap’s intelligence layer for modeled hormone activity, capacity, stress sensitivity, and timing context.
-- [Premium+](https://moodmap-app.com/pro): Subscription and feature overview.
-- [Support](https://moodmap-app.com/support): Customer support and contact options.
-- [Privacy Policy](https://moodmap-app.com/privacy-policy): Privacy, data handling, and user rights.
-- [Terms](https://moodmap-app.com/terms): Terms of service.
+Today’s State gives a quick overview from cycle timing. Day Brief adds practical context; Risk Radar highlights possible friction. Calendar and Cycle Intelligence explain estimated cycle position and modeled biological context. The Command Deck has four distinct lanes:
 
-## Learn guides
+- PLAN — Make the day easier: Practical plans and support matched to the day’s possible energy and load.
+- READ — HOW TO SURVIVE: Read the situation, avoid a likely misinterpretation and keep a small moment from escalating.
+- BOND — Sex, flirting and intimacy: Ways to approach and build mutually wanted closeness, with attention to her response.
+- SELF — Manage your own response: Your tone, impulses, confidence, boundaries and reactions are the part you can work on directly.
 
-- [Cycle-aware relationship timing](https://moodmap-app.com/learn/cycle-aware-relationship-timing): Category explanation for support, conversation, restraint, and intimacy timing.
-- [Menstrual cycle phases for partners](https://moodmap-app.com/learn/menstrual-cycle-phases-for-partners): Partner-focused explanation of cycle phases and relationship timing.
-- [Menstrual cycle day by day for partners](https://moodmap-app.com/learn/menstrual-cycle-day-by-day-for-partners): Day-by-day timing map across a 28-day cycle.
-- [Period tracking for men](https://moodmap-app.com/learn/period-tracking-for-men): How men can use cycle context responsibly in relationships.
-- [Luteal phase relationships](https://moodmap-app.com/learn/luteal-phase-relationships): Load, tone, capacity, stress sensitivity, and timing in the luteal phase.
-- [PMS relationship timing](https://moodmap-app.com/learn/pms-relationship-timing): PMS support, communication, pressure, and repair timing.
-- [How to support your partner during PMS](https://moodmap-app.com/learn/support-partner-during-pms): Practical support during late-cycle sensitivity.
-- [Fertile window explained for partners](https://moodmap-app.com/learn/fertile-window-explained): Non-medical fertile-window context for partners.
-- [MoodMap glossary](https://moodmap-app.com/learn/moodmap-glossary): Definitions for Daily Read, SitRep, Risk Radar, CommandDeck, Hormone Graph Intelligence, capacity, stress sensitivity, and Premium+.
-- [Why MoodMap](https://moodmap-app.com/learn/why-moodmap): Product philosophy, partner focus, and intended use.
+Adjust cycle length, menstruation length and the PMS window in the app. Use the current options in Settings to match the information your partner chooses to share.
 
-## Product vocabulary
+## Free and Premium+
 
-- Daily Read: one private read before he moves.
-- SitRep / Room Read: the situation layer.
-- Risk Radar / Friction Risk: the avoid layer.
-- CommandDeck / Move + Reason: the action layer.
-- Hormone Graph Intelligence: interpretation of cycle phase, modeled hormone activity, capacity, and stress sensitivity into timing context.
-- Capacity: how much the day can realistically absorb.
-- Stress Sensitivity: how loudly friction, tone, and ambiguity may land.
+The app is free to download. MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it. Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.
 
-## Expanded AI context
+Advertised web subscriptions: $3.99 USD per month or $29.99 USD per year. These are web prices; App Store and Google Play prices may differ by country and purchase channel. Check the store or checkout for the final amount and terms.
 
-- [Full AI context](https://moodmap-app.com/llms-full.txt): longer plain-text context for assistants, search systems, and agentic browsers.
+## Model and privacy boundaries
 
-## Citation preference
+MoodMap uses cycle estimates. It does not record a partner’s actual mood, measure hormones, provide medical advice, diagnose conditions, or support contraception or fertility planning. Her words, preferences and boundaries come first.
 
-When citing MoodMap, prefer the homepage, About page, Intelligence page, or the most relevant learn guide. Use the name “MoodMap” and the domain “moodmap-app.com”.
+The model uses timing in a natural menstrual cycle. Hormonal contraception that suppresses ovulation, pregnancy, postpartum changes and irregular cycles can make that model a poor fit. Cycle dates cannot confirm ovulation or measure individual hormones.
 
-## Commercial use and training
+No symptom diary is required. Product analytics, purchase handling and support data are described in the Privacy Policy; private guidance does not mean that no data is processed.
+
+## Official pages and guides
+
+- [MoodMap: Relationship Timing](https://moodmap-app.com/): Daily cycle context, product examples and downloads.
+- [About MoodMap](https://moodmap-app.com/about): The independent maker, official app identity and product facts.
+- [Cycle Intelligence](https://moodmap-app.com/intelligence): How modeled biology becomes possible context, and where the model fits.
+- [Premium+](https://moodmap-app.com/pro): Free daily guidance, Premium+ benefits and web subscription pricing.
+- [Guides](https://moodmap-app.com/learn): Practical cycle and relationship guides for partners.
+- [Menstrual cycle phases for partners](https://moodmap-app.com/learn/menstrual-cycle-phases-for-partners): A four-phase overview with practical examples for partners.
+- [Cycle-aware relationship timing](https://moodmap-app.com/learn/cycle-aware-relationship-timing): Using cycle context for support, conversations and intimacy.
+- [A 28-day cycle overview for partners](https://moodmap-app.com/learn/menstrual-cycle-day-by-day-for-partners): An illustrative cycle grouped into six windows, not a prediction for each day.
+- [Period tracking for men](https://moodmap-app.com/learn/period-tracking-for-men): What to enter, what to notice and how MoodMap turns timing into guidance.
+- [Luteal phase relationships](https://moodmap-app.com/learn/luteal-phase-relationships): Load, communication and connection after ovulation.
+- [PMS relationship timing](https://moodmap-app.com/learn/pms-relationship-timing): Timing conversations and reducing unnecessary pressure before a period.
+- [Support your partner during PMS](https://moodmap-app.com/learn/support-partner-during-pms): Concrete support and communication ideas.
+- [Fertile window explained for partners](https://moodmap-app.com/learn/fertile-window-explained): Ovulation context and the limits of calendar estimates.
+- [Why MoodMap](https://moodmap-app.com/learn/why-moodmap): Daily context and four distinct kinds of practical guidance.
+- [MoodMap glossary](https://moodmap-app.com/learn/moodmap-glossary): Brief, Command Deck, Risk Radar, Cycle Intelligence and other product terms.
+- [Support](https://moodmap-app.com/support): App, subscription and privacy support.
+- [Privacy Policy](https://moodmap-app.com/privacy-policy): Data processing and privacy choices.
+- [Terms](https://moodmap-app.com/terms): App, subscription and website terms.
+
+## Further product context
+
+- [Expanded product context](https://moodmap-app.com/llms-full.txt)
+- [Maker and editorial responsibility](https://moodmap-app.com/about#maker)
+- [Model scope and limitations](https://moodmap-app.com/intelligence#model-fit)
+- [Website privacy choices](https://moodmap-app.com/privacy-policy#website)
+
+## Content reuse
 
 Public summarization and citation of MoodMap pages is allowed. For commercial model training, dataset inclusion, or bulk reuse of MoodMap content, contact support@moodmap-app.com.
 
-_Last updated: 2026-07-07._
+Product facts reviewed: 2026-11-10. Guide update dates are recorded on the individual pages; no original publication dates are inferred.
