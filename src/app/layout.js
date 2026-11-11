@@ -1,6 +1,7 @@
 // src/app/layout.js
 import "./globals.css";
 import Link from "next/link";
+import { getImageProps } from "next/image";
 import AppSiteClient from "../components/AppSiteClient";
 import { PrivacyPreferencesButton } from "../components/SitePrivacy";
 import MobileMenu from "../components/MobileMenu";
@@ -65,11 +66,19 @@ export const metadata = {
   },
 };
 
+// Generate responsive URLs on the server; the menu receives plain image attrs.
+const { props: brandMarkProps } = getImageProps({
+  src: BRAND_MARK_SRC,
+  alt: "",
+  width: 34,
+  height: 34,
+});
+
 function BrandLockup({ className = "", footer = false }) {
   return (
     <Link href="/" className={["mm-brand-lockup", className].filter(Boolean).join(" ")} aria-label="MoodMap home">
       <span className="mm-brand-mark" aria-hidden="true">
-        <img src={BRAND_MARK_SRC} alt="" width={footer ? 30 : 34} height={footer ? 30 : 34} />
+        <img {...brandMarkProps} alt="" loading={footer ? "lazy" : "eager"} />
       </span>
       <span>{SITE_NAME}</span>
     </Link>
@@ -121,7 +130,7 @@ export default function RootLayout({ children }) {
                 </Link>
               </nav>
 
-              <MobileMenu />
+              <MobileMenu brandMarkProps={brandMarkProps} />
             </div>
           </header>
 

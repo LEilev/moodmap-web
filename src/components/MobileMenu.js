@@ -18,7 +18,7 @@ const LINKS = [
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
-export default function MobileMenu() {
+export default function MobileMenu({ brandMarkProps } = {}) {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef(null);
   const panelRef = useRef(null);
@@ -128,7 +128,12 @@ export default function MobileMenu() {
             <div className="mm-mobile-panel__header">
               <div className="mm-brand-lockup text-base" aria-hidden="true">
                 <span className="mm-brand-mark">
-                  <img src={BRAND_MARK_SRC} alt="" width="34" height="34" />
+                  <img
+                    {...(brandMarkProps ?? { src: BRAND_MARK_SRC, width: 34, height: 34 })}
+                    alt=""
+                    loading="eager"
+                    decoding="async"
+                  />
                 </span>
                 <span>MoodMap</span>
               </div>

@@ -1,7 +1,7 @@
 // src/app/privacy-policy/page.js
 import Link from "next/link";
 import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
-import Script from "next/script";
+import PrivacyPolicyContents from "../../components/PrivacyPolicyContents";
 import { pageMetadata } from "../seo";
 import {
   Database,
@@ -488,97 +488,7 @@ export default function PrivacyPolicyPage() {
         </div>
       </section>
 
-      {/* IntersectionObserver for aktiv seksjons-markering (lett og performant) */}
-      <Script id="pp-toc-active" strategy="afterInteractive">
-        {`
-(function () {
-  try {
-    var sectionIds = ${JSON.stringify(toc.map((t) => t.id))};
-    var tocNavs = Array.from(document.querySelectorAll('[data-pp-toc]'));
-    if (!tocNavs.length) return;
-
-    var allLinks = [];
-    tocNavs.forEach(function(nav){
-      allLinks = allLinks.concat(Array.from(nav.querySelectorAll('a[href^="#"]')));
-    });
-
-    // Map id -> tilhørende <a> (både mobil og desktop)
-    var idToLinks = new Map();
-    sectionIds.forEach(function (id) {
-      var matches = allLinks.filter(function (a) {
-        var href = a.getAttribute('href') || '';
-        var hash = href.startsWith('#') ? href.slice(1) : (href.split('#')[1] || '');
-        return hash === id;
-      });
-      idToLinks.set(id, matches);
-    });
-
-    function clearActive() {
-      allLinks.forEach(function (a) {
-        a.classList.remove('bg-white/10', 'text-white');
-        a.classList.add('text-blue-100');
-        a.setAttribute('aria-current', 'false');
-      });
-    }
-
-    function setActive(id) {
-      clearActive();
-      var links = idToLinks.get(id) || [];
-      links.forEach(function (a) {
-        a.classList.add('bg-white/10', 'text-white');
-        a.classList.remove('text-blue-100');
-        a.setAttribute('aria-current', 'true');
-      });
-    }
-
-    // Init: hash eller første seksjon
-    var initial = (location.hash || '').replace('#','');
-    if (sectionIds.indexOf(initial) !== -1) setActive(initial);
-    else setActive(sectionIds[0]);
-
-    // Observer: marker seksjon nær toppen (35% offset)
-    var visible = new Set();
-    var currentId = initial || sectionIds[0];
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var id = entry.target.id;
-        if (entry.isIntersecting) visible.add(id);
-        else visible.delete(id);
-      });
-
-      // plukk første synlige i dokument-rekkefølge
-      for (var i = 0; i < sectionIds.length; i++) {
-        var id2 = sectionIds[i];
-        if (visible.has(id2)) {
-          if (id2 !== currentId) {
-            currentId = id2;
-            setActive(currentId);
-          }
-          break;
-        }
-      }
-    }, { root: null, rootMargin: '-35% 0px -55% 0px', threshold: 0.01 });
-
-    sectionIds.forEach(function (id) {
-      var el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-
-    // Gi umiddelbar feedback ved klikk på TOC-lenker
-    allLinks.forEach(function (a) {
-      a.addEventListener('click', function () {
-        var href = a.getAttribute('href') || '';
-        var id = href.startsWith('#') ? href.slice(1) : (href.split('#')[1] || '');
-        if (id) setActive(id);
-      });
-    });
-
-    // Rydd opp
-    window.addEventListener('pagehide', function(){ observer.disconnect(); });
-  } catch (_) {}
-})();
-        `}
-      </Script>
+      <PrivacyPolicyContents sectionIds={toc.map(({ id }) => id)} />
     </main>
   );
 }
