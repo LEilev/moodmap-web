@@ -28,6 +28,31 @@ export const APPSTORE_URL = PRODUCT.appStoreUrl;
 export const PLAYSTORE_URL = PRODUCT.playStoreUrl;
 export const DEFAULT_META_DESCRIPTION = PRODUCT.summary;
 
+// Next.js inherits each nested social metadata object as a whole. Keep a page's
+// canonical URL and sharing identity together instead of inheriting the home page.
+export function pageMetadata({ title, description, path }) {
+  const socialTitle = `${title} | ${SITE_NAME}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title: socialTitle,
+      description,
+      url: path,
+      type: "website",
+      siteName: SITE_NAME,
+      images: [{ url: OG_IMAGE_SRC, width: 1200, height: 630, alt: OG_IMAGE_ALT }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: socialTitle,
+      description,
+      images: [{ url: OG_IMAGE_SRC, alt: OG_IMAGE_ALT }],
+    },
+  };
+}
+
 export const SOURCE_LINKS = [
   {
     label: "ACOG — Your Menstrual Cycle",
@@ -66,7 +91,6 @@ export function organizationJsonLd() {
     logo: absoluteUrl(BRAND_MARK_SRC),
     email: SUPPORT_EMAIL,
     founder: { "@type": "Person", name: PRODUCT.founder, url: absoluteUrl("/about#maker") },
-    availableLanguage: ["en"],
     areaServed: "Worldwide",
     knowsAbout: [
       "Cycle-aware relationship intelligence",
@@ -139,7 +163,6 @@ export function mobileApplicationJsonLd(path = "/") {
       availability: "https://schema.org/InStock",
     },
     publisher: { "@id": `${SITE_URL}#organization` },
-    downloadUrl: absoluteUrl("/#download"),
     installUrl: [APPSTORE_URL, PLAYSTORE_URL],
     sameAs: [APPSTORE_URL, PLAYSTORE_URL],
   };

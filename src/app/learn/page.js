@@ -10,17 +10,15 @@ import {
   HeartHandshake,
   Layers,
 } from "lucide-react";
-import { breadcrumbJsonLd } from "../seo";
+import { breadcrumbJsonLd, pageMetadata } from "../seo";
 import { PRODUCT } from "../../lib/product";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Guides for Cycle-Aware Relationship Timing",
   description:
     "Guides on cycle-aware relationship timing, PMS support, luteal context, an illustrative cycle overview, Cycle Intelligence, and MoodMap boundaries.",
-  alternates: {
-    canonical: "/learn",
-  },
-};
+  path: "/learn",
+});
 
 const SITE_URL = PRODUCT.siteUrl;
 
@@ -175,16 +173,16 @@ export default function LearnIndexPage() {
               <span className="glass-icon">
                 <Icon className="h-6 w-6 text-white drop-shadow" aria-hidden />
               </span>
-              <h2 className="mt-3 text-base sm:text-lg font-semibold">{title}</h2>
+              <h2 className="mt-3 text-base sm:text-lg font-semibold">
+                <Link href={href} className="mm-link after:absolute after:inset-0 after:content-['']">
+                  {title}
+                </Link>
+              </h2>
               <p className="mt-2 text-sm sm:text-[15px] text-white/70 leading-relaxed">
                 {description}
               </p>
 
-              <div className="mt-4">
-                <Link href={href} className="mm-link text-sm text-white/80">
-                  Read guide →
-                </Link>
-              </div>
+              <p aria-hidden="true" className="mt-4 text-sm text-white/80">Read guide →</p>
 
               <div aria-hidden="true" className="glass-gloss" />
             </article>

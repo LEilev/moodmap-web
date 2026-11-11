@@ -1,6 +1,7 @@
 // src/app/terms/page.js
 import Link from "next/link";
 import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
+import { pageMetadata } from "../seo";
 import {
   Scale,
   Stethoscope,
@@ -16,14 +17,12 @@ import {
   Gavel,
 } from "lucide-react";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Terms for App, Subscription, and Website Use",
   description:
     "Read the terms for using MoodMap’s app, website, subscriptions, support features, and non-medical relationship-timing guidance.",
-  alternates: {
-    canonical: "/terms",
-  },
-};
+  path: "/terms",
+});
 
 const LAST_UPDATED = displayDate(CONTENT_UPDATES["/terms"]);
 

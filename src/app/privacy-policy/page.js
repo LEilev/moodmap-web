@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
 import Script from "next/script";
+import { pageMetadata } from "../seo";
 import {
   Database,
   BarChart3,
@@ -15,14 +16,12 @@ import {
   Mail,
 } from "lucide-react";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Privacy Policy for MoodMap Data and Billing",
   description:
     "Read how MoodMap handles privacy, local cycle data, support messages, subscriptions, analytics, app store billing, and user rights.",
-  alternates: {
-    canonical: "/privacy-policy",
-  },
-};
+  path: "/privacy-policy",
+});
 
 const toc = [
   { id: "section1", label: "1. Information We Collect and Store" },

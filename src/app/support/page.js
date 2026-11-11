@@ -1,15 +1,14 @@
 import Link from "next/link";
 import { PRODUCT } from "../../lib/product";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { pageMetadata } from "../seo";
 
-export const metadata = {
+export const metadata = pageMetadata({
   title: "Support for App and Subscription Help",
   description:
     "Get help with MoodMap on iOS and Android, including app store subscriptions, privacy, app access, and support contact details.",
-  alternates: {
-    canonical: "/support",
-  },
-};
+  path: "/support",
+});
 
 export default function SupportPage() {
   return (

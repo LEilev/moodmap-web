@@ -105,7 +105,7 @@ Disallow: /server/
 Disallow: /drafts/
 Disallow: /dev/
 
-# Bulk training / extended model-improvement crawlers — restricted by default
+# Bulk training / extended-use policies — restricted by default
 User-agent: GPTBot
 Disallow: /
 
@@ -118,6 +118,8 @@ Disallow: /
 User-agent: CCBot
 Disallow: /
 
+# Google-Extended governs both future Gemini training and grounding in Gemini Apps / Vertex AI.
+# This restriction does not block Google Search, including AI Overviews and AI Mode.
 User-agent: Google-Extended
 Disallow: /
 
