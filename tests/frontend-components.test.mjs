@@ -63,6 +63,20 @@ test("menu renders outside the filtered header, traps focus, closes on Escape an
   assert.deepEqual(dom.scrollCalls.at(-1), [{ left: 0, top: 240, behavior: "instant" }]);
 });
 
+test("closing a pointer-opened menu returns focus to its initially unfocused trigger", async () => {
+  const result = render(menuTree());
+  const trigger = result.getByRole("button", { name: "Open menu" });
+  assert.equal(dom.window.document.activeElement, dom.window.document.body);
+  fireEvent.click(trigger);
+  await act(() => new Promise((resolve) => setTimeout(resolve, 50)));
+  const dialog = within(dom.window.document.body).getByRole("dialog", { name: "Navigation menu" });
+  const close = within(dialog).getByRole("button", { name: "Close menu", exact: true });
+  assert.equal(dom.window.document.activeElement, close);
+  fireEvent.click(close);
+  assert.equal(dom.window.document.querySelector('[role="dialog"]'), null);
+  assert.equal(dom.window.document.activeElement === trigger, true, "focus should return to the menu trigger");
+});
+
 test("crossing the desktop breakpoint closes an open drawer and restores page access", async () => {
   const result = render(menuTree());
   await openMenu(result);

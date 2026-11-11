@@ -51,9 +51,10 @@ export default function MobileMenu() {
       if (siteShell) siteShell.inert = wasInert;
       unlock();
       const onDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      // Pointer activation can leave focus on the page instead of the opener.
       const focusTarget = onDesktop
         ? document.getElementById("main-content")
-        : previouslyFocused?.isConnected ? previouslyFocused : trigger;
+        : trigger?.isConnected ? trigger : previouslyFocused?.isConnected ? previouslyFocused : null;
       focusTarget?.focus({ preventScroll: true });
     };
   }, [open]);
