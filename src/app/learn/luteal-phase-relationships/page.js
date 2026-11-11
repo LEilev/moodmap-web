@@ -1,5 +1,6 @@
+import GuideArticle, { GuideFAQ, GuideProductExample, GuideRelated, GuideSection, GuideStoreLinks, guideStyles as styles } from "../../../components/GuideArticle";
+import { PRODUCT } from "../../../lib/product";
 import Link from "next/link";
-import { Brain, Gauge, HeartHandshake, MessageCircle, Shield, Sparkles } from "lucide-react";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -33,22 +34,18 @@ export const metadata = {
 
 const PRINCIPLES = [
   {
-    icon: Gauge,
-    title: "Capacity becomes the main read",
-    body: "The luteal phase can make practical load, clutter, noise, and unresolved tasks feel denser. The cleaner partner move is often load reduction before explanation.",
+    title: "Notice energy and discomfort",
+    body: "If she is tired or uncomfortable, offer a practical assist before adding another task or decision. Check what she wants rather than assuming.",
   },
   {
-    icon: MessageCircle,
-    title: "Tone costs more than content",
+    title: "Make your point clear",
     body: "A valid point can still land badly if the hour is wrong. Sarcasm, ambiguity, and closure pressure can become the real fight.",
   },
   {
-    icon: HeartHandshake,
     title: "Reliability beats performance",
     body: "Grand gestures are less useful than follow-through: do the thing, close the loop, lower the room, and stop asking for credit while she is overloaded.",
   },
   {
-    icon: Sparkles,
     title: "Intimacy needs a softer read",
     body: "Connection may still be there, but pace and comfort matter. A good partner reads openness instead of treating the phase like a yes or no switch.",
   },
@@ -96,86 +93,51 @@ export default function LutealPhaseRelationshipsPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
+    <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-
-      <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10" />
-
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Brain className="h-4 w-4 opacity-90" aria-hidden />
-            Luteal timing context
+      <GuideArticle
+        path={SLUG}
+        title="Luteal phase relationships"
+        lead="The weeks after ovulation can bring changes in comfort, energy and mood for some people. Use that background to notice what she needs today, choose your tone and make room for connection."
+        contents={[
+          { href: "#context", label: "The luteal context" },
+          { href: "#notice", label: "What to notice" },
+          { href: "#practical-moves", label: "Practical moves" },
+          { href: "#questions", label: "Common questions" },
+        ]}
+      >
+        <GuideSection id="context" title="Start with the day she is having">
+          <div className={styles.summary}><p>The useful question is what the cycle context may add to the situation. A phase cannot settle an argument or tell you what she feels.</p></div>
+          <p>The luteal phase follows ovulation. Toward the next period, some people experience tiredness, breast tenderness, bloating, irritability or sleep changes; others notice little change. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome">Office on Women’s Health explains how PMS symptoms vary</a>.</p>
+          <p>If discomfort or poor sleep is part of her day, a small practical burden may matter more than another explanation. If she feels well and wants to connect, follow that response. For the wider sequence, see <Link href="/learn/menstrual-cycle-phases-for-partners">the four phases explained for partners</Link>.</p>
+        </GuideSection>
+        <GuideSection id="notice" title="Four things worth noticing">
+          <div className={styles.phaseGrid}>
+            {PRINCIPLES.map(({ title, body }) => <div key={title} className={styles.phase}><h3>{title}</h3><p>{body}</p></div>)}
           </div>
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            Luteal phase relationships
-          </h1>
-          <p className="mt-4 mx-auto max-w-2xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            The luteal phase is where many wrong-hour conversations get expensive. The move is not to blame hormones — it is to read load, tone, capacity, and timing before you add more weight.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-6 pb-16">
-        <div className="mx-auto grid max-w-5xl gap-6">
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon"><Shield className="h-6 w-6 text-white" aria-hidden /></span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">Context, not blame</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Luteal timing is useful when it makes a man more careful, not when it gives him an excuse to dismiss her. The real job is cleaner support, cleaner tone, and fewer avoidable pressure loops.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <div className="grid gap-5 md:grid-cols-2">
-            {PRINCIPLES.map(({ icon: Icon, title, body }) => (
-              <article key={title} className="glass-card p-5 sm:p-6 text-left">
-                <span className="glass-icon"><Icon className="h-5 w-5 text-white" aria-hidden /></span>
-                <h2 className="mt-4 text-lg font-semibold text-white">{title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
-              </article>
-            ))}
-          </div>
-
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <h2 className="text-xl sm:text-2xl font-semibold">Cleaner luteal-phase moves</h2>
-            <div className="mt-5 grid gap-3 md:grid-cols-2">
-              {MOVES.map(([title, body]) => (
-                <div key={title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-                  <h3 className="text-sm font-semibold text-white">{title}</h3>
-                  <p className="mt-1 text-sm leading-relaxed text-white/66">{body}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <section className="grid gap-4 md:grid-cols-2" aria-label="Luteal phase relationship questions">
-            {FAQ.map(({ q, a }) => (
-              <article key={q} className="glass-card p-5 text-left">
-                <h2 className="text-base font-semibold text-white">{q}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">{a}</p>
-              </article>
-            ))}
-          </section>
-
-          <SourceTrustBlock path={SLUG} />
-
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/learn/pms-relationship-timing" className="btn-primary">
-              PMS relationship timing
-            </Link>
-            <Link href="/intelligence" className="mm-link text-sm text-white/76">
-              Explore Cycle Intelligence →
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+        </GuideSection>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/read-day.webp"
+          alt="MoodMap’s luteal daily screen, titled Soft Tone, Strong Center, with Intelligence, Risk and Direction sections."
+          title="A quick read before you respond">
+          <p>{PRODUCT.summary}</p>
+          <p>This luteal example brings warmth and clarity together: keep your point clear without adding unnecessary pressure. The screen gives you a starting point; her actual words and response guide the conversation.</p>
+        </GuideProductExample>
+        <GuideSection id="practical-moves" title="Practical moves for a harder day">
+          <ol>{MOVES.map(([title, body]) => <li key={title}><strong>{title}.</strong> {body}</li>)}</ol>
+          <p>For example: “I can sort dinner. Do you want company while you unwind, or a little space?” Offer a real choice, then follow through.</p>
+          <p>Pause a non-urgent discussion by agreeing when to return to it. Necessary decisions and personal boundaries still deserve attention, whatever the cycle day.</p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <SourceTrustBlock path={SLUG} />
+        <GuideRelated items={[
+          { href: "/learn/pms-relationship-timing", label: "Choose a better moment for a PMS conversation" },
+          { href: "/learn/support-partner-during-pms", label: "Practical ways to support a partner during PMS" },
+          { href: "/intelligence", label: "How MoodMap’s cycle model works" },
+        ]} />
+        <GuideStoreLinks path={SLUG} />
+      </GuideArticle>
+    </>
   );
 }

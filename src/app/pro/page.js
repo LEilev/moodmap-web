@@ -1,6 +1,6 @@
+import "../polish.css";
 import Link from "next/link";
 import {
-  ArrowRight,
   BellRing,
   CalendarDays,
   Check,
@@ -11,32 +11,12 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
-import { PRODUCT, FREE_FEATURES, PREMIUM_FEATURES, WEB_PLANS } from "../../lib/product";
+import StoreButtons from "../../components/StoreButtons";
+import { PRODUCT, FREE_FEATURES, PREMIUM_FEATURES } from "../../lib/product";
 import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
 
 const META_DESCRIPTION =
   "Explore MoodMap Premium+: fuller Brief and Risk content, the complete PLAN, READ, BOND, and SELF Command Deck, deeper insights, and additional optional alerts.";
-
-// Only bounded attribution fields reach checkout; arbitrary URL values never pass through.
-function buildPlanHref(planType, searchParams) {
-  const qs = new URLSearchParams({ type: planType === "yearly" ? "yearly" : "monthly" });
-  const attributionKeys = new Set(["via", "ref", "ref_code", "pk_campaign", "pk_source", "pk_medium", "pk_content", "pk_keyword"]);
-  const append = (key, value) => {
-    if (typeof value !== "string" || !value || value.length > 100) return;
-    if (key === "entry") {
-      if (["pro", "article", "paywall"].includes(value)) qs.set(key, value);
-      return;
-    }
-    if (attributionKeys.has(key) && /^[a-zA-Z0-9._~-]+$/.test(value)) qs.set(key, value);
-  };
-  if (searchParams && typeof searchParams.forEach === "function") {
-    searchParams.forEach((value, key) => append(key, value));
-  } else if (searchParams) {
-    Object.entries(searchParams).forEach(([key, value]) => append(key, Array.isArray(value) ? value[0] : value));
-  }
-  if (!qs.has("entry")) qs.set("entry", "pro");
-  return `/buy?${qs.toString()}`;
-}
 
 const VALUE_STACK = [
   {
@@ -80,26 +60,7 @@ export const metadata = {
   },
 };
 
-function PlanCard({ name, price, cadence, href, primary = false }) {
-  return (
-    <Link
-      href={href}
-      prefetch={false}
-      aria-label={`Choose MoodMap Premium+ ${name.toLowerCase()} plan`}
-      className={["mm-v2-plan-card", primary ? "is-primary" : ""].filter(Boolean).join(" ")}
-    >
-      <span>{name}</span>
-      <strong>{price}</strong>
-      <small>{cadence}</small>
-      <div>Continue <ArrowRight aria-hidden="true" /></div>
-    </Link>
-  );
-}
-
-export default async function ProPage({ searchParams }) {
-  const resolvedSearchParams = await searchParams;
-  const yearlyHref = buildPlanHref("yearly", resolvedSearchParams);
-  const monthlyHref = buildPlanHref("monthly", resolvedSearchParams);
+export default function ProPage() {
   const appJsonLd = mobileApplicationJsonLd("/pro");
 
   return (
@@ -118,13 +79,12 @@ export default async function ProPage({ searchParams }) {
             </p>
             <p className="mm-v2-boundary">Full context for your response. Still not a verdict on her.</p>
 
-            <div className="mm-v2-plan-grid" data-mm-placement="pro-plans" data-mm-context="/pro">
-              <PlanCard name="Annual" price={WEB_PLANS.yearly.displayPrice} cadence={WEB_PLANS.yearly.cadence} href={yearlyHref} primary />
-              <PlanCard name="Monthly" price={WEB_PLANS.monthly.displayPrice} cadence={WEB_PLANS.monthly.cadence} href={monthlyHref} />
-            </div>
-
             <p className="mm-v2-purchase-note">
-              Web subscription prices in USD. Renews automatically until canceled. App Store and Google Play prices may differ by country and purchase channel. Check the final amount at checkout.
+              {PRODUCT.purchaseSummary}
+            </p>
+            <StoreButtons placement="pro-hero" context="/pro" />
+            <p className="mm-v2-purchase-note">
+              Review the local price, billing period, and renewal terms in your app store before subscribing. Manage renewal or cancel in the store where you subscribed.
             </p>
           </div>
 
@@ -199,11 +159,9 @@ export default async function ProPage({ searchParams }) {
         <div className="mm-container" data-reveal>
           <span className="mm-v2-final-cta__icon"><ShieldCheck aria-hidden="true" /></span>
           <h2>Open the full read.</h2>
-          <p>Choose an annual or monthly web subscription, then follow the activation steps to open Premium+ in MoodMap.</p>
-          <div className="mm-v2-final-plan-row" data-mm-placement="pro-end" data-mm-context="/pro">
-            <Link href={yearlyHref} prefetch={false} className="mm-v2-primary-link">Annual · {WEB_PLANS.yearly.displayPrice} <ArrowRight aria-hidden="true" /></Link>
-            <Link href={monthlyHref} prefetch={false} className="mm-v2-secondary-link">Monthly · {WEB_PLANS.monthly.displayPrice}</Link>
-          </div>
+          <p>{PRODUCT.purchaseInstructions}</p>
+          <StoreButtons compact placement="pro-end" context="/pro" />
+          <p className="mm-v2-purchase-note">Free to download. Upgrade to Premium+ in the app when you’re ready.</p>
           <Link href="/" className="mm-v2-final-cta__secondary">← Back to Home</Link>
         </div>
       </section>

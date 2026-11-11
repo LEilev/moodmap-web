@@ -65,9 +65,9 @@ MoodMap at this domain is a relationship-timing app for men. It is not an emotio
 - Deeper WHY explanations and cycle insights
 - Additional optional timing alerts
 
-The app is free to download. MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it. Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.
+MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it. Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.
 
-Advertised web subscriptions: $3.99 USD per month or $29.99 USD per year. These are web prices; App Store and Google Play prices may differ by country and purchase channel. Check the store or checkout for the final amount and terms.
+Free to download. Optional Premium+ subscription in the app. Your app store shows local prices and subscription terms before purchase. Download MoodMap from the App Store or Google Play, then open the app to view Premium+ options.
 
 ### Setup and settings
 
@@ -85,7 +85,7 @@ The hormone graph and capacity percentage describe a model. They are not validat
 
 No symptom diary is required. Product analytics, purchase handling and support data are described in the Privacy Policy; private guidance does not mean that no data is processed.
 
-The website offers separate optional analytics and referral-attribution choices. See the Privacy Policy for website choices and mobile-app data handling. Purchases and subscriptions are handled through the channel where they were made: App Store, Google Play or web checkout. Support is available at support@moodmap-app.com.
+The website offers optional analytics controls. See the Privacy Policy for website choices and mobile-app data handling. New Premium+ subscriptions are offered in the app through the App Store or Google Play, with local prices and terms shown before purchase. Manage a store subscription through the store account used to purchase it. Support is available at support@moodmap-app.com.
 
 ## Maker and editorial responsibility
 
@@ -96,7 +96,7 @@ MoodMap is developed independently in Norway by Lars Eilev Skiaker. The site pub
 - [MoodMap: Relationship Timing](https://moodmap-app.com/): Daily cycle context, product examples and downloads.
 - [About MoodMap](https://moodmap-app.com/about): The independent maker, official app identity and product facts.
 - [Cycle Intelligence](https://moodmap-app.com/intelligence): How modeled biology becomes possible context, and where the model fits.
-- [Premium+](https://moodmap-app.com/pro): Free daily guidance, Premium+ benefits and web subscription pricing.
+- [Premium+](https://moodmap-app.com/pro): Free daily guidance, optional Premium+ in the app, and official store links for local prices and terms.
 - [Guides](https://moodmap-app.com/learn): Practical cycle and relationship guides for partners.
 - [Support](https://moodmap-app.com/support): App, subscription and privacy support.
 - [Privacy Policy](https://moodmap-app.com/privacy-policy): Data processing and privacy choices.

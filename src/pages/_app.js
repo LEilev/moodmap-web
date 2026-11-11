@@ -1,5 +1,4 @@
 import "../app/globals.css";
-import "../app/polish.css";
 import { useRouter } from "next/router";
 import SitePrivacy, { PrivacyPreferencesButton } from "../components/SitePrivacy";
 

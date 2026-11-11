@@ -1,6 +1,6 @@
+import GuideArticle, { GuideFAQ, GuideProductExample, GuideRelated, GuideSection, GuideStoreLinks, guideStyles as styles } from "../../../components/GuideArticle";
 import Link from "next/link";
 import { PRODUCT } from "../../../lib/product";
-import { BookOpen, Brain, Compass, Layers3, Shield, Sparkles } from "lucide-react";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -167,87 +167,52 @@ export default function MoodMapGlossaryPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
+    <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(definedTermSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
-
-      <div aria-hidden="true" className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10" />
-      <div aria-hidden="true" className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10" />
-
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <BookOpen className="h-4 w-4 opacity-90" aria-hidden />
-            Current MoodMap product language
-          </div>
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">MoodMap glossary</h1>
-          <p className="mt-4 mx-auto max-w-3xl text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            Clear definitions for Today’s State, Day Brief, Cycle Calendar, Risk Radar, Command Deck, WHY, Cycle Intelligence, capacity, Timing Alerts, and Premium+.
-          </p>
+      <GuideArticle
+        path={SLUG}
+        title="MoodMap glossary"
+        lead="Clear definitions for the screens and ideas you see in MoodMap: the daily read, Brief, Cycle Calendar, Risk Radar, Command Deck, WHY and Cycle Intelligence."
+        contents={[
+          { href: "#todays-state", label: "Today’s State" },
+          { href: "#day-brief", label: "Day Brief" },
+          { href: "#command-deck", label: "Command Deck" },
+          { href: "#cycle-intelligence", label: "Cycle Intelligence" },
+          { href: "#premium-plus", label: "Premium+" },
+          { href: "#questions", label: "Common questions" },
+        ]}
+      >
+        <div className={styles.summary}><p>{PRODUCT.summary}</p></div>
+        <div className={styles.glossary}>
+          {TERMS.map((term) => (
+            <GuideSection key={term.slug} id={term.slug} title={term.name}>
+              {term.legacySlug && <span id={term.legacySlug} aria-hidden="true" className={styles.legacyAnchor} />}
+              <p><strong>{term.short}</strong></p><p>{term.definition}</p>
+            </GuideSection>
+          ))}
         </div>
-      </section>
-
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-5xl grid gap-6">
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon"><Brain className="h-6 w-6 text-white" aria-hidden /></span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">The core definition</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  {PRODUCT.summary}
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <div className="grid gap-4">
-            {TERMS.map((term) => (
-              <article key={term.slug} id={term.slug} className="glass-card p-5 sm:p-6 text-left scroll-mt-28">
-                {term.legacySlug && <span id={term.legacySlug} aria-hidden="true" className="scroll-mt-28" />}
-                <div className="flex items-start gap-4">
-                  <span className="mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] text-emerald-100"><Sparkles className="h-4 w-4" aria-hidden /></span>
-                  <div>
-                    <h2 className="text-lg sm:text-xl font-semibold text-white">{term.name}</h2>
-                    <p className="mt-1 text-sm font-semibold text-emerald-100/80">{term.short}</p>
-                    <p className="mt-2 text-sm sm:text-base leading-relaxed text-white/70">{term.definition}</p>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon"><Shield className="h-6 w-6 text-white" aria-hidden /></span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">Boundary language</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap does not record actual mood, measure individual hormones, diagnose conditions, provide contraception, plan fertility, or replace consent and communication. Its narrower job is context for the user’s timing before he acts.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <section className="grid gap-4 md:grid-cols-2" aria-label="MoodMap glossary questions">
-            {FAQ.map(({ q, a }) => (
-              <article key={q} className="glass-card p-5 text-left">
-                <h2 className="text-base font-semibold text-white">{q}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">{a}</p>
-              </article>
-            ))}
-          </section>
-
-          <SourceTrustBlock path={SLUG} />
-
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link href="/intelligence" className="btn-primary inline-flex items-center gap-2"><Layers3 className="h-4 w-4" aria-hidden />Explore Intelligence</Link>
-            <Link href="/learn/cycle-aware-relationship-timing" className="mm-link inline-flex items-center gap-2 text-sm text-white/76"><Compass className="h-4 w-4" aria-hidden />Learn cycle-aware timing →</Link>
-          </div>
-        </div>
-      </section>
-    </main>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/protocol-overview.webp"
+          alt="MoodMap Command Deck with PLAN, READ, BOND and SELF tabs and the READ lane selected."
+          title="See the Command Deck in context">
+          <p>The four tabs have different jobs. PLAN covers practical plans; READ is HOW TO SURVIVE; BOND covers sex, flirting and intimacy; SELF focuses on your own reactions.</p>
+          <p>Open WHY when you want the reasoning behind a suggestion. The <Link href="/learn/period-tracking-for-men">getting-started guide</Link> shows how these pieces fit into the daily experience.</p>
+        </GuideProductExample>
+        <GuideSection id="boundaries" title="What the terms do not claim">
+          <p>{PRODUCT.boundaries}</p>
+          <p>{PRODUCT.privacySummary} <Link href="/privacy-policy">Read the Privacy Policy.</Link></p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <SourceTrustBlock path={SLUG} />
+        <GuideRelated items={[
+          { href: "/intelligence", label: "Explore the modeled cycle context" },
+          { href: "/learn/cycle-aware-relationship-timing", label: "Understand cycle-aware relationship timing" },
+          { href: "/pro", label: "See what Premium+ includes" },
+        ]} />
+        <GuideStoreLinks path={SLUG} />
+      </GuideArticle>
+    </>
   );
 }

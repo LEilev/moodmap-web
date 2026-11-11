@@ -1,3 +1,4 @@
+import "../polish.css";
 import Link from "next/link";
 import {
   Activity,

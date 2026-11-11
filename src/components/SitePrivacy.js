@@ -3,15 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import {
   CONSENT_KEY, PRIVACY_CHANGE_EVENT, PRIVACY_OPEN_EVENT,
-  browserRequestsPrivacy, readConsent, saveConsent,
+  browserRequestsPrivacy, migrateRetiredReferralConsent, readConsent, saveConsent,
 } from "../lib/site-consent.mjs";
 import { analyticsPageAllowed, clickEventForLink, createAnalyticsController } from "../lib/site-analytics.mjs";
-import {
-  PROMOTEKIT_SITE_ID, applyReferralToLinks, clearReferral,
-  referralPageAllowed, rememberReferral,
-} from "../lib/referral-attribution.mjs";
+import { clearReferral } from "../lib/referral-attribution.mjs";
 
 const MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const isPrivatePage = (pathname) => /^\/(?:activate|thanks|account|partner)(?:\/|$)/.test(pathname || "");
 
 export function PrivacyPreferencesButton({ className = "mm-link" }) {
   return (
@@ -26,7 +24,7 @@ function clearAnalyticsCookies() {
   const domains = ["", window.location.hostname, `.${window.location.hostname}`];
   document.cookie.split(";").forEach((cookie) => {
     const name = cookie.trim().split("=")[0];
-    if (!/^_ga(?:_|$)|^promotekit(?:_|$)/.test(name)) return;
+    if (!/^_ga(?:_|$)/.test(name)) return;
     domains.forEach((domain) => {
       document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax${domain ? `; Domain=${domain}` : ""}`;
     });
@@ -39,7 +37,7 @@ export default function SitePrivacy({ path }) {
   const [choice, setChoice] = useState(null);
   const [visible, setVisible] = useState(false);
   const [expanded, setExpanded] = useState(false);
-  const [draft, setDraft] = useState({ analytics: false, referral: false });
+  const [draft, setDraft] = useState({ analytics: false });
   const currentChoice = useRef(null);
   const heading = useRef(null);
   const returnFocus = useRef(null);
@@ -51,16 +49,16 @@ export default function SitePrivacy({ path }) {
     window.mmGaEvent = eventHelper;
 
     const sync = () => {
+      migrateRetiredReferralConsent(window);
+      clearReferral(window);
       const next = readConsent(window);
       const previous = currentChoice.current;
       currentChoice.current = next;
       setChoice(next);
-      setDraft({ analytics: next?.analytics === true, referral: next?.referral === true });
+      setDraft({ analytics: next?.analytics === true });
       if (!next) setVisible(true);
       if (!next?.analytics) controller.disable();
-      if (!next?.referral) clearReferral(window);
-
-      const revoked = (previous?.analytics && !next?.analytics) || (previous?.referral && !next?.referral);
+      const revoked = previous?.analytics && !next?.analytics;
       if (revoked && !window.__mmOptionalResetting && document.querySelector("#mm-ga4, #mm-promotekit")) {
         window.__mmOptionalResetting = true;
         clearAnalyticsCookies();
@@ -81,7 +79,7 @@ export default function SitePrivacy({ path }) {
       if (!anchor || anchor.target === "_blank" || !document.querySelector("#mm-ga4, #mm-promotekit")) return;
       try {
         const target = new URL(anchor.href, window.location.href);
-        if (target.origin !== window.location.origin || referralPageAllowed(target.pathname)) return;
+        if (target.origin !== window.location.origin || !isPrivatePage(target.pathname)) return;
         event.preventDefault();
         event.stopPropagation();
         controller.disable();
@@ -94,9 +92,6 @@ export default function SitePrivacy({ path }) {
       if (!anchor) return;
       const hit = clickEventForLink(anchor, window.location.href);
       if (hit) controller.track(hit.name, hit.params);
-      if (currentChoice.current?.referral && referralPageAllowed(window.location.pathname)) {
-        applyReferralToLinks(window);
-      }
     };
     sync();
     setReady(true);
@@ -118,12 +113,12 @@ export default function SitePrivacy({ path }) {
   }, []);
 
   useEffect(() => {
-    if (!ready || referralPageAllowed(window.location.pathname) || window.__mmOptionalResetting) return;
+    if (!ready || !isPrivatePage(window.location.pathname) || window.__mmOptionalResetting) return;
     if (document.querySelector("#mm-ga4, #mm-promotekit")) {
       window.__mmOptionalResetting = true;
       window.__mmWebAnalytics?.disable();
       // Defensive fallback for programmatic SPA navigation into a token-bearing page.
-      // The fresh document will not initialize either optional vendor on this route.
+      // The fresh document will not initialize analytics on this route.
       window.location.reload();
     }
   }, [ready, path]);
@@ -136,29 +131,6 @@ export default function SitePrivacy({ path }) {
     }
     window.__mmWebAnalytics?.pageView();
   }, [ready, choice, path]);
-
-  useEffect(() => {
-    if (!ready || !choice?.referral || !referralPageAllowed(window.location.pathname)) return;
-    rememberReferral(window);
-    let script = document.getElementById("mm-promotekit");
-    const apply = () => applyReferralToLinks(window);
-    if (!script) {
-      script = document.createElement("script");
-      script.id = "mm-promotekit";
-      script.async = true;
-      script.referrerPolicy = "origin";
-      script.src = "https://cdn.promotekit.com/promotekit.js";
-      script.dataset.promotekit = PROMOTEKIT_SITE_ID;
-      document.head.append(script);
-    }
-    script.addEventListener("load", apply);
-    apply();
-    const timers = [400, 1200, 2400].map((delay) => window.setTimeout(apply, delay));
-    return () => {
-      script.removeEventListener("load", apply);
-      timers.forEach((timer) => window.clearTimeout(timer));
-    };
-  }, [ready, choice?.referral, path]);
 
   useEffect(() => {
     if (expanded && visible) heading.current?.focus({ preventScroll: true });
@@ -180,8 +152,7 @@ export default function SitePrivacy({ path }) {
     <section className="mm-privacy-panel" aria-labelledby="privacy-choice-heading">
       <h2 ref={heading} tabIndex={-1} id="privacy-choice-heading">Your privacy choices</h2>
       <p>
-        Optional analytics help improve MoodMap. Referral cookies credit the creator who sent you.
-        Both stay off until you choose. <a className="mm-link" href="/privacy-policy#website">Privacy policy</a>
+        Optional analytics help improve MoodMap and stay off until you choose. <a className="mm-link" href="/privacy-policy#website">Privacy policy</a>
       </p>
       {browserOptOut && <p className="mm-privacy-note">Your browser’s privacy signal keeps optional tracking off.</p>}
       {expanded && (
@@ -192,18 +163,13 @@ export default function SitePrivacy({ path }) {
               onChange={(event) => setDraft((value) => ({ ...value, analytics: event.target.checked }))} />
             <span><strong>Analytics</strong><small>Understand which pages and download links are useful.</small></span>
           </label>
-          <label>
-            <input type="checkbox" checked={draft.referral}
-              onChange={(event) => setDraft((value) => ({ ...value, referral: event.target.checked }))} />
-            <span><strong>Referral attribution</strong><small>Credit a referral when you choose a subscription.</small></span>
-          </label>
         </fieldset>
       )}
       <div className="mm-privacy-actions">
-        <button type="button" onClick={() => choose({ analytics: false, referral: false })}>Essential only</button>
+        <button type="button" onClick={() => choose({ analytics: false })}>Essential only</button>
         {expanded
           ? <button type="button" onClick={() => choose(draft)}>Save choices</button>
-          : <button type="button" disabled={browserOptOut} onClick={() => choose({ analytics: true, referral: true })}>Accept optional</button>}
+          : <button type="button" disabled={browserOptOut} onClick={() => choose({ analytics: true })}>Allow analytics</button>}
         {expanded
           ? choice && <button type="button" onClick={close}>Cancel</button>
           : <button type="button" onClick={() => setExpanded(true)}>Choose</button>}

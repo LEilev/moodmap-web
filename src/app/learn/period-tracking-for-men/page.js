@@ -81,7 +81,7 @@ export default function PeriodTrackingForMenPage() {
           <p>{PRODUCT.freeSummary}</p>
           <p>{PRODUCT.premiumSummary}</p>
           <p>{PRODUCT.settingsSummary}</p>
-          <p>Current subscription options appear in the app and your local store. You can also view the <Link href="/pro">web subscription options</Link>; web and store prices may differ.</p>
+          <p>{PRODUCT.purchaseSummary} <Link href="/pro">Explore Premium+ and get the app.</Link></p>
           <p>Available in {PRODUCT.languages.map(({ name }) => name).join(", ")}.</p>
         </GuideSection>
 

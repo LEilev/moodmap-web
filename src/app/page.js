@@ -1,5 +1,5 @@
+import "./polish.css";
 import Link from "next/link";
-import { FaApple, FaGooglePlay } from "react-icons/fa";
 import {
   BellRing,
   CalendarDays,
@@ -11,11 +11,10 @@ import {
 
 import ScrollReveal from "../components/ScrollReveal";
 import ProductShowcase from "../components/ProductShowcase";
+import StoreButtons from "../components/StoreButtons";
 import { PRODUCT, PREMIUM_FEATURES } from "../lib/product";
 import {
-  APPSTORE_URL,
   DEFAULT_META_DESCRIPTION,
-  PLAYSTORE_URL,
   SITE_TITLE,
   faqJsonLd,
   mobileApplicationJsonLd,
@@ -121,26 +120,6 @@ const FAQ_ITEMS = [
     "No. MoodMap provides modeled cycle-based context, not certainty about an individual person. The point is to make your response more careful—not to replace her words with an app.",
   ],
 ];
-
-function StoreButtons({ compact = false }) {
-  return (
-    <div
-      id={compact ? undefined : "download"}
-      data-mm-placement={compact ? "home-end" : "home-hero"}
-      data-mm-context="/"
-      className={["mm-store-row", compact ? "mm-store-row--center" : ""].filter(Boolean).join(" ")}
-    >
-      <a href={APPSTORE_URL} className="store-btn" aria-label="Download MoodMap for iPhone on the App Store">
-        <span className="store-btn__icon" aria-hidden="true"><FaApple /></span>
-        <span className="store-btn__copy"><small>App Store</small><strong>Download for iPhone</strong></span>
-      </a>
-      <a href={PLAYSTORE_URL} className="store-btn" aria-label="Get MoodMap on Google Play">
-        <span className="store-btn__icon" aria-hidden="true"><FaGooglePlay /></span>
-        <span className="store-btn__copy"><small>Google Play</small><strong>Get on Google Play</strong></span>
-      </a>
-    </div>
-  );
-}
 
 function SectionLabel({ children }) {
   return <span className="mm-section-label">{children}</span>;
@@ -319,8 +298,8 @@ function ValuePremiumSection() {
             <h2>Unlock the full read.</h2>
             <p>{PRODUCT.premiumSummary}</p>
             <div className="mm-v4-plan-note">
-              <strong>Monthly or annual access</strong>
-              <span>Compare web plans here, or see local pricing in the App Store or Google Play.</span>
+              <strong>Premium+ in the app</strong>
+              <span>{PRODUCT.purchaseSummary}</span>
             </div>
             <Link href="/pro" className="mm-v2-primary-link">See Premium+ <ChevronRight aria-hidden="true" /></Link>
           </div>

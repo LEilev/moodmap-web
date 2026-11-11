@@ -3,9 +3,9 @@ import { PRODUCT } from "../../lib/product";
 import { Mail, Phone, MapPin } from "lucide-react";
 
 export const metadata = {
-  title: "Support for App, Billing, and Account Help",
+  title: "Support for App and Subscription Help",
   description:
-    "Get help with MoodMap on iOS and Android, including subscriptions, billing, privacy, app access, account questions, and support contact details.",
+    "Get help with MoodMap on iOS and Android, including app store subscriptions, privacy, app access, and support contact details.",
   alternates: {
     canonical: "/support",
   },
@@ -131,7 +131,8 @@ export default function SupportPage() {
 
         <section className="mt-8 glass-card p-6 sm:p-7" aria-labelledby="support-billing">
           <h2 id="support-billing" className="text-xl font-semibold">Subscriptions and app access</h2>
-          <p className="mt-3 text-white/75 leading-relaxed">For a purchase made in the App Store or Google Play, manage the subscription through that store account. For a web purchase, include the email used at checkout when you contact support. Prices and billing are tied to the channel where you subscribed.</p>
+          <p className="mt-3 text-white/75 leading-relaxed">{PRODUCT.purchaseSummary} Manage a subscription through the App Store or Google Play account used to purchase it, including billing and cancellation.</p>
+          <p className="mt-3 text-white/75 leading-relaxed">For a question about an earlier web payment link or receipt, contact <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>{PRODUCT.supportEmail}</a>. Include the details needed to identify the issue.</p>
           <p className="mt-3 text-white/75 leading-relaxed">For an app problem, tell us your device, app version, what you expected, and what happened. Remove personal cycle information from screenshots before sharing them. For privacy requests, see the <Link href="/privacy-policy" className="mm-link">Privacy Policy</Link>.</p>
         </section>
 

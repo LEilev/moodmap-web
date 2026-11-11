@@ -30,9 +30,9 @@ Adjust cycle length, menstruation length and the PMS window in the app. Use the 
 
 ## Free and Premium+
 
-The app is free to download. MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it. Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.
+MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it. Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.
 
-Advertised web subscriptions: $3.99 USD per month or $29.99 USD per year. These are web prices; App Store and Google Play prices may differ by country and purchase channel. Check the store or checkout for the final amount and terms.
+Free to download. Optional Premium+ subscription in the app. Your app store shows local prices and subscription terms before purchase. Download MoodMap from the App Store or Google Play, then open the app to view Premium+ options.
 
 ## Model and privacy boundaries
 
@@ -47,7 +47,7 @@ No symptom diary is required. Product analytics, purchase handling and support d
 - [MoodMap: Relationship Timing](https://moodmap-app.com/): Daily cycle context, product examples and downloads.
 - [About MoodMap](https://moodmap-app.com/about): The independent maker, official app identity and product facts.
 - [Cycle Intelligence](https://moodmap-app.com/intelligence): How modeled biology becomes possible context, and where the model fits.
-- [Premium+](https://moodmap-app.com/pro): Free daily guidance, Premium+ benefits and web subscription pricing.
+- [Premium+](https://moodmap-app.com/pro): Free daily guidance, optional Premium+ in the app, and official store links for local prices and terms.
 - [Guides](https://moodmap-app.com/learn): Practical cycle and relationship guides for partners.
 - [Menstrual cycle phases for partners](https://moodmap-app.com/learn/menstrual-cycle-phases-for-partners): A four-phase overview with practical examples for partners.
 - [Cycle-aware relationship timing](https://moodmap-app.com/learn/cycle-aware-relationship-timing): Using cycle context for support, conversations and intimacy.

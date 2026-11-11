@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 import {
   PRODUCT, COMMAND_DECK_LANES, PRODUCT_FEATURES, FREE_FEATURES,
-  PREMIUM_FEATURES, WEB_PLANS, CONTENT_UPDATES, PUBLIC_PAGES,
+  PREMIUM_FEATURES, CONTENT_UPDATES, PUBLIC_PAGES,
 } from "../src/lib/product.js";
 
 // These are optional plain-text product mirrors, not crawler instructions or
@@ -26,9 +26,9 @@ export function buildPublicContent() {
 - Google Play: ${PRODUCT.playStoreUrl}
 - Support: ${PRODUCT.supportEmail}`;
   const lanes = list(COMMAND_DECK_LANES.map((lane) => `${lane.name} — ${lane.title}: ${lane.description}`));
-  const pricing = `The app is free to download. ${PRODUCT.freeSummary} ${PRODUCT.premiumSummary}
+  const pricing = `${PRODUCT.freeSummary} ${PRODUCT.premiumSummary}
 
-Advertised web subscriptions: ${WEB_PLANS.monthly.displayPrice} USD ${WEB_PLANS.monthly.cadence} or ${WEB_PLANS.yearly.displayPrice} USD ${WEB_PLANS.yearly.cadence}. These are web prices; App Store and Google Play prices may differ by country and purchase channel. Check the store or checkout for the final amount and terms.`;
+${PRODUCT.purchaseSummary} ${PRODUCT.purchaseInstructions}`;
   const short = `# ${PRODUCT.name}
 
 > ${PRODUCT.summary}
@@ -137,7 +137,7 @@ The hormone graph and capacity percentage describe a model. They are not validat
 
 ${PRODUCT.privacySummary}
 
-The website offers separate optional analytics and referral-attribution choices. See the Privacy Policy for website choices and mobile-app data handling. Purchases and subscriptions are handled through the channel where they were made: App Store, Google Play or web checkout. Support is available at ${PRODUCT.supportEmail}.
+The website offers optional analytics controls. See the Privacy Policy for website choices and mobile-app data handling. New Premium+ subscriptions are offered in the app through the App Store or Google Play, with local prices and terms shown before purchase. Manage a store subscription through the store account used to purchase it. Support is available at ${PRODUCT.supportEmail}.
 
 ## Maker and editorial responsibility
 

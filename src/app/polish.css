@@ -1,3 +1,7 @@
+/* Marketing pages only: home, Premium+, About, Intelligence and the retired partner page.
+   Site chrome, materials, privacy controls and anchor offsets live in globals.css.
+   Remaining responsive overrides retain their cascade order. */
+
 .mm-page {
   --mm-dark: #05070d;
   --mm-navy: #080d18;
@@ -45,7 +49,6 @@
 
 .mm-section {
   padding-block: clamp(26px, 4vw, 56px);
-  scroll-margin-top: 92px;
 }
 
 .mm-page .mm-section-label {
@@ -95,19 +98,10 @@
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  min-height: 60px;
-  min-width: 198px;
-  border-radius: 18px;
-  border-color: rgba(245, 242, 234, 0.52);
   background:
     linear-gradient(180deg, rgba(245, 242, 234, 0.28), rgba(245, 242, 234, 0.08)),
     linear-gradient(135deg, rgba(37, 211, 107, 0.18), rgba(37, 211, 107, 0.042) 36%, rgba(245, 242, 234, 0.075)),
     #111826;
-  box-shadow:
-    0 26px 80px rgba(0, 0, 0, 0.58),
-    0 0 0 1px rgba(245, 242, 234, 0.025),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.58);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -124,22 +118,15 @@
     radial-gradient(170px 84px at 18% 8%, rgba(255, 255, 255, 0.38), transparent 62%),
     radial-gradient(170px 84px at 96% 90%, rgba(37, 211, 107, 0.21), transparent 70%),
     linear-gradient(90deg, transparent, rgba(245, 242, 234, 0.095), transparent);
-  opacity: 0.76;
   transition: opacity 180ms ease;
 }
 
 .mm-page .store-btn:hover {
   transform: translateY(-2px);
-  border-color: rgba(245, 242, 234, 0.66);
   background:
     linear-gradient(180deg, rgba(245, 242, 234, 0.32), rgba(245, 242, 234, 0.1)),
     linear-gradient(135deg, rgba(37, 211, 107, 0.22), rgba(37, 211, 107, 0.06) 38%, rgba(245, 242, 234, 0.09)),
     #151f30;
-  box-shadow:
-    0 32px 94px rgba(0, 0, 0, 0.62),
-    0 0 0 1px rgba(245, 242, 234, 0.055),
-    0 0 34px rgba(37, 211, 107, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.33);
 }
 
 .mm-page .store-btn:hover::after {
@@ -152,25 +139,8 @@
 }
 
 .mm-page .store-btn__icon {
-  width: 39px;
-  height: 39px;
-  background:
-    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.22), transparent 68%),
-    rgba(245, 242, 234, 0.16);
-  border-color: rgba(245, 242, 234, 0.28);
   color: #fffaf0;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-
-.mm-page .store-btn__copy small {
-  color: rgba(245, 242, 234, 0.72);
-  font-size: 10.5px;
-}
-
-.mm-page .store-btn__copy strong {
-  color: #fffaf0;
-  font-size: 18px;
-  letter-spacing: -0.045em;
 }
 
 @keyframes mm-shot-fade {
@@ -226,175 +196,29 @@
   }
 }
 
-/* --------------------------------------------------------------------------
-   Conversion architecture repair pass
-   - Product proof becomes one compact demo moment, not a tall dashboard block.
-   - Cost/FAQ sections carry the conversion argument without adding dead scroll.
-   -------------------------------------------------------------------------- */
-
 .mm-page .store-btn {
-  border-color: rgba(245, 242, 234, 0.5);
   background:
     linear-gradient(180deg, rgba(245, 242, 234, 0.24), rgba(245, 242, 234, 0.07)),
     linear-gradient(135deg, rgba(37, 211, 107, 0.14), rgba(255, 255, 255, 0.035) 46%, rgba(37, 211, 107, 0.08)),
     #121926;
 }
 
-/* --------------------------------------------------------------------------
-   Premium value-gravity pass
-   - Pulls the money argument directly after hero.
-   - Makes proof feel like a credibility rail, not another heavy panel.
-   - Gives the consequence section a different, sharper rhythm from the product demo.
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   Premium value-gravity repair pass
-   - Move + Reason opens as the default product layer in JS.
-   - Cost section is treated as editorial consequence, not another glass panel.
-   - Final CTA gets a more official, less custom-grey store badge treatment.
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   Move + Reason value pass
-   - Treats Move + Reason as interaction proof: move -> WHY -> reason.
-   - Keeps the product demo readable instead of relying on a tiny screenshot collage.
-   - Tightens the proof rail and sharpens the consequence section rhythm.
-   -------------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------------
-   Premium+ hardening pass
-   - Adds early boundary language so capacity does not read like a score.
-   - Shows full-cycle breadth above the fold.
-   - Adds a concrete Premium+ value stack before the generic how-it-works flow.
-   - Tightens CTA buttons so they read as premium app actions, not blurred badges.
-   -------------------------------------------------------------------------- */
-
-.mm-page .store-btn {
-  min-height: 58px;
-  min-width: 216px;
-  border-radius: 16px;
-  border-color: rgba(245, 242, 234, 0.24);
-  background:
-    radial-gradient(180px 78px at 8% 0%, rgba(255, 255, 255, 0.12), transparent 66%),
-    linear-gradient(180deg, rgba(245, 242, 234, 0.105), rgba(245, 242, 234, 0.025)),
-    #070b12;
-  box-shadow:
-    0 24px 72px rgba(0, 0, 0, 0.52),
-    0 0 0 1px rgba(245, 242, 234, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14);
-}
-
-.mm-page .store-btn::after {
-  opacity: 0.24;
-}
-
-.mm-page .store-btn:hover {
-  border-color: rgba(245, 242, 234, 0.36);
-  background:
-    radial-gradient(180px 78px at 8% 0%, rgba(255, 255, 255, 0.16), transparent 66%),
-    linear-gradient(180deg, rgba(245, 242, 234, 0.13), rgba(245, 242, 234, 0.032)),
-    #090f19;
-  box-shadow:
-    0 30px 86px rgba(0, 0, 0, 0.58),
-    0 0 34px rgba(37, 211, 107, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-.mm-page .store-btn__icon {
-  width: 36px;
-  height: 36px;
-  background: rgba(245, 242, 234, 0.09);
-  border-color: rgba(245, 242, 234, 0.13);
-}
-
 .mm-page .store-btn__copy small {
-  color: rgba(245, 242, 234, 0.56);
-  font-size: 10px;
   font-weight: 760;
-  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .mm-page .store-btn__copy strong {
   color: rgba(245, 242, 234, 0.98);
-  font-size: 15.5px;
-  letter-spacing: -0.035em;
-  white-space: nowrap;
 }
-
-@media (max-width: 767px) {
-
-  .mm-page .store-btn {
-    min-width: 0;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Premium+ tightening pass
-   - Product anchor now lands cleanly below sticky chrome.
-   - Hero full-cycle proof becomes readable context, not a cryptic side rail.
-   - Premium+ value stack sells outcomes, not repeated product labels.
-   -------------------------------------------------------------------------- */
 
 .mm-section {
   scroll-margin-top: 84px;
 }
 
 .mm-page .store-btn {
-  min-height: 56px;
-  min-width: 204px;
-  border-radius: 14px;
-  border-color: rgba(245, 242, 234, 0.22);
-  background:
-    radial-gradient(150px 70px at 10% 0%, rgba(255, 255, 255, 0.1), transparent 66%),
-    linear-gradient(180deg, rgba(245, 242, 234, 0.08), rgba(245, 242, 234, 0.018)),
-    #060910;
-}
-
-.mm-page .store-btn::after {
-  opacity: 0.16;
-}
-
-.mm-page .store-btn__icon {
-  width: 35px;
-  height: 35px;
-  background: rgba(245, 242, 234, 0.08);
-}
-
-.mm-page .store-btn__copy small {
-  font-size: 9.5px;
-  letter-spacing: 0.09em;
-}
-
-.mm-page .store-btn__copy strong {
-  font-size: 15px;
-}
-
-/* --------------------------------------------------------------------------
-   Premium+ surgical polish pass
-   - Keeps full-cycle proof above the first fold on common laptop heights.
-   - Gives #product a real anchor target below sticky chrome.
-   - Removes the last SaaS-tier language and tightens low-value explanation space.
-   - Makes download CTAs flatter, cleaner, and less badge-heavy.
-   -------------------------------------------------------------------------- */
-
-html {
-  scroll-padding-top: 96px;
-}
-
-:target {
-  scroll-margin-top: 96px;
-}
-
-.mm-page .store-btn {
   min-height: 52px;
-  min-width: 196px;
   border-radius: 13px;
-  border-color: rgba(245, 242, 234, 0.18);
-  background:
-    radial-gradient(130px 62px at 12% 0%, rgba(255, 255, 255, 0.075), transparent 68%),
-    linear-gradient(180deg, rgba(245, 242, 234, 0.058), rgba(245, 242, 234, 0.012)),
-    #060910;
   box-shadow:
     0 18px 52px rgba(0, 0, 0, 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.11);
@@ -430,11 +254,6 @@ html {
   letter-spacing: 0.12em;
 }
 
-.mm-page .store-btn__copy strong {
-  font-size: 14.5px;
-  letter-spacing: -0.035em;
-}
-
 @media (min-width: 1024px) and (max-height: 940px) {
 
   .mm-store-row {
@@ -449,55 +268,6 @@ html {
   }
 }
 
-/* --------------------------------------------------------------------------
-   Premium+ intelligence proof pass
-   - Uses hormone chart/insight screenshots only as a controlled why-layer.
-   - Keeps the homepage framed as relationship timing, not medical prediction.
-   - Fixes the last weak CTA and Premium+ language details.
-   -------------------------------------------------------------------------- */
-
-#product {
-  scroll-margin-top: 104px;
-}
-
-@media (max-width: 767px) {
-  #product {
-    scroll-margin-top: 86px;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Premium+ final lift pass
-   - Makes the why-layer graph visible enough to signal a real system.
-   - Uses one scroll-padding model so nav anchors do not reveal previous sections.
-   - Removes the last bit of academic/medical coldness from the intelligence block.
-   - Adds a little more premium tension to hero proof, product proof, and value cards.
-   -------------------------------------------------------------------------- */
-
-html {
-  scroll-padding-top: 86px;
-}
-
-:target {
-  scroll-margin-top: 0 !important;
-}
-
-#product,
-#why-layer,
-#cost,
-#premium,
-#how-it-works,
-#trust,
-#questions {
-  scroll-margin-top: 0 !important;
-}
-
-.mm-section-label {
-  box-shadow:
-    0 12px 34px rgba(0, 0, 0, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
-}
-
 .mm-page .store-btn {
   border-color: rgba(245, 242, 234, 0.21);
   background:
@@ -509,18 +279,6 @@ html {
 .mm-page .store-btn__copy strong {
   letter-spacing: -0.03em;
 }
-
-@media (max-width: 767px) {
-  html {
-    scroll-padding-top: 78px;
-  }
-}
-
-/* --------------------------------------------------------------------------
-   Final micro-polish pass
-   - Product nav now targets the label inside the product panel, not the section edge.
-   - Store buttons have enough width for the clearer Google Play CTA without wrapping.
-   -------------------------------------------------------------------------- */
 .mm-product-anchor {
   scroll-margin-top: 0 !important;
 }
@@ -539,10 +297,6 @@ html {
     min-width: 0;
   }
 }
-
-/* ========================================================================== */
-/* MoodMap Web 2026 — App Store-aligned marketing pass                        */
-/* ========================================================================== */
 
 .mm-v2-page {
   --mm2-bg: #050912;
@@ -577,13 +331,8 @@ html {
   opacity: 1;
 }
 
-.mm-v2-page .mm-section {
-  padding-block: clamp(58px, 8vw, 106px);
-}
-
 .mm-v2-hero {
   position: relative;
-  padding-block: clamp(54px, 7vw, 92px) clamp(38px, 5.5vw, 70px);
 }
 
 .mm-v2-hero::before {
@@ -600,31 +349,23 @@ html {
   position: relative;
   display: grid;
   align-items: center;
-  gap: clamp(42px, 7vw, 92px);
 }
 
 .mm-v2-hero__copy {
   position: relative;
   z-index: 2;
-  max-width: 680px;
 }
 
 .mm-v2-hero__copy h1 {
   margin-top: 24px;
-  max-width: 780px;
   color: var(--mm2-text);
-  font-size: clamp(50px, 8.6vw, 92px);
   font-weight: 870;
-  letter-spacing: -0.073em;
-  line-height: 0.91;
   text-wrap: balance;
 }
 
 .mm-v2-hero__lead {
   margin-top: 25px;
-  max-width: 650px;
   color: rgba(229, 237, 248, 0.76);
-  font-size: clamp(17px, 2vw, 21px);
   line-height: 1.56;
   text-wrap: pretty;
 }
@@ -676,8 +417,6 @@ html {
 .mm-v2-hero__visual::before {
   content: "";
   position: absolute;
-  width: min(90vw, 620px);
-  height: min(90vw, 620px);
   border-radius: 999px;
   background:
     radial-gradient(circle, rgba(32, 214, 107, 0.17), rgba(46, 200, 255, 0.08) 40%, transparent 70%);
@@ -686,17 +425,7 @@ html {
 }
 
 .mm-v2-poster {
-  position: relative;
-  width: min(100%, 520px);
-  overflow: hidden;
-  border: 1px solid rgba(136, 179, 228, 0.22);
-  border-radius: 34px;
   background: #070d18;
-  box-shadow:
-    0 42px 130px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(255, 255, 255, 0.025),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09);
-  isolation: isolate;
 }
 
 .mm-v2-poster::after {
@@ -705,9 +434,6 @@ html {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
-    inset 0 80px 120px rgba(255, 255, 255, 0.012);
 }
 
 .mm-v2-poster__glow {
@@ -720,30 +446,10 @@ html {
   z-index: 0;
 }
 
-.mm-v2-poster img {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.mm-v2-poster--hero {
-  width: min(100%, 486px);
-  transform: rotate(0.5deg);
-}
-
-.mm-v2-product-section {
-  padding-top: clamp(58px, 7vw, 92px) !important;
-}
-
 .mm-v2-showcase {
   display: grid;
-  gap: clamp(32px, 6vw, 78px);
   align-items: center;
   border: 1px solid var(--mm2-line);
-  border-radius: 36px;
-  padding: clamp(24px, 4vw, 48px);
   background:
     radial-gradient(720px 420px at 92% 9%, rgba(46, 200, 255, 0.075), transparent 72%),
     radial-gradient(580px 360px at 0% 100%, rgba(32, 214, 107, 0.045), transparent 72%),
@@ -770,33 +476,23 @@ html {
 
 .mm-v2-showcase__copy h2 {
   margin-top: 20px;
-  max-width: 620px;
-  font-size: clamp(39px, 5.2vw, 66px);
 }
 
 .mm-v2-showcase__copy > p {
   margin-top: 18px;
-  max-width: 590px;
   color: var(--mm2-muted);
-  font-size: 16px;
   line-height: 1.6;
 }
 
 .mm-v2-showcase__tabs {
   display: grid;
-  gap: 10px;
-  margin-top: 29px;
 }
 
 .mm-v2-showcase-tab {
   position: relative;
   display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 13px;
   width: 100%;
   border: 1px solid rgba(151, 183, 224, 0.12);
-  border-radius: 20px;
-  padding: 15px;
   overflow: hidden;
   color: inherit;
   text-align: left;
@@ -841,10 +537,7 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
   border: 1px solid rgba(151, 183, 224, 0.12);
-  border-radius: 13px;
   color: rgba(220, 230, 245, 0.48);
   background: rgba(255, 255, 255, 0.025);
   font-size: 11px;
@@ -879,7 +572,6 @@ html {
 .mm-v2-showcase-tab__copy strong {
   margin-top: 4px;
   color: rgba(245, 248, 252, 0.9);
-  font-size: 16px;
   font-weight: 790;
   letter-spacing: -0.025em;
 }
@@ -887,15 +579,12 @@ html {
 .mm-v2-showcase-tab__copy small {
   margin-top: 4px;
   color: rgba(220, 230, 245, 0.53);
-  font-size: 12.5px;
   line-height: 1.4;
 }
 
 .mm-v2-showcase__visual {
   min-width: 0;
   border: 1px solid rgba(151, 183, 224, 0.16);
-  border-radius: 30px;
-  padding: 14px;
   background:
     radial-gradient(520px 250px at 50% 0%, rgba(46, 200, 255, 0.07), transparent 72%),
     rgba(5, 10, 19, 0.68);
@@ -909,7 +598,6 @@ html {
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
-  padding: 8px 9px 15px;
 }
 
 .mm-v2-showcase__visual-head span {
@@ -921,9 +609,7 @@ html {
 }
 
 .mm-v2-showcase__visual-head strong {
-  max-width: 64%;
   color: rgba(245, 248, 252, 0.72);
-  font-size: 12px;
   font-weight: 650;
   line-height: 1.4;
   text-align: right;
@@ -952,13 +638,10 @@ html {
 .mm-v2-feature-grid {
   display: grid;
   align-items: center;
-  gap: clamp(42px, 7vw, 92px);
 }
 
 .mm-v2-feature-copy h2 {
   margin-top: 21px;
-  max-width: 660px;
-  font-size: clamp(42px, 6.2vw, 72px);
 }
 
 .mm-v2-feature-lead {
@@ -1060,18 +743,13 @@ html {
 
 .mm-v2-dual-grid {
   display: grid;
-  gap: 22px;
 }
 
 .mm-v2-dual-card {
   position: relative;
   display: grid;
-  align-items: end;
-  gap: 28px;
   overflow: hidden;
   border: 1px solid rgba(151, 183, 224, 0.14);
-  border-radius: 34px;
-  padding: clamp(24px, 4vw, 40px);
   background:
     radial-gradient(620px 360px at 85% 4%, rgba(246, 198, 79, 0.08), transparent 70%),
     linear-gradient(180deg, rgba(17, 26, 44, 0.84), rgba(7, 13, 24, 0.78));
@@ -1117,23 +795,18 @@ html {
 
 .mm-v2-dual-card h2 {
   margin-top: 18px;
-  font-size: clamp(34px, 4.6vw, 56px);
 }
 
 .mm-v2-dual-card__copy > p {
   margin-top: 16px;
   max-width: 560px;
   color: var(--mm2-muted);
-  font-size: 15px;
   line-height: 1.62;
 }
 
 .mm-v2-dual-card .mm-v2-poster {
   position: relative;
   z-index: 2;
-  justify-self: center;
-  width: min(100%, 470px);
-  border-radius: 28px;
 }
 
 .mm-v2-section-heading {
@@ -1142,7 +815,6 @@ html {
 
 .mm-v2-section-heading h2 {
   margin-top: 20px;
-  font-size: clamp(42px, 6vw, 72px);
 }
 
 .mm-v2-section-heading > p {
@@ -1172,7 +844,6 @@ html {
 
 .mm-v2-premium-copy h2 {
   margin-top: 20px;
-  font-size: clamp(44px, 6vw, 74px);
 }
 
 .mm-v2-premium-copy > p {
@@ -1256,7 +927,6 @@ html {
 
 .mm-v2-trust-intro h2 {
   margin-top: 20px;
-  font-size: clamp(40px, 5.6vw, 68px);
 }
 
 .mm-v2-trust-intro > p {
@@ -1304,7 +974,6 @@ html {
 
 .mm-v2-faq-intro h2 {
   margin-top: 20px;
-  font-size: clamp(40px, 5.3vw, 64px);
 }
 
 .mm-v2-faq-intro > p {
@@ -1379,7 +1048,6 @@ html {
 
 .mm-v2-final-cta {
   position: relative;
-  padding-block: clamp(76px, 10vw, 128px);
   text-align: center;
   overflow: hidden;
 }
@@ -1422,7 +1090,6 @@ html {
 .mm-v2-final-cta h2 {
   margin-top: 22px;
   max-width: 880px;
-  font-size: clamp(48px, 7.7vw, 88px);
 }
 
 .mm-v2-final-cta > .mm-container > p {
@@ -1453,17 +1120,6 @@ html {
 }
 
 @media (min-width: 960px) {
-  .mm-v2-hero__grid {
-    grid-template-columns: minmax(0, 1.06fr) minmax(390px, 0.82fr);
-  }
-
-  .mm-v2-showcase {
-    grid-template-columns: minmax(0, 0.88fr) minmax(390px, 0.84fr);
-  }
-
-  .mm-v2-feature-grid {
-    grid-template-columns: minmax(0, 1fr) minmax(380px, 0.76fr);
-  }
 
   .mm-v2-dual-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1518,17 +1174,6 @@ html {
 }
 
 @media (max-width: 719px) {
-  .mm-v2-page .mm-section {
-    padding-block: 58px;
-  }
-
-  .mm-v2-hero {
-    padding-top: 46px;
-  }
-
-  .mm-v2-hero__copy h1 {
-    font-size: clamp(48px, 15vw, 68px);
-  }
 
   .mm-v2-hero__lead {
     font-size: 16.5px;
@@ -1540,10 +1185,6 @@ html {
   .mm-v2-premium-panel,
   .mm-v2-trust-panel {
     border-radius: 28px;
-  }
-
-  .mm-v2-showcase {
-    padding: 20px;
   }
 
   .mm-v2-showcase__tabs {
@@ -1569,14 +1210,6 @@ html {
     padding: 22px;
   }
 
-  .mm-v2-section-heading h2,
-  .mm-v2-feature-copy h2,
-  .mm-v2-trust-intro h2,
-  .mm-v2-faq-intro h2,
-  .mm-v2-premium-copy h2 {
-    font-size: clamp(40px, 12.5vw, 56px);
-  }
-
   .mm-v2-final-cta h2 {
     font-size: clamp(48px, 14vw, 68px);
   }
@@ -1593,15 +1226,12 @@ html {
   }
 }
 
-/* ---------- Shared 2026 subpages ---------- */
-
 .mm-v2-subpage {
   min-height: 100vh;
 }
 
 .mm-v2-subhero {
   position: relative;
-  padding-block: clamp(56px, 7.5vw, 96px) clamp(52px, 7vw, 92px);
 }
 
 .mm-v2-subhero::before {
@@ -1631,17 +1261,13 @@ html {
   z-index: 1;
   display: grid;
   align-items: center;
-  gap: clamp(42px, 7vw, 92px);
 }
 
 .mm-v2-subhero__copy h1 {
   margin-top: 23px;
-  max-width: 760px;
   color: var(--mm2-text);
-  font-size: clamp(50px, 7.8vw, 86px);
   font-weight: 870;
   letter-spacing: -0.072em;
-  line-height: 0.92;
   text-wrap: balance;
 }
 
@@ -1649,7 +1275,6 @@ html {
   margin-top: 24px;
   max-width: 680px;
   color: var(--mm2-muted);
-  font-size: clamp(17px, 1.85vw, 20px);
   line-height: 1.6;
   text-wrap: pretty;
 }
@@ -1707,8 +1332,6 @@ html {
 
 .mm-v2-subhero__badge {
   position: absolute;
-  top: -15px;
-  right: 3%;
   z-index: 5;
   display: inline-flex;
   align-items: center;
@@ -1734,11 +1357,6 @@ html {
 .mm-v2-subhero__badge--orange {
   border-color: rgba(246, 132, 58, 0.25);
   color: rgba(255, 202, 162, 0.92);
-}
-
-.mm-v2-poster--pro,
-.mm-v2-poster--about {
-  width: min(100%, 500px);
 }
 
 .mm-v2-poster--pro {
@@ -1843,9 +1461,9 @@ html {
 .mm-v2-purchase-note {
   margin-top: 15px;
   max-width: 590px;
-  color: rgba(220, 230, 245, 0.44);
-  font-size: 12px;
-  line-height: 1.55;
+  color: rgba(220, 230, 245, 0.72);
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .mm-v2-value-section {
@@ -1855,13 +1473,11 @@ html {
 .mm-v2-value-grid {
   display: grid;
   gap: 14px;
-  margin-top: 34px;
 }
 
 .mm-v2-value-grid article {
   border: 1px solid rgba(151, 183, 224, 0.12);
   border-radius: 24px;
-  padding: 23px;
   background:
     radial-gradient(280px 180px at 100% 0%, rgba(46, 200, 255, 0.04), transparent 70%),
     rgba(10, 18, 32, 0.62);
@@ -1904,7 +1520,6 @@ html {
   display: grid;
   gap: clamp(34px, 6vw, 72px);
   border: 1px solid rgba(151, 183, 224, 0.13);
-  border-radius: 36px;
   padding: clamp(26px, 5vw, 50px);
   background:
     radial-gradient(680px 360px at 0% 0%, rgba(32, 214, 107, 0.07), transparent 70%),
@@ -1920,7 +1535,6 @@ html {
 .mm-v2-store-panel h2 {
   margin-top: 20px;
   color: var(--mm2-text);
-  font-size: clamp(38px, 5.4vw, 66px);
   font-weight: 850;
   letter-spacing: -0.062em;
   line-height: 0.98;
@@ -2032,7 +1646,6 @@ html {
   gap: 14px;
   border: 1px solid rgba(151, 183, 224, 0.11);
   border-radius: 21px;
-  padding: 17px;
   background: rgba(10, 18, 32, 0.58);
 }
 
@@ -2069,7 +1682,6 @@ html {
   display: grid;
   gap: clamp(30px, 5vw, 62px);
   border: 1px solid rgba(32, 214, 107, 0.16);
-  border-radius: 36px;
   padding: clamp(28px, 5vw, 50px);
   background:
     radial-gradient(680px 360px at 0% 0%, rgba(32, 214, 107, 0.08), transparent 70%),
@@ -2095,7 +1707,6 @@ html {
 
 .mm-v2-definition-panel {
   border: 1px solid rgba(46, 200, 255, 0.14);
-  border-radius: 36px;
   padding: clamp(28px, 5vw, 52px);
   background:
     radial-gradient(680px 360px at 0% 0%, rgba(46, 200, 255, 0.07), transparent 70%),
@@ -2122,10 +1733,6 @@ html {
   padding: clamp(24px, 4vw, 38px);
   background: rgba(10, 18, 32, 0.64);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.23);
-}
-
-.mm-v2-about-card h2 {
-  font-size: clamp(32px, 4vw, 48px);
 }
 
 .mm-v2-about-card dl {
@@ -2191,7 +1798,6 @@ html {
   display: grid;
   gap: clamp(30px, 5vw, 60px);
   border: 1px solid rgba(151, 183, 224, 0.12);
-  border-radius: 34px;
   padding: clamp(26px, 5vw, 48px);
   background:
     radial-gradient(620px 320px at 100% 0%, rgba(46, 200, 255, 0.055), transparent 70%),
@@ -2245,9 +1851,6 @@ html {
 }
 
 @media (min-width: 960px) {
-  .mm-v2-subhero__grid {
-    grid-template-columns: minmax(0, 1.04fr) minmax(380px, 0.78fr);
-  }
 
   .mm-v2-value-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2309,10 +1912,6 @@ html {
     padding-top: 46px;
   }
 
-  .mm-v2-subhero__copy h1 {
-    font-size: clamp(48px, 14.5vw, 66px);
-  }
-
   .mm-v2-plan-card {
     min-height: 116px;
   }
@@ -2325,10 +1924,6 @@ html {
     border-radius: 28px;
   }
 }
-
-/* ========================================================================== */
-/* MoodMap Web 2026 — Round 2: raw-screen device system + tighter rhythm       */
-/* ========================================================================== */
 
 /* Use the original iPhone captures as the product source of truth. */
 
@@ -2814,10 +2409,6 @@ html {
     display: none;
   }
 }
-
-/* ========================================================================== */
-/* MoodMap Web 2026 — Round 3: six-section conversion architecture            */
-/* ========================================================================== */
 
 .mm-v4-page .mm-section {
   padding-block: clamp(48px, 5vw, 72px);
@@ -3385,10 +2976,6 @@ html {
   }
 }
 
-/* ========================================================================== */
-/* MoodMap Web 2026 — Round 4: conversion polish + responsive close           */
-/* ========================================================================== */
-
 .mm-v5-page {
   --mm5-body: rgba(220, 230, 245, 0.66);
   --mm5-body-strong: rgba(229, 237, 248, 0.74);
@@ -3416,7 +3003,6 @@ html {
 }
 
 .mm-v5-page .mm-v4-proof-grid p {
-  color: rgba(220, 230, 245, 0.6);
   font-size: 12.5px;
   line-height: 1.5;
 }
@@ -3444,7 +3030,6 @@ html {
 }
 
 .mm-v5-page .mm-v2-showcase-tab__copy small {
-  color: rgba(220, 230, 245, 0.62);
   font-size: 13.25px;
   line-height: 1.45;
 }
@@ -3532,7 +3117,6 @@ html {
 
 .mm-v5-page .mm-v4-steps p,
 .mm-v5-page .mm-v4-outcome-grid p {
-  color: rgba(220, 230, 245, 0.63);
   font-size: 13.25px;
   line-height: 1.55;
 }
@@ -3577,7 +3161,6 @@ html {
 }
 
 .mm-v5-page .mm-v4-plan-note span {
-  color: rgba(230, 231, 235, 0.62);
   font-size: 13.25px;
   line-height: 1.5;
 }
@@ -3599,7 +3182,6 @@ html {
 }
 
 .mm-v5-page .mm-v4-trust-panel .mm-v2-trust-grid p {
-  color: rgba(220, 230, 245, 0.63);
   font-size: 13.25px;
   line-height: 1.52;
 }
@@ -3641,7 +3223,6 @@ html {
 
 .mm-v5-page .mm-v5-faq-card .mm-v2-faq-list details p {
   padding: 15px 17px 18px;
-  color: rgba(220, 230, 245, 0.66);
   font-size: 14px;
   line-height: 1.58;
 }
@@ -3956,10 +3537,6 @@ html {
     font-size: 12.75px;
   }
 }
-
-/* ========================================================================== */
-/* MoodMap Web 2026 — Round 5: final hierarchy + Intelligence conversion      */
-/* ========================================================================== */
 
 /* A slightly higher contrast floor for explanatory text. The hierarchy stays
    quiet, but the body copy now survives weaker displays and 100% desktop zoom. */

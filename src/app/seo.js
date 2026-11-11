@@ -132,6 +132,8 @@ export function mobileApplicationJsonLd(path = "/") {
     featureList: PRODUCT_FEATURES,
     offers: {
       "@type": "Offer",
+      name: "Free app download",
+      description: PRODUCT.purchaseSummary,
       price: "0",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",

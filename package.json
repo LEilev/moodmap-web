@@ -12,7 +12,9 @@
     "check": "npm run lint && npm test && npm run build",
     "content:sync": "node scripts/sync-public-content.mjs",
     "content:check": "node scripts/sync-public-content.mjs --check",
-    "prebuild": "npm run content:check"
+    "prebuild": "npm run content:check",
+    "test:browser": "node tests/browser/run.mjs",
+    "test:browser:run": "playwright test"
   },
   "dependencies": {
     "@upstash/redis": "^1.35.1",
@@ -39,7 +41,8 @@
     "jsdom": "^31.0.0",
     "@testing-library/react": "^16.3.0",
     "typescript": "^5.9.3",
-    "esbuild": "^0.28.2"
+    "esbuild": "^0.28.2",
+    "@playwright/test": "1.65.0"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0"

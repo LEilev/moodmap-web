@@ -1,14 +1,7 @@
+import GuideArticle, { GuideFAQ, GuideProductExample, GuideRelated, GuideSection, GuideStoreLinks, guideStyles as styles } from "../../../components/GuideArticle";
 // src/app/learn/support-partner-during-pms/page.js
 import Link from "next/link";
 import { PRODUCT } from "../../../lib/product";
-import {
-  HeartHandshake,
-  MessageCircle,
-  Clock,
-  TriangleAlert,
-  Shield,
-  Sparkles,
-} from "lucide-react";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -76,309 +69,65 @@ export default function SupportPartnerDuringPMSPage() {
   ]);
 
   return (
-    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
-      {/* JSON-LD: Article / Breadcrumb / FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* Subtle premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      {/* Hero */}
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Shield className="h-4 w-4 opacity-90" aria-hidden />
-            Relationship guidance — not medical advice
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <GuideArticle
+        path={SLUG}
+        title="How to support your partner during PMS"
+        lead="When PMS brings discomfort, tiredness or changes in mood, useful support starts with what she needs today. Offer a concrete choice, handle a practical task and keep your response steady."
+        contents={[
+          { href: "#what-pms-can-feel-like", label: "Possible symptoms" },
+          { href: "#what-helps", label: "What helps" },
+          { href: "#what-to-avoid", label: "Common backfires" },
+          { href: "#timing", label: "Timing and boundaries" },
+          { href: "#questions", label: "Common questions" },
+        ]}
+      >
+        <GuideSection id="what-pms-can-feel-like" title="PMS can feel different each time">
+          <p>PMS can include physical discomfort, tiredness, irritability and sleep changes. Some people have few or mild symptoms. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome">Office on Women’s Health describes the variation and common symptoms</a>.</p>
+          <ul><li>Discomfort such as bloating, breast tenderness, cramps or headaches.</li><li>Less energy after disrupted sleep or a demanding day.</li><li>Changes in mood or sensitivity to noise and light.</li></ul>
+          <div className={styles.summary}><p>Ask what would help instead of deciding what she needs from a phase label. “Would you like comfort, space or help with something?” is a useful starting point.</p></div>
+        </GuideSection>
+        <GuideSection id="what-helps" title="Make the support specific">
+          <div className={styles.stepGrid}>
+            <div className={styles.step}><span className={styles.stepNumber}>1</span><h3>Take care of one task</h3><p>Sort dinner, finish a shared chore or handle a piece of planning. Choose something useful and follow through without turning it into another decision for her.</p></div>
+            <div className={styles.step}><span className={styles.stepNumber}>2</span><h3>Offer the comfort she wants</h3><p>Ask whether food, warmth, quiet company or some space would help. Offer touch when it is welcome, and make room for a different preference.</p></div>
+            <div className={styles.step}><span className={styles.stepNumber}>3</span><h3>Keep your own response steady</h3><p>Slow down if you are getting defensive. Listen to the actual concern before suggesting solutions. You can stay clear about your needs while keeping a warm tone.</p></div>
           </div>
-
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            How to support your partner during PMS
-          </h1>
-
-          <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            PMS can compress patience, energy, and emotional bandwidth. This page is a practical
-            partner guide: what tends to help, what tends to backfire, and how timing changes the
-            whole day.
-          </p>
-
-          <p className="mt-3 text-sm text-white/60">
-            Everyone is different. Use this as a respectful baseline — and keep communication open.
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-4xl grid gap-6">
-          {/* Card 1 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <TriangleAlert className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">What PMS can feel like</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  PMS isn’t “one mood.” It can show up as a mix of physical and emotional load.
-                  Common patterns include:
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>Lower energy (social battery drains faster; small tasks feel heavier).</li>
-                  <li>Higher sensitivity (tone, timing, and pressure land harder than usual).</li>
-                  <li>Shorter fuse (less tolerance for chaos, noise, and unresolved conflict).</li>
-                  <li>Physical discomfort (bloating, headache, cramps, sleep disruption).</li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  Your job isn’t to label it. Your job is to reduce friction and increase safety.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 2 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">What usually helps</h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  These are simple moves that tend to help across most relationships — without
-                  being performative.
-                </p>
-
-                <div className="mt-5 grid gap-5">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      1) Reduce the load
-                    </h3>
-                    <ul className="mt-2 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                      <li>Handle one practical thing without announcing it.</li>
-                      <li>Keep plans lighter; give extra buffer time.</li>
-                      <li>Make the environment calmer (less noise, less clutter).</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      2) Lead with steadiness
-                    </h3>
-                    <ul className="mt-2 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                      <li>Speak 10–20% slower. Keep your tone clean.</li>
-                      <li>Assume good intent. Don’t take the first spike personally.</li>
-                      <li>Offer warmth in small doses: tea, blanket, quiet company.</li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      3) Ask the one question that matters
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      Instead of guessing, ask:{" "}
-                      <span className="font-semibold text-white">
-                        “Do you want comfort, space, or help today?”
-                      </span>
-                    </p>
-                    <p className="mt-2 text-white/70">
-                      That single question prevents a lot of “I tried, and it got worse.”
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 3 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <MessageCircle className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What to avoid (common backfires)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  These aren’t “rules.” They’re patterns that tend to escalate stress during PMS.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    <span className="font-semibold text-white">Minimizing</span> (“You’re overreacting,”
-                    “It’s just hormones.”)
-                  </li>
-                  <li>
-                    <span className="font-semibold text-white">Forcing heavy conversations</span>{" "}
-                    (relationship audits, money fights, old receipts).
-                  </li>
-                  <li>
-                    <span className="font-semibold text-white">Fixing-mode too fast</span> (solutions
-                    before you’ve listened).
-                  </li>
-                  <li>
-                    <span className="font-semibold text-white">Pressure</span> (social plans, intimacy,
-                    decisions) when she’s signaling low bandwidth.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-white">Sarcasm & escalation</span> (it lands
-                    harder and sticks longer).
-                  </li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  If the moment is hot: lower the temperature first. Then talk.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 4 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Clock className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Why timing matters (more than you think)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  PMS sits in a high-sensitivity window for many people. The same comment can land
-                  as “fine” one week and “too much” the next. Timing awareness helps you:
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>Choose calmer days for big conversations.</li>
-                  <li>Plan rest and softness before the day becomes heavy.</li>
-                  <li>Respond to sensitivity with support instead of surprise.</li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  This isn’t about “walking on eggshells.” It’s about operating with context.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 5 */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  How MoodMap helps (if you want a daily cue)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap is built for this exact problem: daily, phase-aware guidance for partners.
-                  It highlights timing moments like PMS, ovulation-phase context, and other cycle shifts so you’re
-                  not guessing.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>Daily “what to expect” + practical do/don’t tips.</li>
-                  <li>Heads-ups before high-impact days.</li>
-                  <li>
-                    {PRODUCT.settingsSummary}
-                  </li>
-                  <li>Private by design (no symptom diary required).</li>
-                </ul>
-
-                {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
-                <div className="mt-6 text-sm text-white/70">
-                  Want the fuller Brief, Command Deck, and deeper insights?{" "}
-                  <Link href="/pro" className="mm-link text-white/80">
-                    See what Premium+ unlocks →
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* End-of-guide CTA */}
-          <section className="mt-2 text-center">
-            <div className="glass-card p-6 sm:p-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-                Next step: Put this into practice
-              </div>
-
-              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
-                MoodMap gives day-by-day cues synced to her cycle — so you can lead with timing,
-                steadiness, and respect for her preferences.
-              </p>
-
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/#download" className="btn-primary">
-                  Download MoodMap
-                </Link>
-                <Link href="/learn" className="mm-link text-sm text-white/70">
-                  Explore more Guides →
-                </Link>
-              </div>
-            </div>
-          </section>
-
-          <SourceTrustBlock path={SLUG} />
-
-          {/* NEW: Visible FAQs (matches JSON-LD) */}
-          <section className="mt-2">
-            <div className="glass-card p-6 sm:p-7">
-              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
-              <p className="mt-2 text-sm text-white/60">
-                Short answers to common questions. Relationship guidance — not medical advice.
-              </p>
-
-              <div className="mt-5 space-y-3">
-                {FAQ.map(({ q, a }) => (
-                  <details
-                    key={q}
-                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
-                  >
-                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
-                      <span className="pr-3">{q}</span>
-                      <span className="text-white/50 group-open:rotate-180 transition-transform">
-                        ▾
-                      </span>
-                    </summary>
-                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom nav */}
-          <div className="pt-2 text-center">
-            <Link href="/" className="mm-link text-sm text-white/70">
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+          <p>Try: “I’ll handle dinner. Would you rather have a quiet evening together or some time to yourself?” A specific offer is easier to answer than a long list of possibilities.</p>
+        </GuideSection>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/day-brief.webp"
+          alt="MoodMap Day Brief with Current Picture, Best Approach, What Can Go Well and Set It Up sections about comfort and the evening ahead."
+          title="Get the day’s context before making a plan">
+          <p>{PRODUCT.summary}</p>
+          <p>This Brief example starts with comfort, food and the transition home before adding another demand. Use the daily read as a prompt for the support your partner actually wants.</p>
+        </GuideProductExample>
+        <GuideSection id="what-to-avoid" title="Common ways support can backfire">
+          <ul>
+            <li><strong>Minimizing:</strong> “It’s just hormones” dismisses the concern instead of addressing it.</li>
+            <li><strong>Solving before listening:</strong> ask whether she wants help or simply wants you to understand.</li>
+            <li><strong>Adding pressure:</strong> keep social plans, decisions and intimacy responsive to her interest and comfort.</li>
+            <li><strong>Arguing about your intention:</strong> if something landed badly, acknowledge it before defending what you meant.</li>
+            <li><strong>Taking over:</strong> support her preferences rather than treating her as incapable.</li>
+          </ul>
+        </GuideSection>
+        <GuideSection id="timing" title="Leave room for both people’s needs">
+          <p>If a non-urgent conversation can wait, agree on a better time. If it needs to happen now, make it clear and manageable. The <Link href="/learn/pms-relationship-timing">PMS timing guide</Link> focuses on starting, pausing and returning to those conversations.</p>
+          <p>Symptoms do not excuse harmful behavior or erase your boundaries. If symptoms regularly interfere with daily life, professional support may be useful; a relationship guide cannot assess or treat them.</p>
+          <p>{PRODUCT.settingsSummary} MoodMap’s dates remain estimates, so respond to what she tells you even when it differs from the calendar.</p>
+          <p>{PRODUCT.freeSummary} <Link href="/pro">See what Premium+ adds.</Link></p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <SourceTrustBlock path={SLUG} />
+        <GuideRelated items={[
+          { href: "/learn/pms-relationship-timing", label: "Choose a better moment for a difficult conversation" },
+          { href: "/learn/luteal-phase-relationships", label: "Luteal-phase relationship context" },
+          { href: "/learn/menstrual-cycle-phases-for-partners", label: "Understand the four phases" },
+        ]} />
+        <GuideStoreLinks path={SLUG} title="Try a daily support cue in MoodMap" />
+      </GuideArticle>
+    </>
   );
 }

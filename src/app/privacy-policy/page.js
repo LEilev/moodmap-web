@@ -28,7 +28,7 @@ const toc = [
   { id: "section1", label: "1. Information We Collect and Store" },
   { id: "section2", label: "2. How We Use Your Data" },
   { id: "section3", label: "3. Third-Party Services" },
-  { id: "website", label: "Website privacy choices and billing" },
+  { id: "website", label: "Website privacy choices" },
   { id: "section4", label: "4. Data Security" },
   { id: "section5", label: "5. Data Deletion" },
   { id: "section6", label: "6. No Medical Records or Diagnostic Data" },
@@ -165,7 +165,7 @@ export default function PrivacyPolicyPage() {
             <p className="text-sm leading-relaxed">
               MoodMap is committed to protecting your privacy. This Privacy Policy
               explains how we collect, use, and safeguard information when you
-              use the MoodMap app, website, support, or web checkout. The website
+              use the MoodMap app, website, or support. The website
               choices described below are separate from settings in the mobile app.
             </p>
           </GlassCard>
@@ -219,7 +219,7 @@ export default function PrivacyPolicyPage() {
               <strong>Note:</strong> MoodMap is private by design: no public profile,
               no partner feed, and no data selling. We do not collect personally
               identifiable information such as names or email addresses unless you
-              choose to provide it, for example in a support request or web checkout.
+              choose to provide it, for example in a support request.
             </p>
           </GlassCard>
 
@@ -308,16 +308,16 @@ export default function PrivacyPolicyPage() {
 
           <GlassCard id="website">
             <IconRing><BarChart3 className="h-6 w-6 text-white drop-shadow" aria-hidden /></IconRing>
-            <h2 className="text-xl sm:text-2xl font-semibold">Website privacy choices and billing</h2>
-            <p className="mt-2 text-sm leading-relaxed">The website offers separate choices for optional analytics and referral attribution. Both start off and are enabled only when you choose the relevant category. You can use the site and open checkout with essential storage only.</p>
+            <h2 className="text-xl sm:text-2xl font-semibold">Website privacy choices</h2>
+            <p className="mt-2 text-sm leading-relaxed">Website analytics are optional and stay off until you choose to enable them. You can browse the site and follow links to the app stores with essential storage only.</p>
             <ul className="mt-3 list-disc list-inside text-sm text-blue-100 space-y-2">
-              <li><strong>Essential preference storage:</strong> your choice is remembered in this browser for up to 180 days. This preference contains your selected categories and the time of the choice, without creating a visitor identifier. If browser storage is unavailable, the preference lasts for the current page session.</li>
-              <li><strong>Optional website analytics:</strong> when enabled and configured, Google Analytics 4 helps us understand page visits and actions such as store-link, Premium+, and checkout clicks. Our event collection excludes URL query strings, fragments, email addresses, payment identifiers, and cycle information. Our browser analytics events are disabled on purchase confirmation, activation, and account pages.</li>
-              <li><strong>Optional referral attribution:</strong> PromoteKit can record a referral identifier and use cookies or browser storage to credit the creator who referred you. The referral script and referral storage are enabled only after you choose this category.</li>
-              <li><strong>Browser privacy signals:</strong> Global Privacy Control and Do Not Track keep these optional website categories off. Choose <strong>Privacy choices</strong> in the footer to review or withdraw your choices at any time. Withdrawing consent stops future optional collection; it does not automatically delete information already received by a service.</li>
-              <li><strong>Web subscriptions:</strong> Stripe processes web payments and subscription billing. Checkout and purchase fulfillment use the information needed to complete and validate your purchase, including your checkout email and payment or subscription identifiers. These operations are separate from optional website analytics and referral attribution.</li>
+              <li><strong>Essential preference storage:</strong> your choice is remembered in this browser for up to 180 days. This preference contains your analytics choice and the time of the choice, without creating a visitor identifier. If browser storage is unavailable, the preference lasts for the current page session.</li>
+              <li><strong>Optional website analytics:</strong> when enabled and configured, Google Analytics 4 helps us understand page visits and actions such as store-link and Premium+ clicks. Our event collection excludes URL query strings, fragments, email addresses, payment identifiers, and cycle information. Our browser analytics events remain disabled on purchase confirmation, activation, and account pages.</li>
+              <li><strong>Browser privacy signals:</strong> Global Privacy Control and Do Not Track keep optional website analytics off. Choose <strong>Privacy choices</strong> in the footer to review or withdraw your choice at any time. Withdrawing consent stops future optional collection; it does not automatically delete information already received by a service.</li>
+              <li><strong>App subscriptions:</strong> new Premium+ subscriptions are offered in the app through the App Store or Google Play. The store shows local prices and terms before purchase and handles billing through your store account. The mobile-app purchase services described above continue to apply.</li>
+              <li><strong>Earlier website payment links:</strong> web checkout and referral tracking have been retired on this website. For questions about an earlier payment link or receipt, contact support. If you send us details of that issue, we use them to investigate and respond.</li>
             </ul>
-            <p className="mt-3 text-sm leading-relaxed">For service-provider details, see <a className="mm-link" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google’s Privacy Policy</a> and <a className="mm-link" href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Stripe’s Privacy Policy</a>. For access or deletion questions, contact <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>{PRODUCT.supportEmail}</a>.</p>
+            <p className="mt-3 text-sm leading-relaxed">For website analytics service-provider details, see <a className="mm-link" href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google’s Privacy Policy</a>. For access or deletion questions, contact <a className="mm-link" href={`mailto:${PRODUCT.supportEmail}`}>{PRODUCT.supportEmail}</a>.</p>
           </GlassCard>
 
           {/* 4 */}

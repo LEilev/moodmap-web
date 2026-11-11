@@ -1,14 +1,7 @@
+import GuideArticle, { GuideFAQ, GuideProductExample, GuideRelated, GuideSection, GuideStoreLinks, guideStyles as styles } from "../../../components/GuideArticle";
 // src/app/learn/fertile-window-explained/page.js
 import Link from "next/link";
 import { PRODUCT } from "../../../lib/product";
-import {
-  Shield,
-  Sparkles,
-  CalendarDays,
-  HeartHandshake,
-  TriangleAlert,
-  Clock,
-} from "lucide-react";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -47,11 +40,11 @@ export default function FertileWindowExplainedPage() {
   const FAQ = [
     {
       q: "What is the fertile window?",
-      a: "In health and fertility contexts, the fertile window refers to ovulation-related days in the cycle. MoodMap treats it only as broad cycle context for relationship timing; exact timing varies from person to person and month to month.",
+      a: "The fertile window is the part of the cycle around ovulation when sex may result in pregnancy. Its exact timing varies. MoodMap uses calendar estimates only as relationship context, not for contraception or fertility planning.",
     },
     {
       q: "What’s the difference between ovulation day and the fertile window?",
-      a: "Ovulation day refers to the ovulation point in a cycle. Fertile-window awareness refers to the broader ovulation-phase window around it. MoodMap uses this only as general context, not prediction or planning guidance.",
+      a: "Ovulation day is the day an egg is released. The fertile window is the wider interval around it related to pregnancy possibility. A calendar estimate cannot establish the exact timing for an individual cycle.",
     },
     {
       q: "Does ovulation affect mood, energy, or desire?",
@@ -80,307 +73,63 @@ export default function FertileWindowExplainedPage() {
   ]);
 
   return (
-    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
-      {/* JSON-LD: Article / Breadcrumb / FAQ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      {/* Subtle premium glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      {/* Hero */}
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Shield className="h-4 w-4 opacity-90" aria-hidden />
-            Relationship guidance — not medical advice
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <GuideArticle
+        path={SLUG}
+        title="Fertile window, explained for partners"
+        lead="The fertile window is the part of the cycle around ovulation when pregnancy can occur. Here is what the term means, why calendar estimates have limits and how to keep relationship guidance grounded in her actual response."
+        contents={[
+          { href: "#meaning", label: "What it means" },
+          { href: "#ovulation-and-estimates", label: "Ovulation and estimates" },
+          { href: "#connection", label: "Connection and intimacy" },
+          { href: "#using-moodmap", label: "How MoodMap uses it" },
+          { href: "#questions", label: "Common questions" },
+        ]}
+      >
+        <GuideSection id="meaning" title="What the fertile window means">
+          <p>Ovulation is the release of an egg from an ovary. The fertile window refers to the surrounding days when sex may result in pregnancy. The <a href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/">NHS explains ovulation, fertility and why timing varies</a>.</p>
+          <div className={styles.summary}><p>A calendar label is an estimate. It cannot confirm when ovulation has happened, whether pregnancy is possible on a particular day, or whether your partner wants sex.</p></div>
+          <p>This guide explains the term for partners. MoodMap uses cycle timing for relationship guidance and should not be used for contraception or fertility planning.</p>
+        </GuideSection>
+        <GuideSection id="ovulation-and-estimates" title="Ovulation day and the wider window">
+          <div className={styles.compare}>
+            <div><h3>Ovulation day</h3><p>The day an egg is released. Its timing varies, including between cycles in the same person.</p></div>
+            <div><h3>The fertile window</h3><p>The wider interval related to pregnancy possibility around ovulation. A predicted interval does not establish its exact start or end for an individual cycle.</p></div>
           </div>
-
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            Fertile window, explained for partners
-          </h1>
-
-          <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            “Fertile window” sounds clinical, but as a partner you don’t need jargon—you need
-            context. This page explains what it means, how it relates to ovulation, and how timing
-            awareness can help your relationship without turning it into prediction, control, or medical advice.
-          </p>
-
-          <p className="mt-3 text-sm text-white/60">
-            This is general cycle education and relationship guidance, not health advice, fertility
-            planning, or contraception guidance.
-          </p>
-        </div>
-      </section>
-
-      {/* Content */}
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-4xl grid gap-6">
-          {/* Card 1: definition */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <CalendarDays className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What the “fertile window” means (plain English)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  In health and fertility contexts, the fertile window refers to the ovulation-related days in a cycle.{" "}
-                  MoodMap treats that window only as broad cycle context for relationship timing — not as pregnancy, fertility, or contraception guidance.
-                </p>
-
-                <p className="mt-4 text-white/70">
-                  Key point: exact timing varies. Bodies aren’t clocks, and cycles aren’t always
-                  identical month to month, so this should stay general and context-based.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 2: ovulation vs fertile window */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Clock className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Ovulation day vs. fertile window
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  <strong className="text-white">Ovulation day</strong> is the ovulation point in a cycle.
-                  <strong className="text-white"> Fertile-window awareness</strong> refers to the broader ovulation-phase context around it.
-                </p>
-
-                <p className="mt-3 text-white/75 leading-relaxed">
-                  For relationship timing, treat this as context—not a prediction engine. The goal is
-                  not control—it’s awareness.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 3: why it matters */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <HeartHandshake className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  Why partners might care (even without baby plans)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Even when fertility planning is not the goal, cycle timing can still matter because it can
-                  correlate (for some people) with changes in energy, social appetite, confidence, or
-                  desire for closeness. Not always—and not the same for everyone—but it can be useful
-                  context.
-                </p>
-
-                <div className="mt-5 grid gap-5">
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      1) Planning connection with better timing
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      Some couples find playful plans land better on higher-energy days. Timing
-                      awareness helps you choose moments that feel easier—not forced.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      2) Reducing misunderstandings
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      Timing context can help you avoid “big talks” on the wrong day and prevent
-                      friction before it starts.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-base sm:text-lg font-semibold text-white">
-                      3) A calmer mental model
-                    </h3>
-                    <p className="mt-2 text-white/75 leading-relaxed">
-                      Context can turn “what is happening?” into “ah, timing.” That shift alone can
-                      improve tone and patience.
-                    </p>
-                  </div>
-                </div>
-
-                <p className="mt-4 text-white/70">
-                  The best version of this is respectful: timing helps you show up well—not push for
-                  outcomes.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 4: what to avoid */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <TriangleAlert className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  What to avoid (so it stays respectful)
-                </h2>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>
-                    <strong className="text-white">Don’t pressure</strong> intimacy or plans based on
-                    a date on a calendar.
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t assume</strong> she will feel a certain way
-                    “because it’s ovulation.”
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t use timing as an argument</strong> (“You’re
-                    only saying that because…”).
-                  </li>
-                  <li>
-                    <strong className="text-white">Don’t use this for fertility planning or contraception</strong>.
-                    If that’s your goal, talk to a qualified clinician and use appropriate methods.
-                  </li>
-                </ul>
-
-                <p className="mt-4 text-white/70">
-                  Timing awareness should increase respect—not reduce autonomy.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {/* Card 5: MoodMap plug */}
-          <article className="glass-card p-6 sm:p-7">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Sparkles className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div className="text-left">
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  How MoodMap uses timing cues (relationship-first)
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  MoodMap highlights timing moments like PMS, ovulation-phase context, and other cycle shifts so
-                  you can prepare and respond with better timing. It’s built to keep things respectful:
-                  guidance is general, and no symptom diary is required.
-                </p>
-
-                <ul className="mt-4 grid gap-2 text-white/75 leading-relaxed list-disc pl-5">
-                  <li>Daily “what to expect” + practical do/don’t cues.</li>
-                  <li>Heads-ups before high-impact days.</li>
-                  <li>
-                    {PRODUCT.settingsSummary}
-                  </li>
-                  <li>Private by design.</li>
-                </ul>
-
-                {/* Removed duplicate Download CTA (kept the single primary CTA at end-of-guide) */}
-                <div className="mt-6 text-sm text-white/70">
-                  Want the fuller Brief, Command Deck, and deeper insights?{" "}
-                  <Link href="/pro" className="mm-link text-white/80">
-                    See what Premium+ unlocks →
-                  </Link>
-                </div>
-
-                <div className="mt-6 text-sm text-white/60">
-                  Related reading:{" "}
-                  <Link href="/learn/menstrual-cycle-phases-for-partners" className="mm-link">
-                    cycle phases for partners
-                  </Link>{" "}
-                  ·{" "}
-                  <Link href="/learn/support-partner-during-pms" className="mm-link">
-                    support during PMS
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          {/* End-of-guide CTA */}
-          <section className="mt-2 text-center">
-            <div className="glass-card p-6 sm:p-7">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-                <Sparkles className="h-4 w-4 opacity-90" aria-hidden />
-                Next step: Put this into practice
-              </div>
-
-              <p className="mt-3 mx-auto max-w-2xl text-sm sm:text-[15px] text-white/75 leading-relaxed">
-                MoodMap gives day-by-day cues synced to her cycle — so you can act with timing,
-                steadiness, and respect for her preferences.
-              </p>
-
-              <div className="mt-5 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/#download" className="btn-primary">
-                  Download MoodMap
-                </Link>
-                <Link href="/learn" className="mm-link text-sm text-white/70">
-                  Explore more Guides →
-                </Link>
-              </div>
-            </div>
-          </section>
-
-          <SourceTrustBlock path={SLUG} />
-
-          {/* NEW: Visible FAQs (matches JSON-LD) */}
-          <section className="mt-2">
-            <div className="glass-card p-6 sm:p-7">
-              <h2 className="text-lg sm:text-xl font-semibold text-white">FAQs</h2>
-              <p className="mt-2 text-sm text-white/60">
-                Short answers to common questions. Relationship guidance — not medical advice.
-              </p>
-
-              <div className="mt-5 space-y-3">
-                {FAQ.map(({ q, a }) => (
-                  <details
-                    key={q}
-                    className="group rounded-xl bg-white/5 ring-1 ring-white/10 px-4 py-3"
-                  >
-                    <summary className="cursor-pointer select-none list-none font-semibold text-white flex items-center justify-between">
-                      <span className="pr-3">{q}</span>
-                      <span className="text-white/50 group-open:rotate-180 transition-transform">
-                        ▾
-                      </span>
-                    </summary>
-                    <p className="mt-2 text-white/75 leading-relaxed">{a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom nav */}
-          <div className="pt-2 text-center">
-            <Link href="/" className="mm-link text-sm text-white/70">
-              ← Back to Home
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+          <p>A 28-day chart is an illustration, not a reliable date for everyone. See the <Link href="/learn/menstrual-cycle-phases-for-partners">four-phase guide</Link> for the wider sequence.</p>
+        </GuideSection>
+        <GuideSection id="connection" title="Let mutual interest guide connection">
+          <p>Some people notice changes in desire or energy around parts of their cycle; others do not notice a distinct pattern. An estimated ovulation window is not a signal of interest or permission.</p>
+          <ul>
+            <li><strong>Offer a plan:</strong> if she has energy and seems interested, suggest something you would both enjoy.</li>
+            <li><strong>Flirt responsively:</strong> notice whether the interest is returned, and adapt your pace.</li>
+            <li><strong>Make a no easy:</strong> accept a different preference without bargaining or pointing to the calendar.</li>
+            <li><strong>Keep real issues in view:</strong> do not use a phase to dismiss what she says.</li>
+          </ul>
+        </GuideSection>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/cycle-calendar.webp"
+          alt="MoodMap Cycle Calendar displaying period days and estimated fertile and ovulation windows alongside the selected day’s context."
+          title="See the estimate in the wider cycle">
+          <p>The Cycle Calendar shows the broader cycle and lets you open a daily read. BOND guidance focuses on sex, flirting and intimacy, with mutual interest and comfort setting the pace.</p>
+          <p>These are relationship prompts based on an estimate, not a way to establish fertility or read someone’s intentions.</p>
+        </GuideProductExample>
+        <GuideSection id="using-moodmap" title="Keep the starting information current">
+          <p>{PRODUCT.settingsSummary}</p>
+          <p>{PRODUCT.modelScope} <Link href="/intelligence#model-fit">Read about the model’s fit and limits.</Link></p>
+          <p>{PRODUCT.freeSummary} <Link href="/pro">See what Premium+ includes.</Link></p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <SourceTrustBlock path={SLUG} />
+        <GuideRelated items={[
+          { href: "/learn/menstrual-cycle-phases-for-partners", label: "The four phases explained for partners" },
+          { href: "/learn/menstrual-cycle-day-by-day-for-partners", label: "An illustrative 28-day cycle" },
+          { href: "/learn/period-tracking-for-men", label: "Start with agreed cycle information" },
+        ]} />
+        <GuideStoreLinks path={SLUG} />
+      </GuideArticle>
+    </>
   );
 }

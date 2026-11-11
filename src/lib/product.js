@@ -25,6 +25,10 @@ export const PRODUCT = Object.freeze({
     "MoodMap is free to download and includes daily cycle context and free guidance. Premium+ adds the fuller read and more ways to act on it.",
   premiumSummary:
     "Premium+ expands the Brief and Risk content, opens the complete Command Deck, and adds deeper insights and additional optional alerts.",
+  purchaseSummary:
+    "Free to download. Optional Premium+ subscription in the app. Your app store shows local prices and subscription terms before purchase.",
+  purchaseInstructions:
+    "Download MoodMap from the App Store or Google Play, then open the app to view Premium+ options.",
   settingsSummary:
     "Adjust cycle length, menstruation length and the PMS window in the app. Use the current options in Settings to match the information your partner chooses to share.",
   modelScope:
@@ -55,13 +59,6 @@ export const PREMIUM_FEATURES = Object.freeze([
   "Additional optional timing alerts",
 ]);
 
-// These are existing advertised WEB prices, not a claim about a local app store.
-// The destination Stripe products remain the billing source of truth.
-export const WEB_PLANS = Object.freeze({
-  monthly: { displayPrice: "$3.99", cadence: "per month", currency: "USD" },
-  yearly: { displayPrice: "$29.99", cadence: "per year", currency: "USD" },
-});
-
 export const PRODUCT_FEATURES = Object.freeze([
   "Daily cycle context and Brief",
   "Cycle Calendar",
@@ -83,6 +80,9 @@ export const CONTENT_UPDATES = Object.freeze({
   "/learn": "2026-11-10",
   "/learn/menstrual-cycle-phases-for-partners": "2026-11-10",
   "/learn/period-tracking-for-men": "2026-11-10",
+  "/learn/cycle-aware-relationship-timing": "2026-11-10",
+  "/learn/luteal-phase-relationships": "2026-11-10",
+  "/learn/pms-relationship-timing": "2026-11-10",
   "/learn/menstrual-cycle-day-by-day-for-partners": "2026-11-10",
   "/learn/moodmap-glossary": "2026-11-10",
   "/learn/support-partner-during-pms": "2026-11-10",
@@ -90,13 +90,14 @@ export const CONTENT_UPDATES = Object.freeze({
   "/learn/why-moodmap": "2026-11-10",
   "/support": "2026-11-10",
   "/privacy-policy": "2026-11-10",
+  "/terms": "2026-11-10",
 });
 
 export const PUBLIC_PAGES = Object.freeze([
   { path: "/", title: "MoodMap: Relationship Timing", description: "Daily cycle context, product examples and downloads." },
   { path: "/about", title: "About MoodMap", description: "The independent maker, official app identity and product facts." },
   { path: "/intelligence", title: "Cycle Intelligence", description: "How modeled biology becomes possible context, and where the model fits." },
-  { path: "/pro", title: "Premium+", description: "Free daily guidance, Premium+ benefits and web subscription pricing." },
+  { path: "/pro", title: "Premium+", description: "Free daily guidance, optional Premium+ in the app, and official store links for local prices and terms." },
   { path: "/learn", title: "Guides", description: "Practical cycle and relationship guides for partners." },
   { path: "/learn/menstrual-cycle-phases-for-partners", title: "Menstrual cycle phases for partners", description: "A four-phase overview with practical examples for partners." },
   { path: "/learn/cycle-aware-relationship-timing", title: "Cycle-aware relationship timing", description: "Using cycle context for support, conversations and intimacy." },

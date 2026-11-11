@@ -1,10 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { JSDOM } from "jsdom";
-import { CONSENT_KEY, CONSENT_MAX_AGE_MS, parseConsent, readConsent, saveConsent } from "../src/lib/site-consent.mjs";
+import { CONSENT_KEY, CONSENT_MAX_AGE_MS, migrateRetiredReferralConsent, parseConsent, readConsent, saveConsent } from "../src/lib/site-consent.mjs";
 import { analyticsPageAllowed, clickEventForLink, createAnalyticsController, safePagePath, sanitizeAnalyticsEvent } from "../src/lib/site-analytics.mjs";
-import { checkoutReferral, rememberReferral, referralPageAllowed } from "../src/lib/referral-attribution.mjs";
-import { checkoutHref, PLAN_LINKS } from "../src/lib/checkout-links.mjs";
+import { clearReferral } from "../src/lib/referral-attribution.mjs";
+import { checkoutHref } from "../src/lib/checkout-links.mjs";
 
 function browser(path = "/") {
   return new JSDOM("<!doctype html><html><head></head><body></body></html>", {
@@ -83,7 +83,6 @@ test("GPC and DNT override stored acceptance, including a change after analytics
     assert.equal(readConsent(dom.window).referral, false);
     assert.equal(controller.track("store_click", { platform: "ios" }), false);
     assert.equal(dom.window["ga-disable-G-TEST1234"], true);
-    assert.equal(checkoutReferral(dom.window), null);
     const saved = saveConsent(dom.window, { analytics: true, referral: true });
     assert.equal(saved.analytics, false);
     assert.equal(saved.referral, false);
@@ -110,32 +109,49 @@ test("invalid, expired and future consent never enable tracking; unavailable sto
   dom.window.close();
 });
 
-test("referral data is neither read for checkout nor persisted until its separate category is accepted", () => {
-  const dom = browser("/?via=creator_7");
-  dom.window.promotekit_referral = "unique-id-123";
-  assert.equal(rememberReferral(dom.window), "");
-  assert.equal(checkoutReferral(dom.window), null);
-  assert.equal(dom.window.sessionStorage.length, 0);
-  saveConsent(dom.window, { analytics: true, referral: false });
-  assert.equal(checkoutReferral(dom.window), null);
-  saveConsent(dom.window, { analytics: false, referral: true });
-  assert.deepEqual(checkoutReferral(dom.window), { id: "unique-id-123", slug: "creator_7", source: "promotekit_referral" });
-  dom.window.history.replaceState({}, "", "/pro");
-  assert.equal(checkoutReferral(dom.window).slug, "creator_7");
-  assert.equal(referralPageAllowed("/thanks"), false);
-  dom.window.close();
+test("retiring referral preserves the Analytics choice and expiry, and clears only old attribution data", () => {
+  for (const analytics of [true, false]) {
+    const dom = browser("/pro?via=creator_7");
+    const win = dom.window;
+    const previous = { version: 1, analytics, referral: true, updatedAt: Date.now() - 10_000 };
+    win.__mmPrivacySession = { ...previous };
+    for (const storage of [win.localStorage, win.sessionStorage]) {
+      storage.setItem(CONSENT_KEY, JSON.stringify(previous));
+      storage.setItem("mm_referral_slug_v1", "creator_7");
+      storage.setItem("promotekit_referral", "unique-id-123");
+      storage.setItem("unrelated-setting", "keep");
+    }
+    win.promotekit_referral = "unique-id-123";
+    win.document.cookie = "promotekit_referral=unique-id-123; Path=/";
+    win.document.cookie = "_ga=keep; Path=/";
+    migrateRetiredReferralConsent(win);
+    clearReferral(win);
+    assert.deepEqual(readConsent(win), { ...previous, referral: false });
+    assert.deepEqual(win.__mmPrivacySession, { ...previous, referral: false });
+    for (const storage of [win.localStorage, win.sessionStorage]) {
+      assert.deepEqual(JSON.parse(storage.getItem(CONSENT_KEY)), { ...previous, referral: false });
+      assert.equal(storage.getItem("mm_referral_slug_v1"), null);
+      assert.equal(storage.getItem("promotekit_referral"), null);
+      assert.equal(storage.getItem("unrelated-setting"), "keep");
+    }
+    assert.equal(win.promotekit_referral, undefined);
+    assert.equal(win.document.cookie, "_ga=keep");
+    assert.equal(saveConsent(win, { analytics, referral: true }).referral, false);
+    dom.window.close();
+  }
 });
 
-test("existing payment links are preserved; opt-out cannot forward affiliate identifiers or pk parameters", () => {
-  const input = { plan: "yearly", pkParams: { pk_referral: "unique-id", pk_email: "private@example.com" }, referral: { id: "unique-id" } };
-  const declined = new URL(checkoutHref(input));
-  assert.equal(declined.origin + declined.pathname, PLAN_LINKS.yearly);
-  assert.equal(declined.searchParams.get("client_reference_id"), "default");
-  assert.equal(declined.searchParams.has("pk_referral"), false);
-  const granted = new URL(checkoutHref({ ...input, referralEnabled: true }));
-  assert.equal(granted.searchParams.get("client_reference_id"), "unique-id");
-  assert.equal(granted.searchParams.get("pk_referral"), "unique-id");
-  assert.equal(granted.searchParams.has("pk_email"), false);
+test("retired checkout links always return the clean Premium information page", () => {
+  for (const plan of ["monthly", "yearly", "https://buy.stripe.com/retired", null]) {
+    for (const referralEnabled of [false, true]) {
+      assert.equal(checkoutHref({
+        plan, referralEnabled,
+        pkParams: { pk_referral: "unique-id", pk_email: "private@example.com" },
+        referral: { id: "unique-id" },
+      }), "/pro");
+    }
+  }
+  assert.equal(checkoutHref(), "/pro");
 });
 
 test("delegated link classification distinguishes store, Premium and checkout clicks without sending their query", () => {

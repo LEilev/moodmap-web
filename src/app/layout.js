@@ -1,6 +1,5 @@
 // src/app/layout.js
 import "./globals.css";
-import "./polish.css";
 import Link from "next/link";
 import AppSiteClient from "../components/AppSiteClient";
 import { PrivacyPreferencesButton } from "../components/SitePrivacy";

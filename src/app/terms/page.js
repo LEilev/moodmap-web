@@ -1,5 +1,6 @@
 // src/app/terms/page.js
 import Link from "next/link";
+import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
 import {
   Scale,
   Stethoscope,
@@ -24,7 +25,7 @@ export const metadata = {
   },
 };
 
-const LAST_UPDATED = "January 2, 2026";
+const LAST_UPDATED = displayDate(CONTENT_UPDATES["/terms"]);
 
 const toc = [
   { id: "section1", label: "1. Agreement to These Terms" },
@@ -207,10 +208,10 @@ export default function TermsPage() {
             </IconRing>
             <h2 className="text-xl sm:text-2xl font-semibold">5. Subscriptions, Billing & Refunds</h2>
             <p className="mt-2 text-sm leading-relaxed">
-              Paid features (such as Premium+) may be billed through the Apple App Store, Google Play Store, or via Stripe for web purchases, depending on how you subscribe. App Store / Google Play subscriptions are managed through your store account (including billing, renewals, cancellations, and refunds) and are subject to the store’s policies. Stripe (web) subscriptions are billed to the payment method you provide at checkout and can be managed through your MoodMap account; refunds (if any) are handled according to applicable law and the relevant platform’s policies.
+              {PRODUCT.purchaseSummary} New Premium+ subscriptions are purchased through the Apple App Store or Google Play. Billing, renewals, cancellations, and refund requests are handled through the store used for the purchase, subject to its policies and applicable law.
             </p>
             <p className="mt-3 text-sm leading-relaxed text-blue-100">
-              Tip: If you subscribed through the App Store or Google Play, cancel from your store subscription settings. If you subscribed on the web via Stripe, manage or cancel via your MoodMap account (or contact support). Deleting the app does not automatically cancel a subscription.
+              Manage or cancel a subscription from the subscription settings of the store account used to purchase it. Deleting the app does not automatically cancel a subscription. For questions about an earlier web payment link or receipt, <Link href="/support" className="mm-link">contact support</Link>.
             </p>
           </GlassCard>
 

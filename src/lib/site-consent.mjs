@@ -16,7 +16,8 @@ export function parseConsent(raw, now = Date.now()) {
     if (value?.version !== CONSENT_VERSION || typeof value.analytics !== "boolean" ||
         typeof value.referral !== "boolean" || !Number.isFinite(value.updatedAt) ||
         value.updatedAt > now + 60_000 || now - value.updatedAt >= CONSENT_MAX_AGE_MS) return null;
-    return { version: CONSENT_VERSION, analytics: value.analytics, referral: value.referral, updatedAt: value.updatedAt };
+    // The former referral category is permanently retired, including for older opt-ins.
+    return { version: CONSENT_VERSION, analytics: value.analytics, referral: false, updatedAt: value.updatedAt };
   } catch {
     return null;
   }
@@ -33,13 +34,35 @@ export function readConsent(win) {
   return candidates.filter(Boolean).sort((a, b) => b.updatedAt - a.updatedAt)[0] || null;
 }
 
+/** Retain the original Analytics decision and expiry while removing the retired opt-in. */
+export function migrateRetiredReferralConsent(win) {
+  if (!win) return;
+  const migrated = (raw) => {
+    try {
+      const value = typeof raw === "string" ? JSON.parse(raw) : raw;
+      return value?.referral === true ? parseConsent(value) : null;
+    } catch { return null; }
+  };
+  const session = migrated(win.__mmPrivacySession);
+  if (session) win.__mmPrivacySession = session;
+  for (const name of ["localStorage", "sessionStorage"]) {
+    try {
+      const storage = win[name];
+      const next = migrated(storage.getItem(CONSENT_KEY));
+      if (next) storage.setItem(CONSENT_KEY, JSON.stringify(next));
+    } catch {
+      // A blocked store may retain the old record; parseConsent still ignores its referral flag.
+    }
+  }
+}
+
 export function saveConsent(win, choice) {
   const blocked = browserRequestsPrivacy(win);
   const previous = readConsent(win);
   const consent = {
     version: CONSENT_VERSION,
     analytics: !blocked && choice.analytics === true,
-    referral: !blocked && choice.referral === true,
+    referral: false,
     updatedAt: Math.max(Date.now(), (previous?.updatedAt || 0) + 1),
   };
   // Only the privacy decision is essential storage. No visitor identifier is created.

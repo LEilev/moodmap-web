@@ -1,13 +1,6 @@
+import GuideArticle, { GuideFAQ, GuideProductExample, GuideRelated, GuideSection, GuideStoreLinks, guideStyles as styles } from "../../../components/GuideArticle";
+import { PRODUCT } from "../../../lib/product";
 import Link from "next/link";
-import {
-  Brain,
-  CalendarDays,
-  Clock,
-  HeartHandshake,
-  MessageCircle,
-  Shield,
-  Sparkles,
-} from "lucide-react";
 import {
   OG_IMAGE_SRC,
   SourceTrustBlock,
@@ -43,22 +36,18 @@ export const metadata = {
 
 const PRINCIPLES = [
   {
-    icon: Clock,
     title: "Timing is part of the message",
     body: "A valid topic can still be opened at the wrong hour. Cycle-aware timing helps separate the real issue from the bad window.",
   },
   {
-    icon: HeartHandshake,
     title: "Support beats pressure",
     body: "When capacity is narrow, the cleaner move is often food, warmth, space, or one practical assist — not a long explanation.",
   },
   {
-    icon: MessageCircle,
     title: "Tone carries more weight on low-margin days",
     body: "Stress sensitivity can make ambiguity, sarcasm, and closure-chasing land louder than intended.",
   },
   {
-    icon: Sparkles,
     title: "Intimacy needs context",
     body: "Desire, comfort, recovery demand, and openness can shift across the cycle. Timing helps him read pace before he initiates.",
   },
@@ -66,10 +55,10 @@ const PRINCIPLES = [
 
 const WINDOWS = [
   ["Menstruation", "Lower reserve, more physical load, and stronger need for practical support for some."],
-  ["Follicular", "Often a cleaner window for planning, initiative, and forward movement."],
-  ["Ovulation", "Can bring more outward energy and connection for some, but never assume."],
-  ["Luteal", "Complexity and load can feel denser; tone and follow-through matter more."],
-  ["PMS", "Lower stress buffer can make pressure, ambiguity, and unresolved tension cost more."],
+  ["Follicular", "As period symptoms ease, some people feel more energy for plans. Match the energy she actually has."],
+  ["Ovulation", "Some people notice changes in energy or desire around ovulation; others notice little change."],
+  ["Luteal", "If tiredness or discomfort is present, practical help and clear communication may be welcome."],
+  ["PMS", "Some people experience irritability, sleep changes or discomfort before a period. Ask what would help."],
 ];
 
 const FAQ = [
@@ -87,7 +76,7 @@ const FAQ = [
   },
   {
     q: "Does cycle-aware timing replace communication?",
-    a: "It improves timing around communication. Direct consent, conversation, and respect stay central.",
+    a: "No. It can prompt you to think about timing, but direct communication, consent and respect stay central.",
   },
 ];
 
@@ -105,157 +94,60 @@ export default function CycleAwareRelationshipTimingPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="mm-guide-article relative isolate bg-primary-blue text-white">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/18 to-blue-500/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-28 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/18 to-emerald-400/16 blur-[180px] sm:blur-[240px] md:opacity-30 -z-10"
-      />
-
-      <section className="px-6 pt-12 pb-10 sm:pt-16 sm:pb-12">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs sm:text-sm text-white/70 ring-1 ring-white/12 backdrop-blur">
-            <Shield className="h-4 w-4 opacity-90" aria-hidden />
-            Relationship guidance — not medical advice
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+      <GuideArticle
+        path={SLUG}
+        title="Cycle-aware relationship timing"
+        lead="Cycle-aware relationship timing uses menstrual-cycle context to make more thoughtful choices about support, conversations, plans and intimacy. Start with the possible background, then respond to the person in front of you."
+        contents={[
+          { href: "#definition", label: "The idea" },
+          { href: "#principles", label: "Four principles" },
+          { href: "#across-the-cycle", label: "Across the cycle" },
+          { href: "#in-practice", label: "In practice" },
+          { href: "#questions", label: "Common questions" },
+        ]}
+      >
+        <GuideSection id="definition" title="Useful context for your next move">
+          <div className={styles.summary}><p>The purpose is to get a quick feel for what may be shaping the day, then choose how you show up. A cycle estimate is one piece of context alongside her words, preferences and circumstances.</p></div>
+          <p>Sleep, discomfort, energy and the demands of the day can affect how much room either of you has for a plan or conversation. Cycle context can help you remember to check those things instead of taking every change personally.</p>
+          <p>Use information your partner chooses to share. For a practical starting point, read <Link href="/learn/period-tracking-for-men">period tracking for men</Link>.</p>
+        </GuideSection>
+        <GuideSection id="principles" title="Four principles for better timing">
+          <div className={styles.phaseGrid}>
+            {PRINCIPLES.map(({ title, body }) => <div key={title} className={styles.phase}><h3>{title}</h3><p>{body}</p></div>)}
           </div>
-
-          <h1 className="mt-6 text-balance text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            Cycle-aware relationship timing
-          </h1>
-
-          <p className="mt-4 text-pretty text-base sm:text-lg text-white/75 leading-relaxed">
-            Most relationship advice treats timing like a personality issue. MoodMap treats timing
-            as context: cycle phase, capacity, stress sensitivity, and recovery demand can change
-            how a conversation, request, joke, repair attempt, or bid for intimacy lands.
-          </p>
-
-          <p className="mt-3 text-sm text-white/60">
-            The point is not to predict her. The point is to choose a cleaner move.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-6 pb-14">
-        <div className="mx-auto max-w-4xl grid gap-6">
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <Brain className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  The short definition
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Cycle-aware relationship timing is the practice of using menstrual-cycle context
-                  to choose better timing for support, conversations, restraint, and intimacy. It is
-                  context, not control; timing, not diagnosis; awareness, not mind-reading.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <div className="grid gap-6 sm:grid-cols-2">
-            {PRINCIPLES.map(({ icon: Icon, title, body }) => (
-              <article key={title} className="glass-card glass-card-hover p-6 text-left">
-                <span className="glass-icon">
-                  <Icon className="h-6 w-6 text-white" aria-hidden />
-                </span>
-                <h2 className="mt-4 text-lg font-semibold text-white">{title}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/70">{body}</p>
-                <div aria-hidden="true" className="glass-gloss" />
-              </article>
-            ))}
+        </GuideSection>
+        <GuideSection id="across-the-cycle" title="What the cycle can add to the picture">
+          <p>There is no single experience of a phase. These are possible patterns to notice, not a timetable for her mood. PMS describes symptoms before a period, rather than a separate phase that everyone experiences.</p>
+          <dl className={styles.definitions}>{WINDOWS.map(([phase, body]) => <div key={phase}><dt>{phase}</dt><dd>{body}</dd></div>)}</dl>
+          <p>Read the <Link href="/learn/menstrual-cycle-phases-for-partners">four-phase guide</Link> for the underlying biology and the limits of calendar estimates.</p>
+        </GuideSection>
+        <GuideProductExample path={SLUG} image="/screenshots/web-2026/read-day.webp"
+          alt="MoodMap daily screen with luteal context, estimated capacity and a practical direction for the day."
+          title="From a phase label to a daily read">
+          <p>{PRODUCT.summary}</p>
+          <p>The daily screen connects the possible background to a useful direction. Open the Brief for more context or the Command Deck for PLAN, READ, BOND and SELF.</p>
+        </GuideProductExample>
+        <GuideSection id="in-practice" title="What this looks like in practice">
+          <div className={styles.stepGrid}>
+            <div className={styles.step}><h3>Support</h3><p>If she is uncomfortable or tired, offer a concrete task or comfort she wants: food, warmth, help with logistics or quiet company.</p></div>
+            <div className={styles.step}><h3>Conversation</h3><p>Ask whether now works. Keep a necessary conversation clear; if you pause a non-urgent topic, agree when to come back.</p></div>
+            <div className={styles.step}><h3>Intimacy</h3><p>Notice mutual interest, comfort and pace. Flirt when it is welcome and adapt to the response you receive.</p></div>
           </div>
-
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <div className="flex items-start gap-4">
-              <span className="glass-icon">
-                <CalendarDays className="h-6 w-6 text-white" aria-hidden />
-              </span>
-              <div>
-                <h2 className="text-xl sm:text-2xl font-semibold">
-                  How timing changes across the cycle
-                </h2>
-                <p className="mt-2 text-white/75 leading-relaxed">
-                  Every woman is different, and no phase explains a person. But cycle phase can be
-                  useful context for capacity, energy, stress buffer, and recovery demand.
-                </p>
-                <div className="mt-5 grid gap-3">
-                  {WINDOWS.map(([phase, body]) => (
-                    <div key={phase} className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                      <h3 className="text-sm font-bold uppercase tracking-[0.14em] text-emerald-100/85">
-                        {phase}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-white/68">{body}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article className="glass-card p-6 sm:p-7 text-left">
-            <h2 className="text-xl sm:text-2xl font-semibold">What this looks like in practice</h2>
-            <div className="mt-5 grid gap-4 md:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                <h3 className="font-semibold text-white">Support</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">
-                  Do one concrete thing before asking for emotional bandwidth: food, warmth, cleanup,
-                  logistics, or quiet presence.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                <h3 className="font-semibold text-white">Conversation</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">
-                  Save heavy topics for windows with more margin. If it must happen now, make it
-                  shorter, cleaner, and easier to pause.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-4">
-                <h3 className="font-semibold text-white">Intimacy</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">
-                  Read pace before he initiates. Connection is cleaner when comfort, context, and
-                  recovery demand are respected.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <section className="grid gap-4 md:grid-cols-2" aria-label="Cycle-aware relationship timing questions">
-            {FAQ.map(({ q, a }) => (
-              <article key={q} className="glass-card p-5 text-left">
-                <h2 className="text-base font-semibold text-white">{q}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-white/68">{a}</p>
-              </article>
-            ))}
-          </section>
-
-          <SourceTrustBlock path={SLUG} />
-
-          <div className="text-center">
-            <Link href="/intelligence" className="btn-primary">
-              Explore Cycle Intelligence
-            </Link>
-          </div>
-        </div>
-      </section>
-    </main>
+          <p>{PRODUCT.modelScope} <Link href="/intelligence#model-fit">See where MoodMap’s model fits.</Link></p>
+        </GuideSection>
+        <GuideFAQ items={FAQ} />
+        <SourceTrustBlock path={SLUG} />
+        <GuideRelated items={[
+          { href: "/learn/menstrual-cycle-phases-for-partners", label: "The menstrual cycle explained for partners" },
+          { href: "/learn/pms-relationship-timing", label: "Timing conversations during PMS" },
+          { href: "/learn/why-moodmap", label: "What MoodMap adds to a cycle overview" },
+        ]} />
+        <GuideStoreLinks path={SLUG} />
+      </GuideArticle>
+    </>
   );
 }

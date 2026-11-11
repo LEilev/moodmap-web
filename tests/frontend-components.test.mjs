@@ -4,7 +4,7 @@ import React, { act } from "react";
 import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import { installDom } from "./helpers/dom.mjs";
 import { loadJsx } from "./helpers/load-jsx.mjs";
-import { readConsent, saveConsent } from "../src/lib/site-consent.mjs";
+import { CONSENT_KEY, readConsent, saveConsent } from "../src/lib/site-consent.mjs";
 
 const { default: MobileMenu } = await loadJsx("src/components/MobileMenu.js");
 const { default: ProductShowcase } = await loadJsx("src/components/ProductShowcase.js");
@@ -113,7 +113,7 @@ test("product tabs use one tab stop, automatic arrow activation, Home/End and a 
   assert.equal(result.getByAltText("Day Brief screen").getAttribute("height"), "1792");
 });
 
-test("privacy controls start off, allow separate analytics opt-in, and keep one delegated click listener", () => {
+test("privacy controls start off, offer only Analytics opt-in, and keep one delegated click listener", () => {
   const tree = (path) => h("div", { id: "site-shell" },
     h(SitePrivacy, { path }), h(PrivacyPreferencesButton),
     h("a", { href: "https://apps.apple.com/app/id6746102626", "data-mm-placement": "guide-end" }, "Download"));
@@ -123,9 +123,9 @@ test("privacy controls start off, allow separate analytics opt-in, and keep one 
   assert.equal(dom.window.document.scripts.length, 0);
   fireEvent.click(result.getByRole("button", { name: "Choose", exact: true }));
   const analytics = result.getByRole("checkbox", { name: /Analytics/ });
-  const referral = result.getByRole("checkbox", { name: /Referral attribution/ });
   assert.equal(analytics.checked, false);
-  assert.equal(referral.checked, false);
+  assert.equal(result.getAllByRole("checkbox").length, 1);
+  assert.equal(result.queryByRole("checkbox", { name: /Referral attribution/ }), null);
   fireEvent.click(analytics);
   fireEvent.click(result.getByRole("button", { name: "Save choices" }));
   assert.equal(readConsent(dom.window).analytics, true);
@@ -139,6 +139,25 @@ test("privacy controls start off, allow separate analytics opt-in, and keep one 
   const names = dom.window.dataLayer.map((args) => Array.from(args)).filter((row) => row[0] === "event").map((row) => row[1]);
   assert.deepEqual(names, ["page_view", "store_click", "page_view", "store_click"]);
   dom.window.removeEventListener("click", preventNavigation);
+});
+
+test("a historical referral opt-in never loads PromoteKit or leaks identifiers, while valid Analytics survives", () => {
+  const win = dom.window;
+  win.history.replaceState({}, "", "/pro?via=creator_7&pk_referral=old-private-id");
+  const previous = { version: 1, analytics: true, referral: true, updatedAt: Date.now() - 10_000 };
+  win.localStorage.setItem(CONSENT_KEY, JSON.stringify(previous));
+  win.sessionStorage.setItem("mm_referral_slug_v1", "creator_7");
+  win.document.cookie = "promotekit_referral=old-private-id; Path=/";
+  win.promotekit_referral = "old-private-id";
+  render(h(SitePrivacy, { path: "/pro" }));
+  assert.equal(win.document.querySelectorAll("#mm-ga4").length, 1);
+  assert.equal(win.document.querySelectorAll('#mm-promotekit, script[src*="promotekit"]').length, 0);
+  assert.deepEqual(JSON.parse(win.localStorage.getItem(CONSENT_KEY)), { ...previous, referral: false });
+  assert.equal(win.sessionStorage.getItem("mm_referral_slug_v1"), null);
+  assert.equal(win.promotekit_referral, undefined);
+  assert.doesNotMatch(win.document.cookie, /promotekit/);
+  assert.doesNotMatch(JSON.stringify(win.dataLayer), /creator_7|old-private-id|pk_referral|via=/);
+  assert.equal(readConsent(win).analytics, true);
 });
 
 test("privacy UI respects browser opt-out and permits reviewing the disabled optional choices", () => {

@@ -60,6 +60,15 @@
 .related a { display: inline-flex; gap: .4rem; min-height: 44px; align-items: center; }
 .page a:focus-visible, .page summary:focus-visible { outline: 3px solid #a9f2da; outline-offset: 5px; border-radius: .25rem; }
 .sources { margin: 2.75rem 0; }
+.definitions { max-width: 72ch; margin: 1.5rem 0; }
+.definitions > div { padding: 1rem 0; border-top: 1px solid #34435a; }
+.definitions dt { color: #edf1f8; font-weight: 700; }
+.definitions dd { margin: .35rem 0 0; color: #cbd6e7; }
+.glossary .section { position: relative; border-top: 1px solid #34435a; padding-top: 1.5rem; }
+.legacyAnchor { position: absolute; top: 0; display: block; scroll-margin-top: 6rem; }
+.comparisonGroup { margin-top: 2rem; }
+.comparisonGroup .compare { margin: .65rem 0 0; }
+.comparisonGroup .compare > div { padding: .65rem 0 0; }
 @media (min-width: 42rem) {
   .phaseGrid, .laneGrid, .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .product { grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem); }

@@ -385,58 +385,76 @@ test('health requires authorization and returns unhealthy when Redis is absent o
   assert.deepEqual(await result.json(), { ok: false, error: 'outreach_unavailable' });
 });
 
-test('worker fails closed before I/O without auth or unsubscribe signing capability', async () => {
+test('retired outreach still requires operator authorization and rejects an empty credential configuration', async () => {
   const redis = new FakeRedis();
-  const env = mailEnv({ CRON_SECRET: 'short-test-secret', RESEND_API_KEY: 'short-test-key' });
-  const route = await harness({ redis, env }).load('src/app/api/influencer/worker/route.js');
-  assert.equal((await route.GET(new Request(`${BASE}/api/influencer/worker`))).status, 403);
-  const result = await route.GET(new Request(`${BASE}/api/influencer/worker`, { headers: { Authorization: `Bearer ${env.CRON_SECRET}` } }));
-  assert.equal(result.status, 503);
+  for (const env of [{}, mailEnv({ CRON_TOKEN: 'legacy-test-token' })]) {
+    const route = await harness({ redis, env }).load('src/app/api/influencer/worker/route.js');
+    for (const req of [
+      new Request(`${BASE}/api/influencer/worker`),
+      new Request(`${BASE}/api/influencer/worker?token=legacy-test-token`),
+      new Request(`${BASE}/api/influencer/worker`, { headers: { Authorization: 'Bearer incorrect' } }),
+    ]) {
+      const response = await route.GET(req);
+      assert.equal(response.status, 403);
+      assert.equal(response.headers.get('cache-control'), 'no-store');
+      assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+    }
+  }
   assert.equal(redis.calls.length, 0);
 });
 
-test('worker renders signed one-click headers and respects existing suppression', async () => {
-  const redis = new FakeRedis();
-  const suppressed = 'suppressed@example.test';
-  redis.queue = [EMAIL, suppressed];
-  redis.hashes.set(`inf:${EMAIL}`, { email: EMAIL, status: 'queued' });
-  redis.sets.set('inf:unsubscribed', new Set([suppressed]));
-  const sent = [];
-  const h = harness({ redis, env: mailEnv(), fetch: async (_url, init) => { sent.push(JSON.parse(init.body)); return Response.json({ id: 'fake-email-id' }); } });
-  const route = await h.load('src/app/api/influencer/worker/route.js');
-  const response = await route.GET(new Request(`${BASE}/api/influencer/worker?max=2&minDelayMs=0`, { headers: { Authorization: `Bearer ${CRON_KEY}` } }));
-  assert.equal(response.status, 200);
-  assert.equal(sent.length, 1);
-  assert.equal(sent[0].to, EMAIL);
-  assert.equal(sent[0].headers['List-Unsubscribe-Post'], 'List-Unsubscribe=One-Click');
-  const link = sent[0].headers['List-Unsubscribe'].slice(1, -1);
-  assert.match(link, /\/api\/influencer\/unsubscribe\?token=v1\./);
-  assert.ok(!link.includes(EMAIL));
-  assert.ok(sent[0].html.includes(link));
-  const unsubscribe = await h.load('src/app/api/influencer/unsubscribe/route.js');
-  assert.equal((await unsubscribe.POST(formRequest(link, { 'List-Unsubscribe': 'One-Click' }))).status, 200);
-  assert.ok(redis.sets.get('inf:unsubscribed').has(EMAIL));
+test('authorized outreach is always disabled without Redis, mail, queue or follow-up operations', async () => {
+  let io = 0;
+  const redis = new Proxy({}, { get() { io++; throw new Error('Retired outreach must not access Redis'); } });
+  const route = await harness({
+    redis,
+    env: mailEnv({ OUTREACH_ENABLED: 'true', WEB_SALES_ENABLED: 'true', INFLUENCER_UNSUBSCRIBE_SECRET: SIGNING_KEY }),
+    fetch: async () => { io++; throw new Error('Retired outreach must not contact a provider'); },
+  }).load('src/app/api/influencer/worker/route.js');
+  for (const query of ['', '?max=25&force=1&dry=0', '?followups=1&followupDays=1&max=25', '?dry=1']) {
+    const response = await route.GET(new Request(`${BASE}/api/influencer/worker${query}`, { headers: { Authorization: `Bearer ${CRON_KEY}` } }));
+    assert.equal(response.status, 200);
+    assert.deepEqual(await response.json(), { ok: true, paused: true, disabled: true, didWork: false, sent: 0, attempted: 0, reason: 'web_sales_retired' });
+    assert.equal(response.headers.get('cache-control'), 'no-store');
+    assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(response.headers.get('x-robots-tag'), 'noindex, nofollow');
+  }
+  assert.equal(io, 0);
 });
 
-test('failed follow-ups are bounded per run and permanent failure stops later sends', async () => {
-  const redis = new FakeRedis();
-  for (let i = 0; i < 5; i++) {
-    const email = `followup${i}@example.test`;
-    redis.hashes.set(`inf:${email}`, { email, status: 'sent', followupsSent: 0, lastSent: '2020-01-01T00:00:00Z' });
+test('legacy operator credential reports disabled even without mail or database configuration', async () => {
+  const route = await harness({ env: { CRON_TOKEN: 'legacy-test-token' } }).load('src/app/api/influencer/worker/route.js');
+  const response = await route.GET(new Request(`${BASE}/api/influencer/worker?token=legacy-test-token&followups=1`));
+  assert.equal(response.status, 200);
+  const result = await response.json();
+  assert.equal(result.disabled, true);
+  assert.equal(result.didWork, false);
+  assert.equal(result.sent, 0);
+});
+
+test('legacy buy and go routes redirect only to clean /pro without parsing or forwarding query data', async () => {
+  const h = harness();
+  for (const filename of ['src/pages/buy.js', 'src/pages/go.js', 'src/pages/go/[type].js']) {
+    const route = await h.load(filename);
+    const headers = new Map();
+    const result = await route.getServerSideProps({
+      res: { setHeader: (key, value) => headers.set(key.toLowerCase(), value) },
+      req: { url: '/go?type=yearly?via=creator&bad=%ZZ&email=private%40example.test&token=private-token' },
+      params: { type: 'yearly' },
+      query: { type: ['yearly', 'monthly'], uid: 'private-uid', ref: 'creator', email: 'private@example.test', token: 'private-token', to: 'https://untrusted.example.test/' },
+    });
+    assert.equal(result.redirect.destination, '/pro', filename);
+    assert.equal(result.redirect.permanent, false);
+    assert.match(headers.get('cache-control'), /no-store/);
+    assert.equal(headers.get('referrer-policy'), 'no-referrer');
+    assert.equal(headers.get('x-robots-tag'), 'noindex, nofollow');
+    assert.equal(route.default(), null);
   }
-  let sends = 0;
-  const route = await harness({ redis, env: mailEnv(), fetch: async () => { sends++; return new Response('Permanent fake error', { status: 422 }); } }).load('src/app/api/influencer/worker/route.js');
-  const request = () => new Request(`${BASE}/api/influencer/worker?followups=1&max=2&minDelayMs=0`, { headers: { Authorization: `Bearer ${CRON_KEY}` } });
-  const first = await route.GET(request());
-  assert.equal(first.status, 200);
-  assert.equal(sends, 2);
-  assert.equal((await first.json()).failed, 2);
-  assert.equal(redis.hashes.get('inf:followup0@example.test').followupStatus, 'failed');
-  assert.equal(redis.hashes.get('inf:followup1@example.test').followupStatus, 'failed');
-  await route.GET(request());
-  assert.equal(sends, 4);
-  assert.equal(redis.hashes.get('inf:followup0@example.test').followupAttempts, 1);
-  assert.equal(redis.hashes.get('inf:followup1@example.test').followupAttempts, 1);
+});
+
+test('deployment manifest no longer schedules retired influencer outreach', async () => {
+  const config = JSON.parse(await readFile(path.join(ROOT, 'vercel.json'), 'utf8'));
+  assert.deepEqual((config.crons || []).filter((job) => job.path.startsWith('/api/influencer/')), []);
 });
 
 test('version checks Apple app identity and keeps trusted fallbacks/links', async () => {
