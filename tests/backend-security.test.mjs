@@ -279,6 +279,38 @@ test('legacy confirmation is signed, expires, and does not enroll unknown addres
   assert.ok(!redis.sets.get('inf:unsubscribed')?.has('unknown@example.test'));
 });
 
+test('legacy confirmation rejects alternate encodings of the same signature bytes', async () => {
+  const { h, helper } = await registeredFixture();
+  // This instant reproduces the CI failure: its canonical signature ends in A.
+  const now = Date.UTC(2026, 10, 11, 11, 43, 15);
+  const token = await helper.createLegacyConfirmationToken(EMAIL, now);
+  assert.equal(await helper.resolveLegacyConfirmationToken(token, now), EMAIL);
+  const separator = token.lastIndexOf('.');
+  const prefix = token.slice(0, separator + 1);
+  const signature = token.slice(separator + 1);
+  const bytes = Buffer.from(signature, 'base64url');
+  assert.equal(bytes.length, 32);
+  assert.ok(signature.endsWith('A'));
+
+  // SHA-256's final base64url character has two unused bits. All three
+  // nonzero variants decode to the same MAC, but are not server-issued text.
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+  const last = alphabet.indexOf(signature.at(-1));
+  assert.equal(last % 4, 0);
+  for (const padBits of [1, 2, 3]) {
+    const alias = signature.slice(0, -1) + alphabet[last + padBits];
+    assert.deepEqual(Buffer.from(alias, 'base64url'), bytes);
+    assert.equal(await helper.resolveLegacyConfirmationToken(prefix + alias, now), null);
+  }
+
+  const changedBytes = Buffer.from(bytes);
+  changedBytes[0] ^= 1;
+  assert.equal(await helper.resolveLegacyConfirmationToken(prefix + changedBytes.toString('base64url'), now), null);
+  assert.equal(await helper.resolveLegacyConfirmationToken(token, now + 901_000), null);
+  h.env.INFLUENCER_UNSUBSCRIBE_SECRET = CRON_KEY;
+  assert.equal(await helper.resolveLegacyConfirmationToken(token, now), null);
+});
+
 test('unsubscribe fails with generic 503 on missing signer or database failure', async () => {
   const redis = new FakeRedis();
   const missing = await harness({ redis }).load('src/app/api/influencer/unsubscribe/route.js');

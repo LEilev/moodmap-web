@@ -49,7 +49,8 @@ export async function hmacSign(secret, message) {
 export async function hmacVerify(secret, message, signature) {
   try {
     const bytes = decodeBase64Url(signature);
-    if (bytes.length !== 32) return false;
+    // Reject padding-bit aliases; issued signatures use canonical base64url.
+    if (bytes.length !== 32 || base64Url(bytes) !== signature) return false;
     const key = await hmacKey(secret, 'verify');
     return crypto.subtle.verify('HMAC', key, bytes, encoder.encode(message));
   } catch {
