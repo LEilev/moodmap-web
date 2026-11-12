@@ -10,6 +10,11 @@ test("essential-only choice keeps analytics off through navigation", async ({ pa
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.locator("#mm-ga4")).toHaveCount(0);
   expect(events(analyticsCalls, "page_view")).toHaveLength(0);
+  await page.locator("footer").getByRole("link", { name: "Premium+", exact: true }).click();
+  await expect(page).toHaveURL(/\/pro$/);
+  await expect(page.locator("#mm-ga4")).toHaveCount(0);
+  expect(events(analyticsCalls, "premium_click")).toHaveLength(0);
+  expect(events(analyticsCalls, "page_view")).toHaveLength(0);
   await page.getByRole("button", { name: "Privacy choices", exact: true }).click();
   await expect(page.getByRole("checkbox", { name: /Analytics/ })).not.toBeChecked();
   await expect(page.getByRole("checkbox")).toHaveCount(1);
@@ -35,6 +40,33 @@ test("opt-in sends one sanitized page view and one real store click", async ({ p
   const hit = events(analyticsCalls, "store_click")[0][2];
   expect(hit).toMatchObject({ platform: "ios", content_path: path, page_path: path });
   expect(hit.placement).toMatch(/^guide-/);
+  expect(JSON.stringify(analyticsCalls)).not.toMatch(/browser-private|browser-secret|session_id|email=/);
+});
+
+test("Premium+ client navigation records one source click and one destination view", async ({ page, analyticsCalls }) => {
+  const path = TOP_GUIDES[1];
+  await page.goto(`${path}?email=browser-private%40example.invalid&session_id=browser-secret#questions`);
+  await page.getByRole("button", { name: "Allow analytics", exact: true }).click();
+  await expect.poll(() => events(analyticsCalls, "page_view").length).toBe(1);
+  expect(events(analyticsCalls, "premium_click")).toHaveLength(0);
+  await page.evaluate(() => { window.__mmPremiumClientNavigation = true; });
+
+  await page.locator("footer").getByRole("link", { name: "Premium+", exact: true }).click();
+  await expect(page).toHaveURL(/\/pro$/);
+  expect(await page.evaluate(() => window.__mmPremiumClientNavigation)).toBe(true);
+  await expect.poll(() => events(analyticsCalls, "premium_click").length).toBe(1);
+  await expect.poll(() => events(analyticsCalls, "page_view").filter((call) => call[2].page_path === "/pro").length).toBe(1);
+  expect(events(analyticsCalls, "page_view")).toHaveLength(2);
+
+  expect(events(analyticsCalls, "premium_click")[0][2]).toMatchObject({
+    placement: "footer",
+    page_path: path,
+    page_location: `https://moodmap-app.com${path}`,
+    send_to: GA_TEST_ID,
+  });
+  const clickIndex = analyticsCalls.findIndex((call) => call[0] === "event" && call[1] === "premium_click");
+  const arrivalIndex = analyticsCalls.findIndex((call) => call[0] === "event" && call[1] === "page_view" && call[2].page_path === "/pro");
+  expect(arrivalIndex).toBeGreaterThan(clickIndex);
   expect(JSON.stringify(analyticsCalls)).not.toMatch(/browser-private|browser-secret|session_id|email=/);
 });
 

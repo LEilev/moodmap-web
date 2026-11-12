@@ -87,11 +87,18 @@ export default function SitePrivacy({ path }) {
       } catch { /* Keep the original link available. */ }
     };
     const click = (event) => {
-      if (event.defaultPrevented || event.button !== 0) return;
+      if (event.button !== 0) return;
       const anchor = event.target instanceof Element ? event.target.closest("a[href]") : null;
       if (!anchor) return;
       const hit = clickEventForLink(anchor, window.location.href);
-      if (hit) controller.track(hit.name, hit.params);
+      // Next Link prevents the browser default when it handles an internal navigation.
+      // premium_click measures link-click intent; the destination page_view records arrival.
+      const handledPremiumLink = hit?.name === "premium_click" &&
+        anchor.origin === window.location.origin &&
+        (!anchor.target || anchor.target === "_self") && !anchor.hasAttribute("download") &&
+        !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+      if (!hit || (event.defaultPrevented && !handledPremiumLink)) return;
+      controller.track(hit.name, hit.params);
     };
     sync();
     setReady(true);
