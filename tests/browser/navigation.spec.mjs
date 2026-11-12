@@ -40,25 +40,29 @@ test("keyboard navigation reaches homepage sections and download controls", asyn
   await page.keyboard.press("Enter");
   await expect(page.locator("#main-content")).toBeFocused();
 
+  const downloads = page.locator("#download");
+  const iphone = downloads.getByRole("link", { name: "Download MoodMap for iPhone on the App Store", exact: true });
+  const android = downloads.getByRole("link", { name: "Get MoodMap on Google Play", exact: true });
   const navigation = page.getByRole("navigation", { name: "Primary navigation" });
-  for (const [name, hash] of [["Product", "#product"], ["How it works", "#how-it-works"]]) {
+  const destinations = [
+    ["How it works", "#how-it-works", page.locator("#how-it-works").getByRole("heading").first()],
+    ["Get the app", "#download", iphone],
+  ];
+  for (const [name, hash, target] of destinations) {
     const link = navigation.getByRole("link", { name, exact: true });
     await link.focus();
     await expect(link).toBeFocused();
     await page.keyboard.press("Enter");
     await expect.poll(() => new URL(page.url()).hash).toBe(hash);
-    const heading = page.locator(hash).getByRole("heading").first();
-    await expect(heading).toBeInViewport();
+    await expect(target).toBeVisible();
+    await expect(target).toBeInViewport();
     await expect.poll(async () => {
-      const bounds = await heading.boundingBox();
+      const bounds = await target.boundingBox();
       const header = await page.locator("#site-shell > header").boundingBox();
       return bounds !== null && bounds.y >= (header?.height || 0) - 1;
     }).toBe(true);
   }
 
-  const downloads = page.locator("#download");
-  const iphone = downloads.getByRole("link", { name: "Download MoodMap for iPhone on the App Store", exact: true });
-  const android = downloads.getByRole("link", { name: "Get MoodMap on Google Play", exact: true });
   await iphone.focus();
   await expect(iphone).toBeFocused();
   await expect(iphone).toBeVisible();

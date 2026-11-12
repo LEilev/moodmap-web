@@ -7,18 +7,19 @@ import { Download, Menu, X } from "lucide-react";
 import { lockPageScroll } from "../lib/menu-lifecycle.mjs";
 
 const LINKS = [
-  { href: "/#product", label: "Product" },
   { href: "/#how-it-works", label: "How it works" },
-  { href: "/intelligence", label: "Intelligence" },
   { href: "/learn", label: "Guides" },
+  { href: "/pro", label: "Premium+" },
+];
+
+const MORE_LINKS = [
   { href: "/about", label: "About" },
   { href: "/support", label: "Support" },
-  { href: "/pro", label: "Premium+" },
 ];
 
 const BRAND_MARK_SRC = "/brand/moodmap-mark.png";
 
-export default function MobileMenu({ brandMarkProps } = {}) {
+export default function MobileMenu({ brandMarkProps, className = "" } = {}) {
   const [open, setOpen] = useState(false);
   const closeButtonRef = useRef(null);
   const panelRef = useRef(null);
@@ -111,7 +112,7 @@ export default function MobileMenu({ brandMarkProps } = {}) {
 
       {open && createPortal(
         <div
-          className="mm-mobile-menu-shell"
+          className={["mm-mobile-menu-shell", className].filter(Boolean).join(" ")}
           role="dialog"
           aria-modal="true"
           aria-label="Navigation menu"
@@ -129,7 +130,7 @@ export default function MobileMenu({ brandMarkProps } = {}) {
               <div className="mm-brand-lockup text-base" aria-hidden="true">
                 <span className="mm-brand-mark">
                   <img
-                    {...(brandMarkProps ?? { src: BRAND_MARK_SRC, width: 34, height: 34 })}
+                    {...(brandMarkProps ?? { src: BRAND_MARK_SRC, width: 44, height: 44 })}
                     alt=""
                     loading="eager"
                     decoding="async"
@@ -162,12 +163,20 @@ export default function MobileMenu({ brandMarkProps } = {}) {
               ))}
             </nav>
 
+            <nav className="mm-mobile-secondary" aria-label="More MoodMap links">
+              {MORE_LINKS.map((link) => (
+                <Link key={link.href} href={link.href} onClick={() => setOpen(false)}>
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
             <div className="mm-mobile-panel__cta">
               <Link href="/#download" className="mm-mobile-download" onClick={() => setOpen(false)}>
                 <Download className="h-4 w-4" aria-hidden="true" />
                 Download MoodMap
               </Link>
-              <p>One private daily read. Cycle-aware context. Built for your response—not a verdict on her.</p>
+              <p>A quick daily read. A little more understanding.</p>
             </div>
           </aside>
         </div>,

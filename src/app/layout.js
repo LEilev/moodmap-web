@@ -5,6 +5,7 @@ import { getImageProps } from "next/image";
 import AppSiteClient from "../components/AppSiteClient";
 import { PrivacyPreferencesButton } from "../components/SitePrivacy";
 import MobileMenu from "../components/MobileMenu";
+import chrome from "../components/SiteChrome.module.css";
 import {
   BRAND_MARK_SRC,
   DEFAULT_META_DESCRIPTION,
@@ -70,13 +71,13 @@ export const metadata = {
 const { props: brandMarkProps } = getImageProps({
   src: BRAND_MARK_SRC,
   alt: "",
-  width: 34,
-  height: 34,
+  width: 44,
+  height: 44,
 });
 
 function BrandLockup({ className = "", footer = false }) {
   return (
-    <Link href="/" className={["mm-brand-lockup", className].filter(Boolean).join(" ")} aria-label="MoodMap home">
+    <Link href="/" className={["mm-brand-lockup", chrome.brand, className].filter(Boolean).join(" ")} aria-label="MoodMap home">
       <span className="mm-brand-mark" aria-hidden="true">
         <img {...brandMarkProps} alt="" loading={footer ? "lazy" : "eager"} />
       </span>
@@ -107,81 +108,60 @@ export default function RootLayout({ children }) {
         <div id="site-shell" className="flex min-h-full flex-col">
           <AppSiteClient />
           <a href="#main-content" className="mm-skip-link">Skip to content</a>
-          <header className="mm-site-header sticky top-0 z-40">
-            <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3.5">
+          <header className={`mm-site-header sticky top-0 z-40 ${chrome.header}`}>
+            <div className={chrome.headerInner}>
               <BrandLockup />
 
-              {/* Desktop nav */}
-              <nav aria-label="Primary navigation" className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.045] p-1 text-sm font-medium text-white/68 shadow-2xl shadow-black/20 backdrop-blur-xl lg:flex">
-                <Link href="/#product" className="mm-nav-link">
-                  Product
-                </Link>
-                <Link href="/#how-it-works" className="mm-nav-link">
+              <nav aria-label="Primary navigation" className={chrome.navigation}>
+                <Link href="/#how-it-works" className={`mm-nav-link ${chrome.navLink}`}>
                   How it works
                 </Link>
-                <Link href="/intelligence" className="mm-nav-link">
-                  Intelligence
-                </Link>
-                <Link href="/learn" className="mm-nav-link">
+                <Link href="/learn" className={`mm-nav-link ${chrome.navLink}`}>
                   Guides
                 </Link>
-                <Link href="/pro" className="mm-nav-link mm-nav-link--strong">
+                <Link href="/pro" className={`mm-nav-link ${chrome.navLink}`}>
                   Premium+
+                </Link>
+                <Link href="/#download" className={chrome.downloadLink}>
+                  Get the app <span aria-hidden="true">↓</span>
                 </Link>
               </nav>
 
-              <MobileMenu brandMarkProps={brandMarkProps} />
+              <MobileMenu brandMarkProps={brandMarkProps} className={chrome.menuShell} />
             </div>
           </header>
 
           <div id="main-content" tabIndex={-1} className="flex-1">{children}</div>
 
-          <footer className="mm-site-footer">
-            <div className="mx-auto max-w-7xl px-6 py-10">
-              <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-                <div className="max-w-xl">
+          <footer className={`mm-site-footer ${chrome.footer}`}>
+            <div className={chrome.footerInner}>
+              <div className={chrome.footerTop}>
+                <div className={chrome.footerIdentity}>
                   <BrandLockup footer />
-                  <p className="mt-4 text-sm leading-relaxed text-white/58">
-                    Built in Norway. Private by design. Cycle-aware relationship intelligence. Context for your response—not a verdict on her.
-                  </p>
+                  <p>Built in Norway. Made for better connection.</p>
                 </div>
 
-                <div className="text-left md:text-right">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-white/68 md:justify-end">
-                    <Link className="mm-link" href="/learn">
-                      Guides
-                    </Link>
-                    <Link className="mm-link" href="/intelligence">
-                      Intelligence
-                    </Link>
-                    <Link className="mm-link" href="/about">
-                      About
-                    </Link>
-                    <Link className="mm-link" href="/support">
-                      Support
-                    </Link>
-                    <Link className="mm-link" href="/pro">
-                      Premium+
-                    </Link>
-                    <Link className="mm-link" href="/privacy-policy">
-                      Privacy Policy
-                    </Link>
-                    <Link className="mm-link" href="/terms">
-                      Terms
-                    </Link>
-                    <PrivacyPreferencesButton />
-                  </div>
-
-                  <p className="mt-4 text-sm text-white/62">
-                    Contact:{" "}
+                <div className={chrome.footerExplore}>
+                  <nav className={chrome.footerNav} aria-label="Footer navigation">
+                    <Link className="mm-link" href="/about">About</Link>
+                    <Link className="mm-link" href="/learn">Guides</Link>
+                    <Link className="mm-link" href="/intelligence">The model</Link>
+                    <Link className="mm-link" href="/support">Support</Link>
+                    <Link className="mm-link" href="/pro">Premium+</Link>
+                  </nav>
+                  <p className={chrome.contact}>
                     <a className="mm-link" href="mailto:support@moodmap-app.com">
                       support@moodmap-app.com
                     </a>
                   </p>
-
-                  <p className="mt-5 text-xs text-white/60">
-                    © 2026 {SITE_NAME}. All rights reserved.
-                  </p>
+                </div>
+              </div>
+              <div className={chrome.footerBottom}>
+                <p>© 2026 {SITE_NAME}</p>
+                <div className={chrome.legal}>
+                  <Link className="mm-link" href="/privacy-policy">Privacy Policy</Link>
+                  <Link className="mm-link" href="/terms">Terms</Link>
+                  <PrivacyPreferencesButton />
                 </div>
               </div>
             </div>
