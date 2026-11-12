@@ -36,11 +36,8 @@
 .phase p, .step p, .lane p { margin: .65rem 0 0; font-size: .96rem; }
 .phaseLabel { display: block; color: #9be5d0; font-size: .78rem; letter-spacing: .04em; margin: 0 0 .55rem; font-weight: 650; }
 .stepNumber { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border: 1px solid #6ba392; border-radius: 50%; margin-bottom: .9rem; color: #b0f4df; font-size: .85rem; font-weight: 700; }
-.product { display: grid; gap: 2rem; align-items: center; border: 1px solid #43516a; border-radius: 1.3rem; background: linear-gradient(135deg, #17273e, #111d32); padding: clamp(1.1rem, 4vw, 2rem); margin: 2.75rem 0; }
-.product > div { min-width: 0; }
-.product figure { margin: 0; width: min(100%, 16rem); justify-self: center; }
-.product img { width: 100%; height: auto; display: block; border-radius: 1.2rem; border: 1px solid #4a5871; }
-.product figcaption { color: #b6c6dc; font-size: .78rem; line-height: 1.5; margin-top: .8rem; }
+.product { border: 1px solid #43516a; border-radius: 1.3rem; background: linear-gradient(135deg, #17273e, #111d32); padding: clamp(1.1rem, 4vw, 2rem); margin: 2.75rem 0; }
+.product > div { min-width: 0; max-width: 70ch; }
 .download { margin: 1.5rem 0 .5rem; }
 .content .downloadTitle { font-size: 1.05rem; font-weight: 700; color: #f2f6fc; margin-bottom: .75rem; }
 .storeLinks { display: flex; flex-wrap: wrap; gap: .65rem; }
@@ -71,7 +68,6 @@
 .comparisonGroup .compare > div { padding: .65rem 0 0; }
 @media (min-width: 42rem) {
   .phaseGrid, .laneGrid, .compare { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .product { grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem); }
 }
 @media (min-width: 58rem) { .stepGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 24rem) { .storeLinks a { width: 100%; } .byline { font-size: .8rem; } }

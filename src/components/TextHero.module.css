@@ -1,0 +1,42 @@
+.hero {
+  position: relative;
+  padding-block: clamp(2.75rem, 5vw, 4.5rem);
+  border-bottom: 1px solid rgba(151, 183, 224, 0.1);
+}
+
+.copy {
+  position: relative;
+  min-width: 0;
+  max-width: 48rem;
+  text-align: left;
+}
+
+.copy h1 {
+  margin: 1.15rem 0 0;
+  color: var(--mm2-text);
+  font-size: clamp(2.35rem, 5.5vw, 4.25rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.copy > p {
+  max-width: 65ch;
+}
+
+.copy :global(.mm-v2-subhero__lead) {
+  margin-top: 1.25rem;
+}
+
+.copy :global(.mm-section-label),
+.copy :global(.mm-v2-boundary),
+.copy :global(.mm-v2-purchase-note) {
+  margin-inline: 0;
+}
+
+.copy :global(.mm-v2-subhero__actions),
+.copy :global(.mm-store-row) {
+  justify-content: flex-start;
+}

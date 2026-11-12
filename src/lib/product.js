@@ -73,7 +73,7 @@ export const PRODUCT_FEATURES = Object.freeze([
 // Only pages whose substantive content changed in this release receive a new
 // date. An unknown original publication date is not invented.
 export const CONTENT_UPDATES = Object.freeze({
-  "/": "2026-11-10",
+  "/": "2026-11-12",
   "/about": "2026-11-10",
   "/intelligence": "2026-11-10",
   "/pro": "2026-11-10",
@@ -94,7 +94,7 @@ export const CONTENT_UPDATES = Object.freeze({
 });
 
 export const PUBLIC_PAGES = Object.freeze([
-  { path: "/", title: "MoodMap: Relationship Timing", description: "Daily cycle context, product examples and downloads." },
+  { path: "/", title: "MoodMap: Relationship Timing", description: "Daily cycle context for support, conversations and intimacy. Download MoodMap for iOS or Android." },
   { path: "/about", title: "About MoodMap", description: "The independent maker, official app identity and product facts." },
   { path: "/intelligence", title: "Cycle Intelligence", description: "How modeled biology becomes possible context, and where the model fits." },
   { path: "/pro", title: "Premium+", description: "Free daily guidance, optional Premium+ in the app, and official store links for local prices and terms." },

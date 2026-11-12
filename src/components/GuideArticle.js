@@ -51,19 +51,17 @@ export function GuideStoreLinks({ path, placement = "guide-end", title = "Get yo
   );
 }
 
-export function GuideProductExample({ path, image, alt, title, children }) {
+// Screenshots intentionally stay out until current, verified app assets are available.
+// Older guide callers may still pass image/alt props; neither is rendered.
+export function GuideProductExample({ path, title, children }) {
   return (
-    <section className={styles.product} aria-label="MoodMap app example">
+    <section className={styles.product} aria-label="MoodMap daily guidance">
       <div>
-        <p className={styles.eyebrow}>From the overview to today</p>
+        <p className={styles.eyebrow}>Put cycle context into practice</p>
         <h2>{title}</h2>
         {children}
         <GuideStoreLinks path={path} placement="guide-inline" title="Try a daily read" />
       </div>
-      <figure>
-        <img src={image} alt={alt} width={828} height={1792} loading="lazy" decoding="async" />
-        <figcaption>An example from the app. Cycle context and capacity are estimates.</figcaption>
-      </figure>
     </section>
   );
 }

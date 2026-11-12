@@ -31,26 +31,42 @@ test("mobile menu restores focus and scrolling through a tablet width change", a
   await expectPageGeometry(page);
 });
 
-test("keyboard navigation reaches content and operates product tabs", async ({ page }) => {
+test("keyboard navigation reaches homepage sections and download controls", async ({ page }) => {
+  await page.setViewportSize({ width: 1180, height: 820 });
   await page.goto("/");
   await dismissPrivacy(page);
   await page.evaluate(() => document.activeElement?.blur());
   await page.getByRole("link", { name: "Skip to content", exact: true }).focus();
   await page.keyboard.press("Enter");
   await expect(page.locator("#main-content")).toBeFocused();
-  const tabs = page.getByRole("tablist", { name: "MoodMap product views" }).getByRole("tab");
-  const last = tabs.last();
-  await tabs.first().focus();
-  await page.keyboard.press("End");
-  await expect(last).toBeFocused();
-  await expect(last).toHaveAttribute("aria-selected", "true");
-  await page.keyboard.press("Home");
-  await expect(tabs.first()).toBeFocused();
-  await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
-  await page.keyboard.press("ArrowDown");
-  await expect(tabs.nth(1)).toBeFocused();
-  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
-  await expect(page.getByRole("tabpanel")).toHaveAttribute("aria-labelledby", await tabs.nth(1).getAttribute("id"));
+
+  const navigation = page.getByRole("navigation", { name: "Primary navigation" });
+  for (const [name, hash] of [["Product", "#product"], ["How it works", "#how-it-works"]]) {
+    const link = navigation.getByRole("link", { name, exact: true });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect.poll(() => new URL(page.url()).hash).toBe(hash);
+    const heading = page.locator(hash).getByRole("heading").first();
+    await expect(heading).toBeInViewport();
+    await expect.poll(async () => {
+      const bounds = await heading.boundingBox();
+      const header = await page.locator("#site-shell > header").boundingBox();
+      return bounds !== null && bounds.y >= (header?.height || 0) - 1;
+    }).toBe(true);
+  }
+
+  const downloads = page.locator("#download");
+  const iphone = downloads.getByRole("link", { name: "Download MoodMap for iPhone on the App Store", exact: true });
+  const android = downloads.getByRole("link", { name: "Get MoodMap on Google Play", exact: true });
+  await iphone.focus();
+  await expect(iphone).toBeFocused();
+  await expect(iphone).toBeVisible();
+  await expect(iphone).toHaveAttribute("href", /^https:\/\/apps\.apple\.com\//);
+  await page.keyboard.press("Tab");
+  await expect(android).toBeFocused();
+  await expect(android).toBeVisible();
+  await expect(android).toHaveAttribute("href", /^https:\/\/play\.google\.com\/store\/apps\/details\?/);
 });
 
 test("guide contents links leave their headings below the sticky header", async ({ page }) => {

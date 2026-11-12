@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   Activity,
   ArrowRight,
-  Brain,
   Gauge,
   Layers3,
   LineChart,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
+import heroStyles from "../../components/TextHero.module.css";
 import { PRODUCT } from "../../lib/product";
 import {
   OG_IMAGE_SRC,
@@ -124,9 +124,9 @@ export default function IntelligencePage() {
       <ScrollReveal />
       <div aria-hidden="true" className="mm-background-field" />
 
-      <section className="mm-v2-subhero mm-v2-subhero--orange">
-        <div className="mm-container mm-v2-subhero__grid">
-          <div className="mm-v2-subhero__copy" data-reveal>
+      <section className={heroStyles.hero}>
+        <div className="mm-container">
+          <div className={heroStyles.copy} data-reveal>
             <span className="mm-section-label">Cycle Intelligence</span>
             <h1>Understand the signal behind the day.</h1>
             <p className="mm-v2-subhero__lead">
@@ -136,32 +136,6 @@ export default function IntelligencePage() {
             <div className="mm-v2-subhero__actions">
               <Link href="/#download" className="mm-v2-primary-link">Download MoodMap <ArrowRight aria-hidden="true" /></Link>
               <Link href="#how-the-model-works" className="mm-v2-secondary-link">How the model works</Link>
-            </div>
-          </div>
-
-          <div className="mm-v2-subhero__visual" data-reveal>
-            <div className="mm-v2-subhero__badge mm-v2-subhero__badge--orange"><Brain aria-hidden="true" /><span>Biology → possible effects</span></div>
-            <div className="mm-v3-intelligence-stack mm-v3-intelligence-stack--hero" aria-label="MoodMap Cycle Intelligence screens">
-              <div className="mm-v3-phone-frame mm-v3-phone-frame--rear">
-                <img
-                  width={828} height={1792}
-                src="/screenshots/web-2026/intelligence-graph.webp"
-                  alt="MoodMap modeled hormone graph across the cycle."
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-              </div>
-              <div className="mm-v3-phone-frame mm-v3-phone-frame--front">
-                <img
-                  width={828} height={1792}
-                src="/screenshots/web-2026/intelligence.webp"
-                  alt="MoodMap Intelligence showing Today’s Shift, Biology, and possible effects."
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-              </div>
             </div>
           </div>
         </div>

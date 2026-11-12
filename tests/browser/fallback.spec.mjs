@@ -18,9 +18,27 @@ test("important content and store links remain readable without JavaScript", asy
   } finally { await context.close(); }
 });
 
-test("reduced motion keeps reveal content visible", async ({ page }) => {
+test("reduced motion keeps homepage content and animated subpages readable", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await expect(page.locator("html")).not.toHaveClass(/motion-ready/);
+  const homepageContent = [
+    page.getByRole("heading", { level: 1 }),
+    page.locator("#product"),
+    page.locator("#how-it-works"),
+    page.locator("#download"),
+  ];
+  for (const content of homepageContent) {
+    await content.scrollIntoViewIfNeeded();
+    await expect(content).toBeVisible();
+    await expect(content).toHaveCSS("opacity", "1");
+  }
+  await expect(page.locator("#product").getByRole("heading").first()).toBeVisible();
+  await expect(page.locator("#how-it-works").getByRole("heading").first()).toBeVisible();
+  await expect(page.locator("#download").getByRole("link", { name: "Download MoodMap for iPhone on the App Store", exact: true })).toBeVisible();
+
+  // The homepage is static; Premium+ still uses scroll reveals.
+  await page.goto("/pro");
   await expect(page.locator("html")).not.toHaveClass(/motion-ready/);
   const panels = page.locator("[data-reveal]");
   expect(await panels.count()).toBeGreaterThan(0);

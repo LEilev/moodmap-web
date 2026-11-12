@@ -4,7 +4,6 @@ import {
   BellRing,
   CalendarDays,
   Check,
-  Crown,
   Layers3,
   ShieldCheck,
   Sparkles,
@@ -12,6 +11,7 @@ import {
 
 import ScrollReveal from "../../components/ScrollReveal";
 import StoreButtons from "../../components/StoreButtons";
+import heroStyles from "../../components/TextHero.module.css";
 import { PRODUCT, FREE_FEATURES, PREMIUM_FEATURES } from "../../lib/product";
 import { OG_IMAGE_SRC, mobileApplicationJsonLd } from "../seo";
 
@@ -69,9 +69,9 @@ export default function ProPage() {
       <ScrollReveal />
       <div aria-hidden="true" className="mm-background-field" />
 
-      <section className="mm-v2-subhero">
-        <div className="mm-container mm-v2-subhero__grid">
-          <div className="mm-v2-subhero__copy" data-reveal>
+      <section className={heroStyles.hero}>
+        <div className="mm-container">
+          <div className={heroStyles.copy} data-reveal>
             <span className="mm-section-label">MoodMap Premium+</span>
             <h1>Unlock the full read.</h1>
             <p className="mm-v2-subhero__lead">
@@ -86,21 +86,6 @@ export default function ProPage() {
             <p className="mm-v2-purchase-note">
               Review the local price, billing period, and renewal terms in your app store before subscribing. Manage renewal or cancel in the store where you subscribed.
             </p>
-          </div>
-
-          <div className="mm-v2-subhero__visual" data-reveal>
-            <div className="mm-v2-subhero__badge"><Crown aria-hidden="true" /><span>Premium+</span></div>
-            <div className="mm-v2-poster mm-v2-poster--pro">
-              <div className="mm-v2-poster__glow" aria-hidden="true" />
-              <img
-                width={828} height={1792}
-                src="/screenshots/web-2026/protocol-why.webp"
-                alt="MoodMap Command Deck WHY screen showing reciprocity, signal, and how to use the guidance."
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
-            </div>
           </div>
         </div>
       </section>

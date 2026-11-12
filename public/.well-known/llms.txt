@@ -44,7 +44,7 @@ No symptom diary is required. Product analytics, purchase handling and support d
 
 ## Official pages and guides
 
-- [MoodMap: Relationship Timing](https://moodmap-app.com/): Daily cycle context, product examples and downloads.
+- [MoodMap: Relationship Timing](https://moodmap-app.com/): Daily cycle context for support, conversations and intimacy. Download MoodMap for iOS or Android.
 - [About MoodMap](https://moodmap-app.com/about): The independent maker, official app identity and product facts.
 - [Cycle Intelligence](https://moodmap-app.com/intelligence): How modeled biology becomes possible context, and where the model fits.
 - [Premium+](https://moodmap-app.com/pro): Free daily guidance, optional Premium+ in the app, and official store links for local prices and terms.

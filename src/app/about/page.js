@@ -2,7 +2,6 @@ import "../polish.css";
 import Link from "next/link";
 import {
   AppWindow,
-  BadgeCheck,
   ExternalLink,
   Fingerprint,
   Globe2,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 
 import ScrollReveal from "../../components/ScrollReveal";
+import heroStyles from "../../components/TextHero.module.css";
 import { PRODUCT, displayDate } from "../../lib/product";
 import {
   ANDROID_PACKAGE_ID,
@@ -104,9 +104,9 @@ export default function AboutPage() {
       <ScrollReveal />
       <div aria-hidden="true" className="mm-background-field" />
 
-      <section className="mm-v2-subhero mm-v2-subhero--about">
-        <div className="mm-container mm-v2-subhero__grid">
-          <div className="mm-v2-subhero__copy" data-reveal>
+      <section className={heroStyles.hero}>
+        <div className="mm-container">
+          <div className={heroStyles.copy} data-reveal>
             <span className="mm-section-label">Official MoodMap information</span>
             <h1>Built for better relationship timing.</h1>
             <p className="mm-v2-subhero__lead">{DISAMBIGUATION_DESCRIPTION}</p>
@@ -114,21 +114,6 @@ export default function AboutPage() {
             <div className="mm-v2-subhero__actions">
               <Link href="/#download" className="mm-v2-primary-link">Download MoodMap</Link>
               <Link href="/intelligence" className="mm-v2-secondary-link">Explore Intelligence</Link>
-            </div>
-          </div>
-
-          <div className="mm-v2-subhero__visual" data-reveal>
-            <div className="mm-v2-subhero__badge"><BadgeCheck aria-hidden="true" /><span>Official app</span></div>
-            <div className="mm-v2-poster mm-v2-poster--about">
-              <div className="mm-v2-poster__glow" aria-hidden="true" />
-              <img
-                width={828} height={1792}
-                src="/screenshots/web-2026/read-day.webp"
-                alt="MoodMap Today’s State showing cycle phase, capacity, intelligence, risk, and direction."
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-              />
             </div>
           </div>
         </div>
