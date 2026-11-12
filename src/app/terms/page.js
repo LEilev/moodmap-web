@@ -1,5 +1,6 @@
 // src/app/terms/page.js
 import Link from "next/link";
+import pageStyles from "../../components/EditorialPage.module.css";
 import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
 import { pageMetadata } from "../seo";
 import {
@@ -45,9 +46,7 @@ const toc = [
 function IconRing({ children }) {
   return (
     <span
-      className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl
-                 bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20
-                 shadow-inner shadow-emerald-500/10"
+      className={pageStyles.legalIcon}
     >
       {children}
     </span>
@@ -58,7 +57,7 @@ function GlassCard({ id, children }) {
   return (
     <article
       id={id}
-      className="scroll-mt-24 rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl p-6"
+      className={pageStyles.legalCard}
     >
       {children}
     </article>
@@ -67,21 +66,11 @@ function GlassCard({ id, children }) {
 
 export default function TermsPage() {
   return (
-    <main className="relative isolate min-h-screen bg-primary-blue text-white">
-      {/* Subtle emerald→blue glows (match other legal/support pages) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
-      />
-
+    <main className={`${pageStyles.page} ${pageStyles.legal} relative isolate min-h-screen`}>
       {/* Hero */}
-      <section className="px-6 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
-        <div className="mx-auto max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-xs font-semibold text-blue-100">
+      <section className={pageStyles.legalHero}>
+        <div className={pageStyles.legalWidth}>
+          <div className={pageStyles.legalDate}>
             <span>Last updated: {LAST_UPDATED}</span>
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">
@@ -98,12 +87,10 @@ export default function TermsPage() {
       <section className="px-6 pb-8">
         <div className="mx-auto max-w-4xl">
           {/* Mobile: collapsible */}
-          <details className="sm:hidden rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl">
+          <details className={`${pageStyles.legalToc} sm:hidden`}>
             <summary className="list-none cursor-pointer select-none px-4 py-3 font-semibold">
               <span
-                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm
-                           text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                           shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+                className={pageStyles.tocToggle}
               >
                 Jump to section
               </span>
@@ -129,7 +116,7 @@ export default function TermsPage() {
 
           {/* Desktop */}
           <nav
-            className="hidden sm:block rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl p-5"
+            className={`${pageStyles.legalToc} hidden sm:block`}
             role="navigation"
             aria-label="Table of contents"
           >
@@ -325,11 +312,7 @@ export default function TermsPage() {
           <div className="pt-2 text-center">
             <a
               href="mailto:support@moodmap-app.com?subject=Terms%20question"
-              className="group relative inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold
-                         text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                         shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all
-                         hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+              className={pageStyles.primaryLink}
             >
               Email us about Terms
             </a>

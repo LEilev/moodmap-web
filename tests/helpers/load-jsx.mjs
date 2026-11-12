@@ -16,7 +16,9 @@ export async function loadJsx(relativePath, replacements = {}) {
     format: "cjs",
     supported: { "dynamic-import": false },
     jsx: "automatic",
-    loader: { ".js": "jsx" },
+    // DOM unit tests exercise behavior; the production build and browser suite
+    // validate real CSS modules and layout.
+    loader: { ".js": "jsx", ".css": "empty", ".module.css": "empty" },
     packages: "external",
     logLevel: "silent",
   });

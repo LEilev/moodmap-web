@@ -1,5 +1,6 @@
 import "../polish.css";
 import Link from "next/link";
+import pageStyles from "../../components/EditorialPage.module.css";
 import {
   AppWindow,
   ExternalLink,
@@ -96,7 +97,7 @@ export default function AboutPage() {
   const faqSchema = faqJsonLd(FAQ);
 
   return (
-    <main className="mm-page mm-v2-page mm-v2-subpage relative isolate overflow-hidden text-white">
+    <main className={`${pageStyles.page} mm-page mm-v2-page mm-v2-subpage relative isolate overflow-hidden`}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />

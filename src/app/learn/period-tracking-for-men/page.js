@@ -1,7 +1,6 @@
 import Link from "next/link";
 import GuideArticle, {
   GuideFAQ,
-  GuideProductExample,
   GuideRelated,
   GuideSection,
   GuideStoreLinks,
@@ -23,14 +22,14 @@ export const metadata = {
 };
 
 const FAQ = [
-  { q: "What does period tracking for men mean?", a: "It means using cycle timing that a partner has agreed to share as context for practical support, conversations and connection. MoodMap adds a daily read and actionable guidance for the man, without recording his partner’s actual mood." },
-  { q: "What is the minimum information I need?", a: "Start with an agreed period-start date and the cycle information she is comfortable sharing. Keep the estimate current when a new period begins. You do not need to keep a diary of her feelings or symptoms to use MoodMap." },
-  { q: "How do I ask her about it?", a: "Explain what you hope it will help you do: for example, plan better or remember when practical support may be useful. Ask whether she wants that, what she is comfortable sharing and what she would prefer to keep private. Respect a no." },
-  { q: "What if her cycle is not 28 days?", a: "A 28-day cycle is only an example. MoodMap has cycle, menstruation and PMS-window settings. Use the options shown in the current app, and treat the result as an estimate. If cycles are irregular, a calendar model may not fit well." },
+  { q: "What does period tracking for men mean?", a: "Using cycle dates your partner chooses to share to keep possible changes in energy, comfort and mood in mind. MoodMap turns that timing into a daily read and practical guidance on your own phone." },
+  { q: "What is the minimum information I need?", a: "Start with an agreed period-start date and review the cycle settings. Update the date when a new period begins. MoodMap does not require a symptom diary or a record of her feelings." },
+  { q: "How do I ask her about it?", a: "Explain what you want it to help you do, such as remember when practical support may be useful. Ask if she would like that and what she is comfortable sharing. Respect her preference if she does not want tracking." },
+  { q: "What if her cycle is not 28 days?", a: "Review the cycle length, menstruation length and PMS-window options in the app. A calendar estimate becomes less useful when cycles vary substantially; changing a setting cannot remove that uncertainty." },
   { q: "What is free and what does Premium+ add?", a: `${PRODUCT.freeSummary} ${PRODUCT.premiumSummary}` },
-  { q: "Does cycle tracking tell me when she wants sex?", a: "No. Cycle context may be relevant to comfort or desire for some people, but it cannot tell you whether your partner wants sex. BOND offers guidance for flirting and intimacy; her actual interest and consent set the pace." },
-  { q: "Does she need a linked account or mood diary?", a: "MoodMap’s daily guidance does not require a partner mood diary or a shared feed. You enter agreed cycle context and use the guidance on your own phone. Check the Privacy Policy for how analytics, purchases and support information are handled." },
-  { q: "Can I use MoodMap for contraception or fertility planning?", a: "No. It uses cycle estimates for educational relationship guidance. It cannot confirm ovulation, measure hormones or replace appropriate medical and fertility advice." },
+  { q: "Does cycle tracking tell me when she wants sex?", a: "No. BOND offers ideas for flirting, sex and intimacy, but a cycle estimate cannot tell you whether she is interested. Her response and consent set the pace." },
+  { q: "Does she need a linked account or mood diary?", a: "No. You enter agreed cycle context and use the guidance on your phone. A partner mood diary or shared feed is not required." },
+  { q: "Can I use MoodMap for contraception or fertility planning?", a: "No. MoodMap estimates cycle context for relationship guidance. It cannot confirm ovulation, measure hormones or support contraception or fertility planning." },
 ];
 
 export default function PeriodTrackingForMenPage() {
@@ -43,61 +42,57 @@ export default function PeriodTrackingForMenPage() {
     <>
       {schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />)}
       <GuideArticle path={SLUG} title={TITLE}
-        lead="A period tracker for men can help you keep agreed cycle timing in mind. The useful next step is knowing what that context may mean today: her possible energy, comfort and mood, and a better way for you to respond."
+        lead="A period tracker for men can give you a little more context for her day. Here is what to enter, what you can learn, and how to turn that information into something useful between you."
+        readingTime="5 min read"
+        takeaway="Start with a period date your partner chooses to share. MoodMap uses that timing for a quick daily read of possible mood, energy and connection—with practical guidance for your response."
         contents={[{ href: "#get-started", label: "Get started" }, { href: "#daily-guidance", label: "What you get each day" }, { href: "#free-premium", label: "Free and Premium+" }, { href: "#privacy", label: "Privacy and agreement" }, { href: "#questions", label: "Common questions" }]}>
-        <GuideSection id="get-started" title="Start with a little information and a clear purpose">
-          <div className={styles.summary}><p><strong>The goal:</strong> get a quick feel for the possible cycle context, then act on what is actually happening between you. A date can be useful background; it cannot tell you what she thinks.</p></div>
+        <GuideSection id="get-started" title="Start with one date">
           <div className={styles.stepGrid}>
-            <article className={styles.step}><span className={styles.stepNumber}>1</span><h3>Ask what would help</h3><p>Explain why you want a reminder or cycle overview. Agree on what she wants to share and what support she finds useful.</p></article>
-            <article className={styles.step}><span className={styles.stepNumber}>2</span><h3>Set the cycle context</h3><p>Enter an agreed period-start date and check the cycle settings. Keep the date current when a new period starts. An estimate is only as useful as its starting information.</p></article>
-            <article className={styles.step}><span className={styles.stepNumber}>3</span><h3>Read, then respond</h3><p>Use the daily context to consider a practical move: simplify a plan, change your tone, offer support or make room for mutual connection.</p></article>
+            <article className={styles.step}><span className={styles.stepNumber}>1</span><h3>Agree on what helps</h3><p>Ask whether a cycle reminder would be useful, what she wants to share and what support she actually appreciates.</p></article>
+            <article className={styles.step}><span className={styles.stepNumber}>2</span><h3>Set the cycle context</h3><p>Enter the agreed period-start date. Review cycle length, menstruation length and the PMS window. Update the date when a new period begins.</p></article>
+            <article className={styles.step}><span className={styles.stepNumber}>3</span><h3>Read, then respond</h3><p>Open the daily read. Consider the possible context, then choose a useful move for support, conversation or mutually wanted closeness.</p></article>
           </div>
-          <p>The <a href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/" target="_blank" rel="noopener noreferrer">first day of bleeding is cycle day one</a>. Real cycles vary; if you need the overview first, read <Link href="/learn/menstrual-cycle-phases-for-partners">the four phases explained for partners</Link>.</p>
+          <p>The <a href="https://www.nhs.uk/conditions/periods/fertility-in-the-menstrual-cycle/" target="_blank" rel="noopener noreferrer">first day of bleeding is cycle day one</a>. Cycle length counts from one period’s first day to the next. If the basics are new to you, start with <Link href="/learn/menstrual-cycle-phases-for-partners">the four phases explained for partners</Link>.</p>
         </GuideSection>
 
-        <GuideProductExample path={SLUG} image="/screenshots/web-2026/day-brief.webp" alt="MoodMap Day Brief with Current Picture, Best Approach, What Can Go Well and Set It Up sections." title="One daily read you can put to use">
-          <p>{PRODUCT.summary}</p>
-          <p>The Brief connects the possible background to the day ahead. This example starts with comfort and practical setup before a bigger conversation or a bid for closeness.</p>
-          <p>Get the gist quickly, then open the explanation when you want more context.</p>
-        </GuideProductExample>
-
-        <GuideSection id="daily-guidance" title="Four different jobs in the Command Deck">
-          <p>PLAN, READ, BOND and SELF all change with the cycle context. Each helps with a different part of your response, so four categories do not become four versions of the same advice.</p>
+        <GuideSection id="daily-guidance" title="A quick read. A useful next move.">
+          <p>MoodMap’s daily context and Brief help you get the gist: what the cycle may mean for mood, energy and connection today. Open the explanations when you want more depth.</p>
+          <p>The Command Deck turns that context into four kinds of guidance. Each changes with the cycle:</p>
           <div className={styles.laneGrid}>
             {COMMAND_DECK_LANES.map(({ name, title, description }) => <article key={name} className={styles.lane}><span className={styles.phaseLabel}>{name}</span><h3>{title}</h3><p>{description}</p></article>)}
           </div>
-          <p>The WHY explanations add reasoning behind a move. The <Link href="/intelligence">Cycle Intelligence view</Link> explains the modeled biology and possible effects separately.</p>
+          <p>For how the estimates work, read <Link href="/intelligence">the cycle model and its limits</Link>.</p>
         </GuideSection>
 
-        <GuideSection id="calendar-guidance" title="From calendar dates to partner guidance">
+        <GuideSection id="calendar-guidance" title="From dates to daily perspective">
           <div className={styles.compare}>
-            <div><h3>Dates and symptom records</h3><p>A calendar helps someone record periods and see expected timing. Symptom tracking can help them notice their own patterns.</p></div>
-            <div><h3>MoodMap’s emphasis</h3><p>MoodMap uses agreed cycle timing to create a daily read for the partner: possible context, likely misunderstandings to avoid and practical moves for support, intimacy and self-regulation.</p></div>
+            <div><h3>A useful heads-up</h3><p>Possible tiredness or discomfort can be a reason to check in, offer help or keep a plan flexible. MoodMap gives you a starting point for that response.</p></div>
+            <div><h3>Room for the person</h3><p>She may feel differently from the estimate. Stress, sleep and what is happening between you matter too. Listen to what she says and adapt.</p></div>
           </div>
-          <p>Apps can combine several of these functions. Choose based on the job you want done. MoodMap’s primary job is helping you respond with more context.</p>
         </GuideSection>
 
-        <GuideSection id="free-premium" title="Start free. Open more depth with Premium+.">
-          <p>{PRODUCT.freeSummary}</p>
-          <p>{PRODUCT.premiumSummary}</p>
-          <p>{PRODUCT.settingsSummary}</p>
-          <p>{PRODUCT.purchaseSummary} <Link href="/pro">Explore Premium+ and get the app.</Link></p>
-          <p>Available in {PRODUCT.languages.map(({ name }) => name).join(", ")}.</p>
+        <GuideSection id="free-premium" title="Start free. Go deeper with Premium+.">
+          <div className={styles.compare}>
+            <div><h3>Free</h3><p>{PRODUCT.freeSummary}</p></div>
+            <div><h3>Premium+</h3><p>{PRODUCT.premiumSummary}</p></div>
+          </div>
+          <p>Your app store shows local prices and subscription terms before purchase. <Link href="/pro">See what Premium+ includes.</Link></p>
+          <p className={styles.finePrint}>Available for iPhone and Android in {PRODUCT.languages.map(({ name }) => name).join(", ")}.</p>
         </GuideSection>
 
-        <GuideSection id="privacy" title="Keep the agreement as clear as the dates">
-          <p>A useful starting question is: “Would a reminder help me plan better and show up well, or would you rather I do not track anything?” Agree what support means to her. It may be practical help, company, less noise or simply remembering that a difficult day is possible.</p>
-          <p>{PRODUCT.privacySummary} <Link href="/privacy-policy">Read the Privacy Policy</Link> for the actual data handling and choices.</p>
-          <p>Never use a calendar to win an argument or decide that a concern is invalid. For sex, flirting and intimacy, respond to the interest you receive. A phase is not a green light.</p>
+        <GuideSection id="privacy" title="Keep the agreement clear">
+          <div className={styles.summary}><p>“Would it help if I kept track of the dates so I can plan better, or would you prefer I didn’t?”</p></div>
+          <p>Agree on the purpose and the information she wants to share. Revisit that agreement if her preferences change. Tracking should make support easier; it should not become a way to dismiss a concern or label an argument.</p>
+          <p>{PRODUCT.privacySummary} <Link href="/privacy-policy">Read the Privacy Policy.</Link></p>
         </GuideSection>
 
-        <GuideSection id="model-fit" title="Know what the estimate can and cannot do">
+        <GuideSection id="model-fit" title="When a calendar estimate is less useful">
           <p>{PRODUCT.modelScope}</p>
-          <p>PMS experiences also vary. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome" target="_blank" rel="noopener noreferrer">Office on Women’s Health describes possible symptoms and when they deserve professional attention</a>. MoodMap supplies context for your response, not a diagnosis of your partner.</p>
+          <p>If symptoms interfere with daily life, encourage professional advice. The <a href="https://womenshealth.gov/menstrual-cycle/premenstrual-syndrome" target="_blank" rel="noopener noreferrer">Office on Women’s Health explains PMS symptoms and when to seek help</a>. MoodMap supplies relationship context, not a diagnosis.</p>
         </GuideSection>
         <GuideFAQ items={FAQ} />
         <div className={styles.sources}><SourceTrustBlock path={SLUG} /></div>
-        <GuideStoreLinks path={SLUG} title="Get a daily starting point for your next move" />
+        <GuideStoreLinks path={SLUG} title="A little more context for today" />
         <GuideRelated items={[{ href: "/learn/menstrual-cycle-phases-for-partners", label: "Cycle phases explained for partners" }, { href: "/learn/support-partner-during-pms", label: "Practical support during PMS" }, { href: "/learn/moodmap-glossary", label: "The MoodMap feature guide" }]} />
       </GuideArticle>
     </>

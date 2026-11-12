@@ -77,9 +77,9 @@ export const CONTENT_UPDATES = Object.freeze({
   "/about": "2026-11-10",
   "/intelligence": "2026-11-10",
   "/pro": "2026-11-10",
-  "/learn": "2026-11-10",
-  "/learn/menstrual-cycle-phases-for-partners": "2026-11-10",
-  "/learn/period-tracking-for-men": "2026-11-10",
+  "/learn": "2026-11-12",
+  "/learn/menstrual-cycle-phases-for-partners": "2026-11-12",
+  "/learn/period-tracking-for-men": "2026-11-12",
   "/learn/cycle-aware-relationship-timing": "2026-11-10",
   "/learn/luteal-phase-relationships": "2026-11-10",
   "/learn/pms-relationship-timing": "2026-11-10",
@@ -89,7 +89,7 @@ export const CONTENT_UPDATES = Object.freeze({
   "/learn/fertile-window-explained": "2026-11-10",
   "/learn/why-moodmap": "2026-11-10",
   "/support": "2026-11-10",
-  "/privacy-policy": "2026-11-10",
+  "/privacy-policy": "2026-11-12",
   "/terms": "2026-11-10",
 });
 

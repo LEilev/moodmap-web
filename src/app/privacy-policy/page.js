@@ -1,5 +1,6 @@
 // src/app/privacy-policy/page.js
 import Link from "next/link";
+import pageStyles from "../../components/EditorialPage.module.css";
 import { PRODUCT, CONTENT_UPDATES, displayDate } from "../../lib/product";
 import PrivacyPolicyContents from "../../components/PrivacyPolicyContents";
 import { pageMetadata } from "../seo";
@@ -41,9 +42,7 @@ const toc = [
 function IconRing({ children }) {
   return (
     <span
-      className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-xl
-                     bg-gradient-to-br from-emerald-400/40 to-blue-500/40 ring-1 ring-white/20
-                     shadow-inner shadow-emerald-500/10"
+      className={pageStyles.legalIcon}
     >
       {children}
     </span>
@@ -54,7 +53,7 @@ function GlassCard({ id, children }) {
   return (
     <article
       id={id}
-      className="scroll-mt-24 rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl p-6"
+      className={pageStyles.legalCard}
     >
       {children}
     </article>
@@ -63,21 +62,11 @@ function GlassCard({ id, children }) {
 
 export default function PrivacyPolicyPage() {
   return (
-    <main className="relative isolate min-h-screen bg-primary-blue text-white">
-      {/* Subtile emerald→blue glows (matcher Pro/Support) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[34rem] w-[34rem] rounded-full bg-gradient-to-br from-emerald-400/25 to-blue-500/25 blur-[140px] sm:blur-[180px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-40 top-32 h-[36rem] w-[36rem] rounded-full bg-gradient-to-tr from-blue-500/25 to-emerald-400/25 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
-      />
-
+    <main className={`${pageStyles.page} ${pageStyles.legal} relative isolate min-h-screen`}>
       {/* Hero */}
-      <section className="px-6 pt-16 pb-8 sm:pt-20 sm:pb-10 text-center">
-        <div className="mx-auto max-w-3xl">
-          <div className="inline-flex items-center gap-2 rounded-full bg-white/12 ring-1 ring-white/20 px-3 py-1 text-xs font-semibold text-blue-100">
+      <section className={pageStyles.legalHero}>
+        <div className={pageStyles.legalWidth}>
+          <div className={pageStyles.legalDate}>
             <span>Updated: {displayDate(CONTENT_UPDATES["/privacy-policy"])}</span>
           </div>
           <h1 className="mt-4 text-4xl sm:text-5xl font-extrabold tracking-tight">
@@ -90,12 +79,10 @@ export default function PrivacyPolicyPage() {
       <section className="px-6 pb-8">
         <div className="mx-auto max-w-4xl">
           {/* Mobile: collapsible */}
-          <details className="sm:hidden rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl">
+          <details className={`${pageStyles.legalToc} sm:hidden`}>
             <summary className="list-none cursor-pointer select-none px-4 py-3 font-semibold">
               <span
-                className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm
-                               text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                               shadow-[0_8px_24px_rgba(59,130,246,0.35)]"
+                className={pageStyles.tocToggle}
               >
                 Jump to section
               </span>
@@ -126,7 +113,7 @@ export default function PrivacyPolicyPage() {
 
           {/* Desktop: glasskort med liste */}
           <nav
-            className="hidden sm:block rounded-2xl bg-white/12 ring-1 ring-white/10 backdrop-blur-xl p-5"
+            className={`${pageStyles.legalToc} hidden sm:block`}
             role="navigation"
             aria-label="Table of contents"
             data-pp-toc
@@ -312,6 +299,7 @@ export default function PrivacyPolicyPage() {
             <ul className="mt-3 list-disc list-inside text-sm text-blue-100 space-y-2">
               <li><strong>Essential preference storage:</strong> your choice is remembered in this browser for up to 180 days. This preference contains your analytics choice and the time of the choice, without creating a visitor identifier. If browser storage is unavailable, the preference lasts for the current page session.</li>
               <li><strong>Optional website analytics:</strong> when enabled and configured, Google Analytics 4 helps us understand page visits and actions such as store-link and Premium+ clicks. Our event collection excludes URL query strings, fragments, email addresses, payment identifiers, and cycle information. Our browser analytics events remain disabled on purchase confirmation, activation, and account pages.</li>
+              <li><strong>Analytics cookies:</strong> after you allow analytics, Google Analytics uses <code>_ga</code> to distinguish visitors and <code>{"_ga_<id>"}</code> to maintain session state. Google’s default expiry is two years; browser limits may shorten it. These cookies are separate from the 180-day privacy preference. Withdrawing analytics consent removes these analytics cookies from this site. See <a className="mm-link" href="https://support.google.com/analytics/answer/11397207?hl=en" target="_blank" rel="noopener noreferrer">Google’s cookie documentation</a>.</li>
               <li><strong>Browser privacy signals:</strong> Global Privacy Control and Do Not Track keep optional website analytics off. Choose <strong>Privacy choices</strong> in the footer to review or withdraw your choice at any time. Withdrawing consent stops future optional collection; it does not automatically delete information already received by a service.</li>
               <li><strong>App subscriptions:</strong> new Premium+ subscriptions are offered in the app through the App Store or Google Play. The store shows local prices and terms before purchase and handles billing through your store account. The mobile-app purchase services described above continue to apply.</li>
               <li><strong>Earlier website payment links:</strong> web checkout and referral tracking have been retired on this website. For questions about an earlier payment link or receipt, contact support. If you send us details of that issue, we use them to investigate and respond.</li>
@@ -468,11 +456,7 @@ export default function PrivacyPolicyPage() {
           <div className="pt-2 text-center">
             <a
               href="mailto:support@moodmap-app.com?subject=Privacy%20question"
-              className="group relative inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold
-                         text-white bg-gradient-to-r from-emerald-400 to-blue-600 ring-1 ring-white/10
-                         shadow-[0_8px_24px_rgba(59,130,246,0.35)] transition-all
-                         hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(59,130,246,0.5)]
-                         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400"
+              className={pageStyles.primaryLink}
             >
               Email us about privacy
             </a>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import pageStyles from "../../components/EditorialPage.module.css";
 import { PRODUCT } from "../../lib/product";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { pageMetadata } from "../seo";
@@ -12,20 +13,10 @@ export const metadata = pageMetadata({
 
 export default function SupportPage() {
   return (
-    <main className="relative isolate min-h-screen bg-primary-blue text-white px-6 py-14 sm:py-16">
-      {/* Glows */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-40 -top-24 h-[30rem] w-[30rem] rounded-full bg-gradient-to-br from-emerald-400/20 to-blue-500/20 blur-[160px] sm:blur-[200px] md:opacity-30 -z-10"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-44 top-48 h-[32rem] w-[32rem] rounded-full bg-gradient-to-tr from-blue-500/20 to-emerald-400/18 blur-[170px] sm:blur-[220px] md:opacity-30 -z-10"
-      />
-
+    <main className={`${pageStyles.page} ${pageStyles.support} relative isolate min-h-screen`}>
       <div className="mx-auto w-full max-w-5xl">
         {/* Header */}
-        <header className="text-center max-w-2xl mx-auto">
+        <header className={pageStyles.supportHeader}>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight mb-3">
             MoodMap Support
           </h1>
