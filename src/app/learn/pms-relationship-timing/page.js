@@ -124,10 +124,9 @@ export default function PmsRelationshipTimingPage() {
             {TIMING_RULES.map(({ title, body }) => <div key={title} className={styles.phase}><h3>{title}</h3><p>{body}</p></div>)}
           </div>
         </GuideSection>
-        <GuideProductExample path={SLUG} image="/screenshots/web-2026/risk-radar.webp"
-          alt="MoodMap Risk Radar showing a joke that lands badly, a likely misread and a brief repair response."
+        <GuideProductExample path={SLUG}
           title="Notice the misread before it grows">
-          <p>This Risk Radar example starts with an ordinary moment: a joke lands badly. It helps you spot the urge to keep explaining and suggests a short repair instead.</p>
+          <p>Risk Radar helps you notice a possible misread and choose a practical response. If a joke lands badly, for example, a short repair can be more useful than repeatedly explaining what you meant.</p>
           <p>MoodMap connects possible cycle context with useful responses. It guides what you do next, without recording her actual mood.</p>
         </GuideProductExample>
         <GuideSection id="repair" title="Pause without abandoning the issue">

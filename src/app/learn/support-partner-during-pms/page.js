@@ -98,11 +98,10 @@ export default function SupportPartnerDuringPMSPage() {
           </div>
           <p>Try: “I’ll handle dinner. Would you rather have a quiet evening together or some time to yourself?” A specific offer is easier to answer than a long list of possibilities.</p>
         </GuideSection>
-        <GuideProductExample path={SLUG} image="/screenshots/web-2026/day-brief.webp"
-          alt="MoodMap Day Brief with Current Picture, Best Approach, What Can Go Well and Set It Up sections about comfort and the evening ahead."
+        <GuideProductExample path={SLUG}
           title="Get the day’s context before making a plan">
           <p>{PRODUCT.summary}</p>
-          <p>This Brief example starts with comfort, food and the transition home before adding another demand. Use the daily read as a prompt for the support your partner actually wants.</p>
+          <p>Use the Brief to consider comfort, food or the transition home before adding another demand. Let the daily read prompt support your partner actually wants.</p>
         </GuideProductExample>
         <GuideSection id="what-to-avoid" title="Common ways support can backfire">
           <ul>

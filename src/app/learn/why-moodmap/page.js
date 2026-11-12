@@ -147,10 +147,9 @@ export default function WhyMoodMapPage() {
             </div>
           ))}
         </GuideSection>
-        <GuideProductExample path={SLUG} image="/screenshots/web-2026/day-brief.webp"
-          alt="MoodMap Day Brief combining Current Picture, Best Approach, What Can Go Well and Set It Up in one daily read."
+        <GuideProductExample path={SLUG}
           title="Get the gist, then choose your next move">
-          <p>The Brief brings the day’s possible background and practical direction together. This example starts with comfort and the transition home before adding another demand.</p>
+          <p>The Brief brings the day’s possible background and practical direction together, helping you decide what to notice and how to respond.</p>
           <p>{PRODUCT.freeSummary}</p>
         </GuideProductExample>
         <GuideSection id="daily-guidance" title="Four distinct kinds of guidance">

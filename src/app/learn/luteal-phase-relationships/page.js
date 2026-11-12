@@ -118,11 +118,10 @@ export default function LutealPhaseRelationshipsPage() {
             {PRINCIPLES.map(({ title, body }) => <div key={title} className={styles.phase}><h3>{title}</h3><p>{body}</p></div>)}
           </div>
         </GuideSection>
-        <GuideProductExample path={SLUG} image="/screenshots/web-2026/read-day.webp"
-          alt="MoodMap’s luteal daily screen, titled Soft Tone, Strong Center, with Intelligence, Risk and Direction sections."
+        <GuideProductExample path={SLUG}
           title="A quick read before you respond">
           <p>{PRODUCT.summary}</p>
-          <p>This luteal example brings warmth and clarity together: keep your point clear without adding unnecessary pressure. The screen gives you a starting point; her actual words and response guide the conversation.</p>
+          <p>Use the luteal context to keep warmth and clarity together: make your point without adding unnecessary pressure. Her actual words and response guide the conversation.</p>
         </GuideProductExample>
         <GuideSection id="practical-moves" title="Practical moves for a harder day">
           <ol>{MOVES.map(([title, body]) => <li key={title}><strong>{title}.</strong> {body}</li>)}</ol>

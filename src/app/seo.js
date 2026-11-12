@@ -55,8 +55,8 @@ export function pageMetadata({ title, description, path }) {
 
 export const SOURCE_LINKS = [
   {
-    label: "ACOG — Your Menstrual Cycle",
-    href: "https://www.acog.org/womens-health/faqs/your-menstrual-cycle",
+    label: "ACOG — The Menstrual Cycle",
+    href: "https://www.acog.org/womens-health/infographics/the-menstrual-cycle",
   },
   {
     label: "NHS — Periods and fertility in the menstrual cycle",
